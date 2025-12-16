@@ -62,13 +62,6 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
       "priority": "critical"
     },
     {
-      "title": "Real-time Collaboration Suite",
-      "description": "Multi-user editing with presence indicators and conflict resolution",
-      "icon": "👥",
-      "status": "in-progress",
-      "priority": "high"
-    },
-    {
       "title": "Enterprise SSO Integration",
       "description": "SAML 2.0 and OIDC support for Okta, Azure AD, and custom IdPs",
       "icon": "🔐",
@@ -125,13 +118,6 @@ const demoConfig = {
       icon: '🤖',
       status: 'in-progress',
       priority: 'critical',
-    },
-    {
-      title: 'Real-time Collaboration Suite',
-      description: 'Multi-user editing with presence indicators and conflict resolution',
-      icon: '👥',
-      status: 'in-progress',
-      priority: 'high',
     },
     {
       title: 'Enterprise SSO Integration',

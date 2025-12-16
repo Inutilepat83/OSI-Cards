@@ -7,7 +7,7 @@ This guide covers different ways to install and configure OSI Cards in your Angu
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - Angular 18 or higher
 - npm or yarn
 
@@ -43,7 +43,7 @@ For enhanced functionality:
 
 \`\`\`bash
 # For charts (ChartSection)
-npm install chart.js
+npm install frappe-charts
 
 # For icons (if not using defaults)
 npm install lucide-angular

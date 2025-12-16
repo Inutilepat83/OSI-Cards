@@ -71,17 +71,6 @@ The **Video Section** (\`type: "video"\`) is used for displays video content wit
         "views": 125000,
         "category": "Tutorial"
       }
-    },
-    {
-      "title": "AI-Powered Insights Demo",
-      "description": "See how our AI engine automatically discovers insights and explains metric changes",
-      "meta": {
-        "url": "https://videos.nexustech.io/ai-demo",
-        "thumbnail": "https://images.nexustech.io/thumbnails/ai-demo.jpg",
-        "duration": "8:15",
-        "views": 67000,
-        "category": "Product Demo"
-      }
     }
   ]
 }
@@ -149,18 +138,6 @@ const demoConfig = {
         duration: '5:23',
         views: 125000,
         category: 'Tutorial',
-      },
-    },
-    {
-      title: 'AI-Powered Insights Demo',
-      description:
-        'See how our AI engine automatically discovers insights and explains metric changes',
-      meta: {
-        url: 'https://videos.nexustech.io/ai-demo',
-        thumbnail: 'https://images.nexustech.io/thumbnails/ai-demo.jpg',
-        duration: '8:15',
-        views: 67000,
-        category: 'Product Demo',
       },
     },
   ],

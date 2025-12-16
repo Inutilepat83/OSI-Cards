@@ -118,6 +118,7 @@ if (typeof window !== 'undefined') {
       const target = event.target as HTMLElement | null;
 
       // Check for chunk loading errors (JS and CSS)
+      // Include both 404 and 500 errors for chunk files
       const isChunkError =
         errorMessage.includes('Importing a module script failed') ||
         errorMessage.includes('Failed to fetch dynamically imported module') ||
@@ -126,7 +127,7 @@ if (typeof window !== 'undefined') {
         (target && (target as any).src?.includes('chunk-')) ||
         (target && (target as any).href?.includes('chunk-')) ||
         (event.message &&
-          event.message.includes('404') &&
+          (event.message.includes('404') || event.message.includes('500')) &&
           (filename.includes('.js') || filename.includes('.css')));
 
       if (isChunkError && shouldAttemptRecovery()) {
@@ -150,7 +151,8 @@ if (typeof window !== 'undefined') {
       errorMessage.includes('Importing a module script failed') ||
       errorMessage.includes('Failed to fetch dynamically imported module') ||
       errorMessage.includes('chunk') ||
-      errorMessage.includes('404');
+      errorMessage.includes('404') ||
+      errorMessage.includes('500');
 
     if (isChunkError && shouldAttemptRecovery()) {
       console.error('🔴 Unhandled rejection - Chunk loading failed:', errorMessage);

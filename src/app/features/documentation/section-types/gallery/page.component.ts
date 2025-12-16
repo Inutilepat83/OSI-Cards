@@ -60,15 +60,6 @@ The **Gallery Section** (\`type: "gallery"\`) is used for displays image galleri
       }
     },
     {
-      "title": "Engineering All-Hands",
-      "description": "Quarterly engineering town hall with product roadmap presentations and team celebrations",
-      "meta": {
-        "url": "https://images.nexustech.io/events/eng-allhands.jpg",
-        "caption": "Engineering team gathering",
-        "alt": "Large group of engineers in conference room"
-      }
-    },
-    {
       "title": "NexusCon 2024 Keynote",
       "description": "CEO Sarah Mitchell delivering the opening keynote to 3,000+ attendees in San Francisco",
       "meta": {
@@ -129,16 +120,6 @@ const demoConfig = {
         url: 'https://images.nexustech.io/office/austin-hq.jpg',
         caption: 'Nexus HQ in Austin, Texas',
         alt: 'Modern office building with glass facade',
-      },
-    },
-    {
-      title: 'Engineering All-Hands',
-      description:
-        'Quarterly engineering town hall with product roadmap presentations and team celebrations',
-      meta: {
-        url: 'https://images.nexustech.io/events/eng-allhands.jpg',
-        caption: 'Engineering team gathering',
-        alt: 'Large group of engineers in conference room',
       },
     },
     {

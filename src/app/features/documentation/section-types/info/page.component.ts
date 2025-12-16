@@ -60,63 +60,11 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
       "icon": "🏢"
     },
     {
-      "label": "Founded",
-      "value": "2018",
-      "icon": "📅"
-    },
-    {
-      "label": "Headquarters",
-      "value": "Austin, Texas, USA",
-      "icon": "📍"
-    },
-    {
-      "label": "Employees",
-      "value": "2,847",
-      "icon": "👥",
-      "trend": "up",
-      "change": 23.5
-    },
-    {
       "label": "Annual Revenue",
       "value": "$127M ARR",
       "icon": "💰",
       "trend": "up",
       "change": 45.2
-    },
-    {
-      "label": "Funding Stage",
-      "value": "Series C ($85M raised)",
-      "icon": "🚀"
-    },
-    {
-      "label": "Customer Base",
-      "value": "450+ Enterprise Clients",
-      "icon": "🎯"
-    },
-    {
-      "label": "Global Offices",
-      "value": "Austin, London, Singapore, São Paulo",
-      "icon": "🌐"
-    },
-    {
-      "label": "Tech Stack",
-      "value": "Python, Kubernetes, AWS, Snowflake",
-      "icon": "⚙️"
-    },
-    {
-      "label": "CEO",
-      "value": "Dr. Maya Chen",
-      "icon": "👤"
-    },
-    {
-      "label": "Stock Symbol",
-      "value": "NXUS (NASDAQ)",
-      "icon": "📈"
-    },
-    {
-      "label": "Website",
-      "value": "www.nexustech.io",
-      "icon": "🔗"
     }
   ]
 }
@@ -169,63 +117,11 @@ const demoConfig = {
       icon: '🏢',
     },
     {
-      label: 'Founded',
-      value: '2018',
-      icon: '📅',
-    },
-    {
-      label: 'Headquarters',
-      value: 'Austin, Texas, USA',
-      icon: '📍',
-    },
-    {
-      label: 'Employees',
-      value: '2,847',
-      icon: '👥',
-      trend: 'up',
-      change: 23.5,
-    },
-    {
       label: 'Annual Revenue',
       value: '$127M ARR',
       icon: '💰',
       trend: 'up',
       change: 45.2,
-    },
-    {
-      label: 'Funding Stage',
-      value: 'Series C ($85M raised)',
-      icon: '🚀',
-    },
-    {
-      label: 'Customer Base',
-      value: '450+ Enterprise Clients',
-      icon: '🎯',
-    },
-    {
-      label: 'Global Offices',
-      value: 'Austin, London, Singapore, São Paulo',
-      icon: '🌐',
-    },
-    {
-      label: 'Tech Stack',
-      value: 'Python, Kubernetes, AWS, Snowflake',
-      icon: '⚙️',
-    },
-    {
-      label: 'CEO',
-      value: 'Dr. Maya Chen',
-      icon: '👤',
-    },
-    {
-      label: 'Stock Symbol',
-      value: 'NXUS (NASDAQ)',
-      icon: '📈',
-    },
-    {
-      label: 'Website',
-      value: 'www.nexustech.io',
-      icon: '🔗',
     },
   ],
 };

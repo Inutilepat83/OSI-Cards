@@ -80,48 +80,6 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "department": "Engineering",
       "location": "Austin, TX",
       "linkedIn": "https://linkedin.com/in/jamespark"
-    },
-    {
-      "label": "Chief Revenue Officer",
-      "title": "Maria Santos",
-      "value": "CRO",
-      "email": "maria.santos@nexustech.io",
-      "salesforce": "https://company.salesforce.com/001xx000003DGbS",
-      "role": "Chief Revenue Officer",
-      "department": "Sales",
-      "location": "New York, NY",
-      "linkedIn": "https://linkedin.com/in/mariasantos"
-    },
-    {
-      "label": "Chief Financial Officer",
-      "title": "David Thompson",
-      "value": "CFO",
-      "email": "david.thompson@nexustech.io",
-      "salesforce": "https://company.salesforce.com/001xx000003DGbT",
-      "role": "Chief Financial Officer",
-      "department": "Finance",
-      "location": "London, UK",
-      "linkedIn": "https://linkedin.com/in/davidthompson"
-    },
-    {
-      "label": "VP of Engineering",
-      "title": "Dr. Wei Chen",
-      "value": "VP Engineering - Platform",
-      "email": "wei.chen@nexustech.io",
-      "salesforce": "https://company.salesforce.com/001xx000003DGbU",
-      "role": "VP of Engineering",
-      "department": "Engineering",
-      "location": "Singapore"
-    },
-    {
-      "label": "VP of Customer Success",
-      "title": "Rachel Green",
-      "value": "VP Customer Success",
-      "email": "rachel.green@nexustech.io",
-      "salesforce": "https://company.salesforce.com/001xx000003DGbV",
-      "role": "VP of Customer Success",
-      "department": "Customer Success",
-      "location": "Austin, TX"
     }
   ]
 }
@@ -220,48 +178,6 @@ const demoConfig = {
       department: 'Engineering',
       location: 'Austin, TX',
       linkedIn: 'https://linkedin.com/in/jamespark',
-    },
-    {
-      label: 'Chief Revenue Officer',
-      title: 'Maria Santos',
-      value: 'CRO',
-      email: 'maria.santos@nexustech.io',
-      phone: '+1 (512) 555-0102',
-      role: 'Chief Revenue Officer',
-      department: 'Sales',
-      location: 'New York, NY',
-      linkedIn: 'https://linkedin.com/in/mariasantos',
-    },
-    {
-      label: 'Chief Financial Officer',
-      title: 'David Thompson',
-      value: 'CFO',
-      email: 'david.thompson@nexustech.io',
-      phone: '+44 20 7946 0958',
-      role: 'Chief Financial Officer',
-      department: 'Finance',
-      location: 'London, UK',
-      linkedIn: 'https://linkedin.com/in/davidthompson',
-    },
-    {
-      label: 'VP of Engineering',
-      title: 'Dr. Wei Chen',
-      value: 'VP Engineering - Platform',
-      email: 'wei.chen@nexustech.io',
-      phone: '+65 6823 4567',
-      role: 'VP of Engineering',
-      department: 'Engineering',
-      location: 'Singapore',
-    },
-    {
-      label: 'VP of Customer Success',
-      title: 'Rachel Green',
-      value: 'VP Customer Success',
-      email: 'rachel.green@nexustech.io',
-      phone: '+1 (512) 555-0105',
-      role: 'VP of Customer Success',
-      department: 'Customer Success',
-      location: 'Austin, TX',
     },
   ],
 };

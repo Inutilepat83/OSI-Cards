@@ -63,17 +63,6 @@ The **News Section** (\`type: "news"\`) is used for displays news articles, head
       "status": "published"
     },
     {
-      "title": "Nexus Named Leader in Gartner Magic Quadrant for Analytics & BI Platforms",
-      "description": "Recognition highlights company's vision completeness and ability to execute, with highest scores for AI/ML capabilities and customer experience.",
-      "meta": {
-        "source": "Gartner",
-        "date": "2024-12-15",
-        "url": "https://gartner.com/magic-quadrant/analytics",
-        "category": "Recognition"
-      },
-      "status": "published"
-    },
-    {
       "title": "Q4 2024 Revenue Exceeds $42M, Up 47% Year-Over-Year",
       "description": "Strong enterprise demand drives record quarterly results. Full-year ARR surpasses $127M with path to profitability in 2025.",
       "meta": {
@@ -136,18 +125,6 @@ const demoConfig = {
         date: '2025-01-20',
         url: 'https://techcrunch.com/nexus-series-c',
         category: 'Funding',
-      },
-      status: 'published',
-    },
-    {
-      title: 'Nexus Named Leader in Gartner Magic Quadrant for Analytics & BI Platforms',
-      description:
-        "Recognition highlights company's vision completeness and ability to execute, with highest scores for AI/ML capabilities and customer experience.",
-      meta: {
-        source: 'Gartner',
-        date: '2024-12-15',
-        url: 'https://gartner.com/magic-quadrant/analytics',
-        category: 'Recognition',
       },
       status: 'published',
     },

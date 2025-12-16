@@ -1484,7 +1484,7 @@ interface PrerenderedPage {
         }
 
         pre {
-          max-height: 1200px !important;
+          max-height: 500px !important;
           padding: 1.5rem !important;
           background: #0a0a0a !important;
           border-radius: 11px !important;
@@ -1643,7 +1643,6 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
   activeDemos = signal<Map<string, ComponentRef<AICardRendererComponent>>>(new Map());
   demoConfigs = signal<Map<string, unknown>>(new Map());
   isLoading = signal(true);
-  llmPromptContent = signal<string>('');
 
   ngOnInit() {
     this.isLoading.set(true);
@@ -1816,12 +1815,8 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
       if (llmBtn) {
         event.preventDefault();
         event.stopPropagation();
-        // Use stored content first, fallback to DOM extraction
-        let code = this.llmPromptContent() || '';
-        if (!code) {
-          const codeEl = this.el.nativeElement.querySelector('.language-llm');
-          code = codeEl?.textContent || '';
-        }
+        const codeEl = this.el.nativeElement.querySelector('.language-llm');
+        const code = codeEl?.textContent || '';
         if (!code) {
           console.error('No LLM prompt content found');
           return;
@@ -2094,8 +2089,6 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
 
       // Special handling for LLM prompt blocks - add standalone copy button above
       if (language === 'llm') {
-        // Store the full prompt content for copying
-        this.llmPromptContent.set(code);
         return `<div class="llm-copy-standalone"><div class="llm-copy-btn" role="button" tabindex="0">COPY PROMPT</div></div><div class="code-block-wrapper llm-block"><div class="code-header"><span class="code-lang">${language}</span></div><pre><code class="language-${language}">${escapedCode}</code></pre></div>`;
       }
 

@@ -69,66 +69,6 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
         "status": "active",
         "type": "Investor"
       }
-    },
-    {
-      "title": "Accenture",
-      "description": "Systems Integration Partner - Enterprise Deployments",
-      "meta": {
-        "influence": 88,
-        "connections": 34,
-        "status": "active",
-        "type": "Implementation Partner"
-      }
-    },
-    {
-      "title": "Snowflake",
-      "description": "Data Platform Partnership - Native Integration",
-      "meta": {
-        "influence": 85,
-        "connections": 28,
-        "status": "active",
-        "type": "Technology Partner"
-      }
-    },
-    {
-      "title": "Microsoft",
-      "description": "Azure Marketplace Partner - Co-sell Agreement",
-      "meta": {
-        "influence": 90,
-        "connections": 52,
-        "status": "active",
-        "type": "Technology Partner"
-      }
-    },
-    {
-      "title": "Deloitte",
-      "description": "Advisory Partner - Digital Transformation",
-      "meta": {
-        "influence": 82,
-        "connections": 19,
-        "status": "active",
-        "type": "Consulting Partner"
-      }
-    },
-    {
-      "title": "Goldman Sachs",
-      "description": "Strategic Banking Partner",
-      "meta": {
-        "influence": 78,
-        "connections": 8,
-        "status": "active",
-        "type": "Financial Partner"
-      }
-    },
-    {
-      "title": "TechStars",
-      "description": "Accelerator Alumni Network",
-      "meta": {
-        "influence": 65,
-        "connections": 156,
-        "status": "active",
-        "type": "Network"
-      }
     }
   ]
 }
@@ -192,66 +132,6 @@ const demoConfig = {
         connections: 12,
         status: 'active',
         type: 'Investor',
-      },
-    },
-    {
-      title: 'Accenture',
-      description: 'Systems Integration Partner - Enterprise Deployments',
-      meta: {
-        influence: 88,
-        connections: 34,
-        status: 'active',
-        type: 'Implementation Partner',
-      },
-    },
-    {
-      title: 'Snowflake',
-      description: 'Data Platform Partnership - Native Integration',
-      meta: {
-        influence: 85,
-        connections: 28,
-        status: 'active',
-        type: 'Technology Partner',
-      },
-    },
-    {
-      title: 'Microsoft',
-      description: 'Azure Marketplace Partner - Co-sell Agreement',
-      meta: {
-        influence: 90,
-        connections: 52,
-        status: 'active',
-        type: 'Technology Partner',
-      },
-    },
-    {
-      title: 'Deloitte',
-      description: 'Advisory Partner - Digital Transformation',
-      meta: {
-        influence: 82,
-        connections: 19,
-        status: 'active',
-        type: 'Consulting Partner',
-      },
-    },
-    {
-      title: 'Goldman Sachs',
-      description: 'Strategic Banking Partner',
-      meta: {
-        influence: 78,
-        connections: 8,
-        status: 'active',
-        type: 'Financial Partner',
-      },
-    },
-    {
-      title: 'TechStars',
-      description: 'Accelerator Alumni Network',
-      meta: {
-        influence: 65,
-        connections: 156,
-        status: 'active',
-        type: 'Network',
       },
     },
   ],

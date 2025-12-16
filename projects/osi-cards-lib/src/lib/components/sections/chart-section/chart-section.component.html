@@ -2,12 +2,10 @@
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
-  <!-- Chart Canvas -->
+  <!-- Chart Container -->
   <div class="chart-container" *ngIf="section.chartData && !chartError">
     <div class="chart-wrapper">
-      <div class="chart-canvas-wrapper">
-        <canvas #chartCanvas></canvas>
-      </div>
+      <div #chartContainer class="chart-canvas-wrapper"></div>
     </div>
   </div>
 

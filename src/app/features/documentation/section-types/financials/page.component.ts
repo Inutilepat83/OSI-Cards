@@ -63,104 +63,10 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
       "period": "FY2024"
     },
     {
-      "label": "Total Revenue",
-      "value": "$142.8M",
-      "format": "currency",
-      "change": 38.7,
-      "trend": "up",
-      "period": "FY2024"
-    },
-    {
-      "label": "Gross Profit",
-      "value": "$112.3M",
-      "format": "currency",
-      "change": 41.2,
-      "trend": "up",
-      "period": "FY2024"
-    },
-    {
-      "label": "Gross Margin",
-      "value": "78.6%",
-      "format": "percentage",
-      "change": 2.3,
-      "trend": "up"
-    },
-    {
-      "label": "Operating Expenses",
-      "value": "$98.5M",
-      "format": "currency",
-      "change": 22.1,
-      "trend": "up"
-    },
-    {
-      "label": "EBITDA",
-      "value": "$24.8M",
-      "format": "currency",
-      "change": 156.3,
-      "trend": "up"
-    },
-    {
       "label": "Net Income",
       "value": "$18.2M",
       "format": "currency",
       "change": 245.8,
-      "trend": "up"
-    },
-    {
-      "label": "Operating Margin",
-      "value": "17.4%",
-      "format": "percentage",
-      "change": 8.2,
-      "trend": "up"
-    },
-    {
-      "label": "Cash & Equivalents",
-      "value": "$89.3M",
-      "format": "currency",
-      "change": 12.4,
-      "trend": "up"
-    },
-    {
-      "label": "Total Assets",
-      "value": "$234.7M",
-      "format": "currency",
-      "change": 28.9,
-      "trend": "up"
-    },
-    {
-      "label": "Debt-to-Equity Ratio",
-      "value": "0.34",
-      "format": "ratio",
-      "change": -8.1,
-      "trend": "down"
-    },
-    {
-      "label": "Free Cash Flow",
-      "value": "$31.2M",
-      "format": "currency",
-      "change": 67.4,
-      "trend": "up"
-    },
-    {
-      "label": "R&D Investment",
-      "value": "$28.4M",
-      "format": "currency",
-      "change": 35.2,
-      "trend": "up",
-      "period": "FY2024"
-    },
-    {
-      "label": "Customer Acquisition Cost",
-      "value": "$12,450",
-      "format": "currency",
-      "change": -12.3,
-      "trend": "down"
-    },
-    {
-      "label": "LTV/CAC Ratio",
-      "value": "6.8x",
-      "format": "ratio",
-      "change": 23.5,
       "trend": "up"
     }
   ]
@@ -217,104 +123,10 @@ const demoConfig = {
       period: 'FY2024',
     },
     {
-      label: 'Total Revenue',
-      value: '$142.8M',
-      format: 'currency',
-      change: 38.7,
-      trend: 'up',
-      period: 'FY2024',
-    },
-    {
-      label: 'Gross Profit',
-      value: '$112.3M',
-      format: 'currency',
-      change: 41.2,
-      trend: 'up',
-      period: 'FY2024',
-    },
-    {
-      label: 'Gross Margin',
-      value: '78.6%',
-      format: 'percentage',
-      change: 2.3,
-      trend: 'up',
-    },
-    {
-      label: 'Operating Expenses',
-      value: '$98.5M',
-      format: 'currency',
-      change: 22.1,
-      trend: 'up',
-    },
-    {
-      label: 'EBITDA',
-      value: '$24.8M',
-      format: 'currency',
-      change: 156.3,
-      trend: 'up',
-    },
-    {
       label: 'Net Income',
       value: '$18.2M',
       format: 'currency',
       change: 245.8,
-      trend: 'up',
-    },
-    {
-      label: 'Operating Margin',
-      value: '17.4%',
-      format: 'percentage',
-      change: 8.2,
-      trend: 'up',
-    },
-    {
-      label: 'Cash & Equivalents',
-      value: '$89.3M',
-      format: 'currency',
-      change: 12.4,
-      trend: 'up',
-    },
-    {
-      label: 'Total Assets',
-      value: '$234.7M',
-      format: 'currency',
-      change: 28.9,
-      trend: 'up',
-    },
-    {
-      label: 'Debt-to-Equity Ratio',
-      value: '0.34',
-      format: 'ratio',
-      change: -8.1,
-      trend: 'down',
-    },
-    {
-      label: 'Free Cash Flow',
-      value: '$31.2M',
-      format: 'currency',
-      change: 67.4,
-      trend: 'up',
-    },
-    {
-      label: 'R&D Investment',
-      value: '$28.4M',
-      format: 'currency',
-      change: 35.2,
-      trend: 'up',
-      period: 'FY2024',
-    },
-    {
-      label: 'Customer Acquisition Cost',
-      value: '$12,450',
-      format: 'currency',
-      change: -12.3,
-      trend: 'down',
-    },
-    {
-      label: 'LTV/CAC Ratio',
-      value: '6.8x',
-      format: 'ratio',
-      change: 23.5,
       trend: 'up',
     },
   ],

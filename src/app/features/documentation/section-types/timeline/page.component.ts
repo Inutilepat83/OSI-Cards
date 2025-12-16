@@ -60,15 +60,6 @@ The **Timeline Section** (\`type: "timeline"\`) is used for displays chronologic
       }
     },
     {
-      "title": "Seed Funding Secured",
-      "description": "Raised $3.5M seed round from angel investors and TechStars to build initial product and hire founding team",
-      "meta": {
-        "date": "September 2018",
-        "year": "2018",
-        "icon": "💰"
-      }
-    },
-    {
       "title": "First Enterprise Customer",
       "description": "Signed first Fortune 500 customer, validating product-market fit for enterprise analytics segment",
       "meta": {
@@ -132,16 +123,6 @@ const demoConfig = {
         date: 'March 2018',
         year: '2018',
         icon: '🚀',
-      },
-    },
-    {
-      title: 'Seed Funding Secured',
-      description:
-        'Raised $3.5M seed round from angel investors and TechStars to build initial product and hire founding team',
-      meta: {
-        date: 'September 2018',
-        year: '2018',
-        icon: '💰',
       },
     },
     {

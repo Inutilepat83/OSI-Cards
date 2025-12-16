@@ -1,5 +1,5 @@
 // =====================================================================
-// FINANCIALS SECTION - Clean & Modern
+// FINANCIALS SECTION - Enhanced Modern Design
 // =====================================================================
 
 // Use design system (must come before @import)
@@ -19,30 +19,32 @@
 .financials-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-spacing-compact-sm, 8px);
 }
 
-// Grid
+// Grid - Compact spacing for better density
 .financials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Smaller min for compact
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
-  width: 100%; // Ensure full width
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--osi-spacing-compact-sm, 8px);
+  width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
 
   @include responsive-down("md") {
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
+    gap: var(--osi-spacing-compact-xs, 6px);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 
   @include responsive-down("sm") {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-spacing-compact-xs, 6px);
   }
 
   @include responsive-down("xs") {
     grid-template-columns: 1fr;
+    gap: var(--osi-spacing-compact-xs, 6px);
   }
 
   @media (max-width: 600px) {
@@ -50,24 +52,44 @@
   }
 }
 
-// Financial Card
+// Financial Card - Compact and modern styling
 .financial-card {
   @include card-elevated;
   position: relative;
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 14px)
-  min-height: 95px; // Compact: 95px (was 120px)
+  padding: var(--osi-spacing-compact-sm, 8px) var(--osi-spacing-compact-md, 12px);
+  min-height: 90px;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
+  gap: var(--osi-spacing-compact-xs, 4px);
   max-width: 100%;
-  overflow-x: hidden;
+  overflow: visible; // Allow trend indicator to overflow slightly
   box-sizing: border-box;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+  background: var(--osi-section-item-background, rgba(255, 255, 255, 0.02));
+  border-radius: var(--radius-sm, 6px);
 
+  // Enhanced shadow system with multiple layers
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.02);
+
+  // Subtle left border accent with gradient
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent, #3b82f6) 0%, transparent 100%);
+    border-radius: var(--radius-sm, 6px) 0 0 var(--radius-sm, 6px);
+    opacity: 0.6;
+    transition: opacity var(--duration-slow, 300ms) var(--ease-out, ease-out);
+  }
+
+  // Bottom accent line
   &::after {
     content: "";
     position: absolute;
@@ -75,31 +97,70 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    background: linear-gradient(90deg, var(--accent, #3b82f6) 0%, transparent 100%);
     opacity: 0;
-    transition: opacity var(--duration-slow) var(--ease-out);
+    transition: opacity var(--duration-slow, 300ms) var(--ease-out, ease-out);
   }
 
+  // Enhanced hover state with transform and layered shadows
+  transition:
+    transform 200ms var(--ease-out, ease-out),
+    box-shadow 300ms var(--ease-out, ease-out),
+    background 300ms var(--ease-out, ease-out);
+
   &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
+    transform: translateY(-2px);
+    background: var(--osi-section-item-background-hover, rgba(255, 255, 255, 0.04));
+
+    // Enhanced shadow on hover
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.08),
+      0 8px 12px rgba(0, 0, 0, 0.05),
+      0 12px 20px rgba(0, 0, 0, 0.03);
+
+    &::before {
+      opacity: 1;
+    }
 
     &::after {
       opacity: 0.8;
     }
 
     .financial-value {
-      color: var(--accent);
+      color: var(--accent, #3b82f6);
     }
   }
 }
 
-// Header
+// Trend Indicator - Positioned in top-right corner
+.financial-trend-indicator {
+  position: absolute;
+  top: var(--osi-spacing-compact-xs, 6px);
+  right: var(--osi-spacing-compact-xs, 6px);
+  z-index: 10;
+  margin: 0;
+
+  // Enhanced styling for better integration
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: var(--osi-section-item-background, rgba(255, 255, 255, 0.02));
+    border-radius: 4px;
+    z-index: -1;
+    opacity: 0.8;
+  }
+}
+
+// Header - Compact layout and spacing
 .financial-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  align-items: flex-start;
+  gap: var(--osi-spacing-compact-xs, 4px);
+  margin-top: 0;
+  min-height: 20px; // Compact space for label only
+  padding-right: 70px; // Prevent overlap with trend indicator
 }
 
 .financial-label {
@@ -108,45 +169,129 @@
   min-width: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.7));
+  padding-right: 0; // Ensure no additional padding
 }
 
+// Period badge styling - more compact
 .financial-period {
-  font-size: 0.625rem; // Compact: 10px (was 0.65rem)
-  color: var(--muted-foreground);
-  opacity: 0.7;
+  font-size: 0.6rem;
+  font-weight: 500;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.6));
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.4;
 }
 
-// Value
+// Value - Compact typography
 .financial-value {
   @include typo.number-display-medium;
-  font-size: 1.375rem; // Compact: 22px (was 1.5rem)
-  margin: 2px 0; // Compact: 2px (was 4px)
-  transition: color 200ms var(--ease-out);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 2px 0;
+  transition: color 200ms var(--ease-out, ease-out);
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  font-variant-numeric: tabular-nums; // Better number alignment
+  color: var(--foreground, #f2f2f2);
+  letter-spacing: -0.015em;
 }
 
-// Trend
-.financial-card > lib-trend-indicator {
-  margin-top: auto;
-}
-
-// Responsive
-@include responsive-down("sm") {
+// Responsive enhancements - Compact across all breakpoints
+@include responsive-down("md") {
   .financial-card {
-    padding: var(--osi-spacing-compact-sm, 6px);
-    min-height: 85px; // Compact: 85px (was 110px)
-    gap: var(--osi-spacing-compact-xs, 2px);
+    padding: var(--osi-spacing-compact-sm, 8px) var(--osi-spacing-compact-md, 12px);
+    min-height: 85px;
   }
 
   .financial-value {
-    font-size: 1.25rem; // Compact: 20px (was 1.3rem)
+    font-size: 1.2rem;
+  }
+
+  .financial-header {
+    padding-right: 65px; // Slightly less padding on tablet
   }
 }
 
+@include responsive-down("sm") {
+  .financial-card {
+    padding: var(--osi-spacing-compact-sm, 8px) var(--osi-spacing-compact-sm, 10px);
+    min-height: 82px;
+    gap: var(--osi-spacing-compact-xs, 4px);
+  }
+
+  .financial-value {
+    font-size: 1.15rem;
+  }
+
+  .financial-header {
+    min-height: 18px;
+    padding-right: 60px; // Reduced padding on mobile
+  }
+
+  .financial-label {
+    font-size: 0.625rem;
+  }
+
+  .financial-trend-indicator {
+    top: var(--osi-spacing-compact-xs, 5px);
+    right: var(--osi-spacing-compact-xs, 5px);
+  }
+}
+
+@include responsive-down("xs") {
+  .financial-card {
+    min-height: 80px;
+    padding: var(--osi-spacing-compact-sm, 7px) var(--osi-spacing-compact-sm, 9px);
+  }
+
+  .financial-value {
+    font-size: 1.1rem;
+  }
+
+  .financial-header {
+    min-height: 18px;
+    padding-right: 55px; // Even less padding on small mobile
+  }
+}
+
+// Accessibility and reduced motion
 @media (prefers-reduced-motion: reduce) {
   .financial-card {
     transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .financial-value {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .financial-card {
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+
+    &::before {
+      width: 4px;
+      opacity: 1;
+    }
+  }
+
+  .financial-period {
+    border-width: 2px;
   }
 }

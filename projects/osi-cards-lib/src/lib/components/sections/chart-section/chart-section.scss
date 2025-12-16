@@ -22,20 +22,27 @@
   flex-direction: column;
   gap: 0; // No gap to maximize space
   width: 100%;
+  min-height: 180px; // Ensure minimum height for full chart display with legend
+  max-height: 180px; // Maximum height to keep compact
+  height: 180px; // Fixed height for consistent compact sizing
 }
 
 // CHART WRAPPER - Proper spacing and height
+// Note: No card mixin - section already provides card styling
 .chart-wrapper {
-  @include card;
   padding: 0; // No padding - maximize chart space
-  // Background inherited from @include card mixin
-  max-height: 200px; // Maximum height constraint
-  height: 200px; // Fixed height for consistent sizing
+  background: transparent; // No background - use section background
+  border: none; // No border - section already has border
+  box-shadow: none; // No shadow - section already has shadow
+  min-height: 180px; // Minimum height for compact chart (chart + legend)
+  max-height: 180px; // Maximum height to keep compact
+  height: 180px; // Fixed height for consistent compact sizing
   display: flex;
   flex-direction: column;
   gap: 0; // No gap
-  overflow: visible; // Allow chart to render properly
+  overflow: visible; // Allow legend to be visible
   box-sizing: border-box;
+  width: 100%;
 }
 
 .chart-header {
@@ -76,20 +83,22 @@
   flex-shrink: 0;
 }
 
-// CHART CANVAS - Proper sizing
+// CHART CANVAS - Proper sizing (Frappe Charts uses div, not canvas)
 .chart-canvas-wrapper {
   flex: 1;
   position: relative;
-  height: 200px; // Use full height of wrapper
+  min-height: 140px; // Minimum height for chart area
+  max-height: 180px; // Maximum height to keep compact
+  height: 140px; // Fixed compact height
   width: 100%;
-  overflow: visible; // Allow chart to render properly
+  overflow: visible; // Allow chart and legend to be visible
   box-sizing: border-box;
 
-  canvas {
+  // Frappe Charts container
+  :deep(.frappe-chart) {
     width: 100% !important;
-    height: 100% !important;
-    display: block;
-    box-sizing: border-box;
+    height: 140px !important;
+    max-height: 180px !important;
   }
 }
 
@@ -125,28 +134,54 @@
 
 // RESPONSIVE
 @include responsive-down("md") {
+  .chart-container {
+    min-height: 170px;
+    max-height: 170px;
+    height: 170px;
+  }
+
   .chart-wrapper {
-    padding: 4px;
-    height: 200px;
-    max-height: 200px;
+    padding: 0; // No padding - maximize chart space
+    min-height: 170px;
+    max-height: 170px;
+    height: 170px;
   }
 
   .chart-canvas-wrapper {
-    height: 190px;
-    min-height: 190px;
+    min-height: 130px;
+    max-height: 170px;
+    height: 130px;
+
+    :deep(.frappe-chart) {
+      height: 130px !important;
+      max-height: 170px !important;
+    }
   }
 }
 
 @include responsive-down("sm") {
+  .chart-container {
+    min-height: 160px;
+    max-height: 160px;
+    height: 160px;
+  }
+
   .chart-wrapper {
-    padding: 3px;
-    height: 180px;
-    max-height: 180px;
+    padding: 0; // No padding - maximize chart space
+    min-height: 160px;
+    max-height: 160px;
+    height: 160px;
   }
 
   .chart-canvas-wrapper {
-    height: 174px;
-    min-height: 174px;
+    min-height: 120px;
+    max-height: 160px;
+    height: 120px;
+
+    :deep(.frappe-chart) {
+      height: 120px !important;
+      max-height: 160px !important;
+    }
   }
 
   .chart-header {

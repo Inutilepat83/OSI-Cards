@@ -71,30 +71,6 @@ The **Quotation Section** (\`type: "quotation"\`) is used for displays quotes, t
       "author": "Dr. Michael Chen",
       "role": "VP of Research Analytics",
       "company": "HealthFirst Systems"
-    },
-    {
-      "label": "Financial Services Excellence",
-      "value": "\\"The real-time analytics capabilities have been game-changing for our trading desk. We're now making decisions in milliseconds that used to take hours. Our risk management team has never been more confident in their data.\\"",
-      "description": "Sarah Thompson, Managing Director at Global Investment Bank",
-      "author": "Sarah Thompson",
-      "role": "Managing Director",
-      "company": "Sterling Capital Partners"
-    },
-    {
-      "label": "Manufacturing Efficiency",
-      "value": "\\"We integrated Nexus with our IoT sensors across 12 manufacturing plants. The predictive maintenance insights alone have saved us $15M annually in unplanned downtime. It's become the central nervous system of our operations.\\"",
-      "description": "Klaus Weber, Global Head of Operations at Industrial Manufacturer",
-      "author": "Klaus Weber",
-      "role": "Global Head of Operations",
-      "company": "PrecisionWorks AG"
-    },
-    {
-      "label": "Analyst Recognition",
-      "value": "\\"Nexus Technologies continues to set the standard for modern analytics platforms. Their AI-first approach and commitment to user experience puts them firmly in the Leader quadrant, with the highest scores for innovation and customer satisfaction.\\"",
-      "description": "Gartner Magic Quadrant for Analytics & BI Platforms, 2024",
-      "author": "Gartner Research",
-      "company": "Gartner Inc.",
-      "date": "2024-09-01"
     }
   ]
 }

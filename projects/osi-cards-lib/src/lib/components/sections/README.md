@@ -37,7 +37,7 @@ section-name/
 |---------|------|---------|-------------|
 | analytics-section | `analytics` | metrics, stats, kpi | Performance metrics and KPIs |
 | brand-colors-section | `brand-colors` | colors | Brand color palette display |
-| chart-section | `chart` | - | Data visualization (Chart.js) |
+| chart-section | `chart` | - | Data visualization (Frappe Charts) |
 | contact-card-section | `contact-card` | contacts, team | Contact information cards |
 | event-section | `event` | timeline | Event and calendar displays |
 | fallback-section | `fallback` | - | Fallback for unknown types |

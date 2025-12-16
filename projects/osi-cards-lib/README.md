@@ -47,7 +47,7 @@ npm install @angular/common@^17.0.0 @angular/core@^17.0.0 @angular/animations@^1
 ### Optional Dependencies (for charts and maps)
 
 ```bash
-npm install chart.js leaflet
+npm install frappe-charts leaflet
 ```
 
 ---

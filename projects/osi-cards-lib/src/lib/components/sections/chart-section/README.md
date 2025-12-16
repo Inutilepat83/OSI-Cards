@@ -4,13 +4,13 @@ Displays data visualizations including bar charts, line charts, pie charts, and 
 
 ## Overview
 
-The Chart Section renders interactive charts using Chart.js. Supports multiple chart types with full customization options.
+The Chart Section renders interactive charts using Frappe Charts. Supports multiple chart types with compact, responsive sizing.
 
 **Component:** `lib-chart-section`
 **Type:** `chart`
 **Uses Chart Data:** Yes
 **Default Columns:** 2
-**External Library:** Chart.js
+**External Library:** frappe-charts
 
 ## Use Cases
 

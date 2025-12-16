@@ -18,6 +18,7 @@ module.exports = tseslint.config(
       'src/app/models/index.ts',
       'src/app/shared/index.ts',
       'src/app/store/index.ts',
+      'projects/osi-cards-lib/**/*.ts',
     ],
     extends: [
       eslint.configs.recommended,
@@ -232,6 +233,29 @@ module.exports = tseslint.config(
           leadingUnderscore: 'allow',
         },
       ],
+    },
+  },
+  {
+    files: ['projects/osi-cards-lib/**/*.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylistic,
+      ...angular.configs.tsRecommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: [
+          './tsconfig.json',
+          './projects/osi-cards-lib/tsconfig.json',
+        ],
+        tsconfigRootDir: __dirname,
+      },
+    },
+    processor: angular.processInlineTemplates,
+    rules: {
+      // Library-specific rules can be added here if needed
+      // For now, inherit from main config
     },
   },
   {

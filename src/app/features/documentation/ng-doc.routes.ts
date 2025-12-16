@@ -201,6 +201,10 @@ export const NG_DOC_ROUTING: Routes = [
           import('./section-types/solutions/page.component').then((m) => m.default),
       },
       {
+        path: 'table',
+        loadComponent: () => import('./section-types/table/page.component').then((m) => m.default),
+      },
+      {
         path: 'text-reference',
         loadComponent: () =>
           import('./section-types/text-reference/page.component').then((m) => m.default),

@@ -77,37 +77,6 @@ The **Social Media Section** (\`type: "social-media"\`) is used for displays soc
       "followers": 87500,
       "engagement": 3.2,
       "verified": true
-    },
-    {
-      "platform": "youtube",
-      "handle": "Nexus Technologies",
-      "url": "https://youtube.com/@nexustech",
-      "followers": 45000,
-      "engagement": 6.1,
-      "verified": true
-    },
-    {
-      "platform": "github",
-      "handle": "nexus-tech",
-      "url": "https://github.com/nexus-tech",
-      "followers": 12500,
-      "verified": false
-    },
-    {
-      "platform": "instagram",
-      "handle": "@nexustech.official",
-      "url": "https://instagram.com/nexustech.official",
-      "followers": 32000,
-      "engagement": 5.4,
-      "verified": true
-    },
-    {
-      "platform": "facebook",
-      "handle": "NexusTechnologies",
-      "url": "https://facebook.com/NexusTechnologies",
-      "followers": 28000,
-      "engagement": 2.1,
-      "verified": true
     }
   ]
 }
@@ -168,37 +137,6 @@ const demoConfig = {
       url: 'https://twitter.com/NexusTech',
       followers: 87500,
       engagement: 3.2,
-      verified: true,
-    },
-    {
-      platform: 'youtube',
-      handle: 'Nexus Technologies',
-      url: 'https://youtube.com/@nexustech',
-      followers: 45000,
-      engagement: 6.1,
-      verified: true,
-    },
-    {
-      platform: 'github',
-      handle: 'nexus-tech',
-      url: 'https://github.com/nexus-tech',
-      followers: 12500,
-      verified: false,
-    },
-    {
-      platform: 'instagram',
-      handle: '@nexustech.official',
-      url: 'https://instagram.com/nexustech.official',
-      followers: 32000,
-      engagement: 5.4,
-      verified: true,
-    },
-    {
-      platform: 'facebook',
-      handle: 'NexusTechnologies',
-      url: 'https://facebook.com/NexusTechnologies',
-      followers: 28000,
-      engagement: 2.1,
       verified: true,
     },
   ],

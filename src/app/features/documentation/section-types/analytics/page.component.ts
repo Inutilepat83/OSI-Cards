@@ -63,90 +63,12 @@ The **Analytics Section** (\`type: "analytics"\`) is used for displays metrics w
       "change": 12.8
     },
     {
-      "label": "Customer Acquisition Cost",
-      "value": "$124",
-      "percentage": 78,
-      "performance": "good",
-      "trend": "down",
-      "change": -8.5
-    },
-    {
-      "label": "Monthly Active Users",
-      "value": "2.4M",
-      "percentage": 89,
-      "performance": "excellent",
-      "trend": "up",
-      "change": 31.2
-    },
-    {
-      "label": "Net Promoter Score",
-      "value": "72",
-      "percentage": 72,
-      "performance": "excellent",
-      "trend": "up",
-      "change": 5
-    },
-    {
       "label": "Customer Lifetime Value",
       "value": "$8,450",
       "percentage": 84,
       "performance": "excellent",
       "trend": "up",
       "change": 18.3
-    },
-    {
-      "label": "Churn Rate",
-      "value": "2.1%",
-      "percentage": 21,
-      "performance": "excellent",
-      "trend": "down",
-      "change": -0.8
-    },
-    {
-      "label": "Average Deal Size",
-      "value": "$45K",
-      "percentage": 65,
-      "performance": "good",
-      "trend": "up",
-      "change": 7.2
-    },
-    {
-      "label": "Sales Cycle Length",
-      "value": "34 days",
-      "percentage": 55,
-      "performance": "average",
-      "trend": "stable",
-      "change": -2
-    },
-    {
-      "label": "Pipeline Coverage",
-      "value": "4.2x",
-      "percentage": 84,
-      "performance": "excellent",
-      "trend": "up",
-      "change": 0.5
-    },
-    {
-      "label": "Win Rate",
-      "value": "38%",
-      "percentage": 38,
-      "performance": "average",
-      "trend": "up",
-      "change": 3.1
-    },
-    {
-      "label": "Employee Satisfaction",
-      "value": "4.6/5",
-      "percentage": 92,
-      "performance": "excellent",
-      "trend": "stable"
-    },
-    {
-      "label": "Product Uptime",
-      "value": "99.97%",
-      "percentage": 99,
-      "performance": "excellent",
-      "trend": "stable"
     }
   ]
 }
@@ -203,90 +125,12 @@ const demoConfig = {
       change: 12.8,
     },
     {
-      label: 'Customer Acquisition Cost',
-      value: '$124',
-      percentage: 78,
-      performance: 'good',
-      trend: 'down',
-      change: -8.5,
-    },
-    {
-      label: 'Monthly Active Users',
-      value: '2.4M',
-      percentage: 89,
-      performance: 'excellent',
-      trend: 'up',
-      change: 31.2,
-    },
-    {
-      label: 'Net Promoter Score',
-      value: '72',
-      percentage: 72,
-      performance: 'excellent',
-      trend: 'up',
-      change: 5,
-    },
-    {
       label: 'Customer Lifetime Value',
       value: '$8,450',
       percentage: 84,
       performance: 'excellent',
       trend: 'up',
       change: 18.3,
-    },
-    {
-      label: 'Churn Rate',
-      value: '2.1%',
-      percentage: 21,
-      performance: 'excellent',
-      trend: 'down',
-      change: -0.8,
-    },
-    {
-      label: 'Average Deal Size',
-      value: '$45K',
-      percentage: 65,
-      performance: 'good',
-      trend: 'up',
-      change: 7.2,
-    },
-    {
-      label: 'Sales Cycle Length',
-      value: '34 days',
-      percentage: 55,
-      performance: 'average',
-      trend: 'stable',
-      change: -2,
-    },
-    {
-      label: 'Pipeline Coverage',
-      value: '4.2x',
-      percentage: 84,
-      performance: 'excellent',
-      trend: 'up',
-      change: 0.5,
-    },
-    {
-      label: 'Win Rate',
-      value: '38%',
-      percentage: 38,
-      performance: 'average',
-      trend: 'up',
-      change: 3.1,
-    },
-    {
-      label: 'Employee Satisfaction',
-      value: '4.6/5',
-      percentage: 92,
-      performance: 'excellent',
-      trend: 'stable',
-    },
-    {
-      label: 'Product Uptime',
-      value: '99.97%',
-      percentage: 99,
-      performance: 'excellent',
-      trend: 'stable',
     },
   ],
 };

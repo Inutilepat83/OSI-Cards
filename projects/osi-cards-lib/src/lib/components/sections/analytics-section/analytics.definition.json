@@ -55,7 +55,7 @@
   },
   "aliases": ["metrics", "stats", "kpi"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Q4 2024 Performance Dashboard",
       "type": "analytics",
       "description": "Comprehensive business metrics and KPIs",
@@ -85,6 +85,23 @@
           "value": "99.97%",
           "percentage": 99,
           "performance": "excellent"
+        }
+      ]
+    },
+    "doc": {
+      "title": "KPI Snapshot",
+      "type": "analytics",
+      "description": "Single KPI entry.",
+      "preferredColumns": 2,
+      "priority": 2,
+      "fields": [
+        {
+          "label": "Pipeline Conversion",
+          "value": "38.6% QoQ",
+          "percentage": 39,
+          "performance": "good",
+          "trend": "up",
+          "change": 5.2
         }
       ]
     }

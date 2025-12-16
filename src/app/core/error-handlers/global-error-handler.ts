@@ -142,11 +142,17 @@ export class GlobalErrorHandler implements ErrorHandler {
     context: Record<string, any>;
   } {
     if (error instanceof HttpErrorResponse) {
-      // Check for missing chunk files (404 errors for .js files)
-      if (error.status === 404 && error.url?.includes('.js')) {
+      // Check for missing chunk files (404 or 500 errors for .js/.css files)
+      // 500 errors can occur when dev server tries to serve a non-existent chunk
+      const isChunkFile = error.url?.includes('.js') || error.url?.includes('.css');
+      const isChunkError =
+        (error.status === 404 || error.status === 500) &&
+        (isChunkFile || error.url?.includes('chunk-'));
+
+      if (isChunkError) {
         return {
           type: 'Module Loading Error',
-          message: `Failed to load module chunk: ${error.url}. This may be due to a stale cache.`,
+          message: `Failed to load module chunk: ${error.url}. This may be due to a stale cache or build mismatch.`,
           severity: 'critical',
           context: {
             status: error.status,

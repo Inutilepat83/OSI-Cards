@@ -216,6 +216,36 @@
           "title": "Video Title"
         }
       ]
+    },
+    {
+      "title": "Sales Data",
+      "type": "table",
+      "tableData": {
+        "columns": [
+          {
+            "key": "product",
+            "label": "Product",
+            "type": "string",
+            "sortable": true
+          },
+          {
+            "key": "revenue",
+            "label": "Revenue",
+            "type": "number",
+            "sortable": true
+          }
+        ],
+        "rows": [
+          {
+            "product": "Widget A",
+            "revenue": 4498.5
+          },
+          {
+            "product": "Widget B",
+            "revenue": 7998.0
+          }
+        ]
+      }
     }
   ]
 }

@@ -273,9 +273,45 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:275',
+        message: 'CardConfig setter called',
+        data: {
+          hasValue: !!value,
+          hasSections: !!value?.sections,
+          sectionsCount: value?.sections?.length || 0,
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     this._cardConfig = value;
 
     if (!this._cardConfig?.sections?.length) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'ai-card-renderer.component.ts:282',
+          message: 'No sections - resetting',
+          data: { timestamp: Date.now() },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'card-debug',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
+      // #endregion
       this.resetProcessedSections();
       this.cdr.markForCheck();
       return;
@@ -284,6 +320,29 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const sectionsHash = this.hashSections(this._cardConfig.sections);
     const shouldForceStructural =
       sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
+
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:293',
+        message: 'Refreshing processed sections',
+        data: {
+          sectionsHash,
+          previousHash: this.previousSectionsHash,
+          shouldForceStructural,
+          updateSource: this._updateSource,
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     this.refreshProcessedSections(shouldForceStructural);
     this.cdr.markForCheck();
   }
@@ -492,6 +551,27 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() llmFallbackPrompt?: string;
 
   ngOnInit(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:494',
+        message: 'AICardRenderer ngOnInit starting',
+        data: {
+          hasCardConfig: !!this.cardConfig,
+          hasSections: !!this.cardConfig?.sections,
+          sectionsCount: this.cardConfig?.sections?.length || 0,
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'D',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     // Ensure the host gets the correct data-theme even in Safari (no :host-context reliance).
     this.setupInheritedThemeSync();
 
@@ -510,12 +590,58 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.setupScrollTracking();
     // Use LLM fallback if no card config provided
     if (!this.cardConfig) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'ai-card-renderer.component.ts:512',
+          message: 'No cardConfig - generating fallback',
+          data: { timestamp: Date.now() },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'card-debug',
+          hypothesisId: 'D',
+        }),
+      }).catch(() => {});
+      // #endregion
       this.generateFallbackCard();
     }
 
     if (!this.processedSections.length) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'ai-card-renderer.component.ts:516',
+          message: 'No processed sections - refreshing',
+          data: { timestamp: Date.now() },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'card-debug',
+          hypothesisId: 'D',
+        }),
+      }).catch(() => {});
+      // #endregion
       this.refreshProcessedSections(true);
     }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:520',
+        message: 'AICardRenderer ngOnInit completed',
+        data: { processedSectionsCount: this.processedSections.length, timestamp: Date.now() },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'D',
+      }),
+    }).catch(() => {});
+    // #endregion
 
     // Handle Escape key for fullscreen exit
     fromEvent<KeyboardEvent>(document, 'keydown')
@@ -558,11 +684,43 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:560',
+        message: 'AICardRenderer ngAfterViewInit',
+        data: { timestamp: Date.now() },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'E',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     // Fragment handling removed for standalone library
     // Consumers can implement their own fragment handling if needed
 
     // Set up container width measurement for Shadow DOM compatibility
     this.setupContainerWidthMeasurement();
+
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:568',
+        message: 'Container width measurement setup completed',
+        data: { timestamp: Date.now() },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'E',
+      }),
+    }).catch(() => {});
+    // #endregion
   }
 
   /**

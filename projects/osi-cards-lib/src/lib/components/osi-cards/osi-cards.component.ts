@@ -118,12 +118,56 @@ export class OsiCardsComponent {
     optional: true,
   });
 
+  constructor() {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'osi-cards.component.ts:114',
+        message: 'OsiCardsComponent constructor',
+        data: { timestamp: Date.now() },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'A',
+      }),
+    }).catch(() => {});
+    // #endregion
+  }
+
   // ========================================
   // CARD DATA INPUTS
   // ========================================
 
   /** The card configuration to render */
-  @Input() card?: AICardConfig;
+  @Input() set card(value: AICardConfig | undefined) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'osi-cards.component.ts:126',
+        message: 'Card input set',
+        data: {
+          hasCard: !!value,
+          hasSections: !!value?.sections,
+          sectionsCount: value?.sections?.length || 0,
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'card-debug',
+        hypothesisId: 'B',
+      }),
+    }).catch(() => {});
+    // #endregion
+    this._card = value;
+  }
+  get card(): AICardConfig | undefined {
+    return this._card;
+  }
+  private _card?: AICardConfig;
 
   // ========================================
   // DISPLAY INPUTS

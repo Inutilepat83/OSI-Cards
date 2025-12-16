@@ -97,7 +97,7 @@
     "requireNonEmptyValues": true
   },
   "examples": {
-    "example": {
+    "demo": {
       "title": "Executive Leadership Team",
       "type": "contact-card",
       "description": "Key decision makers and stakeholders",
@@ -150,6 +150,27 @@
           "role": "VP of Customer Success",
           "department": "Customer Success",
           "note": "Extremely customer-focused leader who transformed our customer success metrics, achieving 95% customer satisfaction and reducing churn by 30%. Known for her hands-on approach and ability to build strong relationships with enterprise clients. Regularly hosts customer advisory board meetings and is always open to feedback. Great collaborator who works closely with product and engineering teams to advocate for customer needs. Very responsive to urgent customer issues."
+        }
+      ]
+    },
+    "doc": {
+      "title": "Key Contact",
+      "type": "contact-card",
+      "description": "Single contact entry.",
+      "preferredColumns": 2,
+      "minColumns": 2,
+      "priority": 1,
+      "fields": [
+        {
+          "label": "Account Owner",
+          "title": "Alex Rivera",
+          "value": "Enterprise Account Executive",
+          "role": "Enterprise Account Executive",
+          "department": "Sales",
+          "email": "alex.rivera@example.com",
+          "phone": "+49 30 5550 2121",
+          "location": "Berlin, DE",
+          "linkedIn": "https://www.linkedin.com/in/alex-rivera-enterprise"
         }
       ]
     }

@@ -56,32 +56,8 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
       "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth."
     },
     {
-      "label": "Mission",
-      "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions."
-    },
-    {
-      "label": "Vision",
-      "value": "A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency."
-    },
-    {
-      "label": "Core Values",
-      "value": "Innovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence"
-    },
-    {
       "label": "Market Position",
       "value": "Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years."
-    },
-    {
-      "label": "Industry Focus",
-      "value": "Enterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology"
-    },
-    {
-      "label": "Competitive Advantage",
-      "value": "Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools."
-    },
-    {
-      "label": "Key Differentiators",
-      "value": "Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
     }
   ]
 }
@@ -134,39 +110,9 @@ const demoConfig = {
         'Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth.',
     },
     {
-      label: 'Mission',
-      value:
-        'To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions.',
-    },
-    {
-      label: 'Vision',
-      value:
-        'A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency.',
-    },
-    {
-      label: 'Core Values',
-      value:
-        'Innovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence',
-    },
-    {
       label: 'Market Position',
       value:
         'Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years.',
-    },
-    {
-      label: 'Industry Focus',
-      value:
-        'Enterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology',
-    },
-    {
-      label: 'Competitive Advantage',
-      value:
-        'Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools.',
-    },
-    {
-      label: 'Key Differentiators',
-      value:
-        'Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions',
     },
   ],
 };

@@ -55,26 +55,14 @@ The **Fallback Section** (\`type: "fallback"\`) is used for default section rend
       "value": "Some custom data"
     },
     {
-      "label": "Custom Field 2",
-      "value": "More data to display"
-    },
-    {
       "label": "Numeric Data",
       "value": 42
-    },
-    {
-      "label": "Status",
-      "value": "Active"
     }
   ],
   "items": [
     {
       "title": "Custom Item 1",
       "description": "Description for custom item"
-    },
-    {
-      "title": "Custom Item 2",
-      "description": "Another custom item"
     }
   ]
 }
@@ -118,26 +106,14 @@ const demoConfig = {
       value: 'Some custom data',
     },
     {
-      label: 'Custom Field 2',
-      value: 'More data to display',
-    },
-    {
       label: 'Numeric Data',
       value: 42,
-    },
-    {
-      label: 'Status',
-      value: 'Active',
     },
   ],
   items: [
     {
       title: 'Custom Item 1',
       description: 'Description for custom item',
-    },
-    {
-      title: 'Custom Item 2',
-      description: 'Another custom item',
     },
   ],
 };

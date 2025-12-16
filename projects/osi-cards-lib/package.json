@@ -2,14 +2,7 @@
   "name": "osi-cards-lib",
   "version": "1.5.42",
   "description": "Standalone OSI Cards library for Angular applications with CSS Layer support for easy style overrides",
-  "keywords": [
-    "angular",
-    "cards",
-    "ui",
-    "components",
-    "css-layers",
-    "theming"
-  ],
+  "keywords": ["angular", "cards", "ui", "components", "css-layers", "theming"],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
@@ -21,8 +14,9 @@
     "rxjs": "~7.8.0"
   },
   "optionalDependencies": {
-    "chart.js": "^4.4.0",
-    "leaflet": "^1.9.4"
+    "frappe-charts": "^1.7.3",
+    "leaflet": "^1.9.4",
+    "marked": "^17.0.0"
   },
   "repository": {
     "type": "git",
@@ -79,8 +73,5 @@
       "default": "./styles/osi-cards-standalone.css"
     }
   },
-  "sideEffects": [
-    "*.css",
-    "*.scss"
-  ]
+  "sideEffects": ["*.css", "*.scss"]
 }

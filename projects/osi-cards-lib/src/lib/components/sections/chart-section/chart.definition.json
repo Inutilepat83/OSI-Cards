@@ -23,7 +23,7 @@
     "usesChartData": true,
     "defaultColumns": 2,
     "supportsCollapse": false,
-    "requiresExternalLib": "chart.js"
+    "requiresExternalLib": "frappe-charts"
   },
   "chartSchema": {
     "type": "object",
@@ -64,6 +64,13 @@
                 },
                 "borderWidth": {
                   "type": "number"
+                },
+                "objectives": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Optional array of objective/target values to display in tooltips on hover"
                 }
               },
               "required": ["data"]
@@ -78,9 +85,10 @@
   },
   "aliases": ["graph", "visualization"],
   "examples": {
-    "example": {
+    "barChart": {
       "title": "Revenue & Growth Analysis",
       "type": "chart",
+      "description": "Multi-series bar chart showing revenue, costs, and profit with objectives",
       "chartType": "bar",
       "chartData": {
         "labels": [
@@ -94,6 +102,7 @@
           {
             "label": "Revenue ($M)",
             "data": [28.5, 32.1, 35.8, 42.4, 48.2],
+            "objectives": [30, 35, 38, 45, 50],
             "backgroundColor": "#FF7900",
             "borderColor": "#FF7900",
             "borderWidth": 1
@@ -101,6 +110,7 @@
           {
             "label": "Operating Costs ($M)",
             "data": [22.1, 24.3, 26.8, 31.2, 34.5],
+            "objectives": [25, 27, 29, 33, 36],
             "backgroundColor": "#4CAF50",
             "borderColor": "#4CAF50",
             "borderWidth": 1
@@ -108,6 +118,7 @@
           {
             "label": "Net Profit ($M)",
             "data": [6.4, 7.8, 9, 11.2, 13.7],
+            "objectives": [5, 8, 9, 12, 14],
             "backgroundColor": "#2196F3",
             "borderColor": "#2196F3",
             "borderWidth": 1
@@ -115,7 +126,349 @@
         ]
       },
       "preferredColumns": 2,
+      "minColumns": 2,
+      "maxColumns": 3,
       "priority": 2
+    },
+    "lineChart": {
+      "title": "Sales Trend Over Time",
+      "type": "chart",
+      "description": "Line chart showing sales trends with multiple metrics",
+      "chartType": "line",
+      "chartData": {
+        "labels": [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
+        "datasets": [
+          {
+            "label": "Sales ($K)",
+            "data": [
+              100, 150, 200, 180, 250, 300, 280, 320, 350, 380, 400, 420
+            ],
+            "backgroundColor": "rgba(255, 121, 0, 0.1)",
+            "borderColor": "#FF7900",
+            "borderWidth": 2
+          },
+          {
+            "label": "Target ($K)",
+            "data": [
+              120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340
+            ],
+            "backgroundColor": "rgba(76, 175, 80, 0.1)",
+            "borderColor": "#4CAF50",
+            "borderWidth": 2
+          }
+        ]
+      },
+      "preferredColumns": 3,
+      "minColumns": 2,
+      "maxColumns": 4,
+      "priority": 1
+    },
+    "pieChart": {
+      "title": "Market Share Distribution",
+      "type": "chart",
+      "description": "Pie chart showing market share percentages",
+      "chartType": "pie",
+      "chartData": {
+        "labels": [
+          "Product A",
+          "Product B",
+          "Product C",
+          "Product D",
+          "Others"
+        ],
+        "datasets": [
+          {
+            "label": "Market Share (%)",
+            "data": [35, 28, 20, 12, 5],
+            "backgroundColor": [
+              "#FF7900",
+              "#4CAF50",
+              "#2196F3",
+              "#9C27B0",
+              "#FFC107"
+            ],
+            "borderColor": [
+              "#FF7900",
+              "#4CAF50",
+              "#2196F3",
+              "#9C27B0",
+              "#FFC107"
+            ],
+            "borderWidth": 2
+          }
+        ]
+      },
+      "preferredColumns": 2,
+      "minColumns": 1,
+      "maxColumns": 2,
+      "priority": 2
+    },
+    "doughnutChart": {
+      "title": "Revenue by Region",
+      "type": "chart",
+      "description": "Doughnut chart displaying revenue distribution",
+      "chartType": "doughnut",
+      "chartData": {
+        "labels": [
+          "North America",
+          "Europe",
+          "Asia Pacific",
+          "Latin America",
+          "Middle East & Africa"
+        ],
+        "datasets": [
+          {
+            "label": "Revenue ($M)",
+            "data": [45, 30, 15, 7, 3],
+            "backgroundColor": [
+              "#FF7900",
+              "#4CAF50",
+              "#2196F3",
+              "#9C27B0",
+              "#FFC107"
+            ],
+            "borderColor": [
+              "#FFFFFF",
+              "#FFFFFF",
+              "#FFFFFF",
+              "#FFFFFF",
+              "#FFFFFF"
+            ],
+            "borderWidth": 3
+          }
+        ]
+      },
+      "preferredColumns": 2,
+      "minColumns": 1,
+      "maxColumns": 2,
+      "priority": 2
+    },
+    "areaChart": {
+      "title": "User Growth Over Time",
+      "type": "chart",
+      "description": "Area chart showing cumulative user growth",
+      "chartType": "area",
+      "chartData": {
+        "labels": [
+          "Week 1",
+          "Week 2",
+          "Week 3",
+          "Week 4",
+          "Week 5",
+          "Week 6",
+          "Week 7",
+          "Week 8"
+        ],
+        "datasets": [
+          {
+            "label": "Active Users",
+            "data": [1000, 1500, 2200, 3000, 4000, 5200, 6500, 8000],
+            "backgroundColor": "rgba(255, 121, 0, 0.3)",
+            "borderColor": "#FF7900",
+            "borderWidth": 2
+          },
+          {
+            "label": "New Users",
+            "data": [500, 800, 1200, 1800, 2500, 3200, 4000, 5000],
+            "backgroundColor": "rgba(76, 175, 80, 0.3)",
+            "borderColor": "#4CAF50",
+            "borderWidth": 2
+          }
+        ]
+      },
+      "preferredColumns": 3,
+      "minColumns": 2,
+      "maxColumns": 4,
+      "priority": 1
+    },
+    "radarChart": {
+      "title": "Performance Metrics",
+      "type": "chart",
+      "description": "Radar chart comparing multiple performance dimensions",
+      "chartType": "radar",
+      "chartData": {
+        "labels": [
+          "Speed",
+          "Reliability",
+          "Usability",
+          "Features",
+          "Support",
+          "Value"
+        ],
+        "datasets": [
+          {
+            "label": "Current Product",
+            "data": [85, 90, 75, 80, 70, 85],
+            "backgroundColor": "rgba(255, 121, 0, 0.2)",
+            "borderColor": "#FF7900",
+            "borderWidth": 2
+          },
+          {
+            "label": "Competitor A",
+            "data": [70, 85, 80, 75, 80, 75],
+            "backgroundColor": "rgba(76, 175, 80, 0.2)",
+            "borderColor": "#4CAF50",
+            "borderWidth": 2
+          },
+          {
+            "label": "Target",
+            "data": [90, 95, 90, 85, 90, 90],
+            "backgroundColor": "rgba(33, 150, 243, 0.2)",
+            "borderColor": "#2196F3",
+            "borderWidth": 2
+          }
+        ]
+      },
+      "preferredColumns": 2,
+      "minColumns": 2,
+      "maxColumns": 3,
+      "priority": 2
+    },
+    "compactChart": {
+      "title": "Quick Stats",
+      "type": "chart",
+      "description": "Compact single-column chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "datasets": [
+          {
+            "label": "Daily Sales",
+            "data": [120, 150, 180, 140, 200],
+            "backgroundColor": "#FF7900",
+            "borderColor": "#FF7900",
+            "borderWidth": 1
+          }
+        ]
+      },
+      "preferredColumns": 1,
+      "minColumns": 1,
+      "maxColumns": 1,
+      "priority": 3
+    },
+    "wideChart": {
+      "title": "Annual Performance Overview",
+      "type": "chart",
+      "description": "Wide multi-series chart spanning full width",
+      "chartType": "line",
+      "chartData": {
+        "labels": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4"
+        ],
+        "datasets": [
+          {
+            "label": "2022 Revenue",
+            "data": [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32],
+            "backgroundColor": "rgba(255, 121, 0, 0.1)",
+            "borderColor": "#FF7900",
+            "borderWidth": 2
+          },
+          {
+            "label": "2023 Revenue",
+            "data": [15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37],
+            "backgroundColor": "rgba(76, 175, 80, 0.1)",
+            "borderColor": "#4CAF50",
+            "borderWidth": 2
+          },
+          {
+            "label": "2024 Revenue",
+            "data": [20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42],
+            "backgroundColor": "rgba(33, 150, 243, 0.1)",
+            "borderColor": "#2196F3",
+            "borderWidth": 2
+          }
+        ]
+      },
+      "preferredColumns": 4,
+      "minColumns": 3,
+      "maxColumns": 4,
+      "priority": 1
+    },
+    "demo": {
+      "title": "Revenue & Growth Analysis",
+      "type": "chart",
+      "description": "Multi-series bar chart showing revenue, costs, and profit with objectives",
+      "chartType": "bar",
+      "chartData": {
+        "labels": [
+          "Q1 2024",
+          "Q2 2024",
+          "Q3 2024",
+          "Q4 2024",
+          "Q1 2025 (Proj)"
+        ],
+        "datasets": [
+          {
+            "label": "Revenue ($M)",
+            "data": [28.5, 32.1, 35.8, 42.4, 48.2],
+            "objectives": [30, 35, 38, 45, 50],
+            "backgroundColor": "#FF7900",
+            "borderColor": "#FF7900",
+            "borderWidth": 1
+          },
+          {
+            "label": "Operating Costs ($M)",
+            "data": [22.1, 24.3, 26.8, 31.2, 34.5],
+            "objectives": [25, 27, 29, 33, 36],
+            "backgroundColor": "#4CAF50",
+            "borderColor": "#4CAF50",
+            "borderWidth": 1
+          },
+          {
+            "label": "Net Profit ($M)",
+            "data": [6.4, 7.8, 9, 11.2, 13.7],
+            "objectives": [5, 8, 9, 12, 14],
+            "backgroundColor": "#2196F3",
+            "borderColor": "#2196F3",
+            "borderWidth": 1
+          }
+        ]
+      },
+      "preferredColumns": 2,
+      "minColumns": 2,
+      "maxColumns": 3,
+      "priority": 2
+    },
+    "doc": {
+      "title": "ARR Chart",
+      "type": "chart",
+      "description": "Single-point chart entry.",
+      "preferredColumns": 2,
+      "priority": 2,
+      "chartType": "line",
+      "chartData": {
+        "labels": ["FY2025"],
+        "datasets": [
+          {
+            "label": "ARR (k€)",
+            "data": [45500]
+          }
+        ]
+      }
     }
   }
 }

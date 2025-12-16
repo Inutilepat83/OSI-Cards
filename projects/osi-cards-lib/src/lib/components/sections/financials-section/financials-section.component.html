@@ -4,18 +4,20 @@
 
   <div class="financials-grid" *ngIf="section.fields?.length">
     <div class="financial-card" *ngFor="let metric of section.fields">
-      <div class="financial-header">
-        <span class="financial-label">{{ metric.label }}</span>
-        <span class="financial-period" *ngIf="metric.period">{{ metric.period }}</span>
-      </div>
-      <div class="financial-value">{{ metric.value }}</div>
+      <!-- Trend indicator positioned in top-right corner -->
       <lib-trend-indicator
         *ngIf="metric.trend"
         [trend]="getTrendDirection(metric.trend)"
         [value]="metric.change"
         size="small"
+        class="financial-trend-indicator"
       >
       </lib-trend-indicator>
+
+      <div class="financial-header">
+        <span class="financial-label">{{ metric.label }}</span>
+      </div>
+      <div class="financial-value">{{ metric.value }}</div>
     </div>
   </div>
 

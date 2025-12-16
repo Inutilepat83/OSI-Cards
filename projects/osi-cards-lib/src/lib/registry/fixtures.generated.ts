@@ -1013,17 +1013,17 @@ export const COMPLETE_FIXTURES: Record<string, CardSection> = {
       {
         label: 'About',
         value:
-          'Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth.',
+          'Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage.',
       },
       {
         label: 'Mission',
         value:
-          'To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions.',
+          'To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.',
       },
       {
         label: 'Vision',
         value:
-          'A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency.',
+          'A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency. We envision a future where data intelligence is seamlessly integrated into every aspect of business operations.',
       },
       {
         label: 'Core Values',
@@ -1033,7 +1033,7 @@ export const COMPLETE_FIXTURES: Record<string, CardSection> = {
       {
         label: 'Market Position',
         value:
-          'Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years.',
+          'Recognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership.',
       },
       {
         label: 'Industry Focus',
@@ -1043,12 +1043,12 @@ export const COMPLETE_FIXTURES: Record<string, CardSection> = {
       {
         label: 'Competitive Advantage',
         value:
-          'Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools.',
+          'Proprietary AI engine with patent-pending natural language processing technology, enabling 10x faster insights discovery compared to traditional BI tools. Our unique approach combines cutting-edge AI with intuitive user experience design.',
       },
       {
         label: 'Key Differentiators',
         value:
-          'Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions',
+          'Real-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs',
       },
     ],
   },

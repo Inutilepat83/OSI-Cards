@@ -1,6 +1,6 @@
 {
   "$schema": "./section-registry.schema.json",
-  "version": "1.5.41",
+  "version": "1.5.42",
   "description": "Single source of truth for all OSI Cards section types - compiled from individual section definition files",
   "generatedAt": "2025-12-02T12:49:57.429Z",
   "sections": {
@@ -2658,15 +2658,15 @@
           "fields": [
             {
               "label": "About",
-              "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth."
+              "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage."
             },
             {
               "label": "Mission",
-              "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions."
+              "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence."
             },
             {
               "label": "Vision",
-              "value": "A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency."
+              "value": "A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency. We envision a future where data intelligence is seamlessly integrated into every aspect of business operations."
             },
             {
               "label": "Core Values",
@@ -2674,7 +2674,7 @@
             },
             {
               "label": "Market Position",
-              "value": "Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years."
+              "value": "Recognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership."
             },
             {
               "label": "Industry Focus",
@@ -2682,11 +2682,11 @@
             },
             {
               "label": "Competitive Advantage",
-              "value": "Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools."
+              "value": "Proprietary AI engine with patent-pending natural language processing technology, enabling 10x faster insights discovery compared to traditional BI tools. Our unique approach combines cutting-edge AI with intuitive user experience design."
             },
             {
               "label": "Key Differentiators",
-              "value": "Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
+              "value": "Real-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs"
             }
           ]
         },
@@ -3845,7 +3845,7 @@
       }
     }
   },
-  "registryVersion": "1.5.41",
+  "registryVersion": "1.5.42",
   "allSectionsExample": {
     "cardTitle": "All Sections Demo",
     "cardType": "company",
@@ -3914,19 +3914,19 @@
         "fields": [
           {
             "label": "About",
-            "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth."
+            "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage."
           },
           {
             "label": "Mission",
-            "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions."
+            "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence."
           },
           {
             "label": "Market Position",
-            "value": "Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years."
+            "value": "Recognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership."
           },
           {
             "label": "Key Differentiators",
-            "value": "Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
+            "value": "Real-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs"
           }
         ],
         "preferredColumns": 1,

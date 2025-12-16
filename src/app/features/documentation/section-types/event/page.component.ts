@@ -80,25 +80,6 @@ The **Event Section** (\`type: "event"\`) is used for displays chronological eve
       "attendees": 450
     },
     {
-      "label": "Board Meeting",
-      "value": "Q4 2024 Results Review",
-      "date": "2025-01-28",
-      "time": "14:00",
-      "category": "Corporate",
-      "status": "confirmed",
-      "location": "Virtual",
-      "attendees": 12
-    },
-    {
-      "label": "Product Launch",
-      "value": "Nexus Analytics 5.0 Release",
-      "date": "2025-02-10",
-      "time": "10:00",
-      "category": "Product",
-      "status": "confirmed",
-      "location": "Global Webcast"
-    },
-    {
       "label": "Customer Summit",
       "value": "NexusCon 2025 - AI Future",
       "date": "2025-03-18",
@@ -108,47 +89,6 @@ The **Event Section** (\`type: "event"\`) is used for displays chronological eve
       "status": "planned",
       "location": "Moscone Center, San Francisco",
       "attendees": 3500
-    },
-    {
-      "label": "Investor Day",
-      "value": "Annual Investor Relations Event",
-      "date": "2025-03-25",
-      "time": "09:30",
-      "category": "Finance",
-      "status": "planned",
-      "location": "New York Stock Exchange",
-      "attendees": 200
-    },
-    {
-      "label": "Partner Summit",
-      "value": "Global Partner Ecosystem Meeting",
-      "date": "2025-04-08",
-      "endDate": "2025-04-09",
-      "time": "09:00",
-      "category": "Partnership",
-      "status": "tentative",
-      "location": "London, UK",
-      "attendees": 180
-    },
-    {
-      "label": "Engineering All-Hands",
-      "value": "Technical Roadmap Review",
-      "date": "2025-02-28",
-      "time": "16:00",
-      "category": "Internal",
-      "status": "confirmed",
-      "location": "Virtual",
-      "attendees": 850
-    },
-    {
-      "label": "AWS re:Invent Presence",
-      "value": "Booth #1234 + Speaking Sessions",
-      "date": "2025-12-01",
-      "endDate": "2025-12-05",
-      "time": "08:00",
-      "category": "Conference",
-      "status": "planned",
-      "location": "Las Vegas, NV"
     }
   ]
 }
@@ -208,25 +148,6 @@ const demoConfig = {
       attendees: 450,
     },
     {
-      label: 'Board Meeting',
-      value: 'Q4 2024 Results Review',
-      date: '2025-01-28',
-      time: '14:00',
-      category: 'Corporate',
-      status: 'confirmed',
-      location: 'Virtual',
-      attendees: 12,
-    },
-    {
-      label: 'Product Launch',
-      value: 'Nexus Analytics 5.0 Release',
-      date: '2025-02-10',
-      time: '10:00',
-      category: 'Product',
-      status: 'confirmed',
-      location: 'Global Webcast',
-    },
-    {
       label: 'Customer Summit',
       value: 'NexusCon 2025 - AI Future',
       date: '2025-03-18',
@@ -236,47 +157,6 @@ const demoConfig = {
       status: 'planned',
       location: 'Moscone Center, San Francisco',
       attendees: 3500,
-    },
-    {
-      label: 'Investor Day',
-      value: 'Annual Investor Relations Event',
-      date: '2025-03-25',
-      time: '09:30',
-      category: 'Finance',
-      status: 'planned',
-      location: 'New York Stock Exchange',
-      attendees: 200,
-    },
-    {
-      label: 'Partner Summit',
-      value: 'Global Partner Ecosystem Meeting',
-      date: '2025-04-08',
-      endDate: '2025-04-09',
-      time: '09:00',
-      category: 'Partnership',
-      status: 'tentative',
-      location: 'London, UK',
-      attendees: 180,
-    },
-    {
-      label: 'Engineering All-Hands',
-      value: 'Technical Roadmap Review',
-      date: '2025-02-28',
-      time: '16:00',
-      category: 'Internal',
-      status: 'confirmed',
-      location: 'Virtual',
-      attendees: 850,
-    },
-    {
-      label: 'AWS re:Invent Presence',
-      value: 'Booth #1234 + Speaking Sessions',
-      date: '2025-12-01',
-      endDate: '2025-12-05',
-      time: '08:00',
-      category: 'Conference',
-      status: 'planned',
-      location: 'Las Vegas, NV',
     },
   ],
 };

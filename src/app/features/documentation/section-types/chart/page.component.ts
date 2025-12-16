@@ -20,7 +20,7 @@ The **Chart Section** (\`type: "chart"\`) is used for displays data visualizatio
 | Default Columns | 2 |
 | Supports Collapse | No |
 | Aliases | \`graph\`, \`visualization\` |
-| External Library | \`chart.js\` |
+| External Library | \`frappe-charts\` |
 
 ## Use Cases
 
@@ -63,19 +63,6 @@ The **Chart Section** (\`type: "chart"\`) is used for displays data visualizatio
         ],
         "backgroundColor": "#FF7900",
         "borderColor": "#FF7900",
-        "borderWidth": 1
-      },
-      {
-        "label": "Operating Costs ($M)",
-        "data": [
-          22.1,
-          24.3,
-          26.8,
-          31.2,
-          34.5
-        ],
-        "backgroundColor": "#4CAF50",
-        "borderColor": "#4CAF50",
         "borderWidth": 1
       },
       {
@@ -155,13 +142,6 @@ const demoConfig = {
         data: [28.5, 32.1, 35.8, 42.4, 48.2],
         backgroundColor: '#FF7900',
         borderColor: '#FF7900',
-        borderWidth: 1,
-      },
-      {
-        label: 'Operating Costs ($M)',
-        data: [22.1, 24.3, 26.8, 31.2, 34.5],
-        backgroundColor: '#4CAF50',
-        borderColor: '#4CAF50',
         borderWidth: 1,
       },
       {

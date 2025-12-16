@@ -2,25 +2,26 @@
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
-  <div class="list" *ngIf="section.fields?.length">
-    <div class="item" *ngFor="let f of section.fields; let i = index" [class.highlight]="isHighlighted(f)">
-      <div class="label-row">
-        <span class="icon" *ngIf="f.icon">{{ f.icon }}</span>
-        <span class="label">{{ f.label }}</span>
-      </div>
-      <div class="value-wrapper">
-        <div class="value" [class.value--expanded]="isExpanded(i)">{{ f.value }}</div>
-        <button
-          *ngIf="shouldShowExpandButton(f)"
-          class="value-expand-btn"
-          type="button"
-          (click)="toggleExpanded(i); $event.stopPropagation()"
-          [attr.aria-expanded]="isExpanded(i)"
-          [attr.aria-label]="(isExpanded(i) ? 'Collapse' : 'Expand') + ' value for ' + f.label"
-        >
-          {{ isExpanded(i) ? 'Show less' : 'Show more' }}
-        </button>
-      </div>
+  <div class="list list--continuous" *ngIf="section.fields?.length">
+    <div class="continuous-text-wrapper">
+      <div
+        class="continuous-text markdown-content"
+        [class.continuous-text--expanded]="isTextExpanded"
+        [id]="'overview-continuous-text'"
+        [attr.aria-live]="isTextExpanded ? 'polite' : 'off'"
+        [innerHTML]="getRenderedMarkdown()"
+      ></div>
+      <button
+        *ngIf="shouldShowExpandButtonForText()"
+        class="value-expand-btn"
+        type="button"
+        (click)="toggleTextExpanded($event)"
+        [attr.aria-expanded]="isTextExpanded"
+        [attr.aria-label]="(isTextExpanded ? 'Collapse' : 'Expand') + ' executive summary text'"
+        [attr.aria-controls]="'overview-continuous-text'"
+      >
+        <span class="expand-text">{{ isTextExpanded ? 'Show less' : 'Show more' }}</span>
+      </button>
     </div>
   </div>
 
