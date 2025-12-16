@@ -132,7 +132,6 @@ export class ChartSectionComponent
 
     try {
       // Dynamic import of Frappe Charts
-      // @ts-expect-error - frappe-charts doesn't have TypeScript definitions and may not be installed
       const Chart = (await import('frappe-charts')).default;
       this.chartLibraryLoaded = true;
       this.chartError = null;
