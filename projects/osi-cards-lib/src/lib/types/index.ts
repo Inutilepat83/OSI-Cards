@@ -4,6 +4,9 @@
  * Exports all type definitions for OSI Cards.
  */
 
+// Reference to frappe-charts type declarations
+/// <reference path="./frappe-charts.d.ts" />
+
 // Branded types (ID types, value types)
 export * from './branded.types';
 

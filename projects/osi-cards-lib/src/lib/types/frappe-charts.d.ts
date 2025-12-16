@@ -22,4 +22,3 @@ declare module 'frappe-charts' {
     removeDataPoint?(): void;
   }
 }
-

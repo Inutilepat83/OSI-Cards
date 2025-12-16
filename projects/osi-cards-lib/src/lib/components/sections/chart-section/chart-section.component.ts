@@ -1,3 +1,4 @@
+/// <reference path="../../../types/frappe-charts.d.ts" />
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
