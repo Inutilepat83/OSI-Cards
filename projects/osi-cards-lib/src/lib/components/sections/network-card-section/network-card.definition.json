@@ -1,6 +1,7 @@
 {
   "type": "network-card",
   "name": "Network Card Section",
+  "portfolioDescription": "Relationships, partnerships, connections",
   "description": "Displays relationship graphs, network connections, and influence metrics.",
   "selector": "lib-network-card-section",
   "useCases": [

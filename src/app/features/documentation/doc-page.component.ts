@@ -2094,9 +2094,14 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
 
       // Special handling for LLM prompt blocks - add standalone copy button above
       if (language === 'llm') {
-        // Store the full prompt content for copying
-        this.llmPromptContent.set(code);
-        return `<div class="llm-copy-standalone"><div class="llm-copy-btn" role="button" tabindex="0">COPY PROMPT</div></div><div class="code-block-wrapper llm-block"><div class="code-header"><span class="code-lang">${language}</span></div><pre><code class="language-${language}">${escapedCode}</code></pre></div>`;
+        // Store the full prompt content for copying (preserve original with line breaks)
+        this.llmPromptContent.set(trimmedCode);
+        // Use trimmedCode for escaping to preserve line breaks (trimmedCode already has all internal newlines)
+        const escapedCodeForLLM = trimmedCode
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        return `<div class="llm-copy-standalone"><div class="llm-copy-btn" role="button" tabindex="0">COPY PROMPT</div></div><div class="code-block-wrapper llm-block"><div class="code-header"><span class="code-lang">${language}</span></div><pre><code class="language-${language}">${escapedCodeForLLM}</code></pre></div>`;
       }
 
       return `<div class="code-block-wrapper"><div class="code-header"><span class="code-lang">${language}</span><div class="code-actions">${liveDemoButton}<button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-${language}">${escapedCode}</code></pre></div>${demoContainer}`;

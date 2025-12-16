@@ -1,6 +1,7 @@
 {
   "type": "text-reference",
   "name": "Text Reference Section",
+  "portfolioDescription": "Articles, guides, documentation links",
   "description": "Displays long-form text, paragraphs, articles, and reference content.",
   "selector": "lib-text-reference-section",
   "useCases": [

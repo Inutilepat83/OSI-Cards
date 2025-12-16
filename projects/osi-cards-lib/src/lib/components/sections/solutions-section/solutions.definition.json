@@ -1,6 +1,7 @@
 {
   "type": "solutions",
   "name": "Solutions Section",
+  "portfolioDescription": "Service offerings, solution descriptions",
   "description": "Displays solution offerings, use cases, features, and benefits.",
   "selector": "lib-solutions-section",
   "useCases": [

@@ -10,4 +10,3 @@ declare module 'frappe-charts' {
     export(): void;
   }
 }
-

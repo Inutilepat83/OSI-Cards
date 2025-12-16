@@ -1,6 +1,7 @@
 {
   "type": "gallery",
   "name": "Gallery Section",
+  "portfolioDescription": "Images, visual assets (store URLs/metadata in meta)",
   "description": "Displays image galleries, photo collections, and visual media.",
   "selector": "lib-gallery-section",
   "useCases": [

@@ -1,6 +1,7 @@
 {
   "type": "social-media",
   "name": "Social Media Section",
+  "portfolioDescription": "Social profiles, handles, links",
   "description": "Displays social media posts, engagement metrics, and social feed content.",
   "selector": "lib-social-media-section",
   "useCases": [

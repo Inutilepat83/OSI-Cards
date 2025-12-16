@@ -132,7 +132,7 @@ export class ChartSectionComponent
 
     try {
       // Dynamic import of Frappe Charts
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const Chart = (await import('frappe-charts')).default;
       this.chartLibraryLoaded = true;
       this.chartError = null;

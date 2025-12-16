@@ -1,6 +1,7 @@
 {
   "type": "faq",
   "name": "FAQ Section",
+  "portfolioDescription": "Questions and answers, help content",
   "description": "Displays frequently asked questions with expandable answers.",
   "selector": "lib-faq-section",
   "useCases": [

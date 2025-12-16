@@ -1,6 +1,7 @@
 {
   "type": "financials",
   "name": "Financials Section",
+  "portfolioDescription": "Revenue, budgets, costs, currency-formatted metrics",
   "description": "Displays financial data including revenue, expenses, P&L statements, and currency information.",
   "selector": "lib-financials-section",
   "useCases": [

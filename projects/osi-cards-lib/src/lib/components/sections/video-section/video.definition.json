@@ -1,6 +1,7 @@
 {
   "type": "video",
   "name": "Video Section",
+  "portfolioDescription": "Video content, demos, recordings (store URLs in meta)",
   "description": "Displays video content with thumbnails, durations, and playback controls.",
   "selector": "lib-video-section",
   "useCases": [

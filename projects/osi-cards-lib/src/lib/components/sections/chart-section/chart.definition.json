@@ -1,6 +1,7 @@
 {
   "type": "chart",
   "name": "Chart Section",
+  "portfolioDescription": "Data visualizations with labels and datasets (multiple data points encouraged)",
   "description": "Displays data visualizations including bar charts, line charts, pie charts, and more.",
   "selector": "lib-chart-section",
   "useCases": [

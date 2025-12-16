@@ -1,6 +1,7 @@
 {
   "type": "brand-colors",
   "name": "Brand Colors Section",
+  "portfolioDescription": "Color palettes, design tokens, brand assets",
   "description": "Displays color swatches, brand palettes, and design system colors.",
   "selector": "lib-brand-colors-section",
   "useCases": [

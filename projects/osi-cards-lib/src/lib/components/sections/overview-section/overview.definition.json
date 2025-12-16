@@ -1,6 +1,7 @@
 {
   "type": "overview",
   "name": "Overview Section",
+  "portfolioDescription": "Executive summary, high-level positioning",
   "description": "Displays high-level summaries, executive dashboards, and key highlights.",
   "selector": "lib-overview-section",
   "useCases": [

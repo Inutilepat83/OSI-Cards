@@ -1,6 +1,7 @@
 {
   "type": "info",
   "name": "Info Section",
+  "portfolioDescription": "Key-value metadata, company facts, identifiers",
   "description": "Displays key-value pairs in a clean, scannable format. Ideal for metadata, contact information, and general data display.",
   "selector": "lib-info-section",
   "useCases": [

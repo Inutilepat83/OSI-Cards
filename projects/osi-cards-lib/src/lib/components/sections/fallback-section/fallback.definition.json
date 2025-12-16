@@ -1,6 +1,7 @@
 {
   "type": "fallback",
   "name": "Fallback Section",
+  "portfolioDescription": "Miscellaneous structured data not fitting other types",
   "description": "Default section renderer for unknown or unsupported section types.",
   "selector": "lib-fallback-section",
   "useCases": ["Unknown types", "Error handling", "Graceful degradation"],

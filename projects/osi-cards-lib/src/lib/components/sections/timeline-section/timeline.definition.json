@@ -1,6 +1,7 @@
 {
   "type": "timeline",
   "name": "Timeline Section",
+  "portfolioDescription": "Historical events, milestones, chronological sequences",
   "description": "Displays chronological sequences of events, milestones, and historical data.",
   "selector": "lib-timeline-section",
   "useCases": [

@@ -2,6 +2,7 @@
   "type": "analytics",
   "name": "Analytics Section",
   "description": "Displays metrics with visual indicators and percentages. Perfect for KPIs, performance metrics, and statistical data.",
+  "portfolioDescription": "KPIs, performance metrics, percentages, trends",
   "selector": "lib-analytics-section",
   "useCases": [
     "Performance metrics",

@@ -1,6 +1,7 @@
 {
   "type": "quotation",
   "name": "Quotation Section",
+  "portfolioDescription": "Customer testimonials, quotes, endorsements",
   "description": "Displays quotes, testimonials, highlighted text, and citations.",
   "selector": "lib-quotation-section",
   "useCases": [

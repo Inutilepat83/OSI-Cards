@@ -1,6 +1,7 @@
 {
   "type": "event",
   "name": "Event Section",
+  "portfolioDescription": "Dates, schedules, milestones, calendar entries",
   "description": "Displays chronological events, timelines, schedules, and calendar information.",
   "selector": "lib-event-section",
   "useCases": [

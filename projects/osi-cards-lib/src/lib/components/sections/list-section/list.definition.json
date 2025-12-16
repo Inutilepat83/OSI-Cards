@@ -1,6 +1,7 @@
 {
   "type": "list",
   "name": "List Section",
+  "portfolioDescription": "Collections of related items (tasks, features, opportunities)",
   "description": "Displays structured lists and tables. Supports sorting, filtering, and item interactions.",
   "selector": "lib-list-section",
   "useCases": [

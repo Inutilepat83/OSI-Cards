@@ -1,6 +1,7 @@
 {
   "type": "product",
   "name": "Product Section",
+  "portfolioDescription": "Product names, features, capabilities",
   "description": "Displays product information, features, benefits, and pricing.",
   "selector": "lib-product-section",
   "useCases": [

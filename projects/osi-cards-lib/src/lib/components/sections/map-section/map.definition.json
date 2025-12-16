@@ -1,6 +1,7 @@
 {
   "type": "map",
   "name": "Map Section",
+  "portfolioDescription": "Geographic locations, coordinates, addresses",
   "description": "Displays geographic data with embedded maps, pins, and location information.",
   "selector": "lib-map-section",
   "useCases": [

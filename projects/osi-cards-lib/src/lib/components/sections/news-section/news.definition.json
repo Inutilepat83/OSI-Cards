@@ -1,6 +1,7 @@
 {
   "type": "news",
   "name": "News Section",
+  "portfolioDescription": "News articles, announcements, press releases (with status: published|draft|archived)",
   "description": "Displays news articles, headlines, and press releases. Supports source attribution and publication dates.",
   "selector": "lib-news-section",
   "useCases": [

@@ -1,6 +1,7 @@
 {
   "type": "table",
   "name": "Table Section",
+  "portfolioDescription": "Structured tabular data (store in meta.tableData if applicable)",
   "description": "Displays structured tabular data with sorting, filtering, and pagination capabilities.",
   "selector": "lib-table-section",
   "useCases": [

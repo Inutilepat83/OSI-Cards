@@ -1,6 +1,7 @@
 {
   "type": "contact-card",
   "name": "Contact Card Section",
+  "portfolioDescription": "People, roles, departments, contact info",
   "description": "Displays person information with avatars, roles, contact details, and social links.",
   "selector": "lib-contact-card-section",
   "useCases": [
