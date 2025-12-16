@@ -47,7 +47,8 @@ export class ChartSectionComponent
 
   @ViewChild('chartContainer', { static: false }) chartContainer?: ElementRef<HTMLDivElement>;
 
-  private chartInstance: Awaited<ReturnType<typeof import('frappe-charts')>>['default'] | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private chartInstance: any = null;
   protected chartLibraryLoaded = false;
   protected chartError: string | null = null;
   private previousChartType: string | undefined;
