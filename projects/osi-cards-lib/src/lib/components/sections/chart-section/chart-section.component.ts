@@ -47,9 +47,7 @@ export class ChartSectionComponent
 
   @ViewChild('chartContainer', { static: false }) chartContainer?: ElementRef<HTMLDivElement>;
 
-  private chartInstance: {
-    update: (data: unknown) => void;
-  } | null = null;
+  private chartInstance: Awaited<ReturnType<typeof import('frappe-charts')>>['default'] | null = null;
   protected chartLibraryLoaded = false;
   protected chartError: string | null = null;
   private previousChartType: string | undefined;
@@ -227,7 +225,10 @@ export class ChartSectionComponent
     const frappeData = this.convertToFrappeFormat(chartData, chartType);
 
     // Update chart data
-    this.chartInstance.update(frappeData);
+    this.chartInstance.update({
+      data: frappeData,
+      type: this.mapChartType(this.section.chartType || 'bar'),
+    });
   }
 
   /**
