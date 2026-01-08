@@ -1,6 +1,6 @@
 {
   "name": "osi-cards",
-  "version": "1.5.51",
+  "version": "1.5.48",
   "private": true,
   "bin": {
     "osi-cards": "./tools/cli/osi-cards-cli.js"
@@ -110,10 +110,10 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0",
-    "ng2-charts": "^6.0.0"
+    "ng2-charts": "^6.0.0",
+    "chart.js": "^4.4.0"
   },
   "optionalDependencies": {
-    "chart.js": "^4.4.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "leaflet": "^1.9.4",
@@ -154,16 +154,9 @@
     "typescript-eslint": "8.40.0"
   },
   "lint-staged": {
-    "*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{html,css,scss,json,md}": [
-      "prettier --write"
-    ],
-    "*.ts": [
-      "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
-    ],
+    "*.{ts,js}": ["eslint --fix", "prettier --write"],
+    "*.{html,css,scss,json,md}": ["prettier --write"],
+    "*.ts": ["bash -c 'npx tsc --noEmit --project tsconfig.json || true'"],
     "projects/osi-cards-lib/section-registry.json": [
       "node scripts/generate-from-registry.js"
     ]
@@ -174,10 +167,5 @@
       "pre-push": "npm run lint && npm run test:unit && npm run check:security && npm run size:check"
     }
   },
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss",
-    "src/polyfills.ts",
-    "src/main.ts"
-  ]
+  "sideEffects": ["**/*.css", "**/*.scss", "src/polyfills.ts", "src/main.ts"]
 }
