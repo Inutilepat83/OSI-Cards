@@ -1,6 +1,6 @@
 {
   "name": "osi-cards",
-  "version": "1.5.48",
+  "version": "1.5.52",
   "private": true,
   "bin": {
     "osi-cards": "./tools/cli/osi-cards-cli.js"
@@ -154,9 +154,16 @@
     "typescript-eslint": "8.40.0"
   },
   "lint-staged": {
-    "*.{ts,js}": ["eslint --fix", "prettier --write"],
-    "*.{html,css,scss,json,md}": ["prettier --write"],
-    "*.ts": ["bash -c 'npx tsc --noEmit --project tsconfig.json || true'"],
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,css,scss,json,md}": [
+      "prettier --write"
+    ],
+    "*.ts": [
+      "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
+    ],
     "projects/osi-cards-lib/section-registry.json": [
       "node scripts/generate-from-registry.js"
     ]
@@ -167,5 +174,10 @@
       "pre-push": "npm run lint && npm run test:unit && npm run check:security && npm run size:check"
     }
   },
-  "sideEffects": ["**/*.css", "**/*.scss", "src/polyfills.ts", "src/main.ts"]
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "src/polyfills.ts",
+    "src/main.ts"
+  ]
 }

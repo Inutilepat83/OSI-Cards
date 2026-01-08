@@ -4,7 +4,7 @@
  * This file is generated from section definition files (*.definition.json).
  * Run: npm run generate:section-types
  *
- * Last generated: 2026-01-08T15:55:15.603Z
+ * Last generated: 2026-01-08T16:07:10.379Z
  */
 
 /**
