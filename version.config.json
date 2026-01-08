@@ -1,10 +1,10 @@
 {
   "$schema": "./version.config.schema.json",
-  "version": "1.5.49",
+  "version": "1.5.50",
   "name": "osi-cards",
   "description": "OSI Cards Library - Versatile card generator for sales intelligence agents",
   "releaseDate": "2025-12-03T22:21:56.561Z",
-  "lastUpdated": "2026-01-08T15:34:34.344Z",
+  "lastUpdated": "2026-01-08T15:43:53.945Z",
   "author": "OSI Cards Team",
   "license": "MIT",
   "repository": {
