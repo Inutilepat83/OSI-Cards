@@ -17,6 +17,9 @@ export class FileLoggingService {
   private logs: { timestamp: number; level: string; message: string; data?: any }[] = [];
   private readonly maxLogs = 10000;
   private logServerCheckInterval: number | null = null;
+  private logServerHealthCache: { isAvailable: boolean; lastChecked: number } | null = null;
+  private readonly HEALTH_CHECK_CACHE_DURATION = 60000; // Cache for 60 seconds
+  private readonly HEALTH_CHECK_BACKOFF_DURATION = 300000; // Don't check for 5 minutes after failure
 
   /**
    * Add a log entry
@@ -112,6 +115,7 @@ export class FileLoggingService {
   /**
    * Check if log server is available
    * Completely silent when server is unavailable - log server is optional
+   * Uses caching and backoff to minimize console errors
    */
   async checkLogServerHealth(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
@@ -122,8 +126,60 @@ export class FileLoggingService {
       return false;
     }
 
+    const now = Date.now();
+
+    // Check cache first
+    if (this.logServerHealthCache) {
+      const timeSinceLastCheck = now - this.logServerHealthCache.lastChecked;
+
+      // If server was unavailable, use backoff period
+      if (!this.logServerHealthCache.isAvailable) {
+        if (timeSinceLastCheck < this.HEALTH_CHECK_BACKOFF_DURATION) {
+          // Still in backoff period, return cached result without making request
+          return false;
+        }
+      } else {
+        // Server was available, use shorter cache duration
+        if (timeSinceLastCheck < this.HEALTH_CHECK_CACHE_DURATION) {
+          return this.logServerHealthCache.isAvailable;
+        }
+      }
+    }
+
+    // Suppress console errors by temporarily overriding console methods
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    const logServerUrl = this.config.LOGGING.LOG_SERVER_URL;
+
     try {
-      const logServerUrl = this.config.LOGGING.LOG_SERVER_URL;
+      // Override console methods to filter out fetch errors for this specific request
+      console.error = (...args: any[]) => {
+        const message = args[0]?.toString() || '';
+        // Suppress fetch/network errors related to log server health check
+        if (
+          message.includes('Failed to fetch') ||
+          message.includes('ERR_CONNECTION_REFUSED') ||
+          message.includes('ERR_NETWORK') ||
+          (message.includes(logServerUrl) && message.includes('health'))
+        ) {
+          return; // Suppress this error
+        }
+        originalError.apply(console, args);
+      };
+
+      console.warn = (...args: any[]) => {
+        const message = args[0]?.toString() || '';
+        // Suppress fetch/network warnings related to log server health check
+        if (
+          message.includes('Failed to fetch') ||
+          message.includes('ERR_CONNECTION_REFUSED') ||
+          message.includes('ERR_NETWORK') ||
+          (message.includes(logServerUrl) && message.includes('health'))
+        ) {
+          return; // Suppress this warning
+        }
+        originalWarn.apply(console, args);
+      };
 
       // Use AbortController for better browser compatibility
       const controller = new AbortController();
@@ -137,8 +193,18 @@ export class FileLoggingService {
           mode: 'cors',
           credentials: 'omit',
         });
+
         clearTimeout(timeoutId);
-        return response.ok;
+
+        const isAvailable = response.ok;
+
+        // Update cache
+        this.logServerHealthCache = {
+          isAvailable,
+          lastChecked: now,
+        };
+
+        return isAvailable;
       } catch (fetchError) {
         clearTimeout(timeoutId);
         // Re-throw to be caught by outer catch
@@ -148,7 +214,18 @@ export class FileLoggingService {
       // Completely silent - log server is optional and may not be running
       // Network errors in browser console are expected when service is unavailable
       // but we don't want to log them as application errors
+
+      // Update cache with failure
+      this.logServerHealthCache = {
+        isAvailable: false,
+        lastChecked: now,
+      };
+
       return false;
+    } finally {
+      // Always restore console methods
+      console.error = originalError;
+      console.warn = originalWarn;
     }
   }
 

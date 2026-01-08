@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { CardSection } from '../../../models';
 import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { safeImport } from '../../../utils/optional-import';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -130,9 +131,23 @@ export class ChartSectionComponent
     this.isRendering = true;
 
     try {
-      // Dynamic import of Frappe Charts
-      // Handle different export patterns (default export, named export, or direct export)
-      const frappeChartsModule = await import('frappe-charts');
+      // Dynamic import of Frappe Charts using safe import helper
+      // This gracefully handles cases where frappe-charts is not installed
+      const importResult = await safeImport<{
+        default?: unknown;
+        Chart?: unknown;
+        [key: string]: unknown;
+      }>('frappe-charts', 'npm install frappe-charts');
+
+      if (!importResult.success) {
+        this.chartLibraryLoaded = false;
+        this.chartError = importResult.message;
+        console.error('Frappe Charts import error:', importResult.error);
+        this.cdr.detectChanges();
+        return;
+      }
+
+      const frappeChartsModule = importResult.module;
 
       // Handle different module export patterns (CJS/ESM interop)
       // Frappe Charts exports Chart as default, but build tools may wrap it differently
@@ -295,8 +310,26 @@ export class ChartSectionComponent
       this.cdr.detectChanges();
     } catch (error) {
       this.chartLibraryLoaded = false;
-      this.chartError =
-        error instanceof Error ? error.message : 'Failed to load Frappe Charts library';
+
+      // Provide user-friendly error messages
+      if (error instanceof Error) {
+        // Check if it's a module not found error
+        if (
+          error.message.includes('Cannot find module') ||
+          error.message.includes('Failed to resolve') ||
+          error.message.includes('does not exist') ||
+          error.message.includes('MODULE_NOT_FOUND')
+        ) {
+          this.chartError =
+            'frappe-charts is not installed. Please install it using: npm install frappe-charts';
+        } else {
+          this.chartError = `Failed to initialize chart: ${error.message}`;
+        }
+      } else {
+        this.chartError =
+          'Failed to load Frappe Charts library. Please ensure frappe-charts is installed: npm install frappe-charts';
+      }
+
       console.error('Frappe Charts initialization error:', error);
       this.cdr.detectChanges();
     } finally {

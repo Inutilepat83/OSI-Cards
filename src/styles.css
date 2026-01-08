@@ -769,7 +769,7 @@
 
 .section-title {
   font-size: var(--section-title-font-size);
-  font-weight: var(--section-title-font-weight);
+  font-weight: 700;
   color: var(--foreground);
   margin: 0 0 var(--spacing-xs) 0;
   text-align: left;

@@ -88,7 +88,7 @@
 .ai-section__title {
   @include section-heading-text;
   font-size: var(--osi-section-title-font-size) !important;
-  font-weight: var(--osi-section-title-font-weight) !important;
+  font-weight: 700 !important;
   letter-spacing: var(--osi-section-title-letter-spacing) !important;
   line-height: var(--osi-section-title-line-height) !important;
   color: var(--osi-section-title-color) !important;

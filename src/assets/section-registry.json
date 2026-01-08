@@ -1,6 +1,6 @@
 {
   "$schema": "./section-registry.schema.json",
-  "version": "1.5.44",
+  "version": "1.5.45",
   "description": "Single source of truth for all OSI Cards section types - compiled from individual section definition files",
   "generatedAt": "2025-12-02T12:49:57.429Z",
   "sections": {
@@ -3477,7 +3477,7 @@
       }
     }
   },
-  "registryVersion": "1.5.44",
+  "registryVersion": "1.5.45",
   "allSectionsExample": {
     "cardTitle": "All Sections Demo",
     "cardType": "company",

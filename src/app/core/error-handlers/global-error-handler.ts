@@ -182,6 +182,33 @@ export class GlobalErrorHandler implements ErrorHandler {
     // Check for module loading errors
     if (error instanceof TypeError || error instanceof Error) {
       const errorMessage = error.message || '';
+      const errorStack = error.stack || '';
+      const errorString = `${errorMessage} ${errorStack}`;
+
+      // Check for NG05604 error code (Angular error or custom error)
+      if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
+        console.warn('🔍 NG05604 error detected - logging with full context:', {
+          message: errorMessage,
+          stack: errorStack,
+          error: error,
+          timestamp: new Date().toISOString(),
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+          url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+        });
+
+        return {
+          type: 'NG05604 Error',
+          message: `NG05604 error detected: ${errorMessage}. This may be a custom Angular error or from a third-party library.`,
+          severity: 'warning',
+          context: {
+            originalMessage: errorMessage,
+            stack: errorStack,
+            errorCode: 'NG05604',
+            fullError: error.toString(),
+            timestamp: Date.now(),
+          },
+        };
+      }
 
       // Detect module/chunk loading failures (JS and CSS)
       // More specific checks to avoid false positives
@@ -265,6 +292,20 @@ export class GlobalErrorHandler implements ErrorHandler {
     const error = event.error || event.message || '';
     const errorMessage = error instanceof Error ? error.message : String(error);
     const source = event.filename || '';
+    const errorString = `${errorMessage} ${source}`;
+
+    // Check for NG05604 error code
+    if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
+      console.warn('🔍 NG05604 error detected in window error handler:', {
+        message: errorMessage,
+        source,
+        error,
+        timestamp: new Date().toISOString(),
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      });
+      // Continue processing as normal error
+    }
 
     // Check for chunk/module loading errors
     const target = event.target as HTMLElement | null;
@@ -296,6 +337,21 @@ export class GlobalErrorHandler implements ErrorHandler {
   private handleUnhandledRejection(event: PromiseRejectionEvent): void {
     const reason = event.reason;
     const errorMessage = reason instanceof Error ? reason.message : String(reason || '');
+    const errorStack = reason instanceof Error ? reason.stack : '';
+    const errorString = `${errorMessage} ${errorStack}`;
+
+    // Check for NG05604 error code
+    if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
+      console.warn('🔍 NG05604 error detected in unhandled rejection:', {
+        message: errorMessage,
+        stack: errorStack,
+        reason,
+        timestamp: new Date().toISOString(),
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      });
+      // Continue processing as normal error
+    }
 
     // Check for module loading errors in promise rejections
     if (
