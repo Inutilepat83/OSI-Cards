@@ -13,7 +13,7 @@ Each card is composed of one or more **sections**—standalone, configurable com
 
 ---
 
-## ✨ What's New in v1.5.50
+## ✨ What's New in v1.5.51
 
 ### 🎉 MAJOR: Complete Architecture Optimization
 - **Massive Cleanup**: Removed ~700+ files (28% of project) while maintaining all core functionality
