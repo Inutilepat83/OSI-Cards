@@ -20,7 +20,7 @@ The **Chart Section** (\`type: "chart"\`) is used for displays data visualizatio
 | Default Columns | 2 |
 | Supports Collapse | No |
 | Aliases | \`graph\`, \`visualization\` |
-| External Library | \`frappe-charts\` |
+| External Library | \`Chart.js\` (via ng2-charts) |
 
 ## Use Cases
 

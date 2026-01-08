@@ -63,7 +63,7 @@
   },
   "aliases": ["questions", "help"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Frequently Asked Questions",
       "type": "faq",
       "description": "Common questions about Nexus Analytics platform",
@@ -99,6 +99,22 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Frequently Asked Questions",
+      "type": "faq",
+      "description": "Common questions about Nexus Analytics platform",
+      "preferredColumns": 1,
+      "priority": 3,
+      "items": [
+        {
+          "title": "What is Nexus Analytics and how does it work?",
+          "description": "Nexus Analytics is an AI-powered business intelligence platform that transforms raw data into actionable insights. It connects to your existing data sources (databases, cloud apps, spreadsheets), automatically models relationships, and provides intuitive dashboards and natural language querying. Our AI engine continuously learns from your data to surface relevant insights and anomalies.",
+          "meta": {
+            "category": "General"
+          }
+        }
+      ]
     }
   }
 }

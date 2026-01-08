@@ -58,7 +58,7 @@
     "mandatoryFields": ["label"]
   },
   "examples": {
-    "example": {
+    "demo": {
       "title": "Nexus Analytics Enterprise",
       "type": "product",
       "description": "AI-powered business intelligence platform for data-driven enterprises",
@@ -83,6 +83,19 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Nexus Analytics Enterprise",
+      "type": "product",
+      "description": "AI-powered business intelligence platform for data-driven enterprises",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Product Name",
+          "value": "Nexus Analytics Enterprise Edition"
+        }
+      ]
     }
   }
 }

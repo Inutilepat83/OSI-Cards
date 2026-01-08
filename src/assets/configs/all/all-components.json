@@ -63,14 +63,14 @@
       "title": "Executive Summary",
       "type": "overview",
       "description": "Strategic company overview and positioning",
+      "preferredColumns": 1,
+      "priority": 1,
       "fields": [
         {
           "label": "",
-          "value": "ABOUT\nNexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage.\n\nMISSION\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.\n\nMARKET POSITION\nRecognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership.\n\nKEY DIFFERENTIATORS\nReal-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs"
+          "value": "ABOUT\nNexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage.\n\nMISSION\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.\n\nVISION\nA world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency. We envision a future where data intelligence is seamlessly integrated into every aspect of business operations.\n\nCORE VALUES\nInnovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence"
         }
-      ],
-      "preferredColumns": 1,
-      "priority": 1
+      ]
     },
     {
       "title": "Q4 2024 Performance Dashboard",
@@ -108,7 +108,9 @@
     {
       "title": "Revenue & Growth Analysis",
       "type": "chart",
-      "description": "Multi-series bar chart showing revenue, costs, and profit with objectives",
+      "description": "Comprehensive financial performance visualization",
+      "preferredColumns": 2,
+      "priority": 2,
       "chartType": "bar",
       "chartData": {
         "labels": [
@@ -121,34 +123,45 @@
         "datasets": [
           {
             "label": "Revenue ($M)",
-            "data": [28.5, 32.1, 35.8, 42.4, 48.2],
-            "objectives": [30, 35, 38, 45, 50],
+            "data": [
+              28.5,
+              32.1,
+              35.8,
+              42.4,
+              48.2
+            ],
             "backgroundColor": "#FF7900",
             "borderColor": "#FF7900",
             "borderWidth": 1
           },
           {
             "label": "Operating Costs ($M)",
-            "data": [22.1, 24.3, 26.8, 31.2, 34.5],
-            "objectives": [25, 27, 29, 33, 36],
+            "data": [
+              22.1,
+              24.3,
+              26.8,
+              31.2,
+              34.5
+            ],
             "backgroundColor": "#4CAF50",
             "borderColor": "#4CAF50",
             "borderWidth": 1
           },
           {
             "label": "Net Profit ($M)",
-            "data": [6.4, 7.8, 9, 11.2, 13.7],
-            "objectives": [5, 8, 9, 12, 14],
+            "data": [
+              6.4,
+              7.8,
+              9,
+              11.2,
+              13.7
+            ],
             "backgroundColor": "#2196F3",
             "borderColor": "#2196F3",
             "borderWidth": 1
           }
         ]
-      },
-      "preferredColumns": 2,
-      "minColumns": 2,
-      "maxColumns": 3,
-      "priority": 2
+      }
     },
     {
       "title": "FY2024 Financial Summary",
@@ -715,7 +728,7 @@
           ],
           "deliveryTime": "12-16 weeks",
           "complexity": "high",
-          "score": 8,
+          "expressoLink": "https://expresso.example.com/data-platform",
           "outcomes": [
             "80% faster data access",
             "95% data accuracy",
@@ -734,7 +747,7 @@
           ],
           "deliveryTime": "8-12 weeks",
           "complexity": "high",
-          "score": 9,
+          "expressoLink": "https://expresso.example.com/ai-ml-coe",
           "outcomes": [
             "10x faster model deployment",
             "40% improved model accuracy",
@@ -753,7 +766,7 @@
           ],
           "deliveryTime": "10-14 weeks",
           "complexity": "high",
-          "score": 7,
+          "expressoLink": "https://expresso.example.com/cloud-migration",
           "outcomes": [
             "60% infrastructure cost reduction",
             "99.99% availability",
@@ -772,7 +785,7 @@
           ],
           "deliveryTime": "4-6 weeks",
           "complexity": "low",
-          "score": 6,
+          "expressoLink": "https://expresso.example.com/executive-dashboard",
           "outcomes": [
             "Real-time visibility",
             "50% reduced reporting time",
@@ -867,7 +880,7 @@
           "title": "Nexus Analytics Platform Overview",
           "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
           "meta": {
-            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
             "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
             "duration": "12:45",
             "views": 45000,

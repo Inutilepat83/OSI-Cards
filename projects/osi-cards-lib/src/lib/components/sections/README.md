@@ -2,7 +2,19 @@
 
 **Single Source of Truth for All Sections**
 
-This directory contains all 23 section types used in OSI Cards. Each section is a self-contained module with everything needed for development, styling, and documentation.
+This directory contains all section types used in OSI Cards. Each section is a self-contained module with everything needed for development, styling, and documentation.
+
+## Definition Files as Single Source of Truth
+
+**All section metadata comes from `*.definition.json` files** - these are the authoritative source for:
+- Section type identifiers and aliases
+- Use cases and best practices
+- Data schemas (fieldSchema, itemSchema, chartDataSchema)
+- Examples (demo, doc, long)
+- Rendering configuration
+- Portfolio descriptions (for LLM prompts)
+
+All documentation, JSON templates, prompts, and TypeScript types are **generated** from these definition files. Never hardcode section information - always read from definition files.
 
 ## ✨ NEW: Smart Auto-Discovery System
 

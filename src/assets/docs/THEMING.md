@@ -26,11 +26,11 @@ import { ThemeService } from 'osi-cards-lib';
 })
 export class MyComponent {
   private themeService = inject(ThemeService);
-  
+
   switchToDark(): void {
     this.themeService.setTheme('night');
   }
-  
+
   switchToLight(): void {
     this.themeService.setTheme('day');
   }

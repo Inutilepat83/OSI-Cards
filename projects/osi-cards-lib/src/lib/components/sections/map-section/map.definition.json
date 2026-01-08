@@ -69,7 +69,7 @@
   },
   "aliases": ["locations"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Global Operations Network",
       "type": "map",
       "description": "Worldwide office locations and data centers",
@@ -105,6 +105,24 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Global Operations Network",
+      "type": "map",
+      "description": "Worldwide office locations and data centers",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "name": "Global Headquarters",
+          "x": 30.2672,
+          "y": -97.7431,
+          "type": "headquarters",
+          "address": "500 Congress Ave, Austin, TX 78701, USA",
+          "label": "Global Operations Network",
+          "value": "Sample value"
+        }
+      ]
     }
   }
 }

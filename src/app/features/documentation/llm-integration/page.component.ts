@@ -15,9 +15,9 @@ This prompt is dynamically generated from \`section-registry.json\` - the single
 | ---------------- | ------------------------ |
 | Section Types    | 20                       |
 | Type Aliases     | 0                       |
-| Characters       | 29,374                   |
-| Estimated Tokens | ~7,344                   |
-| Generated        | 2026-01-08T10:18:15.584Z |
+| Characters       | 41,645                   |
+| Estimated Tokens | ~10,412                   |
+| Generated        | 2026-01-08T13:19:08.716Z |
 
 ## How to Use
 
@@ -70,7 +70,7 @@ The section CONTENT is determined entirely by what's in {{CONTEXT}}.
 ================================================================================
 
 **Field-Based Types** (use "fields" array with multiple FieldItem objects):
-  - analytics: KPIs, performance metrics, percentages, trends
+  - analytics: Numerical KPIs, performance metrics, percentages, trends (metric-only, not descriptive facts)
   - brand-colors: Color palettes, design tokens, brand assets
   - contact-card: People, roles, departments, contact info
   - event: Dates, schedules, milestones, calendar entries
@@ -86,7 +86,7 @@ The section CONTENT is determined entirely by what's in {{CONTEXT}}.
 **Item-Based Types** (use "items" array with multiple ItemObject entries):
   - faq: Questions and answers, help content
   - gallery: Images, visual assets (store URLs/metadata in meta)
-  - list: Collections of related items (tasks, features, opportunities)
+  - list: Descriptive facts, capabilities, operational points, collections of related items (tasks, features, opportunities, informational points)
   - network-card: Relationships, partnerships, connections
   - news: News articles, announcements, press releases (with status: published|draft|archived)
   - timeline: Historical events, milestones, chronological sequences
@@ -126,22 +126,53 @@ Instead: Merge into one contact-card with all people.
 ### DATA MAPPING RULES (CRITICAL)
 ================================================================================
 
-**EXHAUSTIVE REFLECTION (Non-Negotiable):**
-  - Every data point in {{CONTEXT}} must appear in the card output.
-  - If a data point seems irrelevant, it still belongs → map it to the most appropriate section type.
-  - Only filter data that is provably invalid (null, empty string, placeholder like "N/A").
-  - Do NOT omit data because "it doesn't fit" or "there's no perfect section"—use fallback or text-reference instead.
-  - Examples:
-    * Random blog URL → text-reference section
-    * Disconnected metric → analytics or fallback section
-    * Person with no email → still include in contact-card with available fields only
-    * Date with no event context → event section with label "Milestone"
+**SELECTIVE & RELEVANT SECTION CREATION (CRITICAL):**
+  - **Prioritize quality over quantity**: Include only the 2-3 MOST RELEVANT sections that best represent the core value proposition or key information.
+  - **Avoid sparse sections**: Do NOT create sections with only 1 field or 1 item unless it's truly critical. Sections should have at least 2-3 meaningful entries to be included.
+  - **Focus on essential information**: Prioritize sections that directly support the card's purpose (e.g., key contacts, core value metrics, primary solutions/offerings).
+  - **Skip peripheral content**: Omit sections with minimal or tangential information (e.g., a single news item, one reference link, a single network connection).
+  - **Quality threshold**: Each section should contain substantial, meaningful content. If a section would have fewer than 2-3 entries, either:
+    * Merge it into a more relevant section, OR
+    * Omit it entirely if it's not essential to the card's purpose
+  - **Examples of what to SKIP:**
+    * A news section with only 1 article → Skip unless it's critical to the value proposition
+    * A network-card section with only 1 connection → Skip or merge into another section
+    * A text-reference section with only 1 link → Skip unless it's the primary resource
+    * An event section with only 1 event → Skip unless it's a key milestone
+  - **Examples of what to INCLUDE:**
+    * Contact-card with 2+ key people → Include (essential for engagement)
+    * Analytics with 3+ meaningful metrics → Include (shows value)
+    * Solutions with 2+ service offerings → Include (core value proposition)
+    * List with 3+ use cases → Include (demonstrates capabilities)
 
 **SECTION SELECTION GUIDANCE:**
+  - **Start with the most important**: Identify the 2-3 section types that are most critical to the card's purpose.
+  - **Prioritize by relevance**: 
+    1. Key contacts/people (contact-card) - if engagement is important
+    2. Core value metrics (analytics, financials) - if demonstrating value
+    3. Primary offerings (solutions, product) - if showcasing services/products
+    4. Essential context (overview) - if summary is needed
   - Decide on section types based on the info and description provided in the SECTION TYPE PORTFOLIO above.
-  - You can also look at the JSON example below to get inspired and understand how different data types map to section types.
   - Match data semantically to the section that best represents it based on the portfolio descriptions.
-  - Note: Section definition files may contain "long" examples showing comprehensive use cases with multiple entries - use these as reference for how to structure sections with multiple data points.
+  - **Quality over completeness**: It's better to have 2-3 well-populated sections than 8-9 sparse ones.
+
+**ANALYTICS vs LIST DISTINCTION (CRITICAL):**
+  - **Analytics section**: Use ONLY for numerical metrics, KPIs, and performance indicators
+    * Examples: "53 million+ FIN messages per day" (metric), "47.3% YoY growth" (percentage), "99.97% uptime" (performance indicator)
+    * Value should be a measurable quantity or percentage
+    * NOT for descriptive facts, even if they contain numbers
+  - **List section**: Use for descriptive facts, capabilities, operational points, and informational items
+    * Examples: "SWIFT network reach: SWIFT connects a global network of 11,000+ financial institutions" (descriptive fact)
+    * Examples: "Operational success factors: For SWIFT connectivity, key success factors include reliability, resiliency..." (descriptive text)
+    * Examples: "Delivery footprint: Orange delivers in over 100 countries and operates connectivity for 800+ SWIFT end users" (descriptive fact with numbers)
+    * Use even if the item contains numbers, if the primary purpose is to describe rather than measure
+  - **Decision rule**: If the value is a metric/KPI/percentage that measures performance → use analytics. If it's a descriptive fact, capability, or operational point → use list.
+  - **Examples of correct usage:**
+    * ✅ Analytics: "SWIFT traffic scale: 53 million+ FIN messages per day" (metric measuring volume)
+    * ❌ Analytics: "SWIFT network reach: SWIFT connects a global network of 11,000+ financial institutions" (descriptive fact → use list)
+    * ✅ List: "SWIFT network reach: SWIFT connects a global network of 11,000+ financial institutions" (descriptive fact)
+    * ✅ List: "Operational success factors: For SWIFT connectivity, key success factors include reliability, resiliency, risk management, and cost control" (descriptive text)
+    * ✅ List: "Alliance Connect delivery footprint: Orange delivers SWIFT Alliance Connect in over 100 countries and operates connectivity for 800+ SWIFT end users worldwide" (descriptive fact with numbers)
 
 **CURRENCY FORMATTING:**
   - Use format: "currency" property on fields, not hardcoded symbols in value
@@ -159,6 +190,30 @@ Instead: Merge into one contact-card with all people.
   - If a field becomes empty after filtering → skip that field entirely
   - If an entire section becomes empty after filtering → skip the section type entirely
 
+**SOLUTIONS SECTION FIELD REQUIREMENTS (CRITICAL):**
+  - For solutions sections, the "title" field is REQUIRED for each solution field
+  - The "title" field should be a descriptive, prominent title for the solution (e.g., "SWIFT Connectivity", "Network Architecture", "Cybersecurity Services")
+  - The "title" is displayed as the main heading at the top of each solution card
+  - If you have a "category" field, you can use it as the "title" if no explicit title exists, but ideally both should be present:
+    * "title": The main descriptive title (REQUIRED) - displayed prominently at top
+    * "category": Optional categorization (e.g., "SWIFT Connectivity", "Network Architecture") - displayed below title if provided
+    * "label": Optional label displayed at the bottom of the card (e.g., "SWIFT Alliance Connect (Silver/Gold) connectivity")
+  - The "benefits" field MUST be an array of strings, NOT a single string
+    * ✅ CORRECT: "benefits": ["Benefit 1", "Benefit 2", "Benefit 3"]
+    * ❌ INCORRECT: "benefits": "Benefit 1; Benefit 2; Benefit 3"
+    * Each benefit should be a separate string in the array for proper UI rendering
+    * The UI component counts array items to show "+X more" - if benefits is a string, it will incorrectly show character count instead
+  - Example structure:
+    {
+      "title": "SWIFT Connectivity",  // REQUIRED - main title displayed at top
+      "category": "SWIFT Connectivity",  // Optional - categorization
+      "description": "Orange is positioned as a preferred SWIFT network partner...",
+      "label": "SWIFT Alliance Connect (Silver/Gold) connectivity",  // Optional - displayed at bottom
+      "benefits": ["Broad geographic reach", "Proven operational model", "Resilient options aligned to SWIFT connectivity needs", "Simplified procurement via an accredited network partner"]  // MUST be array of strings
+    }
+  - NEVER create a solution field without a "title" - it is required by the schema
+  - NEVER use benefits as a string - it MUST be an array of strings
+
 
 ================================================================================
 ### OUTPUT STRUCTURE
@@ -167,6 +222,7 @@ Instead: Merge into one contact-card with all people.
 **Root AICardConfig:**
   {
     "cardTitle": "{{CARD_TITLE}}",
+    "description": "{{DESCRIPTION}}",
     "actions": [
       { "label": "Generate Presentation", "type": "agent", "variant": "primary", "icon": "📊", "agentId": "{{AGENT_ID}}" },
       { "label": "Write Email", "type": "mail", "variant": "primary", "icon": "✉️", "email": { "subject": "{{EMAIL_SUBJECT}}", "body": "{{EMAIL_BODY}}", "contact": { "name": "{{EMAIL_CONTACT_NAME}}", "email": "{{EMAIL_CONTACT_ADDRESS}}", "role": "{{EMAIL_CONTACT_ROLE}}" } } },
@@ -238,37 +294,44 @@ Instead: Merge into one contact-card with all people.
 ### WORKING PROCESS (EXPLICIT STEPS)
 ================================================================================
 
-**Step 1: Ingest & Categorize**
-  - Parse {{CONTEXT}} and identify all data elements
-  - Assign each to a candidate section type(s)
-  - Example: If context has "15 team members with emails" → categorize as contact-card data
-  - Example: If context has "8 financial metrics (revenue, costs, profit)" → categorize as financials data
-  - Example: If context has "12 news articles" → categorize as news data
+**Step 1: Generate Compelling Title**
+  - Analyze {{CONTEXT}} to understand the card's core purpose
+  - Create a catchy, descriptive title (8-15 words) that captures the essence
+  - Include key entities, services, or value propositions
+  - Use engaging separators (—, ×, •, :) to structure the title
+  - If {{CARD_TITLE}} is provided, use it; otherwise generate based on context
 
-**Step 2: Map & Flatten**
-  - Group related elements into section entries
+**Step 2: Identify Core Value (Select 2-3 Most Relevant Sections)**
+  - Parse {{CONTEXT}} and identify the MOST IMPORTANT information
+  - Prioritize sections that directly support the card's purpose:
+    * Key contacts/people (if engagement is important)
+    * Core value metrics (if demonstrating value)
+    * Primary offerings (if showcasing services/products)
+    * Essential context (if summary is needed)
+  - **Skip peripheral content**: Ignore sections that would have only 1-2 entries unless truly critical
+  - **Quality threshold**: Only include sections with 2-3+ meaningful entries
+
+**Step 3: Map & Populate Selected Sections**
+  - For each selected section type, group related elements
   - Create FieldItem or ItemObject for each entry
   - Filter invalid/empty values
-  - Example: 15 contacts → create 15 FieldItem objects in ONE contact-card section
-  - Example: 8 financial metrics → create 8 FieldItem objects in ONE financials section
-  - Example: 12 news items → create 12 ItemObject entries in ONE news section
+  - Ensure each section has at least 2-3 substantial entries
+  - Example: contact-card with 2-3 key people (not 1 person)
+  - Example: analytics with 3-5 meaningful metrics (not 1 metric)
+  - Example: solutions with 2-4 service offerings (not 1 offering)
 
-**Step 3: Assemble Sections**
-  - For each section type with valid entries, create a section object
-  - Populate title, description, fields/items (with multiple entries if context supports it)
-  - Set priority and layout (priority 1 for overview/key contacts, priority 2 for metrics, priority 3 for supporting)
-  - Example: contact-card section with 15 fields, priority 1, preferredColumns 2
-  - Example: financials section with 8 fields, priority 2, preferredColumns 2
-  - Example: news section with 12 items, priority 3, preferredColumns 1
-
-**Step 4: Prioritize Section Order**
-  - Overview/summary first (priority 1)
-  - Key contacts/people second (priority 1)
-  - Analytics, charts, financials third (priority 2)
-  - Supporting content last (priority 3, faq, gallery, etc.)
-  - Example order: [overview, contact-card, analytics, financials, chart, news, faq, gallery]
+**Step 4: Assemble Sections (2-3 Total)**
+  - Create section objects only for the 2-3 most relevant types
+  - Populate title, description, fields/items with multiple entries
+  - Set priority and layout appropriately
+  - **Do NOT create sections with only 1 entry** unless it's absolutely critical
+  - Example: contact-card with 2-3 fields, priority 1, preferredColumns 2
+  - Example: analytics with 3-5 fields, priority 2, preferredColumns 2
+  - Example: solutions with 2-4 fields, priority 2, preferredColumns 2
 
 **Step 5: Validate & Output**
+  - Confirm exactly 2-3 sections (preferred) or up to 4 if truly necessary
+  - Confirm each section has 2+ entries (fields/items)
   - Confirm no wrappers, no cardType, no extra root keys
   - Confirm each section has exactly one of: fields, items, or chartData
   - Confirm no empty values
@@ -282,15 +345,21 @@ Instead: Merge into one contact-card with all people.
 
 Before returning, verify:
 
-□ cardTitle is present and non-empty
+□ cardTitle is present, non-empty, and catchy/representative (8-15 words, includes key entities/value props)
 □ description at root level is optional (can be included if provided in context)
-□ sections array has at least 1 entry
+□ sections array has 2-3 entries (preferred) or up to 4 if truly necessary
+□ Each section has 2+ entries (fields/items) - NO sections with only 1 entry unless absolutely critical
 □ actions array has exactly 3 entries (agent, mail, website)
 □ Each section has exactly ONE of: fields, items, or chartData
 □ No section type appears more than once
 □ No field/item contains null, "", [], {}, 0, 0.0, "N/A", "pending", etc.
+□ For solutions sections: Each solution field MUST have a "title" field (required) - this is the main title displayed at the top of each solution card
+□ For solutions sections: The "benefits" field MUST be an array of strings (e.g., array format: ["benefit1", "benefit2"]), NOT a single string (e.g., string format: "benefit1; benefit2")
 □ Currency fields use format: "currency" property (value can be numeric or string, do not hardcode symbols like $, €, or "k€" in value field)
 □ No HTML entities in JSON strings (use actual characters: & not &amp;, < not &lt;)
+□ No citation markers or references in JSON strings (remove [1][2], [3], etc. - these are NOT valid JSON)
+□ No trailing commas after string values (e.g., "description": "text",[1][2] is INVALID - must be "description": "text")
+□ Valid JSON syntax: all strings properly quoted, commas only between properties, no trailing commas
 □ No componentPath, selector, stylePath, cost, total_tokens keys (cardType is optional for demos only)
 □ No wrapper objects like { type: "card", content: {...} }
 □ JSON is RFC 8259 compliant (valid when parsed)
@@ -303,6 +372,10 @@ If any check fails → adjust before returning.
 ### ANTI-PATTERNS TO AVOID
 ================================================================================
 
+❌ Creating too many sections (aim for 2-3, maximum 4 if truly necessary)
+❌ Creating sections with only 1 entry (each section must have 2+ fields/items unless absolutely critical)
+❌ Including sparse or peripheral sections (skip sections with minimal content)
+❌ Generic or vague card titles (e.g., "Company Card", "Services" - be specific and catchy)
 ❌ Limiting entries to "one per section" (fill sections fully with all valid data)
 ❌ Including sections with no context data (only include if you have entries to populate)
 ❌ Using HTML entities in JSON (write & not &amp;)
@@ -314,7 +387,87 @@ If any check fails → adjust before returning.
 ❌ Hardcoding currency symbols in value field (use format: "currency" property instead, value can be numeric or plain string)
 ❌ Invalid statuses (use: completed, in-progress, planned, cancelled, confirmed, published, etc.)
 ❌ Placeholder values ("N/A", "unknown", "TBD", "pending") in actual data
-❌ Omitting context data because "it doesn't fit"—map it to fallback or text-reference instead
+❌ Creating solution fields without a "title" field (title is REQUIRED for solutions sections - it's the main heading displayed at the top of each solution card)
+❌ Using "benefits" as a string instead of an array in solutions sections (must be array format: ["benefit1", "benefit2"], NOT string format: "benefit1; benefit2" - the UI component requires an array to correctly count and display benefits)
+❌ Citation markers in JSON strings (e.g., "text",[1][2] or "text [1][2]" - remove ALL citation markers like [1], [2], [3] from JSON output)
+❌ Trailing commas after string values (e.g., "description": "text",[1][2] - this is INVALID JSON syntax)
+❌ Invalid JSON syntax (must be valid RFC 8259 JSON - check for missing quotes, extra commas, citation markers)
+
+
+================================================================================
+### CARD TITLE GENERATION (CRITICAL)
+================================================================================
+
+**Generate a catchy, representative title** that clearly communicates the card's purpose and value proposition.
+
+**Title Guidelines:**
+  - **Be specific and descriptive**: Include key entities, services, or value propositions
+  - **Use engaging language**: Make it compelling and professional (e.g., "SWIFT × Orange Business — Connectivity & Cybersecurity CVP" not "Orange Business Card")
+  - **Include context**: Add relevant qualifiers (e.g., "Customer Value Proposition", "Solution Overview", "Partnership Details")
+  - **Keep it concise**: Aim for 8-15 words, avoid overly long titles
+  - **Reflect the card's intent**: The title should immediately convey what the card is about
+  - **Use separators thoughtfully**: Use "—", "×", "•", or ":" to separate key concepts
+  - **Examples of good titles:**
+    * "SWIFT × Orange Business — Connectivity & Cybersecurity CVP"
+    * "Enterprise Data Platform — Implementation Services Overview"
+    * "Strategic Partnership: AWS × TechCorp Cloud Solutions"
+    * "Customer Success Story: Digital Transformation Journey"
+  - **Examples of poor titles:**
+    * "Company Card" (too generic)
+    * "Orange Business" (missing context)
+    * "Services" (not descriptive)
+    * "Information" (too vague)
+
+**If {{CARD_TITLE}} is provided, use it. Otherwise, generate a compelling title based on the context.**
+
+
+================================================================================
+### EMAIL BODY GENERATION (CRITICAL)
+================================================================================
+
+**Generate comprehensive, sales-oriented email bodies** that are friendly, professional, and substantive.
+
+**Email Body Guidelines:**
+  - **Length**: Generate emails that are 150-300 words (3-6 paragraphs). Avoid short, empty emails.
+  - **Sales-oriented**: Focus on value proposition, benefits, and outcomes. Highlight what makes the offering compelling.
+  - **Client-friendly tone**: Use warm, professional language. Be personable but not overly casual. Address the client's needs and interests.
+  - **Substantive content**: Include specific details from the card context:
+    * Key value propositions and benefits
+    * Relevant metrics or outcomes (if available)
+    * Specific solutions or offerings mentioned
+    * Partnership or collaboration opportunities
+    * Next steps or call-to-action
+  - **Structure**:
+    * Opening: Friendly greeting and context-setting (1-2 sentences)
+    * Body: Core value proposition with specific details (2-4 paragraphs)
+    * Closing: Next steps or invitation to discuss further (1-2 sentences)
+  - **Personalization**: Reference the contact's name and role when available. Use {{EMAIL_CONTACT_NAME}} and {{EMAIL_CONTACT_ROLE}} placeholders if they need to be replaced.
+  - **Examples of good email bodies:**
+    * "Hello [Name],
+
+I wanted to share an exciting opportunity for [Company] regarding [Topic]. Our [Solution] has helped organizations like yours achieve [Outcome]. Specifically, we offer [Key Benefit 1], [Key Benefit 2], and [Key Benefit 3].
+
+[Detailed paragraph about value proposition with specific metrics or outcomes from the card context]
+
+[Additional paragraph about partnership or collaboration opportunities]
+
+I'd love to schedule a brief call to discuss how this could benefit [Company]. Would you be available for a 30-minute conversation next week?
+
+Best regards,"
+  - **Examples of poor email bodies:**
+    * "Hello,
+
+Sharing information about our services.
+
+Best regards," (too short, no substance)
+    * "Hi,
+
+Let me know if you're interested.
+
+Thanks," (too brief, no value proposition)
+    * Generic templates without context-specific details
+
+**If {{EMAIL_BODY}} is provided, use it. Otherwise, generate a comprehensive email body based on the card context, following the guidelines above.**
 
 
 ================================================================================
@@ -322,6 +475,7 @@ If any check fails → adjust before returning.
 ================================================================================
 
 **Card Title:** {{CARD_TITLE}}
+**Description:** {{DESCRIPTION}}
 **Context (PRIMARY SOURCE OF TRUTH):** {{CONTEXT}}
 **Website URL:** {{WEBSITE_URL}}
 **Agent ID:** {{AGENT_ID}}
@@ -337,6 +491,17 @@ If any check fails → adjust before returning.
 ================================================================================
 
 Return ONLY the final AICardConfig JSON object (RFC 8259 compliant). No markdown, no explanations, no code blocks.
+
+**CRITICAL JSON VALIDATION RULES:**
+  - **NO citation markers**: Remove ALL citation markers like [1], [2], [3] from JSON strings
+    * ❌ INVALID: "description": "Text here. ",[1][2]
+    * ❌ INVALID: "description": "Text here [1][2]"
+    * ✅ VALID: "description": "Text here."
+  - **NO trailing commas**: Do NOT add commas after string values followed by citation markers
+    * ❌ INVALID: "description": "text",[1][2]
+    * ✅ VALID: "description": "text"
+  - **Valid JSON syntax**: All strings must be properly quoted, commas only between properties, no trailing commas
+  - **Clean string values**: Remove citation markers from ALL string fields (description, body, title, label, value, etc.)
 
 
 ================================================================================
@@ -366,9 +531,9 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
       ]
     },
     {
-      "title": "Nexus Brand Identity System",
+      "title": "Brand Colors",
       "type": "brand-colors",
-      "description": "Official brand color palette and design tokens",
+      "description": "Single color entry.",
       "preferredColumns": 2,
       "priority": 3,
       "fields": [
@@ -466,7 +631,7 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
       "fields": [
         {
           "label": "Annual Recurring Revenue",
-          "value": "$127.4M",
+          "value": 127400000,
           "format": "currency",
           "change": 45.2,
           "trend": "up",
@@ -485,7 +650,7 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
           "title": "Austin Headquarters",
           "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
           "meta": {
-            "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
+            "url": "https://images.nexustech.io/office/austin-hq.jpg",
             "caption": "Nexus HQ in Austin, Texas",
             "alt": "Modern office building with glass facade"
           }
@@ -704,8 +869,8 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
           "title": "Nexus Analytics Platform Overview",
           "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
           "meta": {
-            "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
-            "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
+            "url": "https://videos.nexustech.io/platform-overview",
+            "thumbnail": "https://images.nexustech.io/thumbnails/overview.jpg",
             "duration": "12:45",
             "views": 45000,
             "category": "Product Demo"

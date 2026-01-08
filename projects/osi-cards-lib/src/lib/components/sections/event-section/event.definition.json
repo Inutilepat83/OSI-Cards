@@ -76,7 +76,7 @@
   },
   "aliases": ["calendar", "schedule"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Q1 2025 Key Events",
       "type": "event",
       "description": "Major company events and milestones",
@@ -126,6 +126,26 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Q1 2025 Key Events",
+      "type": "event",
+      "description": "Major company events and milestones",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Annual Sales Kickoff",
+          "value": "SKO 2025 - Revenue Excellence",
+          "date": "2025-01-15",
+          "endDate": "2025-01-17",
+          "time": "09:00",
+          "category": "Sales",
+          "status": "confirmed",
+          "location": "Austin Convention Center, TX",
+          "attendees": 450
+        }
+      ]
     }
   }
 }

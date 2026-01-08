@@ -67,7 +67,7 @@
     "mandatoryFields": ["title"]
   },
   "examples": {
-    "example": {
+    "demo": {
       "title": "Strategic Partner Ecosystem",
       "type": "network-card",
       "description": "Key business relationships and strategic partnerships",
@@ -115,6 +115,25 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Strategic Partner Ecosystem",
+      "type": "network-card",
+      "description": "Key business relationships and strategic partnerships",
+      "preferredColumns": 1,
+      "priority": 3,
+      "items": [
+        {
+          "title": "Amazon Web Services",
+          "description": "Premier Consulting Partner - Cloud Infrastructure",
+          "meta": {
+            "influence": 95,
+            "connections": 47,
+            "status": "active",
+            "type": "Technology Partner"
+          }
+        }
+      ]
     }
   }
 }

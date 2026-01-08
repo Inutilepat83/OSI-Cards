@@ -71,7 +71,7 @@
   },
   "aliases": ["reference", "text-ref", "documentation"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Resources & Documentation",
       "type": "text-reference",
       "description": "Essential guides, documentation, and reference materials",
@@ -109,6 +109,23 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Resources & Documentation",
+      "type": "text-reference",
+      "description": "Essential guides, documentation, and reference materials",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Technical Documentation",
+          "value": "Nexus Analytics Platform - Complete Technical Reference",
+          "description": "Comprehensive documentation covering architecture, API reference, integration guides, and best practices for enterprise deployments",
+          "url": "https://docs.nexustech.io/platform",
+          "type": "Documentation",
+          "date": "2024-12-01"
+        }
+      ]
     }
   }
 }

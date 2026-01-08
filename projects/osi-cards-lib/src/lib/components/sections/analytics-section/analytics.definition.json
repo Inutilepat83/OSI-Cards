@@ -1,20 +1,27 @@
 {
   "type": "analytics",
   "name": "Analytics Section",
-  "description": "Displays metrics with visual indicators and percentages. Perfect for KPIs, performance metrics, and statistical data.",
-  "portfolioDescription": "KPIs, performance metrics, percentages, trends",
+  "description": "Displays numerical metrics with visual indicators and percentages. Perfect for KPIs, performance metrics, and statistical data. Use ONLY for numerical metrics and performance indicators - NOT for descriptive facts or capabilities. **CRITICAL: Analytics sections must NOT contain text-only content. Each field must have a structured value (number, percentage, or short text credential) - never use long descriptive paragraphs or prose text as values.**",
+  "portfolioDescription": "Numerical KPIs, performance metrics, percentages, trends (metric-only, not descriptive facts). **MUST have structured data values (numbers, percentages, short text) - NEVER text-only or descriptive paragraphs.**",
   "selector": "lib-analytics-section",
   "useCases": [
-    "Performance metrics",
-    "KPIs and dashboards",
-    "Growth statistics",
-    "Sales analytics",
-    "Customer health scores"
+    "Performance KPIs",
+    "Growth metrics",
+    "Statistical indicators",
+    "Quantitative measurements",
+    "Percentage-based metrics",
+    "Uptime and availability metrics",
+    "Revenue and financial KPIs"
   ],
   "bestPractices": [
+    "Use ONLY for numerical metrics, KPIs, and performance indicators - NOT for descriptive facts or capabilities",
+    "**CRITICAL: Analytics sections must NOT contain text-only content. Each field must have a structured value (number, percentage, or short text credential) - never use long descriptive paragraphs or prose text as values.**",
     "Include percentage values for better visualization",
     "Group related metrics together",
-    "Use performance ratings for quick assessment"
+    "Use performance ratings for quick assessment",
+    "Value should be a numerical metric, percentage, or short structured text (e.g., 'Preferred SWIFT Alliance Connect partner') - NEVER long descriptive paragraphs or prose text",
+    "Examples of valid values: 100 (number), '47.3%' (percentage), '800' (count), 'Preferred SWIFT Alliance Connect partner' (short credential text)",
+    "Examples of INVALID values: 'Orange delivers SWIFT Alliance Connect in over 100 countries and operates connectivity for 800+ SWIFT end users worldwide' (descriptive paragraph - use list section instead)"
   ],
   "rendering": {
     "usesFields": true,
@@ -31,7 +38,7 @@
       },
       "value": {
         "type": ["string", "number"],
-        "description": "Metric value"
+        "description": "Metric value - should be a numerical metric, percentage, or short structured text credential (e.g., '47.3%', '53 million+', '99.97%', 'Preferred SWIFT Alliance Connect partner'). **CRITICAL: NEVER use long descriptive paragraphs or prose text as values - analytics sections must have structured data, not text-only content.**"
       },
       "percentage": {
         "type": "number",

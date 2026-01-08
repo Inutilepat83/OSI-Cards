@@ -13,6 +13,8 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+// Chart.js providers - ng2-charts is in dependencies
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { DocsPreloadingStrategy } from './core/strategies/docs-preloading.strategy';
 // NgDoc imports removed - using custom documentation system for Angular 20 compatibility
 
@@ -38,6 +40,8 @@ import { StatePersistenceEffects } from './store/state-persistence.effects';
 
 export const config: ApplicationConfig = {
   providers: [
+    // Chart.js providers for ng2-charts
+    provideCharts(withDefaultRegisterables()),
     // Global error handler
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideAnimations(),

@@ -154,38 +154,13 @@ export function hasDiscriminator<T extends object, K extends keyof T, V extends 
 
 /**
  * All valid section types
+ *
+ * Auto-generated from section definition files (*.definition.json).
+ * Run: npm run generate:section-types
  */
-export const SECTION_TYPES = [
-  'info',
-  'analytics',
-  'list',
-  'actions',
-  'chart',
-  'gallery',
-  'map',
-  'event',
-  'contact',
-  'product',
-  'social',
-  'quote',
-  'code',
-  'video',
-  'audio',
-  'file',
-  'table',
-  'form',
-  'timeline',
-  'progress',
-  'rating',
-  'badge',
-  'alert',
-  'accordion',
-  'tabs',
-  'carousel',
-  'grid',
-  'masonry',
-  'custom',
-] as const;
+import { SECTION_TYPE_IDENTIFIERS } from '../../models/section-types.generated';
+
+export const SECTION_TYPES = SECTION_TYPE_IDENTIFIERS;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
 
@@ -201,7 +176,7 @@ export function isValidSectionType(type: string): type is SectionType {
  */
 export function getSectionTypeOrDefault(
   type: string,
-  defaultType: SectionType = 'info'
+  defaultType: SectionType = 'overview'
 ): SectionType {
   return isValidSectionType(type) ? type : defaultType;
 }

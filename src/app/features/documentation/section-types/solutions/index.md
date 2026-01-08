@@ -46,6 +46,7 @@ interface CardSection {
       "deliveryTime": "12-16 weeks",
       "complexity": "high",
       "score": 8,
+      "expressoLink": "https://expresso.example.com/data-platform",
       "outcomes": [
         "80% faster data access",
         "95% data accuracy",
@@ -65,6 +66,7 @@ interface CardSection {
       "deliveryTime": "8-12 weeks",
       "complexity": "high",
       "score": 9,
+      "expressoLink": "https://expresso.example.com/ai-ml-coe",
       "outcomes": [
         "10x faster model deployment",
         "40% improved model accuracy",
@@ -84,6 +86,7 @@ interface CardSection {
       "deliveryTime": "10-14 weeks",
       "complexity": "high",
       "score": 7,
+      "expressoLink": "https://expresso.example.com/cloud-migration",
       "outcomes": [
         "60% infrastructure cost reduction",
         "99.99% availability",
@@ -103,6 +106,7 @@ interface CardSection {
       "deliveryTime": "4-6 weeks",
       "complexity": "low",
       "score": 6,
+      "expressoLink": "https://expresso.example.com/executive-dashboard",
       "outcomes": [
         "Real-time visibility",
         "50% reduced reporting time",
@@ -115,12 +119,20 @@ interface CardSection {
 }
 ```
 
+## Expresso Integration
+
+When an `expressoLink` is provided in the solution data, an Expresso icon will appear next to the solution title. The icon:
+- Shows a tooltip "See the Solution on Expresso" on hover
+- Opens the Expresso product page in a new tab when clicked
+- Only appears when `expressoLink` is provided
+
 ## Best Practices
 
 1. Highlight key benefits
 1. Include use cases
 1. Add feature lists
 1. Show outcomes when available
+1. Add Expresso links when solutions are available on Expresso
 
 ## Component Properties
 

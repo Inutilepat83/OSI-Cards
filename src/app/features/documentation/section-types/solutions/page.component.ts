@@ -43,6 +43,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 | \`deliveryTime\` | string | Delivery timeframe |
 | \`complexity\` | string | Implementation complexity |
 | \`score\` | number | Match score from 1-10 indicating how well the solution matches requirements |
+| \`expressoLink\` | string | URL to the Expresso product page for this solution. When provided, displays a clickable Expresso icon with tooltip "See the Solution on Expresso" |
 | \`outcomes\` | array | Expected outcomes |
 
 ### Items Schema
@@ -56,6 +57,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 | \`deliveryTime\` | string | Delivery timeframe |
 | \`complexity\` | string | Implementation complexity |
 | \`score\` | number | Match score from 1-10 indicating how well the solution matches requirements |
+| \`expressoLink\` | string | URL to the Expresso product page for this solution. When provided, displays a clickable Expresso icon with tooltip "See the Solution on Expresso" |
 | \`outcomes\` | array | Expected outcomes |
 
 ## Complete Example
@@ -80,6 +82,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
       "deliveryTime": "12-16 weeks",
       "complexity": "high",
       "score": 8,
+      "expressoLink": "https://expresso.example.com/data-platform",
       "outcomes": [
         "80% faster data access",
         "95% data accuracy",
@@ -99,6 +102,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
       "deliveryTime": "8-12 weeks",
       "complexity": "high",
       "score": 9,
+      "expressoLink": "https://expresso.example.com/ai-ml-coe",
       "outcomes": [
         "10x faster model deployment",
         "40% improved model accuracy",
@@ -124,6 +128,13 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 }
 \`\`\`
 
+## Expresso Integration
+
+When an \`expressoLink\` is provided in the solution data, an Expresso icon will appear next to the solution title. The icon:
+- Shows a tooltip "See the Solution on Expresso" on hover
+- Opens the Expresso product page in a new tab when clicked
+- Only appears when \`expressoLink\` is provided
+
 ## Best Practices
 
 1. Highlight key benefits
@@ -131,6 +142,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 3. Add feature lists
 4. Show outcomes when available
 5. Include delivery timeframes
+6. Add Expresso links when solutions are available on Expresso
 
 ## Component Information
 
@@ -165,6 +177,7 @@ const demoConfig = {
       deliveryTime: '12-16 weeks',
       complexity: 'high',
       score: 8,
+      expressoLink: 'https://expresso.example.com/data-platform',
       outcomes: ['80% faster data access', '95% data accuracy', '50% reduced operational costs'],
     },
     {
@@ -181,6 +194,7 @@ const demoConfig = {
       deliveryTime: '8-12 weeks',
       complexity: 'high',
       score: 9,
+      expressoLink: 'https://expresso.example.com/ai-ml-coe',
       outcomes: [
         '10x faster model deployment',
         '40% improved model accuracy',

@@ -1,210 +1,26 @@
 #!/usr/bin/env node
 
 /**
- * Generate section type documentation from component code
+ * Generate section type documentation from definition files
  *
- * This script scans all section component files and generates comprehensive
- * documentation pages for each section type, including examples, data schemas,
- * and best practices.
+ * This script reads all section definition files (*.definition.json) and generates
+ * comprehensive documentation pages for each section type, including examples,
+ * data schemas, and best practices.
+ *
+ * Uses definition files as the single source of truth for section metadata.
  */
 
 const fs = require('fs');
 const path = require('path');
+const {
+  getSectionTypes,
+  getSectionMetadata,
+  loadSectionDefinition,
+  sectionsDir
+} = require('./utils/definition-reader');
 
 const rootDir = path.join(__dirname, '..');
-const sectionsDir = path.join(rootDir, 'projects', 'osi-cards-lib', 'src', 'lib', 'components', 'sections');
 const docsDir = path.join(rootDir, 'src', 'app', 'features', 'documentation', 'section-types');
-
-// Section type metadata
-const sectionTypes = {
-  'info': {
-    name: 'Info Section',
-    description: 'Displays key-value pairs in a clean, scannable format. Ideal for metadata, contact information, and general data display.',
-    useCases: ['Company information', 'Contact details', 'Metadata display', 'Key-value pairs'],
-    bestPractices: [
-      'Use for structured data with clear labels and values',
-      'Keep labels concise and descriptive',
-      'Use trend indicators for dynamic data',
-      'Group related fields together'
-    ]
-  },
-  'analytics': {
-    name: 'Analytics Section',
-    description: 'Displays metrics with visual indicators, trends, and percentages. Perfect for KPIs, performance metrics, and statistical data.',
-    useCases: ['Performance metrics', 'KPIs', 'Growth statistics', 'Analytics dashboards'],
-    bestPractices: [
-      'Include percentage values for better visualization',
-      'Use trend indicators (up/down/stable)',
-      'Show change values when available',
-      'Group related metrics together'
-    ]
-  },
-  'news': {
-    name: 'News Section',
-    description: 'Displays news articles, headlines, and press releases. Supports source attribution and publication dates.',
-    useCases: ['News feeds', 'Press releases', 'Announcements', 'Blog posts'],
-    bestPractices: [
-      'Include source and publication date in meta',
-      'Keep headlines concise',
-      'Use descriptions for summaries',
-      'Include status for article state'
-    ]
-  },
-  'list': {
-    name: 'List Section',
-    description: 'Displays structured lists and tables. Supports sorting, filtering, and item interactions.',
-    useCases: ['Product lists', 'Employee rosters', 'Inventory', 'Task lists'],
-    bestPractices: [
-      'Use items array for list data',
-      'Include titles and descriptions',
-      'Add status badges when relevant',
-      'Keep list items scannable'
-    ]
-  },
-  'chart': {
-    name: 'Chart Section',
-    description: 'Displays data visualizations including bar charts, line charts, pie charts, and more.',
-    useCases: ['Data visualization', 'Analytics dashboards', 'Statistical reports', 'Trend analysis'],
-    bestPractices: [
-      'Provide proper chart configuration',
-      'Include chart type specification',
-      'Use appropriate data formats',
-      'Ensure accessibility with labels'
-    ]
-  },
-  'map': {
-    name: 'Map Section',
-    description: 'Displays geographic data with embedded maps, pins, and location information.',
-    useCases: ['Office locations', 'Store finder', 'Geographic data', 'Location tracking'],
-    bestPractices: [
-      'Include coordinates or addresses',
-      'Use proper location formats',
-      'Add location metadata',
-      'Ensure map accessibility'
-    ]
-  },
-  'contact-card': {
-    name: 'Contact Card Section',
-    description: 'Displays person information with avatars, roles, contact details, and social links.',
-    useCases: ['Team members', 'Key contacts', 'Leadership', 'Stakeholders'],
-    bestPractices: [
-      'Include name, role, and contact info',
-      'Add avatar images when available',
-      'Include social media links',
-      'Group by department or role'
-    ]
-  },
-  'financials': {
-    name: 'Financials Section',
-    description: 'Displays financial data including revenue, expenses, P&L statements, and currency information.',
-    useCases: ['Financial reports', 'Quarterly earnings', 'Budget information', 'Revenue tracking'],
-    bestPractices: [
-      'Use currency formatting',
-      'Include time periods',
-      'Show trends and changes',
-      'Group by category'
-    ]
-  },
-  'event': {
-    name: 'Event Section',
-    description: 'Displays chronological events, timelines, schedules, and calendar information.',
-    useCases: ['Event calendars', 'Project timelines', 'Schedules', 'Milestones'],
-    bestPractices: [
-      'Include dates and times',
-      'Add location information',
-      'Use status for event state',
-      'Chronological ordering'
-    ]
-  },
-  'product': {
-    name: 'Product Section',
-    description: 'Displays product information, features, benefits, and pricing.',
-    useCases: ['Product catalogs', 'Feature lists', 'Product comparisons', 'Pricing tables'],
-    bestPractices: [
-      'Highlight key features',
-      'Include pricing when relevant',
-      'Use descriptions for details',
-      'Add status for availability'
-    ]
-  },
-  'overview': {
-    name: 'Overview Section',
-    description: 'Displays high-level summaries, executive dashboards, and key highlights.',
-    useCases: ['Executive summaries', 'Dashboard overviews', 'Key highlights', 'Quick insights'],
-    bestPractices: [
-      'Keep content high-level',
-      'Focus on key metrics',
-      'Use visual indicators',
-      'Limit to essential information'
-    ]
-  },
-  'social-media': {
-    name: 'Social Media Section',
-    description: 'Displays social media posts, engagement metrics, and social feed content.',
-    useCases: ['Social feeds', 'Engagement tracking', 'Social monitoring', 'Content aggregation'],
-    bestPractices: [
-      'Include platform information',
-      'Show engagement metrics',
-      'Add timestamps',
-      'Include author information'
-    ]
-  },
-  'solutions': {
-    name: 'Solutions Section',
-    description: 'Displays solution offerings, use cases, features, and benefits.',
-    useCases: ['Service offerings', 'Solution portfolios', 'Use cases', 'Case studies'],
-    bestPractices: [
-      'Highlight key benefits',
-      'Include use cases',
-      'Add feature lists',
-      'Show outcomes when available'
-    ]
-  },
-  'quotation': {
-    name: 'Quotation Section',
-    description: 'Displays quotes, testimonials, highlighted text, and citations.',
-    useCases: ['Testimonials', 'Quotes', 'Citations', 'Highlighted content'],
-    bestPractices: [
-      'Include source attribution',
-      'Add author information',
-      'Use for emphasis',
-      'Include dates when relevant'
-    ]
-  },
-  'text-reference': {
-    name: 'Text Reference Section',
-    description: 'Displays long-form text, paragraphs, articles, and reference content.',
-    useCases: ['Articles', 'Blog posts', 'Research summaries', 'Long-form content'],
-    bestPractices: [
-      'Break into readable chunks',
-      'Use proper formatting',
-      'Include citations',
-      'Add metadata for context'
-    ]
-  },
-  'network-card': {
-    name: 'Network Card Section',
-    description: 'Displays relationship graphs, network connections, and influence metrics.',
-    useCases: ['Org charts', 'Relationship maps', 'Network analysis', 'Connection graphs'],
-    bestPractices: [
-      'Show relationships clearly',
-      'Include connection types',
-      'Add influence metrics',
-      'Use visual hierarchy'
-    ]
-  },
-  'brand-colors': {
-    name: 'Brand Colors Section',
-    description: 'Displays color swatches, brand palettes, and design system colors.',
-    useCases: ['Brand assets', 'Design systems', 'Color palettes', 'Style guides'],
-    bestPractices: [
-      'Include hex/RGB values',
-      'Show color names',
-      'Group by category',
-      'Enable copy-to-clipboard'
-    ]
-  }
-};
 
 /**
  * Extract component metadata from TypeScript file
@@ -239,12 +55,15 @@ function extractComponentMetadata(filePath) {
 /**
  * Generate documentation page for a section type
  */
-function generateSectionDoc(sectionType, metadata) {
-  const sectionInfo = sectionTypes[sectionType] || {
+function generateSectionDoc(sectionType) {
+  // Load metadata from definition file
+  const sectionInfo = getSectionMetadata(sectionType) || {
+    type: sectionType,
     name: `${sectionType} Section`,
     description: `Documentation for ${sectionType} section type.`,
     useCases: [],
-    bestPractices: []
+    bestPractices: [],
+    rendering: {}
   };
 
   const pageDir = path.join(docsDir, sectionType);
@@ -288,6 +107,52 @@ const ${varName}: NgDocPage = {
 export default ${varName};
 `;
 
+  // Determine content type from rendering config
+  const usesFields = sectionInfo.rendering?.usesFields === true;
+  const usesItems = sectionInfo.rendering?.usesItems === true;
+  const usesChartData = sectionInfo.rendering?.usesChartData === true;
+
+  // Load example from definition file
+  const definition = loadSectionDefinition(sectionType);
+  let exampleJson = '';
+  if (definition && definition.examples) {
+    // Prefer demo, then doc, then long, then example (for backward compatibility)
+    const example = definition.examples.demo || 
+                    definition.examples.doc || 
+                    definition.examples.long || 
+                    definition.examples.example;
+    if (example) {
+      exampleJson = JSON.stringify(example, null, 2);
+    }
+  }
+
+  // Fallback example if none found
+  if (!exampleJson) {
+    const fallbackExample = {
+      title: `${sectionInfo.name} Example`,
+      type: sectionType,
+      description: `Example ${sectionInfo.name.toLowerCase()}`
+    };
+    if (usesItems) {
+      fallbackExample.items = [{
+        title: "Example Item",
+        description: "Item description"
+      }];
+    } else if (usesChartData) {
+      fallbackExample.chartType = "bar";
+      fallbackExample.chartData = {
+        labels: ["Example"],
+        datasets: [{ label: "Data", data: [10] }]
+      };
+    } else {
+      fallbackExample.fields = [{
+        label: "Example Label",
+        value: "Example Value"
+      }];
+    }
+    exampleJson = JSON.stringify(fallbackExample, null, 2);
+  }
+
   // Generate markdown content
   const markdown = `# ${sectionInfo.name}
 
@@ -299,7 +164,9 @@ The **${sectionInfo.name}** is used for ${sectionInfo.description.toLowerCase()}
 
 ## Use Cases
 
-${sectionInfo.useCases.map(uc => `- ${uc}`).join('\n')}
+${sectionInfo.useCases.length > 0 
+  ? sectionInfo.useCases.map(uc => `- ${uc}`).join('\n')
+  : '- General purpose section'}
 
 ## Data Schema
 
@@ -307,50 +174,18 @@ ${sectionInfo.useCases.map(uc => `- ${uc}`).join('\n')}
 interface CardSection {
   title: string;
   type: '${sectionType}';
-  ${componentMetadata.inputs.length > 0 ? componentMetadata.inputs.map(input => `${input}?: any;`).join('\n  ') : 'fields?: CardField[];'}
-  ${sectionType === 'list' || sectionType === 'news' || sectionType === 'event' ? 'items?: CardItem[];' : ''}
+  ${usesChartData 
+    ? 'chartType?: "bar" | "line" | "pie" | "doughnut";\n  chartData?: ChartData;'
+    : usesItems 
+      ? 'items?: CardItem[];'
+      : 'fields?: CardField[];'}
 }
 \`\`\`
 
 ## Example
 
 \`\`\`json
-${(() => {
-  // Try to load from definition file
-  const definitionPath = path.join(sectionsDir, `${sectionType}-section`, `${sectionType}.definition.json`);
-  if (fs.existsSync(definitionPath)) {
-    try {
-      const definitionContent = fs.readFileSync(definitionPath, 'utf8');
-      const definition = JSON.parse(definitionContent);
-      const example = definition.examples?.example || definition.examples?.complete || definition.examples?.minimal;
-      if (example) {
-        return JSON.stringify(example, null, 2);
-      }
-    } catch (error) {
-      // Fallback to basic example
-    }
-  }
-  // Fallback to basic example
-  return JSON.stringify({
-    title: `${sectionInfo.name} Example`,
-    type: sectionType,
-    ...(sectionType === 'list' || sectionType === 'news' ? {
-      items: [
-        {
-          title: "Example Item",
-          description: "Item description"
-        }
-      ]
-    } : {
-      fields: [
-        {
-          label: "Example Label",
-          value: "Example Value"
-        }
-      ]
-    })
-  }, null, 2);
-})()}
+${exampleJson}
 \`\`\`
 
 ## Best Practices
@@ -383,35 +218,22 @@ try {
     fs.mkdirSync(docsDir, { recursive: true });
   }
 
-  // Generate docs for each known section type
-  Object.keys(sectionTypes).forEach(sectionType => {
-    generateSectionDoc(sectionType, sectionTypes[sectionType]);
-  });
-
-  // Also scan for any additional section types in the codebase
-  try {
-    const files = fs.readdirSync(sectionsDir);
-    files.forEach(file => {
-      if (file.endsWith('-section.component.ts') || file.endsWith('section.component.ts')) {
-        const sectionType = file
-          .replace('-section.component.ts', '')
-          .replace('section.component.ts', '')
-          .replace('-', '');
-        if (sectionType && !sectionTypes[sectionType]) {
-          generateSectionDoc(sectionType, {
-            name: `${sectionType} Section`,
-            description: `Documentation for ${sectionType} section type.`,
-            useCases: [],
-            bestPractices: []
-          });
-        }
-      }
-    });
-  } catch (error) {
-    console.warn('Could not scan for additional section types:', error.message);
+  // Discover all section types from definition files
+  const sectionTypes = getSectionTypes();
+  
+  if (sectionTypes.length === 0) {
+    console.warn('⚠️  No section types found. Make sure definition files exist.');
+    process.exit(1);
   }
 
-  console.log('✅ Section type documentation generation complete');
+  console.log(`📚 Generating documentation for ${sectionTypes.length} section types...`);
+
+  // Generate docs for each section type discovered from definition files
+  sectionTypes.forEach(sectionType => {
+    generateSectionDoc(sectionType);
+  });
+
+  console.log(`✅ Section type documentation generation complete (${sectionTypes.length} sections)`);
 } catch (error) {
   console.error('❌ Error generating section docs:', error);
   process.exit(1);

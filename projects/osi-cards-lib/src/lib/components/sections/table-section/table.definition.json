@@ -80,7 +80,7 @@
   },
   "aliases": ["data-table", "grid"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Sales Performance Q1 2025",
       "type": "table",
       "description": "Quarterly sales data by product and region",
@@ -157,6 +157,19 @@
       },
       "preferredColumns": 3,
       "priority": 2
+    },
+    "doc": {
+      "title": "Sales Performance Q1 2025",
+      "type": "table",
+      "description": "Quarterly sales data by product and region",
+      "preferredColumns": 2,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Sales Performance Q1 2025",
+          "value": "Displays structured tabular data with sorting, filtering, and pagination capabilities."
+        }
+      ]
     }
   }
 }

@@ -73,7 +73,7 @@ const agentMiddleware = eventService.createTransformMiddleware(event => {
     type: 'card_interaction',
     data: event
   });
-  
+
   return event;
 });
 
@@ -108,10 +108,10 @@ streamingService.configure({
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { 
-  CardFacadeService, 
+import {
+  CardFacadeService,
   OSICardsStreamingService,
-  EventMiddlewareService 
+  EventMiddlewareService
 } from 'osi-cards-lib';
 
 @Component({
@@ -128,9 +128,9 @@ export class AgentIntegrationComponent {
   private cardFacade = inject(CardFacadeService);
   private streaming = inject(OSICardsStreamingService);
   private events = inject(EventMiddlewareService);
-  
+
   card: AICardConfig | null = null;
-  
+
   ngOnInit() {
     // Subscribe to agent updates
     this.streaming.stream$.subscribe(update => {
@@ -140,17 +140,17 @@ export class AgentIntegrationComponent {
         this.card = this.cardFacade.createCard(update);
       }
     });
-    
+
     // Send events to agent
     this.events.processedEvents$.subscribe(event => {
       this.sendToAgent(event);
     });
   }
-  
+
   onEvent(event: SectionRenderEvent) {
     // Handle user interactions
   }
-  
+
   private sendToAgent(data: any) {
     // Send to your agent workflow
   }

@@ -1,10 +1,14 @@
 {
   "type": "list",
   "name": "List Section",
-  "portfolioDescription": "Collections of related items (tasks, features, opportunities)",
-  "description": "Displays structured lists and tables. Supports sorting, filtering, and item interactions.",
+  "portfolioDescription": "Descriptive facts, capabilities, operational points, collections of related items (tasks, features, opportunities, informational points)",
+  "description": "Displays structured lists of items including descriptive facts, capabilities, operational points, tasks, features, and opportunities. Supports sorting, filtering, and item interactions.",
   "selector": "lib-list-section",
   "useCases": [
+    "Descriptive facts and capabilities",
+    "Operational points and success factors",
+    "Network reach and delivery footprint descriptions",
+    "Informational items with descriptive text",
     "Product lists",
     "Feature lists",
     "Task lists",
@@ -12,6 +16,7 @@
     "Requirements"
   ],
   "bestPractices": [
+    "Use for descriptive facts, capabilities, and operational points - even if they contain numbers, if the primary purpose is to describe rather than measure",
     "Use items array for list data",
     "Include titles and descriptions",
     "Add status badges when relevant",
@@ -69,7 +74,7 @@
   },
   "aliases": ["table", "checklist"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Product Roadmap Q1-Q2 2025",
       "type": "list",
       "description": "Strategic initiatives and feature development",
@@ -98,6 +103,22 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Product Roadmap Q1-Q2 2025",
+      "type": "list",
+      "description": "Strategic initiatives and feature development",
+      "preferredColumns": 1,
+      "priority": 3,
+      "items": [
+        {
+          "title": "AI-Powered Forecasting Engine",
+          "description": "Machine learning model for predictive analytics with 95% accuracy target",
+          "icon": "🤖",
+          "status": "in-progress",
+          "priority": "critical"
+        }
+      ]
     }
   }
 }

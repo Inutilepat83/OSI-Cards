@@ -214,29 +214,11 @@
   opacity: 0.9;
   text-align: left;
   width: 100%;
-  @include text-overflow-ellipsis(2); // Limit to 2 lines by default
   overflow-wrap: break-word;
   word-wrap: break-word;
   transition:
     opacity var(--osi-section-item-transition),
     color var(--osi-section-item-transition);
-}
-
-.solution-description.expanded {
-  @include text-overflow-ellipsis(unset); // Show full text when expanded
-}
-
-.solution-description-expand-button {
-  @include button-text-minimal;
-  margin: var(--osi-section-item-gap-xs) 0 0 0;
-  padding: 0;
-  align-self: flex-start;
-  font-size: var(--text-sm);
-  color: var(--accent);
-  text-align: left;
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
 // BENEFITS LIST - Compact spacing

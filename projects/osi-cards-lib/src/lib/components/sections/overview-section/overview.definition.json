@@ -1,0 +1,104 @@
+{
+  "type": "overview",
+  "name": "Overview Section",
+  "description": "Displays high-level summaries, executive dashboards, and key highlights. Supports newline characters in field values for better text formatting and automatically styles uppercase section headers.",
+  "portfolioDescription": "Executive summary, high-level positioning",
+  "selector": "lib-overview-section",
+  "useCases": [
+    "Executive summaries",
+    "Company overviews",
+    "Key highlights",
+    "Dashboard summaries",
+    "Strategic positioning",
+    "Mission and vision statements",
+    "Business descriptions"
+  ],
+  "bestPractices": [
+    "Use for high-level information and summaries",
+    "Support newline formatting for multi-paragraph content",
+    "Keep content concise and scannable",
+    "Use empty label for single text blocks (formatted as section headers)",
+    "Include structured information with labels for key-value pairs",
+    "Use uppercase headers for section divisions within text blocks"
+  ],
+  "rendering": {
+    "usesFields": true,
+    "usesItems": false,
+    "defaultColumns": 1,
+    "supportsCollapse": true,
+    "supportsEmoji": false
+  },
+  "fieldSchema": {
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "string",
+        "description": "Field label (optional - empty string for single text blocks)"
+      },
+      "value": {
+        "type": "string",
+        "description": "Field value - supports newline characters for multi-line content. Uppercase headers are automatically styled."
+      },
+      "highlight": {
+        "type": "boolean",
+        "description": "Whether to visually emphasize this field"
+      }
+    },
+    "required": ["value"]
+  },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["value"]
+  },
+  "aliases": ["summary", "executive"],
+  "examples": {
+    "demo": {
+      "title": "Executive Summary",
+      "type": "overview",
+      "description": "Strategic company overview and positioning",
+      "preferredColumns": 1,
+      "priority": 1,
+      "fields": [
+        {
+          "label": "",
+          "value": "ABOUT\nNexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage.\n\nMISSION\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.\n\nVISION\nA world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency. We envision a future where data intelligence is seamlessly integrated into every aspect of business operations.\n\nCORE VALUES\nInnovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence"
+        }
+      ]
+    },
+    "doc": {
+      "title": "Executive Overview",
+      "type": "overview",
+      "description": "Single overview field.",
+      "preferredColumns": 1,
+      "priority": 1,
+      "fields": [
+        {
+          "label": "Summary",
+          "value": "Example card demonstrating all supported section types with one valid entry each."
+        }
+      ]
+    },
+    "long": {
+      "title": "Comprehensive Company Overview",
+      "type": "overview",
+      "description": "Detailed company information including history, mission, vision, values, and strategic positioning",
+      "preferredColumns": 1,
+      "priority": 1,
+      "fields": [
+        {
+          "label": "",
+          "value": "COMPANY HISTORY\nFounded in 2018 by Dr. Sarah Mitchell and James Park, Nexus Technologies emerged from a shared vision to transform how enterprises leverage data. Starting with a small team in Austin, Texas, we've grown to serve over 450 enterprise customers across 35 countries. Our journey has been marked by continuous innovation, strategic partnerships, and an unwavering commitment to customer success.\n\nMISSION STATEMENT\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.\n\nVISION\nA world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency. We envision a future where data intelligence is seamlessly integrated into every aspect of business operations.\n\nCORE VALUES\nInnovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence\n\nSTRATEGIC POSITIONING\nAs a leader in AI-powered analytics, we differentiate through our unique combination of enterprise-grade security, intuitive user experience, and cutting-edge AI capabilities. Our platform serves as the intelligence layer that connects disparate data sources, enabling organizations to unlock insights that were previously inaccessible."
+        },
+        {
+          "label": "Market Position",
+          "value": "Recognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms, with highest scores for AI/ML capabilities and customer experience."
+        },
+        {
+          "label": "Key Differentiators",
+          "value": "Enterprise-grade security • Intuitive user experience • Cutting-edge AI • Seamless integrations • Proven ROI"
+        }
+      ]
+    }
+  }
+}

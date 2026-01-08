@@ -110,11 +110,13 @@ function main() {
       const definition = JSON.parse(content);
 
       // Get example from examples (try multiple keys in priority order)
-      // Priority: example > demo > complete > doc > first available
+      // Priority: demo > complete > example > long > doc > first available
+      // Prefer demo/complete for comprehensive showcase examples
       const example =
-        definition.examples?.example ||
         definition.examples?.demo ||
         definition.examples?.complete ||
+        definition.examples?.example ||
+        definition.examples?.long ||
         definition.examples?.doc ||
         (definition.examples && Object.values(definition.examples)[0]);
 

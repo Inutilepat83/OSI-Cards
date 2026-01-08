@@ -74,7 +74,7 @@
   },
   "aliases": ["press", "articles"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Latest News & Press Coverage",
       "type": "news",
       "description": "Recent company news, press releases, and industry recognition",
@@ -114,6 +114,26 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Latest News & Press Coverage",
+      "type": "news",
+      "description": "Recent company news, press releases, and industry recognition",
+      "preferredColumns": 1,
+      "priority": 3,
+      "items": [
+        {
+          "title": "Nexus Technologies Closes $85M Series C to Accelerate AI Innovation",
+          "description": "Funding led by Sequoia Capital will fuel expansion of AI capabilities, global go-to-market, and strategic acquisitions. Company valuation reaches $1.2B.",
+          "meta": {
+            "source": "TechCrunch",
+            "date": "2025-01-20",
+            "url": "https://techcrunch.com/nexus-series-c",
+            "category": "Funding"
+          },
+          "status": "published"
+        }
+      ]
     }
   }
 }

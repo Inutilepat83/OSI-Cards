@@ -3,9 +3,7 @@
   </lib-section-header>
 
   <div class="list-container" *ngIf="section.items?.length">
-    <div class="section-item" *ngFor="let item of section.items; let i = index" [class.expanded]="expandedIndex === i">
-      <span class="list-icon" *ngIf="item.icon">{{ item.icon }}</span>
-      <span class="list-bullet" *ngIf="!item.icon">•</span>
+    <div class="section-item" *ngFor="let item of section.items; let i = index">
       <div class="list-content">
         <div class="list-header">
           <h4 class="list-title">{{ item.title }}</h4>
@@ -19,19 +17,9 @@
           </div>
         </div>
         <div class="list-description-wrapper" *ngIf="item.description">
-          <p class="list-description" [class.list-description--expanded]="isItemExpanded(i)" *ngIf="item.description">
+          <p class="list-description" *ngIf="item.description">
             {{ item.description }}
           </p>
-          <button
-            *ngIf="shouldShowExpandButton(item)"
-            class="list-expand-btn"
-            type="button"
-            (click)="toggleExpanded(i); $event.stopPropagation()"
-            [attr.aria-expanded]="isItemExpanded(i)"
-            [attr.aria-label]="(isItemExpanded(i) ? 'Collapse' : 'Expand') + ' description'"
-          >
-            {{ isItemExpanded(i) ? 'Show less' : 'Show more' }}
-          </button>
         </div>
       </div>
     </div>

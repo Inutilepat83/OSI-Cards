@@ -315,8 +315,6 @@ export class SolutionsSectionComponent
     if (!solution?.expressoLink) {
       return '';
     }
-    return typeof solution.expressoLink === 'string'
-      ? solution.expressoLink
-      : String(solution.expressoLink);
+    return 'See the Solution on Expresso';
   }
 }

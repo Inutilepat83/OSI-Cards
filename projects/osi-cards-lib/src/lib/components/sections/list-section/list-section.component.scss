@@ -1,0 +1,163 @@
+// =====================================================================
+// LIST SECTION - Clean & Modern
+// =====================================================================
+
+// Use design system (must come before @import)
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; // Allow shrinking below 400px
+
+  @include responsive-down("sm") {
+    min-width: 0;
+  }
+}
+
+.list-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap) !important;
+}
+
+// Container - minimal styling, design moved to section-item
+.list-container {
+  width: 100%; // Ensure full width
+  box-sizing: border-box; // Include padding in width
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap) !important;
+}
+
+// Section Item - apply card design to items
+.section-item {
+  @include card("normal");
+  width: 100%; // Ensure full width expansion
+  display: flex;
+  align-items: flex-start;
+  box-sizing: border-box; // Include padding in width
+  // Margin removed - parent container has gap: 10px
+  -webkit-tap-highlight-color: transparent;
+
+  // Unified hover effect
+  @include section-card-hover;
+
+  &:not(:last-child) {
+    // Margin removed - parent container has gap: 10px
+  }
+
+  &:hover {
+    .list-title {
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--accent-rgb), 0.7);
+    outline-offset: 2px;
+  }
+}
+
+// Content
+.list-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
+  min-width: 0;
+  width: 100%; // Ensure full width expansion
+  box-sizing: border-box;
+}
+
+// Header
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--osi-section-item-gap); // Standardized gap token
+  flex-wrap: wrap;
+}
+
+.list-title {
+  @include heading(4);
+  flex: 1;
+  margin: 0;
+  transition: color var(--osi-section-item-transition);
+}
+
+.list-badges {
+  display: flex;
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
+  flex-shrink: 0;
+}
+
+// Description wrapper
+.list-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
+}
+
+// Description - improved contrast for better readability
+.list-description {
+  @include body-text("small");
+  // Enhanced contrast - using foreground with reduced opacity instead of muted-foreground
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  margin: 0;
+  line-height: var(--leading-relaxed);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-weight: var(--font-normal);
+}
+
+// Expanded item reveals full description without changing global padding
+.list-item.expanded {
+  background: var(--osi-section-item-background-hover);
+  border-color: var(--osi-section-item-border-hover);
+  box-shadow: var(--osi-section-item-shadow-hover);
+}
+
+// Responsive - mixin handles spacing, only override layout if needed
+@include responsive-down("sm") {
+  .list-container {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .list-item {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .list-header {
+    flex-direction: column;
+    gap: var(--osi-section-item-gap-xs); // Standardized gap token
+  }
+
+  .list-content {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .list-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-item {
+    transition: none;
+    transform: none !important;
+  }
+}

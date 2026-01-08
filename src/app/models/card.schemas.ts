@@ -6,6 +6,7 @@
  */
 
 import { z } from 'zod';
+import { SECTION_TYPE_IDENTIFIERS_FOR_ZOD } from './section-types.generated';
 
 /**
  * Card Field Schema
@@ -160,45 +161,15 @@ export const cardActionSchema = z
 
 /**
  * Card Section Schema
+ *
+ * Section types are auto-generated from section definition files (*.definition.json).
+ * Run: npm run generate:section-types
  */
 export const cardSectionSchema = z
   .object({
     id: z.string().optional(),
     title: z.string(),
-    type: z.enum([
-      'timeline',
-      'analytics',
-      'metrics',
-      'contact-card',
-      'network-card',
-      'map',
-      'financials',
-      'locations',
-      'event',
-      'project',
-      'list',
-      'table',
-      'chart',
-      'product',
-      'solutions',
-      'stats',
-      'quotation',
-      'reference',
-      'text-reference',
-      'text-ref',
-      'brand-colors',
-      'news',
-      'social-media',
-      'faq', // NEW: FAQ sections
-      'gallery', // NEW: Gallery sections
-      'video', // NEW: Video sections
-      'hero', // NEW: Hero sections
-      'profile-card', // NEW: Profile card sections
-      'article', // NEW: Article sections
-      'text', // NEW: Text sections
-      'data-grid', // NEW: Data grid sections
-      'form', // NEW: Form sections
-    ]),
+    type: z.enum(SECTION_TYPE_IDENTIFIERS_FOR_ZOD),
     description: z.string().optional(),
     subtitle: z.string().optional(),
     colSpan: z.number().int().min(1).max(4).optional(),

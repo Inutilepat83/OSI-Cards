@@ -70,7 +70,7 @@
   },
   "aliases": ["photos", "images"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Life at Nexus",
       "type": "gallery",
       "description": "Behind the scenes at our global offices",
@@ -102,6 +102,24 @@
             "url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop",
             "caption": "NexusCon 2024 main stage",
             "alt": "Speaker on stage at large conference"
+          }
+        }
+      ]
+    },
+    "doc": {
+      "title": "Life at Nexus",
+      "type": "gallery",
+      "description": "Behind the scenes at our global offices",
+      "preferredColumns": 2,
+      "priority": 3,
+      "items": [
+        {
+          "title": "Austin Headquarters",
+          "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
+          "meta": {
+            "url": "https://images.nexustech.io/office/austin-hq.jpg",
+            "caption": "Nexus HQ in Austin, Texas",
+            "alt": "Modern office building with glass facade"
           }
         }
       ]

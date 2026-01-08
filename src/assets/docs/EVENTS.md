@@ -31,7 +31,7 @@ import { SectionRenderEvent } from 'osi-cards-lib';
 export class MyComponent {
   onSectionEvent(event: SectionRenderEvent): void {
     console.log('Section event:', event.type, event.section.title);
-    
+
     if (event.type === 'field') {
       console.log('Field clicked:', event.field?.label);
     }
@@ -57,7 +57,7 @@ const myMiddleware: EventMiddleware = {
   handle: (event: SectionRenderEvent, next) => {
     // Transform or log the event
     console.log('Processing event:', event);
-    
+
     // Pass to next middleware
     return next(event);
   }

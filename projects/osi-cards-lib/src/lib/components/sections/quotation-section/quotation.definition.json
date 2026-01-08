@@ -70,7 +70,7 @@
   },
   "aliases": ["quote", "testimonial"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Customer Success Stories",
       "type": "quotation",
       "description": "What industry leaders say about our platform",
@@ -119,6 +119,24 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Customer Success Stories",
+      "type": "quotation",
+      "description": "What industry leaders say about our platform",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Enterprise Transformation",
+          "value": "\"Nexus Analytics has fundamentally transformed how we approach data-driven decision making. Within six months of deployment, we've seen a 47% reduction in time-to-insight and our business users are now self-sufficient in creating their own reports. The ROI has been extraordinary.\"",
+          "description": "Jennifer Martinez, Chief Data Officer at Fortune 500 Retailer",
+          "author": "Jennifer Martinez",
+          "role": "Chief Data Officer",
+          "company": "MegaMart Corp",
+          "date": "2024-11-15"
+        }
+      ]
     }
   }
 }

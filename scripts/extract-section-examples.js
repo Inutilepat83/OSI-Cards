@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { getSectionMetadata } = require('./utils/definition-reader');
 
 const ROOT_DIR = path.join(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT_DIR, 'projects', 'osi-cards-lib', 'src', 'lib', 'components', 'sections');
@@ -67,18 +68,21 @@ function optimizeExample(example, sectionType) {
     }
   }
 
+  // Get section metadata from definition file
+  const metadata = getSectionMetadata(sectionType);
+  const rendering = metadata?.rendering || {};
+
   // Ensure layout parameters are present
   if (!optimized.preferredColumns && !optimized.colSpan) {
-    // Set default based on section type
-    if (['contact-card', 'analytics', 'gallery', 'chart'].includes(sectionType)) {
-      optimized.preferredColumns = 2;
-    } else {
-      optimized.preferredColumns = 1;
-    }
+    // Use defaultColumns from definition file, or fallback to 1
+    optimized.preferredColumns = rendering.defaultColumns || 1;
   }
 
   if (!optimized.priority) {
-    // Set default priority based on section type
+    // Set default priority based on section type from definition file
+    // Priority 1: overview, contact-card (key people/summaries)
+    // Priority 2: analytics, chart, financials (important metrics)
+    // Priority 3: everything else (supporting content)
     if (['overview', 'contact-card'].includes(sectionType)) {
       optimized.priority = 1;
     } else if (['analytics', 'chart', 'financials'].includes(sectionType)) {
@@ -99,13 +103,13 @@ function extractExample(definitionPath, sectionType) {
     const content = fs.readFileSync(definitionPath, 'utf8');
     const definition = JSON.parse(content);
 
-    // Get example from examples.complete
-    let example = definition.examples?.complete;
-
-    if (!example) {
-      // Fallback to examples.minimal
-      example = definition.examples?.minimal;
-    }
+    // Get example - prefer demo, then doc, then long, then complete, then minimal
+    let example = definition.examples?.demo ||
+                  definition.examples?.doc ||
+                  definition.examples?.long ||
+                  definition.examples?.complete ||
+                  definition.examples?.minimal ||
+                  definition.examples?.example; // backward compatibility
 
     if (!example) {
       log(`  ⚠️  No example found in ${sectionType}`, colors.yellow);

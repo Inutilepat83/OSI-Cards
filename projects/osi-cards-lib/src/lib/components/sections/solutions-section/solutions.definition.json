@@ -83,7 +83,7 @@
   },
   "aliases": ["services", "offerings"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Professional Services Portfolio",
       "type": "solutions",
       "description": "End-to-end implementation and consulting services",
@@ -168,6 +168,36 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Professional Services Portfolio",
+      "type": "solutions",
+      "description": "End-to-end implementation and consulting services",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "title": "Enterprise Data Platform Implementation",
+          "description": "Complete data infrastructure setup including data warehouse, ETL pipelines, and governance framework tailored to your business needs",
+          "category": "Data Infrastructure",
+          "benefits": [
+            "Unified data architecture",
+            "Real-time data processing",
+            "Automated data quality",
+            "Scalable cloud infrastructure",
+            "Built-in compliance controls"
+          ],
+          "deliveryTime": "12-16 weeks",
+          "complexity": "high",
+          "outcomes": [
+            "80% faster data access",
+            "95% data accuracy",
+            "50% reduced operational costs"
+          ],
+          "label": "Professional Services Portfolio",
+          "value": "Sample value"
+        }
+      ]
     }
   }
 }

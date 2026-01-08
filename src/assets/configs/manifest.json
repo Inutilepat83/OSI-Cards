@@ -1,20 +1,19 @@
 {
-  "version": "1.5.2",
-  "generatedAt": "2025-12-01T10:05:13.198Z",
+  "version": "1.5.45",
+  "generatedAt": "2026-01-08T13:22:10.631Z",
   "cards": [
     {
       "id": "all-components",
       "type": "all",
       "path": "all/all-components.json",
       "format": "json",
-      "size": 12908,
+      "size": 35658,
       "priority": "high",
-      "sectionCount": 17,
+      "sectionCount": 21,
       "title": "All Sections Demo",
       "metadata": {
-        "subtitle": "Complete Component Showcase",
         "description": "This card demonstrates all available section types in the OSI Cards library",
-        "lastUpdated": "2025-12-01T10:04:58.396Z",
+        "lastUpdated": "2026-01-08T13:22:01.891Z",
         "hasActions": true
       }
     },
@@ -23,14 +22,13 @@
       "type": "company",
       "path": "companies/company-enterprise-v3.json",
       "format": "json",
-      "size": 5380,
+      "size": 880,
       "priority": "high",
-      "sectionCount": 7,
+      "sectionCount": 2,
       "title": "GlobalTech Industries",
       "metadata": {
-        "subtitle": "Leading Enterprise Technology Solutions Provider",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.025Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -39,14 +37,13 @@
       "type": "company",
       "path": "companies/company-enhanced-v2.json",
       "format": "json",
-      "size": 2223,
+      "size": 826,
       "priority": "high",
-      "sectionCount": 4,
+      "sectionCount": 2,
       "title": "TechVenture Solutions",
       "metadata": {
-        "subtitle": "Enterprise Technology Services",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.021Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -55,30 +52,13 @@
       "type": "company",
       "path": "companies/company-basic-v1.json",
       "format": "json",
-      "size": 934,
+      "size": 745,
       "priority": "high",
       "sectionCount": 2,
       "title": "Acme Corporation",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.003Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "product-enterprise-v3",
-      "type": "product",
-      "path": "products/product-enterprise-v3.json",
-      "format": "json",
-      "size": 6714,
-      "priority": "medium",
-      "sectionCount": 7,
-      "title": "AI Insights Platform",
-      "metadata": {
-        "subtitle": "Enterprise AI Analytics & Intelligence",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -87,30 +67,13 @@
       "type": "contact",
       "path": "contacts/contact-enterprise-v3.json",
       "format": "json",
-      "size": 5288,
+      "size": 918,
       "priority": "medium",
-      "sectionCount": 8,
+      "sectionCount": 2,
       "title": "Alex Patel",
       "metadata": {
-        "subtitle": "Chief Financial Officer",
         "description": null,
-        "lastUpdated": "2025-11-28T16:53:02.668Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "product-enhanced-v2",
-      "type": "product",
-      "path": "products/product-enhanced-v2.json",
-      "format": "json",
-      "size": 3756,
-      "priority": "medium",
-      "sectionCount": 6,
-      "title": "SecureGuard Enterprise",
-      "metadata": {
-        "subtitle": "Enterprise Cybersecurity Platform",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -119,30 +82,28 @@
       "type": "contact",
       "path": "contacts/contact-enhanced-v2.json",
       "format": "json",
-      "size": 3538,
+      "size": 866,
       "priority": "medium",
-      "sectionCount": 5,
+      "sectionCount": 2,
       "title": "Sarah Chen",
       "metadata": {
-        "subtitle": "Chief Marketing Officer",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.070Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
     {
-      "id": "product-basic-v1",
+      "id": "product-enterprise-v3",
       "type": "product",
-      "path": "products/product-basic-v1.json",
+      "path": "products/product-enterprise-v3.json",
       "format": "json",
-      "size": 1188,
+      "size": 858,
       "priority": "medium",
       "sectionCount": 2,
-      "title": "Cloud Backup Solution",
+      "title": "EnterpriseSync Suite",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2025-12-12T21:16:18.282Z",
         "hasActions": true
       }
     },
@@ -151,46 +112,43 @@
       "type": "contact",
       "path": "contacts/contact-basic-v1.json",
       "format": "json",
-      "size": 1081,
+      "size": 802,
       "priority": "medium",
       "sectionCount": 2,
       "title": "John Smith",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.038Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
     {
-      "id": "opportunity-enterprise-v3",
-      "type": "opportunity",
-      "path": "opportunities/opportunity-enterprise-v3.json",
+      "id": "product-enhanced-v2",
+      "type": "product",
+      "path": "products/product-enhanced-v2.json",
       "format": "json",
-      "size": 7759,
-      "priority": "low",
-      "sectionCount": 8,
-      "title": "Digital Transformation Partnership",
+      "size": 790,
+      "priority": "medium",
+      "sectionCount": 2,
+      "title": "SecureGuard Enterprise",
       "metadata": {
-        "subtitle": "Multi-Year Enterprise Digital Transformation",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2025-12-12T21:16:18.282Z",
         "hasActions": true
       }
     },
     {
-      "id": "sko-enterprise-v3",
-      "type": "sko",
-      "path": "sko/sko-enterprise-v3.json",
+      "id": "product-basic-v1",
+      "type": "product",
+      "path": "products/product-basic-v1.json",
       "format": "json",
-      "size": 7528,
-      "priority": "low",
-      "sectionCount": 5,
-      "title": "Top Orange Business Solutions",
+      "size": 731,
+      "priority": "medium",
+      "sectionCount": 2,
+      "title": "Cloud Backup Solution",
       "metadata": {
-        "subtitle": "Recommended Solutions for Enterprise Manufacturing Client",
         "description": null,
-        "lastUpdated": "2025-11-25T07:17:24.622Z",
+        "lastUpdated": "2025-12-08T13:12:42.203Z",
         "hasActions": true
       }
     },
@@ -199,46 +157,28 @@
       "type": "event",
       "path": "events/event-enterprise-v3.json",
       "format": "json",
-      "size": 5961,
+      "size": 887,
       "priority": "low",
-      "sectionCount": 7,
-      "title": "Global Business Forum 2025",
+      "sectionCount": 2,
+      "title": "Global Business Summit 2025",
       "metadata": {
-        "subtitle": "World's Premier Business & Innovation Summit",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
     {
-      "id": "analytics-enterprise-v3",
-      "type": "analytics",
-      "path": "analytics/analytics-enterprise-v3.json",
+      "id": "opportunity-enterprise-v3",
+      "type": "opportunity",
+      "path": "opportunities/opportunity-enterprise-v3.json",
       "format": "json",
-      "size": 4746,
+      "size": 836,
       "priority": "low",
-      "sectionCount": 7,
-      "title": "Customer Health Scorecard",
+      "sectionCount": 2,
+      "title": "Digital Transformation Partnership",
       "metadata": {
-        "subtitle": "Account Management Insights & Analytics",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "sko-enhanced-v2",
-      "type": "sko",
-      "path": "sko/sko-enhanced-v2.json",
-      "format": "json",
-      "size": 4538,
-      "priority": "low",
-      "sectionCount": 4,
-      "title": "Top Orange Business Solutions",
-      "metadata": {
-        "subtitle": "Recommended Solutions for Healthcare Client",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2025-12-12T21:16:18.282Z",
         "hasActions": true
       }
     },
@@ -247,14 +187,13 @@
       "type": "event",
       "path": "events/event-enhanced-v2.json",
       "format": "json",
-      "size": 4112,
+      "size": 823,
       "priority": "low",
-      "sectionCount": 6,
+      "sectionCount": 2,
       "title": "Tech Summit 2025",
       "metadata": {
-        "subtitle": "Global Technology Innovation Conference",
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -263,62 +202,13 @@
       "type": "opportunity",
       "path": "opportunities/opportunity-enhanced-v2.json",
       "format": "json",
-      "size": 3960,
-      "priority": "low",
-      "sectionCount": 6,
-      "title": "Enterprise Cloud Migration",
-      "metadata": {
-        "subtitle": "Financial Services Cloud Transformation",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.074Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "analytics-enhanced-v2",
-      "type": "analytics",
-      "path": "analytics/analytics-enhanced-v2.json",
-      "format": "json",
-      "size": 2811,
-      "priority": "low",
-      "sectionCount": 5,
-      "title": "Marketing Campaign ROI",
-      "metadata": {
-        "subtitle": "Holiday Season 2024 Campaign Analysis",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "sko-basic-v1",
-      "type": "sko",
-      "path": "sko/sko-basic-v1.json",
-      "format": "json",
-      "size": 1080,
-      "priority": "low",
-      "sectionCount": 1,
-      "title": "Top Orange Business Solutions",
-      "metadata": {
-        "subtitle": "Recommended Solutions for Financial Services",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "analytics-basic-v1",
-      "type": "analytics",
-      "path": "analytics/analytics-basic-v1.json",
-      "format": "json",
-      "size": 1067,
+      "size": 763,
       "priority": "low",
       "sectionCount": 2,
-      "title": "Sales Performance Dashboard",
+      "title": "Enterprise Cloud Migration",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2025-12-12T21:16:18.282Z",
         "hasActions": true
       }
     },
@@ -327,14 +217,13 @@
       "type": "event",
       "path": "events/event-basic-v1.json",
       "format": "json",
-      "size": 1056,
+      "size": 760,
       "priority": "low",
       "sectionCount": 2,
       "title": "Tech Summit 2025",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
         "hasActions": true
       }
     },
@@ -343,14 +232,103 @@
       "type": "opportunity",
       "path": "opportunities/opportunity-basic-v1.json",
       "format": "json",
-      "size": 1018,
+      "size": 723,
       "priority": "low",
       "sectionCount": 2,
       "title": "Cloud Migration Project",
       "metadata": {
-        "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.074Z",
+        "lastUpdated": "2025-12-08T13:12:42.203Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "analytics-enterprise-v3",
+      "type": "analytics",
+      "path": "analytics/analytics-enterprise-v3.json",
+      "format": "json",
+      "size": 720,
+      "priority": "low",
+      "sectionCount": 2,
+      "title": "Global Sales Performance",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2025-12-12T21:16:18.283Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "analytics-basic-v1",
+      "type": "analytics",
+      "path": "analytics/analytics-basic-v1.json",
+      "format": "json",
+      "size": 709,
+      "priority": "low",
+      "sectionCount": 2,
+      "title": "Sales Performance Dashboard",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2026-01-06T09:43:27.212Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "analytics-enhanced-v2",
+      "type": "analytics",
+      "path": "analytics/analytics-enhanced-v2.json",
+      "format": "json",
+      "size": 701,
+      "priority": "low",
+      "sectionCount": 2,
+      "title": "Marketing Campaign ROI",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2025-12-12T21:16:18.283Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-enterprise-v3",
+      "type": "sko",
+      "path": "sko/sko-enterprise-v3.json",
+      "format": "json",
+      "size": 610,
+      "priority": "low",
+      "sectionCount": 1,
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2026-01-08T08:33:08.685Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-enhanced-v2",
+      "type": "sko",
+      "path": "sko/sko-enhanced-v2.json",
+      "format": "json",
+      "size": 602,
+      "priority": "low",
+      "sectionCount": 1,
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2026-01-08T08:33:04.188Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-basic-v1",
+      "type": "sko",
+      "path": "sko/sko-basic-v1.json",
+      "format": "json",
+      "size": 561,
+      "priority": "low",
+      "sectionCount": 1,
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "description": null,
+        "lastUpdated": "2026-01-08T08:33:02.212Z",
         "hasActions": true
       }
     }

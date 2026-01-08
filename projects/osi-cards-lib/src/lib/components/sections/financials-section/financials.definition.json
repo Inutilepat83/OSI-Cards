@@ -67,7 +67,7 @@
     "mandatoryFields": ["label"]
   },
   "examples": {
-    "example": {
+    "demo": {
       "title": "FY2024 Financial Summary",
       "type": "financials",
       "description": "Annual financial performance and key metrics",
@@ -105,6 +105,23 @@
       ],
       "preferredColumns": 1,
       "priority": 2
+    },
+    "doc": {
+      "title": "FY2024 Financial Summary",
+      "type": "financials",
+      "description": "Annual financial performance and key metrics",
+      "preferredColumns": 2,
+      "priority": 2,
+      "fields": [
+        {
+          "label": "Annual Recurring Revenue",
+          "value": 127400000,
+          "format": "currency",
+          "change": 45.2,
+          "trend": "up",
+          "period": "FY2024"
+        }
+      ]
     }
   }
 }

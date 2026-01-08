@@ -62,7 +62,7 @@
   },
   "aliases": ["history", "milestones"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Company Journey",
       "type": "timeline",
       "description": "Key milestones in Nexus Technologies' growth story",
@@ -97,6 +97,24 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Company Journey",
+      "type": "timeline",
+      "description": "Key milestones in Nexus Technologies' growth story",
+      "preferredColumns": 1,
+      "priority": 3,
+      "items": [
+        {
+          "title": "Company Founded",
+          "description": "Dr. Sarah Mitchell and James Park launch Nexus Technologies in Austin, TX with a vision to democratize data analytics for enterprises",
+          "meta": {
+            "date": "March 2018",
+            "year": "2018",
+            "icon": "🚀"
+          }
+        }
+      ]
     }
   }
 }

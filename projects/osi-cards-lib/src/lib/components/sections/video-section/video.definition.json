@@ -70,7 +70,7 @@
   },
   "aliases": ["videos", "media"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Video Resources",
       "type": "video",
       "description": "Product demos, tutorials, and webinar recordings",
@@ -111,6 +111,26 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Video Resources",
+      "type": "video",
+      "description": "Product demos, tutorials, and webinar recordings",
+      "preferredColumns": 2,
+      "priority": 3,
+      "items": [
+        {
+          "title": "Nexus Analytics Platform Overview",
+          "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
+          "meta": {
+            "url": "https://videos.nexustech.io/platform-overview",
+            "thumbnail": "https://images.nexustech.io/thumbnails/overview.jpg",
+            "duration": "12:45",
+            "views": 45000,
+            "category": "Product Demo"
+          }
+        }
+      ]
     }
   }
 }

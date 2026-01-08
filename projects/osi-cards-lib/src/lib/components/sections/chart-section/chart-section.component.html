@@ -2,22 +2,27 @@
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
-  <!-- Chart Container -->
-  <div class="chart-container" *ngIf="section.chartData && !chartError">
-    <div class="chart-wrapper">
-      <div #chartContainer class="chart-canvas-wrapper"></div>
+  <!-- Chart Display -->
+  <div class="chart-wrapper" *ngIf="!chartInitFailed && hasValidData()">
+    <div class="chart-container" *ngIf="chartLibraryLoaded() && !chartLoading">
+      <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="chartJsType"></canvas>
+    </div>
+    <div class="chart-loading-overlay" *ngIf="chartLoading">
+      <div class="chart-loading-spinner"></div>
+      <span class="chart-loading-text">Loading chart...</span>
     </div>
   </div>
 
   <!-- Error State -->
-  <lib-empty-state *ngIf="chartError" [message]="chartError" icon="⚠️" variant="minimal"> </lib-empty-state>
-
-  <!-- No Data State -->
   <lib-empty-state
-    *ngIf="!section.chartData && !chartError"
-    message="No chart data available"
+    *ngIf="chartInitFailed && section.chartData"
+    [message]="chartError() || 'Chart unavailable'"
     icon="📊"
     variant="minimal"
   >
+  </lib-empty-state>
+
+  <!-- Empty State -->
+  <lib-empty-state *ngIf="!section.chartData || !hasValidData()" message="No chart data" icon="📊" variant="minimal">
   </lib-empty-state>
 </div>

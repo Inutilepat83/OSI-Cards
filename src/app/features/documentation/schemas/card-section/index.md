@@ -11,12 +11,16 @@ Defines a section within a card.
 ### Section Definition (Type Metadata)
 Section definitions are stored in `*.definition.json` files and describe the **type** of section:
 - Component paths, selectors
-- Data schemas (fieldSchema, itemSchema)
+- Data schemas (fieldSchema, itemSchema, chartDataSchema)
 - Use cases and best practices
-- JSON examples for documentation
+- JSON examples for documentation (demo, doc, long)
 - Rendering capabilities
+- Portfolio descriptions for LLM prompts
+- Type aliases
 
 **Location**: `projects/osi-cards-lib/src/lib/components/sections/{type}-section/{type}.definition.json`
+
+**Single Source of Truth**: These definition files are the authoritative source for all section metadata. All TypeScript types, schemas, documentation, and prompts are **generated** from these files. Never hardcode section information - always read from definition files.
 
 ### Section Parameters (Runtime Data)
 The `CardSection` interface defines what can be **passed** to a section instance:

@@ -730,8 +730,8 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
  * Manifest metadata
  */
 export const MANIFEST_META = {
-  generatedAt: '2026-01-08T11:23:10.205Z',
-  registryVersion: '1.5.45',
+  generatedAt: '2026-01-08T13:31:21.254Z',
+  registryVersion: '1.5.46',
   totalSections: 20,
   publicSections: 20
 };

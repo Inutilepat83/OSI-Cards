@@ -70,7 +70,7 @@
   },
   "aliases": ["social", "socials"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Social Media Presence",
       "type": "social-media",
       "description": "Official company social profiles and engagement",
@@ -107,6 +107,25 @@
           "followers": 28000,
           "engagement": 2.1,
           "verified": true
+        }
+      ]
+    },
+    "doc": {
+      "title": "Social Media Presence",
+      "type": "social-media",
+      "description": "Official company social profiles and engagement",
+      "preferredColumns": 1,
+      "priority": 3,
+      "fields": [
+        {
+          "platform": "linkedin",
+          "handle": "Nexus Technologies",
+          "url": "https://linkedin.com/company/nexus-tech",
+          "followers": 125000,
+          "engagement": 4.8,
+          "verified": true,
+          "label": "Social Media Presence",
+          "value": "Sample value"
         }
       ]
     }

@@ -54,7 +54,7 @@
   },
   "aliases": ["brands", "colors", "palette"],
   "examples": {
-    "example": {
+    "demo": {
       "title": "Nexus Brand Identity System",
       "type": "brand-colors",
       "description": "Official brand color palette and design tokens",
@@ -86,6 +86,21 @@
       ],
       "preferredColumns": 1,
       "priority": 3
+    },
+    "doc": {
+      "title": "Brand Colors",
+      "type": "brand-colors",
+      "description": "Single color entry.",
+      "preferredColumns": 2,
+      "priority": 3,
+      "fields": [
+        {
+          "label": "Nexus Orange",
+          "value": "#FF7900",
+          "description": "Primary brand color - CTAs, highlights, key actions",
+          "category": "Primary"
+        }
+      ]
     }
   }
 }

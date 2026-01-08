@@ -1,13 +1,14 @@
 // =====================================================================
-// CHART SECTION - Proper Canvas Sizing, No Overlaps
+// CHART SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
-@use "../../../styles/design-system/unified-sections" as unified;
-@use "../../../styles/components/sections/component-mixins" as components;
+@use "../../../styles/osi-cards-mixins" as mixins;
+@use "../../../styles/design-system/section-base" as section-base;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -21,293 +22,103 @@
 .chart-container {
   display: flex;
   flex-direction: column;
-  gap: 0; // No gap to maximize space
-  width: 100%;
-  min-height: var(
-    --osi-card-min-height-large
-  ); // Ensure minimum height for full chart display with legend
-  max-height: var(--osi-card-min-height-large); // Maximum height to keep compact
-  height: var(--osi-card-min-height-large); // Fixed height for consistent compact sizing
+  gap: var(--osi-section-item-gap) !important;
 }
 
-// CHART WRAPPER - Proper spacing and height
-// Note: No card mixin - section already provides card styling
 .chart-wrapper {
-  padding: 0; // No padding - maximize chart space
-  background: transparent; // No background - use section background
-  border: none; // No border - section already has border
-  box-shadow: none; // No shadow - section already has shadow
-  min-height: 180px; // Minimum height for compact chart (chart + legend)
-  max-height: 180px; // Maximum height to keep compact
-  height: 180px; // Fixed height for consistent compact sizing
-  display: flex;
-  flex-direction: column;
-  gap: 0; // No gap
-  overflow: visible; // Allow legend to be visible
-  box-sizing: border-box;
+  @include mixins.card-base;
+  overflow: hidden;
+  height: 280px; // Compact: 280px
+  padding: var(--osi-section-item-padding-compact); // Compact: 6px
+  position: relative; // Required for loading overlay positioning
+
+  @include responsive-down("sm") {
+    height: 180px; // Compact: 180px
+    padding: var(--osi-section-item-padding-compact-xs); // Compact: 4px
+  }
+}
+
+.chart-container {
   width: 100%;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--osi-section-item-gap-xs);
-  flex-wrap: wrap;
-  padding-bottom: var(--osi-section-item-padding-compact);
-  border-bottom: 1px solid var(--border);
-}
-
-.chart-title {
-  @include heading(5);
-  font-size: var(--text-base);
-  margin: 0;
-  line-height: var(--leading-tight);
-}
-
-.chart-legend {
-  display: flex;
-  gap: var(--osi-section-item-gap-xs);
-  flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: var(--osi-section-item-gap-xs);
-  font-size: var(--text-xs);
-  color: var(--muted-foreground);
-}
-
-.legend-color {
-  width: var(--osi-spacing-sm); // More compact: 8px
-  height: var(--osi-spacing-sm); // More compact: 8px
-  border-radius: var(--osi-radius-xs);
-  flex-shrink: 0;
-}
-
-// CHART CANVAS - Proper sizing (Frappe Charts uses div, not canvas)
-.chart-canvas-wrapper {
-  flex: 1;
+  height: 100%;
   position: relative;
-  min-height: var(--osi-card-min-height-large); // Minimum height for chart area
-  max-height: var(--osi-card-min-height-large); // Maximum height to keep compact
-  height: var(--osi-card-min-height-large); // Fixed compact height
-  width: 100%;
-  overflow: visible; // Allow chart and legend to be visible
-  box-sizing: border-box;
 
-  // Frappe Charts container
-  :deep(.frappe-chart) {
-    width: 100% !important;
-    height: var(--osi-card-min-height-large) !important;
-    max-height: var(--osi-card-min-height-large) !important;
-
-    // Fix Y-axis label rendering - ensure labels are horizontal
-    .y-axis {
-      .tick {
-        text {
-          writing-mode: horizontal-tb !important;
-          text-orientation: mixed !important;
-          transform: none !important;
-          white-space: nowrap !important;
-        }
-      }
-    }
-
-    // Fix Y-axis text elements directly
-    text.y-axis-text,
-    .y-axis text,
-    .axis-y text {
-      writing-mode: horizontal-tb !important;
-      text-orientation: mixed !important;
-      transform: none !important;
-      white-space: nowrap !important;
-      text-anchor: end !important;
-    }
-
-    // Fix legend text truncation
-    .legend {
-      .legend-item,
-      .legend-text {
-        white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-        max-width: none !important;
-      }
-    }
-
-    // Ensure all text in chart is properly oriented
-    text {
-      writing-mode: horizontal-tb !important;
-      text-orientation: mixed !important;
-    }
+  canvas {
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 
-// CHART FOOTER - Optional stats below chart
-.chart-footer {
-  display: flex;
-  justify-content: space-around;
-  gap: var(--osi-section-item-gap);
-  padding-top: var(--osi-section-item-padding-compact);
-  border-top: 1px solid var(--border);
-}
-
-.chart-stat {
+.chart-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: color-mix(in srgb, var(--background) 85%, transparent);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--osi-section-item-gap-xs);
-}
+  justify-content: center;
+  gap: var(--osi-section-item-gap); // 6px gap between section items
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 
-.chart-stat-value {
-  @include unified.unified-item-value;
-  font-weight: var(--font-bold);
-}
-
-.chart-stat-label {
-  @include unified.unified-item-label;
-}
-
-// RESPONSIVE
-@include responsive-down("md") {
-  .chart-container {
-    min-height: 170px;
-    max-height: 170px;
-    height: 170px;
+  .chart-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid color-mix(in srgb, var(--foreground) 20%, transparent);
+    border-top-color: var(--status-info, #3b82f6);
+    border-radius: 50%;
+    animation: chart-spin 1s linear infinite;
   }
 
-  .chart-wrapper {
-    padding: 0; // No padding - maximize chart space
-    min-height: 170px;
-    max-height: 170px;
-    height: 170px;
-  }
-
-  .chart-canvas-wrapper {
-    min-height: 130px;
-    max-height: 170px;
-    height: 130px;
-
-    :deep(.frappe-chart) {
-      height: 130px !important;
-      max-height: 170px !important;
-
-      // Fix Y-axis label rendering - ensure labels are horizontal
-      .y-axis {
-        .tick {
-          text {
-            writing-mode: horizontal-tb !important;
-            text-orientation: mixed !important;
-            transform: none !important;
-            white-space: nowrap !important;
-          }
-        }
-      }
-
-      // Fix Y-axis text elements directly
-      text.y-axis-text,
-      .y-axis text,
-      .axis-y text {
-        writing-mode: horizontal-tb !important;
-        text-orientation: mixed !important;
-        transform: none !important;
-        white-space: nowrap !important;
-        text-anchor: end !important;
-      }
-
-      // Fix legend text truncation
-      .legend {
-        .legend-item,
-        .legend-text {
-          white-space: nowrap !important;
-          overflow: visible !important;
-          text-overflow: clip !important;
-          max-width: none !important;
-        }
-      }
-
-      // Ensure all text in chart is properly oriented
-      text {
-        writing-mode: horizontal-tb !important;
-        text-orientation: mixed !important;
-      }
-    }
+  .chart-loading-text {
+    @include typo.label-base;
+    color: var(--muted-foreground);
+    font-size: var(--text-sm);
   }
 }
 
-@include responsive-down("sm") {
-  .chart-container {
-    min-height: 160px;
-    max-height: 160px;
-    height: 160px;
+@keyframes chart-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Chart.js theme-aware styling
+:host ::ng-deep {
+  // Ensure chart canvas is visible
+  canvas {
+    display: block !important;
+    max-width: 100%;
+    max-height: 100%;
   }
 
-  .chart-wrapper {
-    padding: 0; // No padding - maximize chart space
-    min-height: 160px;
-    max-height: 160px;
-    height: 160px;
+  // Theme-aware chart.js legend styling
+  .chartjs-legend {
+    color: var(--foreground);
   }
 
-  .chart-canvas-wrapper {
-    min-height: 120px;
-    max-height: 160px;
-    height: 120px;
-
-    :deep(.frappe-chart) {
-      height: 120px !important;
-      max-height: 160px !important;
-
-      // Fix Y-axis label rendering - ensure labels are horizontal
-      .y-axis {
-        .tick {
-          text {
-            writing-mode: horizontal-tb !important;
-            text-orientation: mixed !important;
-            transform: none !important;
-            white-space: nowrap !important;
-          }
-        }
-      }
-
-      // Fix Y-axis text elements directly
-      text.y-axis-text,
-      .y-axis text,
-      .axis-y text {
-        writing-mode: horizontal-tb !important;
-        text-orientation: mixed !important;
-        transform: none !important;
-        white-space: nowrap !important;
-        text-anchor: end !important;
-      }
-
-      // Fix legend text truncation
-      .legend {
-        .legend-item,
-        .legend-text {
-          white-space: nowrap !important;
-          overflow: visible !important;
-          text-overflow: clip !important;
-          max-width: none !important;
-        }
-      }
-
-      // Ensure all text in chart is properly oriented
-      text {
-        writing-mode: horizontal-tb !important;
-        text-orientation: mixed !important;
-      }
-    }
+  // Chart.js tooltip styling
+  .chartjs-tooltip {
+    background-color: var(--osi-section-item-background, var(--card-section-bg)) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border);
+    border-radius: var(--osi-radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    padding: 8px 12px;
   }
 
-  .chart-header {
-    flex-direction: column;
+  // Chart.js tooltip text
+  .chartjs-tooltip-body {
+    color: var(--foreground) !important;
   }
 
-  .chart-footer {
-    flex-direction: column;
-    gap: var(--osi-section-item-gap-xs);
+  // Chart.js tooltip title
+  .chartjs-tooltip-header {
+    color: var(--foreground) !important;
+    border-bottom: 1px solid var(--border);
   }
 }

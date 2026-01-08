@@ -46,6 +46,9 @@ const libraryPackageJson = {
     url: 'https://github.com/Inutilepat83/OSI-Cards/issues'
   },
   homepage: libPackageJson.homepage || 'https://github.com/Inutilepat83/OSI-Cards#readme',
+  publishConfig: {
+    access: 'public'
+  },
   peerDependencies: {
     '@angular/core': '^18.0.0 || ^20.0.0',
     '@angular/common': '^18.0.0 || ^20.0.0',
