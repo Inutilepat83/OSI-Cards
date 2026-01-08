@@ -5,8 +5,8 @@
  */
 
 import { Type } from '@angular/core';
-import { BaseSectionComponent } from '../sections/base-section.component';
 import { SectionType } from '../../models/generated-section-types';
+import { BaseSectionComponent } from '../sections/base-section.component';
 
 import { AnalyticsSectionComponent } from '../sections/analytics-section/analytics-section.component';
 import { BrandColorsSectionComponent } from '../sections/brand-colors-section/brand-colors-section.component';
@@ -28,7 +28,6 @@ import { TableSectionComponent } from '../sections/table-section/table-section.c
 import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
 import { TimelineSectionComponent } from '../sections/timeline-section/timeline-section.component';
 import { VideoSectionComponent } from '../sections/video-section/video-section.component';
-import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
 
 /**
  * Map of section types to their component classes
@@ -49,7 +48,7 @@ export const SECTION_COMPONENT_MAP: Record<SectionType, Type<BaseSectionComponen
   'map': MapSectionComponent,
   'network-card': NetworkCardSectionComponent,
   'news': NewsSectionComponent,
-  'overview': OverviewSectionComponent,
+  'overview': ListSectionComponent, // Fallback: overview section was removed, using list as fallback
   'product': ProductSectionComponent,
   'quotation': QuotationSectionComponent,
   'social-media': SocialMediaSectionComponent,

@@ -1,6 +1,6 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.5.48",
+  "version": "1.5.49",
   "description": "Standalone OSI Cards library for Angular applications with CSS Layer support for easy style overrides",
   "keywords": [
     "angular",
