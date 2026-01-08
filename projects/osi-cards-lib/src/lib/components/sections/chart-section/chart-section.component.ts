@@ -66,7 +66,7 @@ export class ChartSectionComponent
     plugins: {
       legend: {
         display: true,
-        position: 'bottom',
+        position: 'right',
       },
     },
     scales: {

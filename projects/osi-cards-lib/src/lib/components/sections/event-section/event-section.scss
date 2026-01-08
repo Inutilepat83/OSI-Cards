@@ -48,7 +48,7 @@
     width: 100%; // Ensure full width expansion
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: var(--osi-section-item-gap);
+    gap: var(--osi-section-item-gap-xl); // Increased gap between columns
     align-items: center;
     box-sizing: border-box; // Include padding in width
   }

@@ -192,12 +192,8 @@ export class SolutionsSectionComponent
 
   getVisibleBenefits(benefits: string[] | undefined, index: number): string[] {
     if (!benefits || benefits.length === 0) return [];
-    // If single column, show all benefits automatically
-    if (this.isSingleColumn) return benefits;
-    // If expanded, show all benefits
-    if (this.isExpanded(index)) return benefits;
-    // Otherwise, show first 2 benefits
-    return benefits.slice(0, 2);
+    // Always show all benefits
+    return benefits;
   }
 
   /**
@@ -262,15 +258,11 @@ export class SolutionsSectionComponent
 
   /**
    * Check if "+X more" button should be shown
-   * Only show if there are more than 2 benefits AND not in single column layout
+   * Always return false - all benefits are always displayed
    */
   shouldShowMoreButton(solution: any, index: number): boolean {
-    if (!solution.benefits || solution.benefits.length <= 2) {
-      return false;
-    }
-
-    // Don't show "+X more" if in single column layout
-    return !this.isSingleColumn;
+    // Always return false - all benefits are always displayed
+    return false;
   }
 
   /**

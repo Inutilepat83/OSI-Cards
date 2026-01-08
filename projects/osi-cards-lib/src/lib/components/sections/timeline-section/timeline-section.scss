@@ -36,7 +36,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-item-gap) !important;
+  gap: var(--osi-section-item-gap-lg, 12px) !important;
   box-sizing: border-box;
   background: transparent;
 }
@@ -45,12 +45,12 @@
 .section-item {
   @include card("normal");
   display: flex;
-  gap: var(--osi-section-item-gap-sm, 4px);
+  gap: var(--osi-section-item-gap-md, 8px);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 
-  // Reduce vertical padding for tighter spacing while maintaining horizontal padding
-  padding: var(--osi-section-item-gap-sm, 4px) var(--osi-section-item-padding-normal, 12px);
+  // Increased vertical padding for better breathing room
+  padding: var(--osi-section-item-padding-normal, 16px) var(--osi-section-item-padding-normal, 12px);
 
   // Unified hover effect
   @include section-card-hover;
@@ -114,7 +114,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-item-gap-xs, 2px);
+  gap: var(--osi-section-item-gap-sm, 4px);
   padding: 0;
   min-width: 0;
   width: 100%;
@@ -126,6 +126,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--osi-section-item-gap-xs, 2px);
+  margin-top: var(--osi-section-item-gap-xs, 2px);
 }
 
 .timeline-title {
@@ -194,7 +195,7 @@
   }
 
   .timeline-container {
-    gap: var(--osi-section-item-gap) !important;
+    gap: var(--osi-section-item-gap-lg, 12px) !important;
   }
 
   .section-item {
