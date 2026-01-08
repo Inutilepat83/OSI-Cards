@@ -111,6 +111,7 @@ export class FileLoggingService {
 
   /**
    * Check if log server is available
+   * Completely silent when server is unavailable - log server is optional
    */
   async checkLogServerHealth(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
@@ -123,12 +124,30 @@ export class FileLoggingService {
 
     try {
       const logServerUrl = this.config.LOGGING.LOG_SERVER_URL;
-      const response = await fetch(`${logServerUrl}/health`, {
-        method: 'GET',
-        signal: AbortSignal.timeout(2000), // 2 second timeout
-      });
-      return response.ok;
+
+      // Use AbortController for better browser compatibility
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      try {
+        const response = await fetch(`${logServerUrl}/health`, {
+          method: 'GET',
+          signal: controller.signal,
+          // Prevent CORS errors from appearing in console
+          mode: 'cors',
+          credentials: 'omit',
+        });
+        clearTimeout(timeoutId);
+        return response.ok;
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        // Re-throw to be caught by outer catch
+        throw fetchError;
+      }
     } catch (error) {
+      // Completely silent - log server is optional and may not be running
+      // Network errors in browser console are expected when service is unavailable
+      // but we don't want to log them as application errors
       return false;
     }
   }

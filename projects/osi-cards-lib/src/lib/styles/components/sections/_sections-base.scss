@@ -149,6 +149,7 @@
 @mixin card($spacing: "normal") {
   // Background & Border - using standardized tokens
   background: var(--osi-section-item-background);
+  // Set border on all sides including top
   border: var(--osi-section-item-border);
   border-radius: var(--osi-section-item-border-radius);
   box-shadow: var(--osi-section-item-shadow);

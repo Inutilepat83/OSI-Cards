@@ -11,17 +11,23 @@
         <div class="solution-title-row">
           <h4 class="solution-title">{{ solution.title }}</h4>
           <!-- Expresso Logo -->
-          <div class="solution-logo-container">
+          <div
+            class="solution-logo-container"
+            [class.clickable]="solution.expressoLink"
+            (click)="onExpressoLogoClick(solution)"
+            [style.cursor]="solution.expressoLink ? 'pointer' : 'default'"
+          >
             <svg
               class="solution-logo"
               viewBox="0 0 16 16"
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
-              appTooltip="expresso product page"
+              [appTooltip]="getExpressoTooltip(solution)"
               tooltipPosition="top"
               [tooltipDelay]="200"
-              role="img"
-              aria-label="Expresso logo"
+              [tooltipDisabled]="!solution.expressoLink"
+              [attr.role]="solution.expressoLink ? 'button' : 'img'"
+              [attr.aria-label]="solution.expressoLink ? 'Open Expresso product page' : 'Expresso logo'"
               width="16"
               height="16"
             >
@@ -93,9 +99,6 @@
         <span class="solution-meta-label" *ngIf="getMetaLabel(solution) as label">
           {{ label }}
         </span>
-        <lib-badge *ngIf="solution.complexity" [variant]="getComplexityVariant(solution.complexity)" size="sm">
-          {{ solution.complexity }}
-        </lib-badge>
       </div>
     </div>
   </div>

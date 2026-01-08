@@ -1234,55 +1234,60 @@ $breakpoints: (
       --theme-ai-card-border: 1px solid
         color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
     }
-    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
-    --theme-ai-card-background: rgba(255, 255, 255, 0.85);
-    --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
-    --theme-ai-card-box-shadow:
-      0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
-    --theme-ai-card-box-shadow-hover:
-      0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.5),
-      0 0 0 1px rgba(255, 121, 0, 0.3);
-    --theme-ai-card-backdrop-filter: blur(12px);
-    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    & {
+      --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
+      --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+      --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
+      --theme-ai-card-box-shadow:
+        0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+      --theme-ai-card-box-shadow-hover:
+        0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.5),
+        0 0 0 1px rgba(255, 121, 0, 0.3);
+      --theme-ai-card-backdrop-filter: blur(12px);
+      --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-    --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
-    --theme-card-border-hover: var(--color-brand);
-    --theme-card-background: var(--background);
-    --theme-card-background-hover: color-mix(
-      in srgb,
-      var(--background) 98%,
-      var(--surface-contrast-color) 2%
-    );
-    --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+    & {
+      --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+      --theme-card-border-hover: var(--color-brand);
+      --theme-card-background: var(--background);
+      --theme-card-background-hover: color-mix(
+        in srgb,
+        var(--background) 98%,
+        var(--surface-contrast-color) 2%
+      );
+      --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
 
-    --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
-    --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-    --theme-section-border-hover-enhanced-color: rgba(0, 0, 0, 0.13);
-    --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --theme-section-shadow-hover-enhanced: var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.117);
-    --theme-section-transition:
-      border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    // Flat backgrounds - no color-mix
-    --section-background: var(--background);
-    --section-background-hover: var(--background);
-    --section-surface: var(--background);
-    --section-surface-hover: var(--background);
+      --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
+      --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+      --theme-section-border-hover-enhanced-color: rgba(0, 0, 0, 0.13);
+      --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
+      --theme-section-shadow-hover-enhanced: var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.117);
+      --theme-section-transition:
+        border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      // Flat backgrounds - no color-mix
+      --section-background: var(--background);
+      --section-background-hover: var(--background);
+      --section-surface: var(--background);
+      --section-surface-hover: var(--background);
 
-    --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
-    --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-    --theme-section-item-background: var(--background);
-    --theme-section-item-background-hover: var(--background);
-    --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
-    --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
-    --theme-section-item-border-hover-enhanced-color: rgba(0, 0, 0, 0.195);
-    --theme-section-item-shadow-hover-enhanced:
-      var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.1755);
-    --theme-section-item-hover-transform: none;
-    --theme-section-item-transition:
-      border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
+      --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+      --theme-section-item-background: var(--background);
+      --theme-section-item-background-hover: var(--background);
+      --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
+      --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
+      --theme-section-item-border-hover-enhanced-color: rgba(0, 0, 0, 0.195);
+      --theme-section-item-shadow-hover-enhanced:
+        var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.1755);
+      --theme-section-item-hover-transform: none;
+      --theme-section-item-transition:
+        border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   }
 }
 
@@ -1320,15 +1325,17 @@ $breakpoints: (
       --theme-ai-card-border: 1px solid
         color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
     }
-    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
-    --theme-ai-card-background: rgba(20, 20, 20, 0.6);
-    --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
-    --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
-    --theme-ai-card-box-shadow-hover:
-      0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 24px rgba(255, 121, 0, 0.5),
-      0 0 0 1px rgba(255, 121, 0, 0.3);
-    --theme-ai-card-backdrop-filter: blur(12px);
-    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    & {
+      --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
+      --theme-ai-card-background: rgba(20, 20, 20, 0.6);
+      --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
+      --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+      --theme-ai-card-box-shadow-hover:
+        0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 24px rgba(255, 121, 0, 0.5),
+        0 0 0 1px rgba(255, 121, 0, 0.3);
+      --theme-ai-card-backdrop-filter: blur(12px);
+      --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     // Card backgrounds (matches preset)
     --theme-card-border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1434,16 +1441,18 @@ $breakpoints: (
       --theme-ai-card-border: 1px solid
         color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
     }
-    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
-    --theme-ai-card-background: rgba(255, 255, 255, 0.85);
-    --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
-    --theme-ai-card-box-shadow:
-      0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
-    --theme-ai-card-box-shadow-hover:
-      0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.45),
-      0 0 0 1px rgba(255, 121, 0, 0.25);
-    --theme-ai-card-backdrop-filter: blur(12px);
-    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    & {
+      --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
+      --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+      --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
+      --theme-ai-card-box-shadow:
+        0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+      --theme-ai-card-box-shadow-hover:
+        0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.45),
+        0 0 0 1px rgba(255, 121, 0, 0.25);
+      --theme-ai-card-backdrop-filter: blur(12px);
+      --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     // Card backgrounds (matches preset)
     --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);

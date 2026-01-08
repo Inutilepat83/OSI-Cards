@@ -111,10 +111,10 @@ function main() {
 
       // Get example from examples (try multiple keys in priority order)
       // Priority: example > demo > complete > doc > first available
-      const example = 
-        definition.examples?.example || 
-        definition.examples?.demo || 
-        definition.examples?.complete || 
+      const example =
+        definition.examples?.example ||
+        definition.examples?.demo ||
+        definition.examples?.complete ||
         definition.examples?.doc ||
         (definition.examples && Object.values(definition.examples)[0]);
 

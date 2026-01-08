@@ -135,7 +135,7 @@ export class CSPNonceService {
       styleNonce ? `style-src 'self' ${styleNonce}` : "style-src 'self' 'unsafe-inline'", // Fallback for dev
       "img-src 'self' data: https:",
       "font-src 'self' data: https:",
-      "connect-src 'self' https:",
+      "connect-src 'self' https: http://127.0.0.1:7245 http://localhost:*",
       "media-src 'self' https://videos.nexustech.io",
       "frame-src 'self' https://www.youtube.com https://youtube.com https://player.vimeo.com https://vimeo.com",
       "frame-ancestors 'none'",

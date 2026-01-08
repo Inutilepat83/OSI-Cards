@@ -86,10 +86,10 @@ const section = {
 Leverage TypeScript for better developer experience:
 
 \`\`\`typescript
-import type { 
-  AICardConfig, 
-  CardSection, 
-  AnalyticsSection 
+import type {
+  AICardConfig,
+  CardSection,
+  AnalyticsSection
 } from 'osi-cards-lib';
 \`\`\`
 
@@ -115,7 +115,7 @@ streamingService.streamCard(prompt).pipe(
 Use the built-in skeleton while streaming:
 
 \`\`\`html
-<app-ai-card-renderer 
+<app-ai-card-renderer
   [cardConfig]="cardConfig"
   [showSkeleton]="isLoading">
 </app-ai-card-renderer>

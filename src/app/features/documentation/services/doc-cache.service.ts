@@ -93,6 +93,12 @@ export class DocCacheService {
     content: Omit<CachedDocContent, 'contentHash' | 'timestamp'>,
     contentHash: string
   ): Observable<void> {
+    // Validate pageId exists and is a valid string
+    if (!pageId || typeof pageId !== 'string') {
+      console.warn('[DocCache] Invalid pageId provided:', pageId);
+      return of(undefined);
+    }
+
     // Skip cache write in dev mode
     if (this.cacheDisabled || !this.dbPromise) {
       return of(undefined);
@@ -103,9 +109,32 @@ export class DocCacheService {
         return new Promise<void>((resolve, reject) => {
           const transaction = db.transaction(STORE_NAME, 'readwrite');
           const store = transaction.objectStore(STORE_NAME);
-          const request = store.put({ ...content, pageId, contentHash, timestamp: Date.now() });
 
-          request.onerror = () => reject(request.error);
+          // Ensure pageId is explicitly set and not overwritten
+          // Construct entry explicitly to avoid any property conflicts
+          const entry = {
+            pageId: String(pageId), // Explicitly ensure it's a string
+            contentHash: String(contentHash),
+            timestamp: Date.now(),
+            html: content.html || '',
+            toc: content.toc || [],
+            demoConfigs: content.demoConfigs || {},
+          };
+
+          // Validate entry has pageId before storing
+          if (!entry.pageId) {
+            console.warn('[DocCache] Entry missing pageId:', entry);
+            resolve(); // Don't reject, just skip
+            return;
+          }
+
+          const request = store.put(entry);
+
+          request.onerror = () => {
+            // Log but don't reject - cache failures are non-critical
+            console.warn('[DocCache] Failed to store entry:', request.error);
+            resolve(); // Resolve instead of reject to prevent error propagation
+          };
           request.onsuccess = () => resolve();
         });
       })

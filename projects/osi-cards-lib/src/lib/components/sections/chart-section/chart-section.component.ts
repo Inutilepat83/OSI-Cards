@@ -270,6 +270,9 @@ export class ChartSectionComponent
         tooltipOptions: {
           formatTooltipX: (d: unknown) => String(d),
           formatTooltipY: (d: unknown) => {
+            if (d === null || d === undefined) {
+              return '—';
+            }
             return isRevenueData ? this.formatCurrency(d as number) : String(d);
           },
         },
@@ -441,7 +444,10 @@ export class ChartSectionComponent
   /**
    * Format value as currency
    */
-  private formatCurrency(value: number): string {
+  private formatCurrency(value: number | null | undefined): string {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '$0';
+    }
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     } else if (value >= 1000) {

@@ -85,6 +85,16 @@
     line-height: 1.3; // Tighter line height
     font-size: 0.8125rem; // ~13px, smaller than default
 
+    // Style for <br> tags in single-text format (Executive Summary)
+    // Use higher specificity to override global .ai-section br rule
+    ::ng-deep br {
+      display: block !important;
+      content: "";
+      height: 7px !important; // 7px height (reduced from 15px)
+      margin-top: 7px !important; // 7px gap between paragraphs (reduced from 15px)
+      line-height: 1.3 !important; // Tighter line height
+    }
+
     // Style section headers (uppercase words on their own line)
     ::ng-deep {
       .section-header {
@@ -102,6 +112,18 @@
         }
       }
     }
+  }
+}
+
+// More specific override for Executive Summary in overview sections
+// This has higher specificity than .ai-section br to override the global rule
+.ai-section--overview .overview-item--single-text .overview-item__value--single-text {
+  ::ng-deep br {
+    display: block !important;
+    content: "";
+    height: 7px !important; // 7px height (reduced from 15px)
+    margin-top: 7px !important; // 7px gap between paragraphs (reduced from 15px)
+    line-height: 1.3 !important; // Tighter line height
   }
 }
 

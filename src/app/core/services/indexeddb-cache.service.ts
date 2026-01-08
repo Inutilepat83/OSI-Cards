@@ -110,6 +110,12 @@ export class IndexedDBCacheService {
    * @param version Optional version string (e.g., "1.5.40") for cache invalidation
    */
   set(key: string, value: any, timestamp: number, version?: string): Observable<void> {
+    // Validate key exists and is a valid string
+    if (!key || typeof key !== 'string') {
+      console.warn('[IndexedDBCache] Invalid key provided:', key);
+      return of(undefined);
+    }
+
     return from(
       this.initDB()
         .then((db) => {

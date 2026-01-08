@@ -197,7 +197,12 @@ export class DocsImageZoomComponent {
       @if (!isLoaded()) {
         <div class="video-placeholder" (click)="loadVideo()">
           @if (thumbnail) {
-            <img [src]="thumbnail" [alt]="title" class="video-thumbnail" />
+            <img
+              [src]="thumbnail"
+              [alt]="title"
+              class="video-thumbnail"
+              (error)="onThumbnailError($event)"
+            />
           }
           <div class="video-play">
             <lucide-icon name="play" [size]="48"></lucide-icon>
@@ -299,6 +304,12 @@ export class DocsVideoComponent {
 
   loadVideo() {
     this.isLoaded.set(true);
+  }
+
+  onThumbnailError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    // Hide the image when it fails to load to prevent broken image icons
+    img.style.display = 'none';
   }
 
   sanitizedUrl(): string {

@@ -607,27 +607,6 @@
 }
 
 /* Section pulse - subtle scale pulse for highlighted sections */
-@keyframes sectionPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.01);
-  }
-}
-
-/* Section border fade - fading border highlight */
-@keyframes sectionBorderFade {
-  0% {
-    opacity: 1;
-    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
-  }
-  100% {
-    opacity: 0;
-    box-shadow: 0 0 0 transparent;
-  }
-}
 
 /* New section glow - glow effect for newly added sections */
 @keyframes newSectionGlow {
@@ -1263,16 +1242,6 @@
   animation: waveSlide 2s ease-in-out infinite;
 }
 
-/* Section pulse - highlighted section */
-.animate-section-pulse {
-  animation: sectionPulse 2s ease-out;
-}
-
-/* Section border fade - fading highlight */
-.animate-section-border-fade {
-  animation: sectionBorderFade 2s ease-out forwards;
-}
-
 /* New section glow - streaming new sections */
 .animate-new-section-glow {
   animation: newSectionGlow 0.6s ease-out forwards;
@@ -1371,22 +1340,6 @@
   }
 }
 
-/* Section highlight - URL fragment scroll highlight */
-.section-highlight {
-  animation: sectionPulse 2s ease-out;
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
-    border-radius: 14px;
-    pointer-events: none;
-    animation: sectionBorderFade 2s ease-out forwards;
-  }
-}
-
 /* ===================================================================
    PERFORMANCE OPTIMIZATION
    Hardware acceleration hints for smooth animations
@@ -1439,8 +1392,6 @@
   .animate-pulse-ring,
   .animate-text-shimmer,
   .animate-wave-slide,
-  .animate-section-pulse,
-  .animate-section-border-fade,
   .animate-new-section-glow,
   .animate-dot-pulse,
   .animate-ring-expand,
@@ -1458,7 +1409,6 @@
   .animate-bounce,
   .section-streaming,
   .section-streaming-glow,
-  .section-highlight,
   .field-streaming,
   .item-streaming,
   .state-transition-enter,
@@ -1476,7 +1426,6 @@
 
   /* Disable pseudo-element animations */
   .animate-spark-travel::before,
-  .section-highlight::after,
   .btn-ripple::after {
     animation: none !important;
     display: none;

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CardSection } from '../../../models';
 import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 import { TooltipDirective } from '../../../directives/tooltip.directive';
 
@@ -18,18 +18,12 @@ import { TooltipDirective } from '../../../directives/tooltip.directive';
  * Solutions Section Component
  *
  * Displays solution offerings, use cases, and service information.
- * Features: benefits, complexity indicators, delivery timeframes.
+ * Features: benefits, delivery timeframes, expresso links.
  */
 @Component({
   selector: 'lib-solutions-section',
   standalone: true,
-  imports: [
-    CommonModule,
-    SectionHeaderComponent,
-    EmptyStateComponent,
-    BadgeComponent,
-    TooltipDirective,
-  ],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, TooltipDirective],
   templateUrl: './solutions-section.component.html',
   styleUrl: './solutions-section.scss',
 })
@@ -294,5 +288,35 @@ export class SolutionsSectionComponent
     // Clamp between 0 and 10, then convert to percentage
     const clampedScore = Math.max(0, Math.min(10, score));
     return (clampedScore / 10) * 100;
+  }
+
+  /**
+   * Handle expresso logo click
+   */
+  onExpressoLogoClick(solution: any): void {
+    if (solution?.expressoLink) {
+      window.open(solution.expressoLink, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  /**
+   * Open expresso link in a new tab
+   */
+  openExpressoLink(link: string): void {
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  /**
+   * Get tooltip text for expresso link
+   */
+  getExpressoTooltip(solution: any): string {
+    if (!solution?.expressoLink) {
+      return '';
+    }
+    return typeof solution.expressoLink === 'string'
+      ? solution.expressoLink
+      : String(solution.expressoLink);
   }
 }

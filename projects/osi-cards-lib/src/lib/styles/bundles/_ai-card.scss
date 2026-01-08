@@ -195,43 +195,6 @@
   ) !important;
 }
 
-// Section highlight animation for URL fragment scrolling
-.section-highlight {
-  animation: section-pulse 2s ease-out;
-  position: relative;
-}
-
-.section-highlight::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 2px solid rgba(255, 121, 0, 0.6);
-  border-radius: 14px;
-  pointer-events: none;
-  animation: section-border-fade 2s ease-out forwards;
-}
-
-@keyframes section-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.01);
-  }
-}
-
-@keyframes section-border-fade {
-  0% {
-    opacity: 1;
-    box-shadow: 0 0 20px rgba(255, 121, 0, 0.4);
-  }
-  100% {
-    opacity: 0;
-    box-shadow: 0 0 0 rgba(255, 121, 0, 0);
-  }
-}
-
 // 10. Action buttons and footer (enforced styles for Shadow DOM)
 @import "../components/card-actions";
 @import "../components/card-footer";

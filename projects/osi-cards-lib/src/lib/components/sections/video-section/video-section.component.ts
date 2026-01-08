@@ -193,6 +193,27 @@ export class VideoSectionComponent extends BaseSectionComponent implements OnIni
   }
 
   /**
+   * Handle thumbnail image loading errors
+   * Hides the image when it fails to load to prevent broken image icons
+   */
+  onThumbnailError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    // Hide the image to prevent broken image icon from showing
+    img.style.display = 'none';
+    // Optionally, could set a placeholder image here:
+    // img.src = 'assets/placeholder-video.png';
+  }
+
+  /**
+   * Handle video loading errors (including poster image errors)
+   * Silently handles errors to prevent console noise
+   */
+  onVideoError(event: Event): void {
+    // Silently handle video/poster errors - they're non-critical
+    // The video element will handle its own error state
+  }
+
+  /**
    * Track expanded state for descriptions
    */
   descriptionExpandedStates: boolean[] = [];

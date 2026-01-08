@@ -248,6 +248,43 @@ Running `npm run sections:build` automatically generates:
 - Field/item schema
 - Test fixtures (complete, minimal, edgeCases)
 
+### Example Structure Requirements
+
+Each `section.definition.json` file should include an `examples` object with the following structure:
+
+```json
+{
+  "examples": {
+    "demo": {
+      "title": "Section Title",
+      "type": "section-type",
+      "description": "Demo example showing typical use case",
+      "fields": [...] // or "items": [...] or "chartData": {...}
+    },
+    "doc": {
+      "title": "Section Title",
+      "type": "section-type",
+      "description": "Minimal example for documentation",
+      "fields": [...] // Single entry, minimal structure
+    },
+    "long": {
+      "title": "Section Title",
+      "type": "section-type",
+      "description": "Comprehensive example showing all features",
+      "fields": [...] // Multiple entries showing all capabilities
+    }
+  }
+}
+```
+
+**Example Types:**
+- **`demo`** (Required): Comprehensive example for showcases - shows typical use case with multiple entries. Used in demo cards.
+- **`doc`** (Recommended): Minimal example with single entry. Used in documentation and prompt generation. Should be concise.
+- **`long`** (Recommended): Extensive example showing all features, edge cases, and multiple data points. Used for reference.
+
+**Validation:**
+Run `node scripts/validate-section-examples.js` to check that all sections have required examples.
+
 ---
 
 ## 🎯 Benefits

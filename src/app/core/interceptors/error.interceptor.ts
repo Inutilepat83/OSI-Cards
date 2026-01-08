@@ -43,6 +43,16 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept<T>(req: HttpRequest<T>, next: HttpHandler): Observable<HttpEvent<T>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        // Check if this is a documentation file 404 - treat as non-critical
+        // Let the component handle it gracefully without triggering error handler
+        const isDocFile404 = error.status === 404 && error.url?.includes('/assets/docs/');
+
+        if (isDocFile404) {
+          // Silently handle documentation 404s - don't propagate to error handler
+          // Return original error so component can handle it gracefully
+          return throwError(() => error);
+        }
+
         let errorMessage = 'An error occurred';
 
         if (error.error instanceof ErrorEvent) {
@@ -74,8 +84,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           }
         }
 
+        // Preserve HTTP status information in error object
+        const httpError = new Error(errorMessage);
+        (httpError as any).status = error.status;
+        (httpError as any).statusCode = error.status;
+        (httpError as any).url = error.url;
+
         const appError = this.errorHandlingService.handleError(
-          new Error(errorMessage),
+          httpError,
           `HTTP ${error.status || 'Network'}`
         );
 

@@ -59,43 +59,6 @@
   box-sizing: border-box;
 }
 
-/* Section highlight animation for URL fragment scrolling */
-.section-highlight {
-  animation: section-pulse 2s ease-out;
-  position: relative;
-}
-
-.section-highlight::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
-  border-radius: 14px;
-  pointer-events: none;
-  animation: section-border-fade 2s ease-out forwards;
-}
-
-@keyframes section-pulse {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, 0, 0) scale(1.01);
-  }
-}
-
-@keyframes section-border-fade {
-  0% {
-    opacity: 1;
-    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
-  }
-  100% {
-    opacity: 0;
-    box-shadow: 0 0 0 transparent;
-  }
-}
-
 .ai-card-breakpoint-pill {
   display: inline-flex;
   align-items: center;

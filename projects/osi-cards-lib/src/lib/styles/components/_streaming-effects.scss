@@ -410,26 +410,6 @@
 }
 
 /* ===================================================================
-   SECTION HIGHLIGHT EFFECT
-   For URL fragment scrolling and attention
-   =================================================================== */
-
-.section-highlight {
-  animation: sectionPulse 2s ease-out;
-  position: relative;
-}
-
-.section-highlight::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
-  border-radius: var(--card-border-radius, 14px);
-  pointer-events: none;
-  animation: sectionBorderFade 2s ease-out forwards;
-}
-
-/* ===================================================================
    NEW SECTION GLOW EFFECT
    For newly added streaming sections
    =================================================================== */

@@ -111,8 +111,14 @@ export class DocumentationPageComponent implements OnInit {
       })
       .pipe(
         catchError((err) => {
-          console.error('Error loading documentation:', err);
-          this.error.set(`Failed to load "${doc.title}". File may not exist at ${doc.path}`);
+          // Completely silent for 404s - documentation files may not exist
+          if (err.status === 404) {
+            this.error.set(`Documentation file not found: ${doc.title}`);
+          } else {
+            // Only log non-404 errors
+            console.error('Error loading documentation:', err);
+            this.error.set(`Failed to load "${doc.title}". File may not exist at ${doc.path}`);
+          }
           this.isLoading.set(false);
           this.cdr.markForCheck();
           return of('');

@@ -187,9 +187,23 @@ export class ErrorHandlingService {
    */
   private createApplicationError(error: unknown, context?: string): ApplicationError {
     if (error instanceof Error) {
-      // Check for HTTP errors
-      if ('status' in error || 'statusCode' in error) {
-        const status = ('status' in error ? error.status : error.statusCode) as number;
+      // Check for HTTP errors - preserve status from error object
+      const status = (error as any).status || (error as any).statusCode;
+      if (status !== undefined) {
+        // 404s for documentation/assets are non-critical
+        const url = (error as any).url || '';
+        const isDocAsset = url.includes('/assets/docs/') || url.includes('/assets/');
+
+        if (status === 404 && isDocAsset) {
+          // Return a low-severity network error for missing assets
+          // These are expected and should not be treated as critical
+          return ErrorFactory.networkError(error.message || `HTTP ${status} error`, {
+            statusCode: status,
+            originalError: error,
+            context,
+          });
+        }
+
         return ErrorFactory.networkError(error.message || `HTTP ${status} error`, {
           statusCode: status,
           originalError: error,

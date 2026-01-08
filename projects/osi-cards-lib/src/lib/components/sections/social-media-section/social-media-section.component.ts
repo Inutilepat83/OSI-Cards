@@ -105,7 +105,7 @@ export class SocialMediaSectionComponent extends BaseSectionComponent implements
    * Format follower count
    */
   formatFollowers(count?: unknown): string {
-    if (!count || typeof count !== 'number') return '0';
+    if (!count || typeof count !== 'number' || isNaN(count)) return '0';
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();

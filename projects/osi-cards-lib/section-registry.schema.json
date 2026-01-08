@@ -208,21 +208,33 @@
       "type": "object",
       "description": "JSON examples for documentation and testing",
       "properties": {
+        "demo": {
+          "type": "object",
+          "description": "Demo example for showcases - comprehensive example showing typical use case with multiple entries. Used in demo cards and showcases."
+        },
+        "doc": {
+          "type": "object",
+          "description": "Documentation example - minimal example with single entry. Used in documentation and prompt generation. Should be concise and show basic structure."
+        },
+        "long": {
+          "type": "object",
+          "description": "Long/comprehensive example - extensive example showing all features, edge cases, and multiple data points. Used for reference and comprehensive demonstrations. Recommended for showing how sections handle multiple entries."
+        },
         "example": {
           "type": "object",
-          "description": "Representative example demonstrating all available features of the section. Should be concise but show different cases and use all key features."
+          "description": "Legacy: Representative example (backward compatibility - prefer using demo/doc/long)"
         },
         "complete": {
           "type": "object",
-          "description": "Legacy: Complete example (deprecated, use 'example' instead)"
+          "description": "Legacy: Complete example (deprecated, use 'demo' or 'long' instead)"
         },
         "minimal": {
           "type": "object",
-          "description": "Legacy: Minimal example (deprecated, use 'example' instead)"
+          "description": "Legacy: Minimal example (deprecated, use 'doc' instead)"
         },
         "edgeCases": {
           "type": "object",
-          "description": "Legacy: Edge case example (deprecated, use 'example' instead)"
+          "description": "Legacy: Edge case example (deprecated, use 'long' instead)"
         }
       }
     },

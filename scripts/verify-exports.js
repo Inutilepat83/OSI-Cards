@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Export Verification Script
- * 
+ *
  * Verifies that all components, services, and utilities from the library
  * are properly exported and can be imported by consumers.
- * 
+ *
  * Usage: node scripts/verify-exports.js
  */
 
@@ -74,17 +74,8 @@ const EXPECTED_EXPORTS = {
     'resetTransform',
     'isAnimating',
   ],
-  models: [
-    'AICardConfig',
-    'CardSection',
-    'CardField',
-    'CardItem',
-    'CardAction',
-  ],
-  interfaces: [
-    'SectionPlugin',
-    'EventMiddleware',
-  ],
+  models: ['AICardConfig', 'CardSection', 'CardField', 'CardItem', 'CardAction'],
+  interfaces: ['SectionPlugin', 'EventMiddleware'],
   types: [
     'StreamingStage',
     'StreamingState',
@@ -127,7 +118,7 @@ function logResult(name, passed, details = '') {
 // Check if public-api.ts exists
 function checkPublicApiExists() {
   logSection('Checking Public API File');
-  
+
   if (fs.existsSync(PUBLIC_API_PATH)) {
     logResult('public-api.ts exists', true);
     return true;
@@ -140,40 +131,40 @@ function checkPublicApiExists() {
 // Parse public-api.ts to find exports
 function parsePublicApi() {
   logSection('Parsing Public API Exports');
-  
+
   const content = fs.readFileSync(PUBLIC_API_PATH, 'utf-8');
   const exports = {
     wildcardExports: [],
     namedExports: [],
   };
-  
+
   // Find wildcard exports (export * from '...')
   const wildcardRegex = /export\s*\*\s*from\s*['"]([^'"]+)['"]/g;
   let match;
   while ((match = wildcardRegex.exec(content)) !== null) {
     exports.wildcardExports.push(match[1]);
   }
-  
+
   // Find named exports (export { ... } from '...')
   const namedRegex = /export\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"]/g;
   while ((match = namedRegex.exec(content)) !== null) {
-    const names = match[1].split(',').map(n => n.trim().split(' ')[0]);
+    const names = match[1].split(',').map((n) => n.trim().split(' ')[0]);
     exports.namedExports.push(...names);
   }
-  
+
   log(`  Found ${exports.wildcardExports.length} wildcard exports`, colors.blue);
   log(`  Found ${exports.namedExports.length} named exports`, colors.blue);
-  
+
   return exports;
 }
 
 // Check if dist folder exists
 function checkDistExists() {
   logSection('Checking Distribution Build');
-  
+
   if (fs.existsSync(DIST_PATH)) {
     logResult('dist/osi-cards-lib exists', true);
-    
+
     // Check for index.d.ts
     const indexDts = path.join(DIST_PATH, 'index.d.ts');
     if (fs.existsSync(indexDts)) {
@@ -181,7 +172,7 @@ function checkDistExists() {
     } else {
       logResult('index.d.ts exists', false);
     }
-    
+
     return true;
   } else {
     logResult('dist/osi-cards-lib exists', false, 'Run ng build osi-cards-lib first');
@@ -192,10 +183,10 @@ function checkDistExists() {
 // Check component files exist in library
 function checkComponentFiles() {
   logSection('Checking Component Files');
-  
+
   const componentsPath = path.join(LIBRARY_PATH, 'lib/components');
   const results = { passed: 0, failed: 0, missing: [] };
-  
+
   const componentPaths = [
     // Main components
     'ai-card-renderer/ai-card-renderer.component.ts',
@@ -231,12 +222,12 @@ function checkComponentFiles() {
     'sections/solutions-section/solutions-section.component.ts',
     'sections/text-reference-section/text-reference-section.component.ts',
   ];
-  
+
   for (const componentPath of componentPaths) {
     const fullPath = path.join(componentsPath, componentPath);
     const exists = fs.existsSync(fullPath);
     const name = componentPath.split('/').pop().replace('.ts', '');
-    
+
     if (exists) {
       results.passed++;
       logResult(name, true);
@@ -246,17 +237,17 @@ function checkComponentFiles() {
       logResult(name, false, 'File missing');
     }
   }
-  
+
   return results;
 }
 
 // Check service files exist
 function checkServiceFiles() {
   logSection('Checking Service Files');
-  
+
   const servicesPath = path.join(LIBRARY_PATH, 'lib/services');
   const results = { passed: 0, failed: 0, missing: [] };
-  
+
   const servicePaths = [
     'magnetic-tilt.service.ts',
     'icon.service.ts',
@@ -266,12 +257,12 @@ function checkServiceFiles() {
     'section-plugin-registry.service.ts',
     'event-middleware.service.ts',
   ];
-  
+
   for (const servicePath of servicePaths) {
     const fullPath = path.join(servicesPath, servicePath);
     const exists = fs.existsSync(fullPath);
     const name = servicePath.replace('.ts', '');
-    
+
     if (exists) {
       results.passed++;
       logResult(name, true);
@@ -281,17 +272,17 @@ function checkServiceFiles() {
       logResult(name, false, 'File missing');
     }
   }
-  
+
   return results;
 }
 
 // Check utility files exist
 function checkUtilityFiles() {
   logSection('Checking Utility Files');
-  
+
   const utilsPath = path.join(LIBRARY_PATH, 'lib/utils');
   const results = { passed: 0, failed: 0, missing: [] };
-  
+
   const utilPaths = [
     'card-diff.util.ts',
     'responsive.util.ts',
@@ -302,12 +293,12 @@ function checkUtilityFiles() {
     'smart-grid-logger.util.ts',
     'animation-optimization.util.ts',
   ];
-  
+
   for (const utilPath of utilPaths) {
     const fullPath = path.join(utilsPath, utilPath);
     const exists = fs.existsSync(fullPath);
     const name = utilPath.replace('.ts', '');
-    
+
     if (exists) {
       results.passed++;
       logResult(name, true);
@@ -317,17 +308,17 @@ function checkUtilityFiles() {
       logResult(name, false, 'File missing');
     }
   }
-  
+
   return results;
 }
 
 // Check style files exist
 function checkStyleFiles() {
   logSection('Checking Style Files');
-  
+
   const stylesPath = path.join(LIBRARY_PATH, 'lib/styles');
   const results = { passed: 0, failed: 0, missing: [] };
-  
+
   const stylePaths = [
     '_styles.scss',
     '_styles-scoped.scss',
@@ -344,12 +335,12 @@ function checkStyleFiles() {
     'bundles/_all.scss',
     'bundles/_sections.scss',
   ];
-  
+
   for (const stylePath of stylePaths) {
     const fullPath = path.join(stylesPath, stylePath);
     const exists = fs.existsSync(fullPath);
     const name = stylePath;
-    
+
     if (exists) {
       results.passed++;
       logResult(name, true);
@@ -359,7 +350,7 @@ function checkStyleFiles() {
       logResult(name, false, 'File missing');
     }
   }
-  
+
   return results;
 }
 
@@ -367,7 +358,7 @@ function checkStyleFiles() {
 function verify() {
   log('\n🔍 OSI Cards Library Export Verification\n', colors.bright + colors.cyan);
   log('════════════════════════════════════════════════════════════════════\n', colors.cyan);
-  
+
   const results = {
     publicApi: checkPublicApiExists(),
     components: checkComponentFiles(),
@@ -376,18 +367,18 @@ function verify() {
     styles: checkStyleFiles(),
     dist: checkDistExists(),
   };
-  
+
   // Summary
   logSection('Summary');
-  
-  const totalPassed = 
+
+  const totalPassed =
     (results.publicApi ? 1 : 0) +
     results.components.passed +
     results.services.passed +
     results.utilities.passed +
     results.styles.passed +
     (results.dist ? 1 : 0);
-    
+
   const totalFailed =
     (results.publicApi ? 0 : 1) +
     results.components.failed +
@@ -395,41 +386,40 @@ function verify() {
     results.utilities.failed +
     results.styles.failed +
     (results.dist ? 0 : 1);
-  
+
   log(`  Total Passed: ${totalPassed}`, colors.green);
   log(`  Total Failed: ${totalFailed}`, totalFailed > 0 ? colors.red : colors.green);
-  
+
   if (totalFailed > 0) {
     console.log('');
     log('  Missing items:', colors.yellow);
-    
+
     if (results.components.missing.length > 0) {
       log('    Components:', colors.yellow);
-      results.components.missing.forEach(m => log(`      - ${m}`, colors.red));
+      results.components.missing.forEach((m) => log(`      - ${m}`, colors.red));
     }
-    
+
     if (results.services.missing.length > 0) {
       log('    Services:', colors.yellow);
-      results.services.missing.forEach(m => log(`      - ${m}`, colors.red));
+      results.services.missing.forEach((m) => log(`      - ${m}`, colors.red));
     }
-    
+
     if (results.utilities.missing.length > 0) {
       log('    Utilities:', colors.yellow);
-      results.utilities.missing.forEach(m => log(`      - ${m}`, colors.red));
+      results.utilities.missing.forEach((m) => log(`      - ${m}`, colors.red));
     }
-    
+
     if (results.styles.missing.length > 0) {
       log('    Styles:', colors.yellow);
-      results.styles.missing.forEach(m => log(`      - ${m}`, colors.red));
+      results.styles.missing.forEach((m) => log(`      - ${m}`, colors.red));
     }
   }
-  
+
   console.log('');
-  
+
   // Exit with appropriate code
   process.exit(totalFailed > 0 ? 1 : 0);
 }
 
 // Run verification
 verify();
-

@@ -213,6 +213,9 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
         }),
       }).catch(() => {});
       // #endregion
+      if (isNaN(numValue)) {
+        return '—';
+      }
       return `${numValue.toFixed(1)}%`;
     }
 
@@ -233,6 +236,9 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
         }),
       }).catch(() => {});
       // #endregion
+      if (isNaN(numValue)) {
+        return '—';
+      }
       // Format large numbers with K/M suffixes
       if (numValue >= 1000000) {
         return `${(numValue / 1000000).toFixed(1)}M`;

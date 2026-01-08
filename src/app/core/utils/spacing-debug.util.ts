@@ -865,11 +865,63 @@ function performMeasurement(sectionItems: HTMLElement[]): void {
   );
   // #endregion
 
-  // Store complete summary in localStorage
+  // Store complete summary in localStorage with compression and size limits
   try {
-    localStorage.setItem('spacing-debug-summary', JSON.stringify(summary));
+    const summaryString = JSON.stringify(summary);
+    const summarySize = new Blob([summaryString]).size;
+    const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit
+
+    // If summary is too large, store only essential data
+    if (summarySize > MAX_STORAGE_SIZE) {
+      const compressedSummary = {
+        totalItems: summary.totalItems,
+        uniquePaddingValues: summary.uniquePaddingValues,
+        uniqueGapValues: summary.uniqueGapValues,
+        uniqueActualHorizontalGaps: summary.uniqueActualHorizontalGaps,
+        uniqueActualVerticalGaps: summary.uniqueActualVerticalGaps,
+        zeroGapItemsCount: summary.zeroGapItemsCount,
+        asymmetricPaddingCount: summary.asymmetricPaddingCount,
+        inconsistentGapsCount: summary.inconsistentGapsCount,
+        // Store only first 10 measurements to reduce size
+        measurements: summary.measurements.slice(0, 10),
+        sectionGroups: summary.sectionGroups,
+        asymmetricItems: summary.asymmetricItems.slice(0, 10),
+        inconsistentGaps: summary.inconsistentGaps.slice(0, 10),
+        zeroGapItems: summary.zeroGapItems.slice(0, 10),
+      };
+      localStorage.setItem('spacing-debug-summary', JSON.stringify(compressedSummary));
+      console.warn('[Spacing Debug] Summary too large, stored compressed version');
+    } else {
+      localStorage.setItem('spacing-debug-summary', summaryString);
+    }
   } catch (e) {
-    console.warn('[Spacing Debug] Could not store in localStorage:', e);
+    // Handle quota exceeded - try to clear old data and retry with minimal data
+    if ((e as any)?.name === 'QuotaExceededError') {
+      try {
+        // Clear old spacing debug data
+        localStorage.removeItem('spacing-debug-summary');
+        localStorage.removeItem('spacing-debug-logs');
+
+        // Store only essential summary
+        const minimalSummary = {
+          totalItems: summary.totalItems,
+          uniquePaddingValues: summary.uniquePaddingValues,
+          uniqueGapValues: summary.uniqueGapValues,
+          zeroGapItemsCount: summary.zeroGapItemsCount,
+          asymmetricPaddingCount: summary.asymmetricPaddingCount,
+          inconsistentGapsCount: summary.inconsistentGapsCount,
+        };
+        localStorage.setItem('spacing-debug-summary', JSON.stringify(minimalSummary));
+        console.warn('[Spacing Debug] localStorage quota exceeded, stored minimal summary');
+      } catch (retryError) {
+        console.warn(
+          '[Spacing Debug] Could not store in localStorage even after cleanup:',
+          retryError
+        );
+      }
+    } else {
+      console.warn('[Spacing Debug] Could not store in localStorage:', e);
+    }
   }
 
   // Also log a simplified version for quick analysis

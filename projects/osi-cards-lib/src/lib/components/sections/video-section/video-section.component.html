@@ -27,6 +27,7 @@
             *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
             [poster]="getThumbnail(video)"
             [title]="video.title"
+            (error)="onVideoError($event)"
           ></video>
 
           <!-- Thumbnail Only (fallback when no video URL or embed failed) -->
@@ -35,6 +36,7 @@
             [alt]="video.title"
             *ngIf="!getVideoUrl(video) && getThumbnail(video)"
             class="video-thumbnail"
+            (error)="onThumbnailError($event)"
           />
 
           <!-- Error state when no video URL and no thumbnail -->
