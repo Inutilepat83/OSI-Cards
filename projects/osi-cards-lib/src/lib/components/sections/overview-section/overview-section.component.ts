@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { CardSection } from '../../../models';
+import { ClipboardService } from '../../../services/clipboard.service';
 import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { LucideIconsModule } from '../../../icons';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -14,12 +16,13 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 @Component({
   selector: 'lib-overview-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, LucideIconsModule],
   templateUrl: './overview-section.component.html',
   styleUrl: './overview-section.scss',
 })
 export class OverviewSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+  private readonly clipboardService = inject(ClipboardService);
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -115,5 +118,48 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
 
     // Convert newlines to <br> tags for HTML rendering
     return stringValue.replace(/\n/g, '<br>');
+  }
+
+  /**
+   * Copy section content to clipboard
+   */
+  async onCopySection(): Promise<void> {
+    if (!this.section.fields?.length) {
+      return;
+    }
+
+    // Build text content from all fields
+    const textParts: string[] = [];
+
+    // Add title if available
+    if (this.section.title) {
+      textParts.push(this.section.title);
+    }
+
+    // Add description if available
+    if (this.section.description) {
+      textParts.push(this.section.description);
+    }
+
+    // Add field content
+    this.section.fields.forEach((field) => {
+      const value = this.getFieldValue(field);
+      if (value !== null && value !== undefined) {
+        const stringValue = String(value);
+        if (field.label) {
+          textParts.push(`${field.label}: ${stringValue}`);
+        } else {
+          textParts.push(stringValue);
+        }
+      }
+    });
+
+    const textToCopy = textParts.join('\n\n');
+
+    try {
+      await this.clipboardService.copy(textToCopy);
+    } catch (error) {
+      console.error('Failed to copy section content to clipboard', error);
+    }
   }
 }

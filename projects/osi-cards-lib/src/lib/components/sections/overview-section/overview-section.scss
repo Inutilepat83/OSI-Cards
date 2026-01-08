@@ -16,6 +16,11 @@
 :host {
   display: block;
   width: 100%;
+  position: relative;
+}
+
+.ai-section--overview {
+  position: relative;
 }
 
 // Grid - Stack layout for overview fields
@@ -171,4 +176,76 @@
   .overview-item {
     border: 1px solid var(--border, var(--osi-border));
   }
+}
+
+// Copy Button
+// Purpose: Discrete copy button in top right corner, matching export button style
+// Note: Must override .section-content > * { width: 100% } rule from _section-shell.scss
+.ai-section--overview .overview-section-copy-btn,
+.section-content .overview-section-copy-btn,
+.overview-section-copy-btn {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  flex-shrink: 0 !important;
+  width: 12px !important;
+  min-width: 12px !important;
+  max-width: 12px !important;
+  height: 12px !important;
+  min-height: 12px !important;
+  max-height: 12px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.6)) !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease !important;
+  opacity: 0.5 !important;
+  z-index: 10 !important;
+  box-sizing: border-box !important;
+}
+
+.overview-section-copy-btn:hover {
+  color: var(--color-brand, #ff7900) !important;
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+.overview-section-copy-btn:active {
+  color: var(--color-brand, #ff7900) !important;
+  background: transparent !important;
+  opacity: 0.7 !important;
+}
+
+.overview-section-copy-btn:focus-visible {
+  outline: 2px solid var(--color-brand, #ff7900) !important;
+  outline-offset: 2px !important;
+  color: var(--color-brand, #ff7900) !important;
+  opacity: 1 !important;
+}
+
+// Lucide icon styling
+.overview-section-copy-btn lucide-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+}
+
+.overview-section-copy-btn lucide-icon svg {
+  display: block !important;
+  width: inherit !important;
+  height: inherit !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }

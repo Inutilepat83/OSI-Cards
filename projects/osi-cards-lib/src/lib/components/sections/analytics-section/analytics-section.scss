@@ -30,7 +30,7 @@
   grid-template-columns: repeat(auto-fit, minmax(var(--osi-section-item-grid-min-sm), 1fr));
   gap: var(--osi-section-item-gap) !important;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: visible; // Allow progress bars to be fully visible
 
   @include responsive-down("md") {
     gap: var(--osi-section-item-gap) !important;
@@ -60,6 +60,9 @@
   justify-content: space-between;
   // Padding and gap are handled by card('normal') mixin - 12px uniform
   gap: var(--osi-section-item-gap);
+  // Ensure progress bars are visible - allow overflow for progress area
+  overflow-y: hidden; // Keep vertical overflow hidden
+  overflow-x: visible; // Allow horizontal overflow for progress bars
 
   @include responsive-down("sm") {
     min-height: var(--osi-section-item-min-height-xs);
@@ -184,6 +187,8 @@
   gap: var(--osi-section-item-gap-xs);
   min-height: 18px;
   margin-top: var(--osi-section-item-gap-xs);
+  width: 100%;
+  overflow: visible; // Ensure progress bars are fully visible
 }
 
 .metric-progress-wrapper {
@@ -191,11 +196,14 @@
   align-items: center;
   gap: var(--osi-section-item-gap-xs);
   width: 100%;
+  min-width: 0; // Allow flex items to shrink below their content size
+  overflow: visible; // Ensure progress bars and labels are visible
 }
 
 .metric-progress-track {
   position: relative;
-  flex: 1;
+  flex: 1 1 0; // Allow track to shrink to accommodate label
+  min-width: 0; // Allow flex item to shrink below content size
   height: 3px;
   background: color-mix(in srgb, var(--muted-foreground) 15%, transparent 85%);
   border-radius: var(--osi-radius-full);
@@ -218,21 +226,45 @@
 .metric-progress-fill--default {
   background: linear-gradient(
     90deg,
-    var(--accent, var(--osi-accent)) 0%,
-    color-mix(in srgb, var(--accent, var(--osi-accent)) 80%, white 20%) 100%
+    var(--accent, var(--osi-accent, #ff7900)) 0%,
+    color-mix(in srgb, var(--accent, var(--osi-accent, #ff7900)) 80%, white 20%) 100%
   );
 }
 
 .metric-progress-fill--success {
-  background: linear-gradient(90deg, var(--osi-success) 0%, var(--osi-success-bright) 100%);
+  // Use --status-success as primary fallback (defined in user's CSS), then --osi-success, then hardcoded
+  // Ensure bright enough for dark backgrounds - use brighter green for visibility
+  background: linear-gradient(
+    90deg,
+    var(--status-success, var(--osi-success, #22c55e)) 0%,
+    var(--osi-success-bright, #34d87b) 100%
+  );
+  // Ensure full opacity for visibility on dark backgrounds
+  opacity: 1;
 }
 
 .metric-progress-fill--warning {
-  background: linear-gradient(90deg, var(--osi-warning) 0%, var(--osi-warning-bright) 100%);
+  // Use --status-warning as primary fallback, then --osi-warning, then hardcoded value
+  background: linear-gradient(
+    90deg,
+    var(--status-warning, var(--osi-warning, #f59e0b)) 0%,
+    var(--osi-warning-bright, #fbbf24) 100%
+  );
+  // Fallback to solid color if gradient fails
+  background-color: var(--status-warning, var(--osi-warning, #f59e0b));
+  opacity: 1;
 }
 
 .metric-progress-fill--error {
-  background: linear-gradient(90deg, var(--osi-error) 0%, var(--osi-error-bright) 100%);
+  // Use --status-error as primary fallback, then --osi-error, then hardcoded value
+  background: linear-gradient(
+    90deg,
+    var(--status-error, var(--osi-error, #ef4444)) 0%,
+    var(--osi-error-bright, #f87171) 100%
+  );
+  // Fallback to solid color if gradient fails
+  background-color: var(--status-error, var(--osi-error, #ef4444));
+  opacity: 1;
 }
 
 // Target marker (bullet-style) - Subtle in dark mode

@@ -1,16 +1,16 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
- * 
+ *
  * This file is generated from section definition files (*.definition.json).
  * Run: npm run generate:section-types
- * 
- * Last generated: 2026-01-08T13:31:21.595Z
+ *
+ * Last generated: 2026-01-08T14:15:17.023Z
  */
 
 /**
  * All valid section type identifiers (canonical types + aliases)
  * Generated from section definition files
- * 
+ *
  * This array is used by Zod schemas for runtime validation.
  */
 export const SECTION_TYPE_IDENTIFIERS = [
@@ -161,7 +161,7 @@ export function resolveSectionType(identifier: string): CanonicalSectionType | n
   if (CANONICAL_SECTION_TYPES.includes(identifier as CanonicalSectionType)) {
     return identifier as CanonicalSectionType;
   }
-  
+
   // Check if it's an alias
   return SECTION_TYPE_ALIASES[identifier] || null;
 }

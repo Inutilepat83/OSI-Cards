@@ -10,7 +10,6 @@
       </button>
       <div class="answer" *ngIf="isExpanded(i)" [@fadeInOut]>
         <p class="text expanded">{{ getAnswer(item) }}</p>
-        <span class="cat" *ngIf="item.meta?.category">{{ item.meta?.category }}</span>
       </div>
     </div>
   </div>

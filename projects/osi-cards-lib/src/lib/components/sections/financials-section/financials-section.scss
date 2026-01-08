@@ -64,7 +64,7 @@
   flex-direction: column;
   gap: var(--osi-section-item-gap);
   max-width: 100%;
-  overflow: visible; // Allow trend indicator to overflow slightly
+  overflow: hidden; // Keep trend indicator within padding
   box-sizing: border-box;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -99,11 +99,12 @@
   }
 }
 
-// Trend Indicator - Positioned in top-right corner
+// Trend Indicator - Positioned in top-right corner within padding
 .financial-trend-indicator {
   position: absolute;
-  top: var(--osi-section-item-gap-xs);
-  right: var(--osi-section-item-gap-xs);
+  // Position within padding: use padding value minus small offset for visual spacing
+  top: calc(var(--osi-section-item-padding-normal, 16px) - 4px);
+  right: calc(var(--osi-section-item-padding-normal, 16px) - 4px);
   z-index: 10;
   margin: 0;
 
@@ -196,8 +197,8 @@
   }
 
   .financial-trend-indicator {
-    top: var(--osi-section-item-gap-xs);
-    right: var(--osi-section-item-gap-xs);
+    top: calc(var(--osi-section-item-padding-normal, 16px) - 4px);
+    right: calc(var(--osi-section-item-padding-normal, 16px) - 4px);
   }
 }
 

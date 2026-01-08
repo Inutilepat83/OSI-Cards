@@ -14,7 +14,7 @@ const path = require('path');
 const {
   getSectionTypes,
   getAllSectionTypeIdentifiers,
-  getSectionAliases
+  getSectionAliases,
 } = require('./utils/definition-reader');
 
 const rootDir = path.join(__dirname, '..');
@@ -37,21 +37,21 @@ function generateSectionTypes() {
   // Generate TypeScript file content
   const content = `/**
  * AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
- * 
+ *
  * This file is generated from section definition files (*.definition.json).
  * Run: npm run generate:section-types
- * 
+ *
  * Last generated: ${new Date().toISOString()}
  */
 
 /**
  * All valid section type identifiers (canonical types + aliases)
  * Generated from section definition files
- * 
+ *
  * This array is used by Zod schemas for runtime validation.
  */
 export const SECTION_TYPE_IDENTIFIERS = [
-${allIdentifiers.map(type => `  '${type}'`).join(',\n')}
+${allIdentifiers.map((type) => `  '${type}'`).join(',\n')}
 ] as const;
 
 /**
@@ -68,7 +68,7 @@ export type SectionTypeIdentifier = typeof SECTION_TYPE_IDENTIFIERS[number];
  * Canonical section types (from definition file 'type' field)
  */
 export const CANONICAL_SECTION_TYPES = [
-${sectionTypes.map(type => `  '${type}'`).join(',\n')}
+${sectionTypes.map((type) => `  '${type}'`).join(',\n')}
 ] as const;
 
 export type CanonicalSectionType = typeof CANONICAL_SECTION_TYPES[number];
@@ -90,7 +90,7 @@ export function resolveSectionType(identifier: string): CanonicalSectionType | n
   if (CANONICAL_SECTION_TYPES.includes(identifier as CanonicalSectionType)) {
     return identifier as CanonicalSectionType;
   }
-  
+
   // Check if it's an alias
   return SECTION_TYPE_ALIASES[identifier] || null;
 }

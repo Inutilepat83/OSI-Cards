@@ -144,7 +144,7 @@ Instead: Merge into one contact-card with all people.
 
 **SECTION SELECTION GUIDANCE:**
   - **Start with the most important**: Identify the 2-3 section types that are most critical to the card's purpose.
-  - **Prioritize by relevance**: 
+  - **Prioritize by relevance**:
     1. Key contacts/people (contact-card) - if engagement is important
     2. Core value metrics (analytics, financials) - if demonstrating value
     3. Primary offerings (solutions, product) - if showcasing services/products
@@ -237,12 +237,12 @@ Instead: Merge into one contact-card with all people.
   - Table: Use fields array for table metadata/description. Store actual tabular data in meta.tableData if provided. If only metadata available, use fields array only.
 
 **Layout Defaults (adjust per context):**
-  
+
   **Priority Decision Tree:**
   - Priority 1 (Highest): Overview sections, key contact cards, executive summaries - always visible, never condensed
   - Priority 2 (Medium): Analytics, charts, financials, important metrics - visible by default, condensed last
   - Priority 3 (Lowest): FAQ, gallery, reference materials, supporting content - normal priority, can be collapsed first
-  
+
   **Priority Examples:**
   - overview → priority 1 (critical summary)
   - contact-card → priority 1 (key people)
@@ -251,18 +251,18 @@ Instead: Merge into one contact-card with all people.
   - chart → priority 2 (data visualization)
   - faq → priority 3 (supporting content)
   - gallery → priority 3 (supporting content)
-  
+
   **PreferredColumns Guidance:**
   - 1 column: Densely packed lists, FAQs, timelines, long vertical content (use when 10+ entries or vertical scrolling needed)
   - 2 columns: Balanced layout for contacts, news, events, most field-based sections (recommended default for most cases)
   - 3-4 columns: Sparse data, wide charts, detailed analytics (use for wide content or when space allows)
-  
+
   **PreferredColumns Examples:**
   - FAQs with 15 questions → preferredColumns 1 (vertical scrolling)
   - Contact cards with 5 people → preferredColumns 2 (balanced side-by-side)
   - Chart with multiple datasets → preferredColumns 3-4 (wide visualization)
   - Analytics with 3 metrics → preferredColumns 2 (balanced display)
-  
+
   **Adjust based on:**
   - Number of entries (10+ entries → preferredColumns 1-2)
   - Visual density (dense content → 1 column, sparse → 2-3 columns)

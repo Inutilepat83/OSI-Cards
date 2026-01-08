@@ -6,7 +6,10 @@
     <div class="section-item" *ngFor="let item of section.items; let i = index">
       <div class="list-content">
         <div class="list-header">
-          <h4 class="list-title">{{ item.title }}</h4>
+          <div class="list-title-wrapper">
+            <span class="list-icon" *ngIf="item.icon">{{ item.icon }}</span>
+            <h4 class="list-title">{{ item.title }}</h4>
+          </div>
           <div class="list-badges">
             <lib-badge *ngIf="item.status" [variant]="getStatusVariant(item.status)" size="sm">
               {{ item.status }}

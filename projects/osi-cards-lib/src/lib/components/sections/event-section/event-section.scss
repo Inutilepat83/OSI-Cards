@@ -46,9 +46,10 @@
   @include card("normal");
   & {
     width: 100%; // Ensure full width expansion
-    display: flex;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: auto 1fr;
     gap: var(--osi-section-item-gap);
+    align-items: center;
     box-sizing: border-box; // Include padding in width
   }
 
@@ -84,7 +85,8 @@
 
 .date {
   flex-shrink: 0;
-  width: 50px; // Compact: 50px (was 54px)
+  width: 60px; // Square: width matches height
+  height: 60px; // Square: height matches width
   padding: var(--osi-section-item-padding-compact);
   background: var(--surface-hover);
   border: 1px solid var(--border);
@@ -170,7 +172,7 @@
   }
 
   .section-item {
-    flex-direction: column;
+    grid-template-columns: 1fr;
 
     .date {
       width: 100%;

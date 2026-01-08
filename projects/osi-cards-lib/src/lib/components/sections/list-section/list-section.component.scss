@@ -87,11 +87,27 @@
   flex-wrap: wrap;
 }
 
+.list-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--osi-section-item-gap-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.list-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
 .list-title {
   @include heading(4);
   flex: 1;
   margin: 0;
   transition: color var(--osi-section-item-transition);
+  min-width: 0;
 }
 
 .list-badges {

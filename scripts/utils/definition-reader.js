@@ -2,7 +2,7 @@
 
 /**
  * Centralized utility for reading section definition files
- * 
+ *
  * This module provides functions to discover and read all section definition files
  * (*.definition.json) from the sections directory, ensuring a single source of truth.
  */
@@ -62,11 +62,7 @@ function discoverAllSectionTypes() {
   for (const entry of entries) {
     if (entry.isDirectory() && entry.name.endsWith('-section')) {
       const sectionType = entry.name.replace('-section', '');
-      const definitionPath = path.join(
-        sectionsDir,
-        entry.name,
-        `${sectionType}.definition.json`
-      );
+      const definitionPath = path.join(sectionsDir, entry.name, `${sectionType}.definition.json`);
 
       if (fs.existsSync(definitionPath)) {
         sectionTypes.push(sectionType);
@@ -157,7 +153,7 @@ function getSectionMetadata(sectionType) {
     itemSchema: definition.itemSchema,
     chartDataSchema: definition.chartDataSchema,
     tableDataSchema: definition.tableDataSchema,
-    completionRules: definition.completionRules || {}
+    completionRules: definition.completionRules || {},
   };
 }
 
@@ -169,5 +165,5 @@ module.exports = {
   getSectionAliases,
   getAllSectionTypeIdentifiers,
   getSectionMetadata,
-  sectionsDir
+  sectionsDir,
 };

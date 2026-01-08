@@ -122,40 +122,11 @@
 
 .excerpt {
   @include body-text("small");
-  @include expandable-text(2); // Show 2 lines by default
+  display: block;
   color: var(--muted-foreground);
   word-wrap: break-word;
   overflow-wrap: break-word;
   margin: 0;
-
-  &--expanded {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
-  }
-}
-
-.excerpt-expand-btn {
-  align-self: flex-start;
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  cursor: pointer;
-  padding: var(--osi-section-item-padding-compact) 0;
-  text-decoration: underline;
-  transition: opacity var(--osi-section-item-transition);
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: var(--osi-radius-xs);
-  }
 }
 
 .link {

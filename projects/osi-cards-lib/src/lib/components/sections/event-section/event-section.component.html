@@ -17,10 +17,10 @@
           <span class="detail-item" *ngIf="e.location">{{ e.location }}</span>
           <span class="detail-item" *ngIf="e.attendees">{{ e.attendees }} people</span>
         </div>
+        <lib-badge *ngIf="e.status" class="status" [variant]="getStatusVariant(e.status)" size="sm">
+          {{ formatStatus(e.status) }}
+        </lib-badge>
       </div>
-      <lib-badge *ngIf="e.status" class="status" [variant]="getStatusVariant(e.status)" size="sm">
-        {{ formatStatus(e.status) }}
-      </lib-badge>
     </div>
   </div>
 

@@ -18,19 +18,9 @@
         </div>
         <h4 class="title">{{ a.title }}</h4>
         <div class="excerpt-wrapper" *ngIf="a.description">
-          <p class="excerpt" [class.excerpt--expanded]="isExpanded(i)" *ngIf="a.description">
+          <p class="excerpt" *ngIf="a.description">
             {{ a.description }}
           </p>
-          <button
-            *ngIf="shouldShowExpandButton(a)"
-            class="excerpt-expand-btn"
-            type="button"
-            (click)="toggleExpanded(i); $event.stopPropagation()"
-            [attr.aria-expanded]="isExpanded(i)"
-            [attr.aria-label]="(isExpanded(i) ? 'Collapse' : 'Expand') + ' article preview'"
-          >
-            {{ isExpanded(i) ? 'Show less' : 'Show more' }}
-          </button>
         </div>
         <a [href]="a.meta?.url" class="link" *ngIf="a.meta?.url" target="_blank" rel="noopener">Read →</a>
       </div>

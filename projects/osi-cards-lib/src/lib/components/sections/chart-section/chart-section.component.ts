@@ -55,10 +55,36 @@ export class ChartSectionComponent
   chartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      },
+    },
     plugins: {
       legend: {
         display: true,
         position: 'bottom',
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          padding: 4,
+        },
+        border: {
+          display: false,
+        },
+      },
+      y: {
+        ticks: {
+          padding: 4,
+        },
+        border: {
+          display: false,
+        },
       },
     },
   };
