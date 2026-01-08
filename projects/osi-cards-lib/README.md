@@ -46,16 +46,15 @@ npm install @angular/common@^17.0.0 @angular/core@^17.0.0 @angular/animations@^1
 
 ### Optional Dependencies (for charts and maps)
 
-**Important:** These dependencies are optional but **required** if you use chart or map sections in your cards.
+**Important:** These dependencies are optional but **required** if you use map sections in your cards.
 
 ```bash
-npm install frappe-charts leaflet
+npm install leaflet
 ```
 
-- **frappe-charts**: Required for `chart` section type (bar, line, pie, doughnut, area charts)
 - **leaflet**: Required for `map` section type (geographic location maps)
 
-**Note:** If you use chart or map sections without installing these dependencies, you'll see error messages in the console and the sections will display error states. The library will gracefully handle missing dependencies, but functionality will be limited.
+**Note:** If you use map sections without installing this dependency, you'll see error messages in the console and the sections will display error states. The library will gracefully handle missing dependencies, but functionality will be limited.
 
 ---
 
@@ -448,31 +447,6 @@ npm install lucide-angular@^0.292.0
 - Ensure you're using `<osi-cards-container [theme]="'day'">` or `<osi-cards-container [theme]="'night'">`
 - The `[theme]` input automatically sets the `data-theme` attribute
 - Check browser console for any errors
-
-### Chart sections not rendering / "Failed to resolve import 'frappe-charts'" error
-
-If you're using chart sections (`type: "chart"`) and encounter build errors or see error messages in the console:
-
-1. **Install frappe-charts:**
-   ```bash
-   npm install frappe-charts
-   ```
-
-2. **Verify installation:**
-   - Check that `frappe-charts` appears in your `package.json` dependencies
-   - Ensure `node_modules/frappe-charts` exists
-
-3. **Rebuild your application:**
-   ```bash
-   npm install  # If you just added the dependency
-   ng serve    # Restart dev server
-   # or
-   ng build    # Rebuild
-   ```
-
-4. **If using Vite/Angular 17+**: The library now handles missing dependencies gracefully. If you see "frappe-charts is not installed" in the console, simply install it as shown above.
-
-**Note:** Chart sections will display an error state if `frappe-charts` is not installed. The library handles this gracefully, but charts won't render until the dependency is installed.
 
 ### Map sections not rendering
 

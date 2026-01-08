@@ -41,10 +41,7 @@ OSI Cards has the following peer dependencies that should already be in your Ang
 
 For enhanced functionality:
 
-\`\`\`bash
-# For charts (ChartSection)
-npm install frappe-charts
-
+```bash
 # For icons (if not using defaults)
 npm install lucide-angular
 \`\`\`

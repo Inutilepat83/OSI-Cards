@@ -49,7 +49,7 @@ section-name/
 |---------|------|---------|-------------|
 | analytics-section | `analytics` | metrics, stats, kpi | Performance metrics and KPIs |
 | brand-colors-section | `brand-colors` | colors | Brand color palette display |
-| chart-section | `chart` | - | Data visualization (Frappe Charts) |
+| chart-section | `chart` | - | Data visualization (Chart.js) |
 | contact-card-section | `contact-card` | contacts, team | Contact information cards |
 | event-section | `event` | timeline | Event and calendar displays |
 | faq-section | `faq` | - | Frequently asked questions |

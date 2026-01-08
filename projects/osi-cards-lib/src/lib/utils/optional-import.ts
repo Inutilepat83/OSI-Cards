@@ -2,17 +2,16 @@
  * Optional Import Utility
  *
  * Provides safe dynamic imports for optional dependencies that may not be installed.
- * This is particularly useful for libraries like frappe-charts and leaflet that are
+ * This is particularly useful for libraries like leaflet that are
  * declared as optional dependencies but may not be present in consuming applications.
  *
  * @example
  * ```typescript
- * const result = await safeImport('frappe-charts');
  * if (result.success) {
- *   const Chart = result.module;
- *   // Use Chart...
+ *   const Leaflet = result.module;
+ *   // Use Leaflet...
  * } else {
- *   console.error('frappe-charts not installed:', result.error);
+ *   console.error('leaflet not installed:', result.error);
  * }
  * ```
  */
@@ -31,17 +30,18 @@ export type OptionalImportResult<T> =
  * cases where the module is not installed. It provides helpful error messages
  * to guide users on how to install missing dependencies.
  *
- * @param moduleName - The name of the module to import (e.g., 'frappe-charts')
- * @param installCommand - Optional npm install command to suggest (e.g., 'npm install frappe-charts')
+ * @param moduleName - The name of the module to import (e.g., 'leaflet')
+ * @param installCommand - Optional npm install command to suggest (e.g., 'npm install leaflet')
  * @returns Promise resolving to either success with module or failure with error
  *
  * @example
  * ```typescript
- * const result = await safeImport('frappe-charts', 'npm install frappe-charts');
+ * const result = await safeImport('leaflet', 'npm install leaflet');
  * if (result.success) {
- *   // Use result.module
+ *   const L = result.module;
+ *   // Use Leaflet...
  * } else {
- *   // Handle error: result.error and result.message
+ *   console.error(result.message);
  * }
  * ```
  */
