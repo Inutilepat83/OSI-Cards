@@ -28,6 +28,10 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+# Cursor IDE
+.cursor/debug.log
+.cursor/*.log
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
