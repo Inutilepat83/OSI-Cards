@@ -141,27 +141,10 @@
   transition: all 200ms ease-out;
   box-sizing: border-box;
 
-  // Accent line (consistent across all cards)
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--accent, #ff7900);
-    opacity: 0;
-    transition: opacity 200ms ease-out;
-  }
-
   &:hover {
     border-color: rgba(255, 255, 255, 0.12);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-
-    &::before {
-      opacity: 0.6;
-    }
   }
 }
 

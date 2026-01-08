@@ -4,17 +4,25 @@
 
   <div class="grid" *ngIf="section.items?.length">
     <div
-      class="item"
+      class="section-item"
       *ngFor="let i of section.items; let idx = index"
       (click)="onImageClick(i, idx)"
       tabindex="0"
       role="button"
     >
       <div class="img-container">
-        <img [src]="getImageUrl(i)" [alt]="getAltText(i)" class="img" loading="lazy" />
-      </div>
-      <div class="caption" *ngIf="getCaption(i)">
-        <span class="text">{{ getCaption(i) }}</span>
+        <img
+          [src]="getImageUrl(i)"
+          [alt]="getAltText(i)"
+          class="img"
+          loading="lazy"
+          decoding="async"
+          (error)="onImageError($event, i)"
+          (load)="onImageLoad($event, i)"
+        />
+        <div class="caption" *ngIf="getCaption(i)">
+          <span class="text">{{ getCaption(i) }}</span>
+        </div>
       </div>
     </div>
   </div>

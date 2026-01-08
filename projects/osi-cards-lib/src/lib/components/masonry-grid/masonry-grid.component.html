@@ -25,6 +25,8 @@
     [style.transform]="gridMode === 'absolute-polyfill' && item.transform ? item.transform : null"
     [style.width]="gridMode === 'absolute-polyfill' && item.width ? item.width : null"
     [attr.aria-label]="'Section: ' + (item.section.title || 'Untitled')"
+    #masonryItem
+    (animationend)="onAnimationEnd($event, masonryItem, idx)"
   >
     <app-section-renderer [section]="item.section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>
   </div>

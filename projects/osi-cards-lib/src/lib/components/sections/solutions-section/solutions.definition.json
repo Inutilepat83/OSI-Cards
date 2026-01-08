@@ -56,6 +56,12 @@
         "enum": ["low", "medium", "high"],
         "description": "Implementation complexity"
       },
+      "score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 10,
+        "description": "Match score from 1-10 indicating how well the solution matches requirements"
+      },
       "outcomes": {
         "type": "array",
         "items": {

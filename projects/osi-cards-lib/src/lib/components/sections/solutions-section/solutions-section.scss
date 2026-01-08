@@ -5,8 +5,10 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/design-system/unified-sections" as unified;
 @use "../../../styles/components/sections/component-mixins" as components;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -20,39 +22,51 @@
 .solutions-container {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 // SOLUTIONS GRID - 2 columns desktop, 1 mobile
 .solutions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 14px)
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+    gap: var(--osi-section-item-gap);
   }
 
   @include responsive-down("sm") {
     grid-template-columns: 1fr;
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 }
 
-.solution-card {
-  @include card-elevated;
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16-14px)
+.section-item {
+  @include card("normal");
+  // Padding handled by card('normal') mixin - 12px
   min-height: 180px; // Compact: 180px (was 220px)
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
-  transition: all 300ms var(--ease-out);
+  gap: var(--osi-section-item-gap);
   position: relative;
+  text-align: left;
+  align-items: stretch; // Ensure children take full width
 
-  // Animated bottom accent line
+  // Ensure all direct children align to left and reset margins/padding
+  > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  // Unified hover effect
+  @include section-card-hover;
+
+  // Animated bottom accent line (decorative)
   &::after {
     content: "";
     position: absolute;
@@ -62,13 +76,10 @@
     height: 2px;
     background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
     opacity: 0;
-    transition: opacity 300ms var(--ease-out);
+    transition: opacity var(--osi-section-item-transition);
   }
 
   &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
-
     &::after {
       opacity: 0.8;
     }
@@ -79,41 +90,120 @@
   }
 }
 
-// SOLUTION HEADER - Title + category layout
+// SOLUTION HEADER - Title + category layout with logo
 .solution-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
-  flex-wrap: wrap;
+  gap: var(--osi-section-item-gap-xs);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// Title row - title and logo on same line
+.solution-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; // Align to top when title wraps to multiple lines
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--osi-section-item-gap);
+  margin: 0;
+  padding: 0;
+  // Force them to stay on same row - no wrapping
+  flex-wrap: nowrap;
+}
+
+// EXPRESSO LOGO - Integrated into header, top right, same line as title
+.solution-logo-container {
+  flex-shrink: 0;
+  flex-grow: 0;
+  pointer-events: auto;
+  line-height: 0; // Prevent extra spacing
+  margin: 0;
+  padding: 0;
+  // Align logo to top when title wraps to multiple lines
+  align-self: flex-start;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // Ensure logo stays on same line
+  order: 2;
+  // Prevent container from affecting layout
+  box-sizing: border-box;
+  // Constrain container size
+  min-width: 16px;
+  max-width: 16px;
+  min-height: 16px;
+  max-height: 16px;
+  overflow: hidden;
+}
+
+.solution-logo {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  display: block;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  // Force SVG to maintain square aspect ratio
+  aspect-ratio: 1 / 1;
+  // Ensure SVG fits exactly in container - prevents stretching
+  box-sizing: border-box;
+  // No hover animation - logo should not move
+  // Override any global min-height rules that might affect SVGs (e.g., from masonry-grid)
+  // Since .solution-logo is the SVG element itself, these rules apply directly
 }
 
 .solution-title {
   @include heading(5);
-  font-size: 0.9375rem; // 15px
-  flex: 1;
   margin: 0;
-  line-height: 1.4;
-  transition: color 200ms var(--ease-out);
+  padding: 0;
+  line-height: var(--leading-normal);
+  text-align: left;
+  transition: color var(--osi-section-item-transition);
+  // Allow title to take available space but stay on same row as logo
+  flex: 1 1 auto;
+  min-width: 0;
+  // Allow title to wrap to multiple lines if needed
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .solution-category {
-  @include typo.label-uppercase;
-  font-size: 0.625rem; // Compact: 10px (was 0.65rem)
+  @include unified.unified-item-label;
   opacity: 0.7;
+  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 .solution-description {
   @include body-text("small");
   color: var(--muted-foreground);
-  font-size: 0.75rem; // 12px
-  line-height: 1.5; // Compact: 1.5 (was 1.6)
+  line-height: var(--leading-relaxed);
   margin: 0;
+  padding: 0;
+  margin-bottom: var(--osi-section-item-gap); // Improved spacing before benefits
   opacity: 0.9;
+  text-align: left;
+  width: 100%;
   @include text-overflow-ellipsis(2); // Limit to 2 lines by default
   overflow-wrap: break-word;
   word-wrap: break-word;
-  transition: all 0.2s ease-out;
+  transition:
+    opacity var(--osi-section-item-transition),
+    color var(--osi-section-item-transition);
 }
 
 .solution-description.expanded {
@@ -122,10 +212,12 @@
 
 .solution-description-expand-button {
   @include button-text-minimal;
-  margin-top: var(--osi-spacing-compact-xs, 2px);
+  margin: var(--osi-section-item-gap-xs) 0 0 0;
+  padding: 0;
   align-self: flex-start;
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   color: var(--accent);
+  text-align: left;
   &:hover {
     text-decoration: underline;
   }
@@ -138,22 +230,26 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
+  gap: var(--osi-section-item-gap-xs); // Compact: 2px (was 6px)
   flex: 1;
+  text-align: left;
+  width: 100%;
 
   li {
-    font-size: 0.7rem; // 11px
+    font-size: var(--text-sm);
     color: var(--muted-foreground);
-    padding-left: 18px; // Room for checkmark
+    padding: 0 0 0 18px; // Room for checkmark, no other padding
+    margin: 0;
     position: relative;
-    line-height: 1.4;
+    line-height: var(--leading-normal);
+    text-align: left;
 
     &::before {
       content: "✓";
       position: absolute;
       left: 0;
       color: var(--accent);
-      font-size: 0.7rem;
+      font-size: var(--text-sm);
       font-weight: var(--font-bold);
     }
   }
@@ -161,14 +257,17 @@
 
 .solution-more {
   align-self: flex-start;
+  margin: 0;
+  margin-bottom: var(--osi-section-item-gap); // Improved spacing before separator
   padding: 0;
   border: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   cursor: pointer;
-  line-height: 1.2;
+  line-height: var(--leading-tight);
+  text-align: left;
 
   &:hover {
     text-decoration: underline;
@@ -177,35 +276,97 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: var(--osi-radius-sm);
   }
+
+  // Hide "+X more" when in single column layout (handled by component logic)
+  // CSS fallback for very small screens
+  @media (max-width: 600px) {
+    // Component logic will handle this, but CSS provides fallback
+  }
+}
+
+// SOLUTION SCORE - Match score bar with brand colors
+.solution-score {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap-xs);
+  margin: var(--osi-section-item-gap) 0 0 0;
+  padding: 0;
+  width: 100%;
+}
+
+.solution-score-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+  font-weight: var(--font-medium);
+  margin: 0;
+  padding: 0;
+}
+
+.solution-score-value {
+  font-weight: var(--font-semibold);
+  color: var(--accent, var(--color-brand, #ff7900));
+}
+
+.solution-score-bar {
+  width: 100%;
+  height: 6px;
+  background: color-mix(in srgb, var(--accent, var(--color-brand, #ff7900)) 15%, transparent);
+  border-radius: var(--osi-radius-sm, 3px);
+  overflow: hidden;
+  position: relative;
+}
+
+.solution-score-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--accent, var(--color-brand, #ff7900)) 0%,
+    var(--osi-accent-bright, var(--color-brand-light, #ff9933)) 100%
+  );
+  border-radius: var(--osi-radius-sm, 3px);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 4px
+    color-mix(in srgb, var(--accent, var(--color-brand, #ff7900)) 40%, transparent);
 }
 
 // SOLUTION META - Compact separation at bottom
 .solution-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
-  margin-top: auto; // Push to bottom
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
+  justify-content: flex-start;
+  gap: var(--osi-section-item-gap);
+  margin: auto 0 0 0; // Push to bottom, reset other margins
+  padding: var(--osi-section-item-padding-compact) 0 0 0; // Top padding only
   border-top: 1px solid var(--border);
+  width: 100%;
 }
 
-.delivery-time {
-  font-size: 0.7rem;
+.delivery-time,
+.solution-meta-label {
+  font-size: var(--text-sm);
   color: var(--muted-foreground);
   opacity: 0.7;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 // RESPONSIVE
 @include responsive-down("sm") {
-  .solution-card {
-    padding: var(--osi-spacing-compact-md, 12px);
+  .section-item {
+    // Padding handled by card('normal') mixin
     min-height: 160px; // Compact: 160px (was 200px)
   }
 
   .solution-description {
-    font-size: 0.7rem;
+    font-size: var(--text-sm);
   }
 }

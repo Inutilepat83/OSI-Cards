@@ -1,5 +1,3 @@
-/// <reference path="../../../types/frappe-charts.d.ts" />
-import type { default as Chart } from 'frappe-charts';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -133,8 +131,66 @@ export class ChartSectionComponent
 
     try {
       // Dynamic import of Frappe Charts
+      // Handle different export patterns (default export, named export, or direct export)
+      const frappeChartsModule = await import('frappe-charts');
 
-      const Chart = (await import('frappe-charts')).default;
+      // Handle different module export patterns (CJS/ESM interop)
+      // Frappe Charts exports Chart as default, but build tools may wrap it differently
+      let Chart: unknown = null;
+
+      const module = frappeChartsModule as {
+        default?: unknown;
+        Chart?: unknown;
+        [key: string]: unknown;
+      };
+
+      // Pattern 1: Direct default export (most common for ESM)
+      if (module.default) {
+        if (typeof module.default === 'function') {
+          Chart = module.default;
+        } else if (
+          typeof module.default === 'object' &&
+          module.default !== null &&
+          'Chart' in module.default &&
+          typeof (module.default as { Chart?: unknown }).Chart === 'function'
+        ) {
+          // Default is an object containing Chart
+          Chart = (module.default as { Chart: unknown }).Chart;
+        } else if (
+          typeof module.default === 'object' &&
+          module.default !== null &&
+          'default' in module.default &&
+          typeof (module.default as { default?: unknown }).default === 'function'
+        ) {
+          // Nested default (some build tools)
+          Chart = (module.default as { default: unknown }).default;
+        }
+      }
+
+      // Pattern 2: Named export Chart (if default didn't work)
+      if (!Chart && module.Chart && typeof module.Chart === 'function') {
+        Chart = module.Chart;
+      }
+
+      // Pattern 3: Module itself is the Chart (unlikely but possible)
+      if (!Chart && typeof frappeChartsModule === 'function') {
+        Chart = frappeChartsModule;
+      }
+
+      // Validate that Chart is a constructor
+      if (!Chart || typeof Chart !== 'function') {
+        console.error('Frappe Charts module structure:', {
+          module: frappeChartsModule,
+          defaultType: typeof frappeChartsModule.default,
+          hasChart: 'Chart' in frappeChartsModule,
+          moduleKeys: Object.keys(frappeChartsModule),
+        });
+        throw new Error(
+          'Chart is not a constructor. Frappe Charts library may not be loaded correctly. ' +
+            'Please ensure frappe-charts is installed: npm install frappe-charts'
+        );
+      }
+
       this.chartLibraryLoaded = true;
       this.chartError = null;
 
@@ -175,8 +231,35 @@ export class ChartSectionComponent
       // Map chart types: bar -> bar, line -> line, pie -> pie, doughnut -> percentage
       const frappeChartType = this.mapChartType(chartType);
 
+      // Ensure Chart is a constructor function before instantiating
+      if (typeof Chart !== 'function' || !Chart.prototype) {
+        throw new Error(
+          'Chart is not a valid constructor. Received: ' +
+            typeof Chart +
+            '. Please ensure frappe-charts is properly installed.'
+        );
+      }
+
       // Create chart instance with compact sizing
-      this.chartInstance = new Chart(container, {
+      // Type assertion needed because Chart comes from dynamic import
+      const ChartConstructor = Chart as new (
+        container: HTMLElement,
+        config: {
+          data: unknown;
+          type: string;
+          height?: number;
+          colors?: string[];
+          axisOptions?: { xIsSeries?: boolean };
+          tooltipOptions?: {
+            formatTooltipX?: (d: unknown) => string;
+            formatTooltipY?: (d: unknown) => string;
+          };
+          lineOptions?: { dotSize?: number; hideDots?: boolean };
+          barOptions?: { spaceRatio?: number };
+        }
+      ) => unknown;
+
+      this.chartInstance = new ChartConstructor(container, {
         data: frappeData,
         type: frappeChartType,
         height: 140, // Fixed compact height for chart area
@@ -199,6 +282,13 @@ export class ChartSectionComponent
         },
       });
 
+      // Fix Y-axis labels after chart is rendered
+      // Use setTimeout to ensure chart is fully rendered
+      setTimeout(() => {
+        this.fixYAxisLabels(container);
+        this.fixLegendLabels(container);
+      }, 100);
+
       this.cdr.detectChanges();
     } catch (error) {
       this.chartLibraryLoaded = false;
@@ -215,7 +305,7 @@ export class ChartSectionComponent
    * Update existing chart with new data
    */
   private updateChart(): void {
-    if (!this.chartInstance || !this.section.chartData) {
+    if (!this.chartInstance || !this.section.chartData || !this.chartContainer?.nativeElement) {
       return;
     }
 
@@ -230,6 +320,12 @@ export class ChartSectionComponent
       data: frappeData,
       type: this.mapChartType(this.section.chartType || 'bar'),
     });
+
+    // Fix Y-axis labels and legend after update
+    setTimeout(() => {
+      this.fixYAxisLabels(this.chartContainer!.nativeElement);
+      this.fixLegendLabels(this.chartContainer!.nativeElement);
+    }, 100);
   }
 
   /**
@@ -353,6 +449,103 @@ export class ChartSectionComponent
     } else {
       return `$${value.toFixed(0)}`;
     }
+  }
+
+  /**
+   * Fix Y-axis label rendering issues
+   */
+  private fixYAxisLabels(container: HTMLElement): void {
+    // Find all SVG text elements in the chart
+    const allTexts = container.querySelectorAll('svg text, .frappe-chart text');
+
+    allTexts.forEach((textEl) => {
+      const element = textEl as SVGTextElement;
+      const textContent = element.textContent?.trim() || '';
+
+      // Check if this is likely a Y-axis label
+      // Y-axis labels are typically numeric and positioned on the left side
+      const isNumeric = /^[\d.,]+$/.test(textContent);
+      const x = parseFloat(element.getAttribute('x') || '0');
+      const y = parseFloat(element.getAttribute('y') || '0');
+
+      // Y-axis labels are typically on the left side (x < 50) and have numeric content
+      // or are part of the Y-axis structure
+      const isYAxisLabel =
+        (isNumeric && x < 100 && y > 0 && y < 200) || // Position-based detection
+        element.getAttribute('class')?.includes('y-axis') ||
+        element.closest('.y-axis, .axis-y, [class*="y-axis"]') !== null;
+
+      if (isYAxisLabel) {
+        // Ensure horizontal text orientation
+        element.setAttribute('writing-mode', 'horizontal-tb');
+        element.setAttribute('text-orientation', 'mixed');
+        element.style.writingMode = 'horizontal-tb';
+        element.style.textOrientation = 'mixed';
+        element.style.transform = 'none';
+        element.style.whiteSpace = 'nowrap';
+        element.style.textAnchor = 'end';
+
+        // Remove any rotation transforms
+        const transform = element.getAttribute('transform') || '';
+        if (transform.includes('rotate')) {
+          element.setAttribute('transform', transform.replace(/rotate\([^)]*\)/g, '').trim());
+        }
+      }
+    });
+  }
+
+  /**
+   * Fix legend label truncation
+   */
+  private fixLegendLabels(container: HTMLElement): void {
+    // Find all legend-related elements (both SVG and HTML)
+    const legendContainers = container.querySelectorAll(
+      '.frappe-chart .legend, .legend-item, [class*="legend"], .chart-legend'
+    );
+
+    legendContainers.forEach((containerEl) => {
+      // Fix SVG text elements in legend
+      const svgTexts = containerEl.querySelectorAll('text');
+      svgTexts.forEach((textEl) => {
+        const element = textEl as SVGTextElement;
+        element.style.whiteSpace = 'nowrap';
+        element.style.overflow = 'visible';
+        element.style.textOverflow = 'clip';
+        // Ensure text is not clipped
+        if (element.getAttribute('clip-path')) {
+          element.removeAttribute('clip-path');
+        }
+      });
+
+      // Fix HTML text elements in legend
+      const htmlTexts = containerEl.querySelectorAll('span, div, label');
+      htmlTexts.forEach((textEl) => {
+        const element = textEl as HTMLElement;
+        element.style.whiteSpace = 'nowrap';
+        element.style.overflow = 'visible';
+        element.style.textOverflow = 'clip';
+        element.style.maxWidth = 'none';
+      });
+    });
+
+    // Also fix any text elements that might be part of legend structure
+    const allLegendTexts = container.querySelectorAll(
+      '.frappe-chart text, [class*="legend"] text, [class*="legend"] span, [class*="legend"] div'
+    );
+
+    allLegendTexts.forEach((textEl) => {
+      const element = textEl as SVGTextElement | HTMLElement;
+      if (element instanceof SVGTextElement) {
+        element.style.whiteSpace = 'nowrap';
+        element.style.overflow = 'visible';
+        element.style.textOverflow = 'clip';
+      } else if (element instanceof HTMLElement) {
+        element.style.whiteSpace = 'nowrap';
+        element.style.overflow = 'visible';
+        element.style.textOverflow = 'clip';
+        element.style.maxWidth = 'none';
+      }
+    });
   }
 
   /**

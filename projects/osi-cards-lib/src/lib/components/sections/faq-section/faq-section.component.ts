@@ -79,10 +79,10 @@ export class FaqSectionComponent extends BaseSectionComponent implements OnInit 
     return this.calculateFaqLayoutPreferences(this.section, availableColumns);
   }
   expandedItems: Set<number> = new Set();
-  answerExpandedStates: boolean[] = []; // Track expanded state for each answer
 
   /**
    * Toggle FAQ item expansion
+   * When expanded, automatically shows full answer (no "Show more" needed)
    */
   toggle(index: number): void {
     if (this.expandedItems.has(index)) {
@@ -100,25 +100,12 @@ export class FaqSectionComponent extends BaseSectionComponent implements OnInit 
   }
 
   /**
-   * Toggle answer expansion
-   */
-  toggleAnswerExpanded(index: number): void {
-    this.answerExpandedStates[index] = !this.answerExpandedStates[index];
-  }
-
-  /**
-   * Check if answer is expanded
-   */
-  isAnswerExpanded(index: number): boolean {
-    return !!this.answerExpandedStates[index];
-  }
-
-  /**
    * Check if answer needs "Show more" button
+   * Always returns false - answers always show fully when FAQ item is expanded
    */
   shouldShowExpandButton(item: any): boolean {
-    const answer = this.getAnswer(item);
-    return !!(answer && answer.length > 200);
+    // Always return false - no "Show more" button needed
+    return false;
   }
 
   /**

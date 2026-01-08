@@ -7,7 +7,6 @@ import {
   SectionPluginConfig,
   SectionPluginMetadata,
 } from '../interfaces/section-plugin.interface';
-import { FallbackSectionComponent } from '../components/sections/fallback-section/fallback-section.component';
 
 /**
  * Registry service for managing custom section type plugins
@@ -40,7 +39,7 @@ import { FallbackSectionComponent } from '../components/sections/fallback-sectio
 })
 export class SectionPluginRegistry {
   private plugins = new Map<string, RegisteredSectionPlugin>();
-  private readonly defaultFallback = FallbackSectionComponent;
+  private readonly defaultFallback: Type<BaseSectionComponent> | null = null;
 
   /**
    * Register a custom section plugin

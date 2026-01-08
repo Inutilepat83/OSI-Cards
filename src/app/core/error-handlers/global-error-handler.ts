@@ -30,7 +30,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
   }
 
-  handleError(error: Error | HttpErrorResponse): void {
+  public handleError(error: Error | HttpErrorResponse): void {
     // Run outside Angular zone to prevent change detection issues
     this.zone.runOutsideAngular(() => {
       this.processError(error);
@@ -108,8 +108,9 @@ export class GlobalErrorHandler implements ErrorHandler {
   private isModuleLoadingError(error: Error | HttpErrorResponse): boolean {
     if (error instanceof HttpErrorResponse) {
       // Check for 404 on JS or CSS chunk files
+      const HTTP_NOT_FOUND = 404;
       return (
-        error.status === 404 &&
+        error.status === HTTP_NOT_FOUND &&
         error.url !== undefined &&
         error.url !== null &&
         (error.url.includes('.js') || error.url.includes('.css')) &&
@@ -139,14 +140,17 @@ export class GlobalErrorHandler implements ErrorHandler {
     type: string;
     message: string;
     severity: 'critical' | 'error' | 'warning' | 'info';
-    context: Record<string, any>;
+    context: Record<string, unknown>;
   } {
+    const HTTP_NOT_FOUND = 404;
+    const HTTP_INTERNAL_SERVER_ERROR = 500;
+
     if (error instanceof HttpErrorResponse) {
       // Check for missing chunk files (404 or 500 errors for .js/.css files)
       // 500 errors can occur when dev server tries to serve a non-existent chunk
       const isChunkFile = error.url?.includes('.js') || error.url?.includes('.css');
       const isChunkError =
-        (error.status === 404 || error.status === 500) &&
+        (error.status === HTTP_NOT_FOUND || error.status === HTTP_INTERNAL_SERVER_ERROR) &&
         (isChunkFile || error.url?.includes('chunk-'));
 
       if (isChunkError) {
@@ -166,7 +170,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       return {
         type: 'HTTP Error',
         message: `HTTP ${error.status}: ${error.message}`,
-        severity: error.status >= 500 ? 'critical' : 'error',
+        severity: error.status >= HTTP_INTERNAL_SERVER_ERROR ? 'critical' : 'error',
         context: {
           status: error.status,
           url: error.url,
@@ -263,11 +267,15 @@ export class GlobalErrorHandler implements ErrorHandler {
     const source = event.filename || '';
 
     // Check for chunk/module loading errors
+    const target = event.target as HTMLElement | null;
     if (
       errorMessage.includes('Importing a module script failed') ||
       errorMessage.includes('Failed to fetch dynamically imported module') ||
       source.includes('chunk-') ||
-      (event.target && (event.target as any).src?.includes('chunk-'))
+      (target &&
+        'src' in target &&
+        typeof (target as { src?: string }).src === 'string' &&
+        (target as { src: string }).src.includes('chunk-'))
     ) {
       console.error('🔴 Module loading error detected:', {
         message: errorMessage,
@@ -328,19 +336,19 @@ export class GlobalErrorHandler implements ErrorHandler {
     console.warn('🚀 IMMEDIATE RECOVERY: Clearing cache and reloading...');
 
     // IMMEDIATE recovery - minimal delay
-    const performRecovery = () => {
+    const performRecovery = (): void => {
       // Clear service workers but don't wait
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
+        void navigator.serviceWorker
           .getRegistrations()
           .then((registrations) => {
             if (registrations.length > 0) {
-              console.log(`Clearing ${registrations.length} service worker(s)...`);
+              console.warn(`Clearing ${registrations.length} service worker(s)...`);
               return Promise.all(registrations.map((registration) => registration.unregister()));
             }
             return undefined;
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             console.warn('Service worker unregister failed (continuing anyway):', err);
           })
           .then(() => undefined);
@@ -348,7 +356,7 @@ export class GlobalErrorHandler implements ErrorHandler {
 
       // Reload IMMEDIATELY after very short delay (just enough for logs)
       setTimeout(() => {
-        console.log('✅ Reloading page NOW...');
+        console.warn('✅ Reloading page NOW...');
         // Clear query params and reload
         const currentHref = window.location?.href;
         if (currentHref && typeof currentHref === 'string' && currentHref.length > 0) {

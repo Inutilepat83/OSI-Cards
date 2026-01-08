@@ -86,8 +86,7 @@ app-card-actions {
 }
 
 .osi-action-button--primary:focus-visible {
-  outline: var(--border-width-accent-sm) solid var(--color-brand) !important;
-  outline-offset: var(--border-width-accent-sm) !important;
+  outline: none !important;
 }
 
 // Secondary Button - Orange Border (Outline) with WHITE text
@@ -115,8 +114,7 @@ app-card-actions {
 }
 
 .osi-action-button--secondary:focus-visible {
-  outline: var(--border-width-accent-sm) solid var(--color-brand) !important;
-  outline-offset: var(--border-width-accent-sm) !important;
+  outline: none !important;
 }
 
 // Button Content Elements - Always white

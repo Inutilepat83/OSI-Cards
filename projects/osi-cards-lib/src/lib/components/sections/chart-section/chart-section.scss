@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/design-system/unified-sections" as unified;
 @use "../../../styles/components/sections/component-mixins" as components;
 @use "../../../styles/responsive" as *;
 
@@ -22,9 +23,11 @@
   flex-direction: column;
   gap: 0; // No gap to maximize space
   width: 100%;
-  min-height: 180px; // Ensure minimum height for full chart display with legend
-  max-height: 180px; // Maximum height to keep compact
-  height: 180px; // Fixed height for consistent compact sizing
+  min-height: var(
+    --osi-card-min-height-large
+  ); // Ensure minimum height for full chart display with legend
+  max-height: var(--osi-card-min-height-large); // Maximum height to keep compact
+  height: var(--osi-card-min-height-large); // Fixed height for consistent compact sizing
 }
 
 // CHART WRAPPER - Proper spacing and height
@@ -49,37 +52,37 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
+  gap: var(--osi-section-item-gap-xs);
   flex-wrap: wrap;
-  padding-bottom: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
+  padding-bottom: var(--osi-section-item-padding-compact);
   border-bottom: 1px solid var(--border);
 }
 
 .chart-title {
   @include heading(5);
-  font-size: 0.875rem; // More compact: 14px
+  font-size: var(--text-base);
   margin: 0;
-  line-height: 1.2;
+  line-height: var(--leading-tight);
 }
 
 .chart-legend {
   display: flex;
-  gap: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
+  gap: var(--osi-section-item-gap-xs);
   flex-wrap: wrap;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 2px; // More compact: 2px
-  font-size: 0.65rem; // More compact: smaller font
+  gap: var(--osi-section-item-gap-xs);
+  font-size: var(--text-xs);
   color: var(--muted-foreground);
 }
 
 .legend-color {
-  width: 8px; // More compact: 8px
-  height: 8px; // More compact: 8px
-  border-radius: 2px;
+  width: var(--osi-spacing-sm); // More compact: 8px
+  height: var(--osi-spacing-sm); // More compact: 8px
+  border-radius: var(--osi-radius-xs);
   flex-shrink: 0;
 }
 
@@ -87,9 +90,9 @@
 .chart-canvas-wrapper {
   flex: 1;
   position: relative;
-  min-height: 140px; // Minimum height for chart area
-  max-height: 180px; // Maximum height to keep compact
-  height: 140px; // Fixed compact height
+  min-height: var(--osi-card-min-height-large); // Minimum height for chart area
+  max-height: var(--osi-card-min-height-large); // Maximum height to keep compact
+  height: var(--osi-card-min-height-large); // Fixed compact height
   width: 100%;
   overflow: visible; // Allow chart and legend to be visible
   box-sizing: border-box;
@@ -97,8 +100,48 @@
   // Frappe Charts container
   :deep(.frappe-chart) {
     width: 100% !important;
-    height: 140px !important;
-    max-height: 180px !important;
+    height: var(--osi-card-min-height-large) !important;
+    max-height: var(--osi-card-min-height-large) !important;
+
+    // Fix Y-axis label rendering - ensure labels are horizontal
+    .y-axis {
+      .tick {
+        text {
+          writing-mode: horizontal-tb !important;
+          text-orientation: mixed !important;
+          transform: none !important;
+          white-space: nowrap !important;
+        }
+      }
+    }
+
+    // Fix Y-axis text elements directly
+    text.y-axis-text,
+    .y-axis text,
+    .axis-y text {
+      writing-mode: horizontal-tb !important;
+      text-orientation: mixed !important;
+      transform: none !important;
+      white-space: nowrap !important;
+      text-anchor: end !important;
+    }
+
+    // Fix legend text truncation
+    .legend {
+      .legend-item,
+      .legend-text {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        max-width: none !important;
+      }
+    }
+
+    // Ensure all text in chart is properly oriented
+    text {
+      writing-mode: horizontal-tb !important;
+      text-orientation: mixed !important;
+    }
   }
 }
 
@@ -106,8 +149,8 @@
 .chart-footer {
   display: flex;
   justify-content: space-around;
-  gap: var(--osi-spacing-compact-sm, 6px); // More compact: 6px
-  padding-top: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
+  gap: var(--osi-section-item-gap);
+  padding-top: var(--osi-section-item-padding-compact);
   border-top: 1px solid var(--border);
 }
 
@@ -115,21 +158,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px; // More compact: 1px
+  gap: var(--osi-section-item-gap-xs);
 }
 
 .chart-stat-value {
-  @include typo.number-display-medium;
-  font-size: var(--text-base); // More compact: base instead of lg
+  @include unified.unified-item-value;
   font-weight: var(--font-bold);
 }
 
 .chart-stat-label {
-  @include typo.caption;
-  font-size: 0.65rem; // More compact: smaller
-  color: var(--muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  @include unified.unified-item-label;
 }
 
 // RESPONSIVE
@@ -155,6 +193,46 @@
     :deep(.frappe-chart) {
       height: 130px !important;
       max-height: 170px !important;
+
+      // Fix Y-axis label rendering - ensure labels are horizontal
+      .y-axis {
+        .tick {
+          text {
+            writing-mode: horizontal-tb !important;
+            text-orientation: mixed !important;
+            transform: none !important;
+            white-space: nowrap !important;
+          }
+        }
+      }
+
+      // Fix Y-axis text elements directly
+      text.y-axis-text,
+      .y-axis text,
+      .axis-y text {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+        transform: none !important;
+        white-space: nowrap !important;
+        text-anchor: end !important;
+      }
+
+      // Fix legend text truncation
+      .legend {
+        .legend-item,
+        .legend-text {
+          white-space: nowrap !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+          max-width: none !important;
+        }
+      }
+
+      // Ensure all text in chart is properly oriented
+      text {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+      }
     }
   }
 }
@@ -181,6 +259,46 @@
     :deep(.frappe-chart) {
       height: 120px !important;
       max-height: 160px !important;
+
+      // Fix Y-axis label rendering - ensure labels are horizontal
+      .y-axis {
+        .tick {
+          text {
+            writing-mode: horizontal-tb !important;
+            text-orientation: mixed !important;
+            transform: none !important;
+            white-space: nowrap !important;
+          }
+        }
+      }
+
+      // Fix Y-axis text elements directly
+      text.y-axis-text,
+      .y-axis text,
+      .axis-y text {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+        transform: none !important;
+        white-space: nowrap !important;
+        text-anchor: end !important;
+      }
+
+      // Fix legend text truncation
+      .legend {
+        .legend-item,
+        .legend-text {
+          white-space: nowrap !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+          max-width: none !important;
+        }
+      }
+
+      // Ensure all text in chart is properly oriented
+      text {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+      }
     }
   }
 
@@ -190,6 +308,6 @@
 
   .chart-footer {
     flex-direction: column;
-    gap: 2px;
+    gap: var(--osi-section-item-gap-xs);
   }
 }

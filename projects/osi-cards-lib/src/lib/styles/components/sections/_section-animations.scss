@@ -11,6 +11,127 @@
 @use "design-tokens" as *;
 
 // =====================================================================
+// METAL REFLECTION EFFECT
+// =====================================================================
+//
+// Adds a subtle metallic reflection effect on hover with sweeping animation.
+// Direction can be left-to-right (ltr) or right-to-left (rtl).
+// The effect sweeps across the element like light on metal.
+//
+
+// Keyframe animation for metal sweep effect - fully vertical, more discrete
+@keyframes metal-sweep-ltr {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
+}
+
+@keyframes metal-sweep-rtl {
+  0% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@mixin section-metal-reflection($direction: "ltr") {
+  position: relative;
+  overflow: hidden;
+
+  // Use ::before for metal reflection to avoid conflicts with ::after used by components
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    border-radius: inherit;
+    // Reset animation state
+    animation: none;
+
+    @if $direction == "ltr" {
+      // Left-to-right reflection with sweep animation - more discrete
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.3) 40%,
+        rgba(255, 255, 255, 0.2) 60%,
+        transparent 100%
+      );
+      width: 50%;
+    } @else {
+      // Right-to-left reflection with sweep animation - more discrete
+      background: linear-gradient(
+        270deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.3) 40%,
+        rgba(255, 255, 255, 0.2) 60%,
+        transparent 100%
+      );
+      width: 50%;
+    }
+
+    // Use overlay blend mode for metallic appearance
+    mix-blend-mode: overlay;
+  }
+
+  // Trigger animation on hover - each item independently
+  &:hover::before {
+    opacity: 1;
+    // Play animation on hover - restart animation each time for this specific item
+    @if $direction == "ltr" {
+      animation: metal-sweep-ltr 0.23s ease-out forwards;
+    } @else {
+      animation: metal-sweep-rtl 0.23s ease-out forwards;
+    }
+  }
+
+  // Reset animation when hover ends so it can play again
+  &:not(:hover)::before {
+    animation: none;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// =====================================================================
 // STANDARD CARD HOVER EFFECT
 // =====================================================================
 //
@@ -19,15 +140,17 @@
 //
 
 @mixin section-card-hover {
-  transition:
-    box-shadow var(--duration-base) var(--ease-out),
-    background var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+  // Use standardized transition token
+  transition: var(--osi-section-item-transition);
+
+  // Add metal reflection effect (default left-to-right)
+  @include section-metal-reflection("ltr");
 
   &:hover {
-    box-shadow: var(--shadow-lg);
-    background: var(--osi-section-item-background-hover);
-    border-color: var(--osi-section-item-border-hover);
+    // Keep background unchanged - only border and shadow change
+    // background: var(--osi-section-item-background-hover); // Removed - background stays the same
+    border-color: var(--osi-section-item-border-hover-enhanced-color);
+    box-shadow: var(--osi-section-item-shadow-hover-enhanced);
   }
 
   &:focus-visible {
@@ -60,6 +183,9 @@
     background var(--duration-slow) var(--ease-out),
     border-color var(--duration-slow) var(--ease-out);
 
+  // Add metal reflection effect (default left-to-right)
+  @include section-metal-reflection("ltr");
+
   &:hover {
     box-shadow: var(--shadow-xl);
     background: var(--osi-section-item-background-hover);
@@ -83,6 +209,9 @@
     box-shadow var(--duration-base) var(--ease-out),
     background var(--duration-base) var(--ease-out);
 
+  // Add metal reflection effect (default left-to-right)
+  @include section-metal-reflection("ltr");
+
   &:hover {
     box-shadow: var(--shadow-md);
     background: var(--osi-section-item-background-hover);
@@ -101,15 +230,16 @@
 //
 
 @mixin section-list-item-hover {
-  transition:
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+  // Use standardized transition token
+  transition: var(--osi-section-item-transition);
+
+  // Add metal reflection effect (default left-to-right)
+  @include section-metal-reflection("ltr");
 
   &:hover {
-    background: var(--surface-raised);
+    background: var(--osi-section-item-background-hover);
     color: var(--foreground);
-    border-color: var(--border-strong);
+    border-color: var(--osi-section-item-border-hover);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -203,20 +333,10 @@
 }
 
 // =====================================================================
-// ENTRANCE ANIMATIONS
+// ENTRANCE ANIMATIONS - DEPRECATED
 // =====================================================================
-//
-// Keyframe animations for section/item entrance.
-//
-
-@keyframes section-item-stream {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+// @deprecated Use @keyframes item-stream from _sections-base.scss instead
+// This keyframe is kept for backward compatibility.
 
 @keyframes section-fade-in {
   from {
@@ -243,64 +363,25 @@
 // For animating lists of items with staggered delays.
 //
 
+// =====================================================================
+// ANIMATION MIXINS - DEPRECATED
+// =====================================================================
+// @deprecated Use @include item-animation from _sections-base.scss instead
+// These mixins are kept for backward compatibility but redirect to the standard mixin.
+
 @mixin section-item-animation {
-  &.section-item-streaming {
-    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
-  }
-
-  &.section-item-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.section-item-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none !important;
-  }
+  @include item-animation;
+  @warn "section-item-animation from _section-animations.scss is deprecated. Use @include item-animation from _sections-base.scss instead.";
 }
 
 @mixin legacy-item-animation {
-  &.item-streaming {
-    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
-  }
-
-  &.item-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.item-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none !important;
-  }
+  @include item-animation;
+  @warn "legacy-item-animation from _section-animations.scss is deprecated. Use @include item-animation from _sections-base.scss instead.";
 }
 
 @mixin legacy-field-animation {
-  &.field-streaming {
-    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
-  }
-
-  &.field-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.field-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none !important;
-  }
+  @include item-animation;
+  @warn "legacy-field-animation from _section-animations.scss is deprecated. Use @include item-animation from _sections-base.scss instead.";
 }
 
 // =====================================================================

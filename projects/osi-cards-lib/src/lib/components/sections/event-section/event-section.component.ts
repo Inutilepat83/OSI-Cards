@@ -114,10 +114,19 @@ export class EventSectionComponent extends BaseSectionComponent implements OnIni
     const statusLower = status.toLowerCase();
 
     if (statusLower === 'confirmed' || statusLower === 'completed') return 'success';
-    if (statusLower === 'upcoming' || statusLower === 'scheduled') return 'primary';
+    if (statusLower === 'upcoming' || statusLower === 'scheduled' || statusLower === 'planned')
+      return 'primary';
     if (statusLower === 'tentative' || statusLower === 'pending') return 'warning';
     if (statusLower === 'cancelled' || statusLower === 'postponed') return 'error';
 
     return 'default';
+  }
+
+  /**
+   * Format status text for display (capitalize first letter)
+   */
+  formatStatus(status?: string): string {
+    if (!status) return '';
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   }
 }

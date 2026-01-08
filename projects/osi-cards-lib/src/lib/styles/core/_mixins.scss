@@ -252,7 +252,7 @@ $osi-use-important: true !default;
 
 /// Subtitle text - used for secondary headings, roles
 @mixin osi-text-subtitle {
-  @include important-prop("font-size", var(--card-subtitle-font-size, 0.7rem));
+  @include important-prop("font-size", var(--card-subtitle-font-size, 0.575rem));
   @include important-prop("font-weight", var(--card-subtitle-font-weight, 500));
   @include important-prop("color", var(--card-text-secondary, inherit));
   @include important-prop("letter-spacing", var(--card-subtitle-letter-spacing, 0.015em));

@@ -5,7 +5,7 @@
   <div class="grid" *ngIf="section.items?.length">
     <!-- SMART: Adaptive height based on content -->
     <article
-      class="card"
+      class="section-item"
       *ngFor="let a of section.items; let i = index"
       [class.has-image]="getImageUrl(a)"
       [class.has-excerpt]="a.description"

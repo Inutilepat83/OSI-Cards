@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -24,31 +25,29 @@
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-section-item-grid-min-xl), 1fr));
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   box-sizing: border-box;
 
   @include responsive-down("sm") {
     grid-template-columns: 1fr;
-    gap: var(--osi-spacing-xs);
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 }
 
-.video-card {
-  @include card-elevated;
-  border-radius: var(--osi-radius-sm);
+.section-item {
+  @include card("normal");
   overflow: hidden;
   cursor: pointer;
 
-  &:hover {
-    border-color: var(--osi-accent);
-  }
+  // Unified hover effect
+  @include section-card-hover;
 }
 
 .video-thumbnail {
   width: 100%;
-  height: 120px;
+  height: var(--osi-card-min-height-large);
   object-fit: cover;
   background: var(--osi-surface-hover);
   display: flex;
@@ -59,9 +58,9 @@
   &::after {
     content: "▶";
     position: absolute;
-    font-size: var(--osi-text-2xl);
-    color: white;
-    background: var(--osi-accent);
+    font-size: var(--text-2xl);
+    color: var(--accent-foreground);
+    background: var(--accent);
     width: 40px;
     height: 40px;
     display: flex;
@@ -76,13 +75,19 @@
 }
 
 .video-info {
-  padding: var(--osi-spacing-sm);
+  // Add horizontal and bottom padding since video-wrapper extends to edges
+  // Top padding not needed as flex gap handles spacing from video-wrapper
+  padding-left: var(--osi-section-item-padding-normal);
+  padding-right: var(--osi-section-item-padding-normal);
+  padding-bottom: var(--osi-section-item-padding-normal);
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
+  gap: var(--osi-section-item-gap-xs);
 
   @include responsive-down("sm") {
-    padding: var(--osi-spacing-xs);
+    padding-left: var(--osi-section-item-padding-compact);
+    padding-right: var(--osi-section-item-padding-compact);
+    padding-bottom: var(--osi-section-item-padding-compact);
   }
 }
 
@@ -97,11 +102,13 @@
   @include body-text("small");
   color: var(--muted-foreground);
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   @include text-overflow-ellipsis(2); // Limit to 2 lines by default
   overflow-wrap: break-word;
   word-wrap: break-word;
-  transition: all 0.2s ease-out;
+  transition:
+    color var(--osi-section-item-transition),
+    opacity var(--osi-section-item-transition);
 }
 
 .video-description.expanded {
@@ -110,9 +117,9 @@
 
 .video-expand-button {
   @include button-text-minimal;
-  margin-top: var(--osi-spacing-compact-xs, 2px);
+  margin-top: var(--osi-section-item-gap-xs);
   align-self: flex-start;
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   color: var(--accent);
   &:hover {
     text-decoration: underline;
@@ -121,10 +128,68 @@
 
 .video-meta {
   display: flex;
-  gap: var(--osi-spacing-sm);
-  font-size: 0.7rem;
-  color: var(--osi-muted-foreground);
+  gap: var(--osi-section-item-gap);
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
   flex-wrap: wrap;
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+
+.video-wrapper {
+  position: relative;
+  width: calc(100% + var(--osi-section-item-padding-normal) * 2);
+  margin-left: calc(var(--osi-section-item-padding-normal) * -1);
+  margin-right: calc(var(--osi-section-item-padding-normal) * -1);
+  margin-top: calc(var(--osi-section-item-padding-normal) * -1);
+  aspect-ratio: 16 / 9;
+  background: var(--osi-surface-hover);
+  // Only round top corners to match section-item border-radius
+  border-radius: var(--osi-section-item-border-radius) var(--osi-section-item-border-radius) 0 0;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  @include responsive-down("sm") {
+    width: calc(100% + var(--osi-section-item-padding-compact) * 2);
+    margin-left: calc(var(--osi-section-item-padding-compact) * -1);
+    margin-right: calc(var(--osi-section-item-padding-compact) * -1);
+    margin-top: calc(var(--osi-section-item-padding-compact) * -1);
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+    object-fit: cover;
+  }
+}
+
+.video-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  background: var(--osi-surface-hover);
+  color: var(--muted-foreground);
+  text-align: center;
+  padding: var(--osi-spacing-md);
+
+  p {
+    margin: 0;
+    @include body-text("small");
+  }
 }

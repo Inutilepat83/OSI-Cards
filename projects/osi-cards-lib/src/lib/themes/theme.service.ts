@@ -479,12 +479,52 @@ export class ThemeService implements OnDestroy {
 
     // Apply preset variables - inline styles have higher specificity than CSS rules
     const variables = isDark ? DEFAULT_THEME_PRESET.dark : DEFAULT_THEME_PRESET.light;
+
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'theme.service.ts:481',
+        message: 'applyThemeStylePreset: BEFORE applying variables',
+        data: {
+          isDark,
+          variableCount: Object.keys(variables).length,
+          hasBackground: !!variables['--background'],
+          hasForeground: !!variables['--foreground'],
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     Object.entries(variables).forEach(([key, value]) => {
       if (value) {
         // Inline styles override CSS rules, so these will take precedence
         this.rootElement!.style.setProperty(key, value);
       }
     });
+
+    // #region agent log
+    const appliedBg = this.rootElement.style.getPropertyValue('--background');
+    const appliedFg = this.rootElement.style.getPropertyValue('--foreground');
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'theme.service.ts:487',
+        message: 'applyThemeStylePreset: AFTER applying variables',
+        data: { isDark, appliedBg, appliedFg, allVariables: Object.keys(variables).slice(0, 5) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+    // #endregion
   }
 
   /**
@@ -742,11 +782,80 @@ export class ThemeService implements OnDestroy {
 
   private applyTheme(theme: string): void {
     if (!this.rootElement) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'theme.service.ts:744',
+          message: 'applyTheme: rootElement is null',
+          data: { theme },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
       return;
     }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'theme.service.ts:749',
+        message: 'applyTheme: BEFORE setting data-theme',
+        data: {
+          theme,
+          rootElementTag: this.rootElement.tagName,
+          rootElementId: this.rootElement.id,
+          currentDataTheme: this.rootElement.getAttribute('data-theme'),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      }),
+    }).catch(() => {});
+    // #endregion
+
     // Set data-theme attribute
     this.rootElement.setAttribute('data-theme', theme);
+
+    // #region agent log
+    const bodyTheme = this.document.body?.getAttribute('data-theme');
+    const bodyBg = this.document.body
+      ? getComputedStyle(this.document.body).backgroundColor
+      : 'N/A';
+    const htmlBg = getComputedStyle(this.rootElement).backgroundColor;
+    const htmlBgVar = getComputedStyle(this.rootElement).getPropertyValue('--background');
+    const bodyBgVar = this.document.body
+      ? getComputedStyle(this.document.body).getPropertyValue('--background')
+      : 'N/A';
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'theme.service.ts:752',
+        message: 'applyTheme: AFTER setting data-theme',
+        data: {
+          theme,
+          htmlDataTheme: this.rootElement.getAttribute('data-theme'),
+          bodyDataTheme: bodyTheme,
+          htmlBg,
+          htmlBgVar,
+          bodyBg,
+          bodyBgVar,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'B',
+      }),
+    }).catch(() => {});
+    // #endregion
 
     // Update resolved theme subject
     this.resolvedThemeSubject.next(theme);
@@ -756,6 +865,24 @@ export class ThemeService implements OnDestroy {
     if (theme === 'day' || theme === 'night' || theme === 'light' || theme === 'dark') {
       // Apply preset immediately - inline styles have higher specificity than CSS rules
       this.applyThemeStylePreset(isDark);
+
+      // #region agent log
+      const afterPresetBg = getComputedStyle(this.rootElement).getPropertyValue('--background');
+      const afterPresetFg = getComputedStyle(this.rootElement).getPropertyValue('--foreground');
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'theme.service.ts:759',
+          message: 'applyTheme: AFTER applyThemeStylePreset',
+          data: { theme, isDark, afterPresetBg, afterPresetFg },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
+      // #endregion
     }
 
     // Check if custom theme with variables
@@ -767,6 +894,47 @@ export class ThemeService implements OnDestroy {
     // Update color scheme meta tag
     const colorScheme = this.isThemeDark(theme) ? 'dark' : 'light';
     this.updateColorScheme(colorScheme);
+
+    // Ensure body element also has data-theme for CSS selectors that target [data-theme]
+    if (this.document.body && this.rootElement === this.document.documentElement) {
+      this.document.body.setAttribute('data-theme', theme);
+    }
+
+    // #region agent log
+    const finalHtmlBg = getComputedStyle(this.rootElement).getPropertyValue('--background');
+    const finalBodyBg = this.document.body
+      ? getComputedStyle(this.document.body).getPropertyValue('--background')
+      : 'N/A';
+    const finalBodyComputedBg = this.document.body
+      ? getComputedStyle(this.document.body).backgroundColor
+      : 'N/A';
+    const appRoot = this.document.querySelector('app-root');
+    const appRootBg = appRoot ? getComputedStyle(appRoot).getPropertyValue('--background') : 'N/A';
+    const appRootComputedBg = appRoot ? getComputedStyle(appRoot).backgroundColor : 'N/A';
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'theme.service.ts:773',
+        message: 'applyTheme: FINAL state',
+        data: {
+          theme,
+          colorScheme,
+          finalHtmlBg,
+          finalBodyBg,
+          finalBodyComputedBg,
+          appRootBg,
+          appRootComputedBg,
+          appRootExists: !!appRoot,
+          bodyDataTheme: this.document.body?.getAttribute('data-theme'),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run2',
+        hypothesisId: 'D',
+      }),
+    }).catch(() => {});
+    // #endregion
   }
 
   private updateColorScheme(scheme: 'light' | 'dark' | 'light dark'): void {

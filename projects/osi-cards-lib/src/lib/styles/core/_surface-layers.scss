@@ -14,7 +14,13 @@
 
 /* AI card (hero shell) ----------------------------------------------------- */
 @mixin surface-ai-card-base {
-  border: var(--ai-card-border, 1px solid rgba(255, 121, 0, 0.12)) !important;
+  border: var(--ai-card-border, 1px solid rgba(255, 121, 0, 0.2)) !important;
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    border: var(
+      --ai-card-border,
+      1px solid color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent)
+    ) !important;
+  }
   border-width: 1px !important;
   border-style: solid !important;
   border-radius: var(--ai-card-border-radius) !important;
@@ -26,7 +32,7 @@
 }
 
 @mixin surface-ai-card-hover {
-  border-color: var(--ai-card-border-hover, rgba(255, 121, 0, 0.2)) !important;
+  border-color: var(--ai-card-border-hover, var(--color-brand, #ff7900)) !important;
   background: var(--section-item-background-hover, var(--section-item-background)) !important;
   box-shadow: var(--ai-card-box-shadow-hover, var(--ai-card-box-shadow, none)) !important;
 }
@@ -43,11 +49,8 @@
 }
 
 @mixin surface-section-hover {
-  /* Use hover background variable - flat color with theme border */
-  background: var(
-    --section-surface-hover,
-    var(--section-background-hover, var(--section-surface))
-  ) !important;
+  /* Keep background unchanged on hover - only border and shadow change */
+  /* background stays the same - do not override */
   border-color: var(--section-border-hover, var(--section-border)) !important;
   box-shadow: var(--section-box-shadow-hover, var(--section-box-shadow)) !important;
 }
@@ -69,8 +72,14 @@
 }
 
 @mixin surface-section-item-hover {
-  /* Use hover background variable - flat color with theme border */
-  background: var(--section-item-background-hover, var(--section-item-background)) !important;
-  border-color: var(--section-item-border-hover, var(--section-item-border)) !important;
-  box-shadow: var(--section-item-box-shadow-hover) !important;
+  /* Keep background unchanged on hover - only border and shadow change */
+  /* background stays the same - do not override */
+  border-color: var(
+    --osi-section-item-border-hover-enhanced-color,
+    var(--section-item-border-hover, var(--section-item-border))
+  ) !important;
+  box-shadow: var(
+    --osi-section-item-shadow-hover-enhanced,
+    var(--section-item-box-shadow-hover)
+  ) !important;
 }

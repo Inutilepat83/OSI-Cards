@@ -71,7 +71,7 @@ The section CONTENT is determined entirely by what's in {{CONTEXT}}.
   - brand-colors: Color palettes, design tokens, brand assets
   - contact-card: People, roles, departments, contact info
   - event: Dates, schedules, milestones, calendar entries
-  - fallback: Miscellaneous structured data not fitting other types
+  - info: Miscellaneous structured data not fitting other types (used for unknown types)
   - financials: Revenue, budgets, costs, currency-formatted metrics
   - info: Key-value metadata, company facts, identifiers
   - map: Geographic locations, coordinates, addresses
@@ -130,10 +130,10 @@ Instead: Merge into one contact-card with all people.
   - Every data point in {{CONTEXT}} must appear in the card output.
   - If a data point seems irrelevant, it still belongs → map it to the most appropriate section type.
   - Only filter data that is provably invalid (null, empty string, placeholder like "N/A").
-  - Do NOT omit data because "it doesn't fit" or "there's no perfect section"—use fallback or text-reference instead.
+  - Do NOT omit data because "it doesn't fit" or "there's no perfect section"—use info or text-reference instead.
   - Examples:
     * Random blog URL → text-reference section
-    * Disconnected metric → analytics or fallback section
+    * Disconnected metric → analytics or info section
     * Person with no email → still include in contact-card with available fields only
     * Date with no event context → event section with label "Milestone"
 
@@ -385,8 +385,8 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
     },
     {
       "title": "Unknown Section Type",
-      "type": "fallback",
-      "description": "This section type is not recognized and will render using fallback",
+      "type": "info",
+      "description": "This section type is not recognized",
       "preferredColumns": 1,
       "priority": 3,
       "fields": [
@@ -440,27 +440,10 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
           "title": "Austin Headquarters",
           "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
           "meta": {
-            "url": "https://images.nexustech.io/office/austin-hq.jpg",
+            "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
             "caption": "Nexus HQ in Austin, Texas",
             "alt": "Modern office building with glass facade"
           }
-        }
-      ]
-    },
-    {
-      "title": "Nexus Technologies Inc.",
-      "type": "info",
-      "description": "Enterprise SaaS company specializing in AI-powered analytics",
-      "preferredColumns": 1,
-      "priority": 3,
-      "fields": [
-        {
-          "label": "Industry",
-          "value": "Enterprise Software & AI",
-          "icon": "🏢",
-          "format": "currency",
-          "trend": "up",
-          "change": 10.5
         }
       ]
     },
@@ -689,8 +672,8 @@ EXAMPLE (covers ALL section types + actions; structure reference only; do not co
           "title": "Nexus Analytics Platform Overview",
           "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
           "meta": {
-            "url": "https://videos.nexustech.io/platform-overview",
-            "thumbnail": "https://images.nexustech.io/thumbnails/overview.jpg",
+            "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+            "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
             "duration": "12:45",
             "views": 45000,
             "category": "Product Demo"

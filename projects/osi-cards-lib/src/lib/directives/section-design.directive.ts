@@ -45,7 +45,8 @@ const DESIGN_PARAM_TO_CSS_VAR: Record<keyof SectionDesignParams, string> = {
   itemGap: '--section-item-gap',
   itemPadding: '--section-item-padding',
   itemPaddingSmall: '--section-item-padding-small',
-  elementGap: '--section-element-gap',
+  // @deprecated Use --osi-section-item-gap instead
+  elementGap: '--osi-section-item-gap', // Updated to use modern token
   containerPadding: '--section-container-padding',
   gridGap: '--section-grid-gap',
   gridRowGap: '--section-grid-row-gap',

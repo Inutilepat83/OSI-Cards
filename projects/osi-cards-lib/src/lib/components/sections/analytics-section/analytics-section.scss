@@ -6,6 +6,8 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
+@use "../../../styles/design-system/unified-sections" as unified;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,127 +21,86 @@
 .analytics-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 4px);
+  gap: var(--osi-section-item-gap) !important;
 }
 
 // Grid - More compact spacing
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-section-item-grid-min-sm), 1fr));
+  gap: var(--osi-section-item-gap) !important;
   max-width: 100%;
   overflow-x: hidden;
 
   @include responsive-down("md") {
-    gap: 5px;
+    gap: var(--osi-section-item-gap) !important;
   }
 
   @include responsive-down("sm") {
     grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    gap: var(--osi-section-item-gap) !important;
   }
 
   @include responsive-down("xs") {
     grid-template-columns: 1fr;
+    gap: var(--osi-section-item-gap) !important;
   }
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
+    gap: var(--osi-section-item-gap) !important;
   }
 }
 
-// Metric Card - Compact Interactive Tile with Progressive Disclosure
-.metric-card {
+// Section Item - apply card design to items
+.section-item {
+  @include card("normal"); // Use normal spacing for consistency
   position: relative;
-  padding: 8px 10px;
-  min-height: 80px; // Reduced for collapsed state
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  min-height: var(--osi-section-item-min-height-sm);
   justify-content: space-between;
-  cursor: pointer;
-  max-width: 100%;
-  overflow-x: hidden;
-  box-sizing: border-box;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-
-  // Dark-mode depth: distinct surface level
-  background: color-mix(
-    in srgb,
-    var(--card-background, #1a1a1a) 98%,
-    var(--foreground, #ffffff) 2%
-  );
-  border: 1px solid color-mix(in srgb, var(--card-border, #333333) 50%, transparent 50%);
-  border-radius: var(--radius-md, 6px);
-
-  // Restrained shadow for elevation
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.1),
-    0 0 0 0.5px color-mix(in srgb, var(--card-border, #333333) 20%, transparent 80%);
-
-  transition:
-    box-shadow 200ms var(--ease-out),
-    background 200ms var(--ease-out),
-    border-color 200ms var(--ease-out),
-    transform 200ms var(--ease-out),
-    min-height 200ms var(--ease-out);
+  // Padding and gap are handled by card('normal') mixin - 12px uniform
+  gap: var(--osi-section-item-gap);
 
   @include responsive-down("sm") {
-    padding: 7px 9px;
-    min-height: 75px;
-    gap: 3px;
+    min-height: var(--osi-section-item-min-height-xs);
   }
 
   @include responsive-down("xs") {
-    padding: 6px 8px;
-    min-height: 70px;
+    min-height: var(--osi-section-item-min-height-xs);
   }
 
-  // Subtle hover elevation
-  &:hover,
-  &:focus-within {
-    background: color-mix(
-      in srgb,
-      var(--card-background, #1a1a1a) 100%,
-      var(--foreground, #ffffff) 3%
-    );
-    border-color: color-mix(in srgb, var(--card-border, #333333) 70%, transparent 30%);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.15),
-      0 0 0 0.5px color-mix(in srgb, var(--card-border, #333333) 30%, transparent 70%);
-    transform: translateY(-1px);
-  }
+  // Unified hover effect - using standardized mixin
+  @include section-card-hover;
 
   &:focus-within {
-    outline: 2px solid var(--accent, #ff7900);
+    outline: 2px solid var(--accent, var(--osi-accent));
     outline-offset: 2px;
   }
 
   // Expanded state - taller with more content visible
   &--expanded {
     min-height: auto; // Allow natural height
-    padding-bottom: 10px;
+    // Padding handled by card('normal') mixin
 
     @include responsive-down("sm") {
-      padding-bottom: 9px;
+      // Padding handled by card('normal') mixin
     }
 
     @include responsive-down("xs") {
-      padding-bottom: 8px;
+      // Padding handled by card('normal') mixin
     }
   }
 
   // Comfortable density mode - always show details
   .analytics-grid[data-density="comfortable"] & {
-    min-height: 95px;
+    min-height: var(--osi-section-item-min-height-lg);
 
     @include responsive-down("sm") {
-      min-height: 90px;
+      min-height: var(--osi-section-item-min-height-md);
     }
 
     @include responsive-down("xs") {
-      min-height: 85px;
+      min-height: var(--osi-section-item-min-height-sm);
     }
   }
 }
@@ -149,19 +110,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 4px;
+  gap: var(--osi-section-item-gap-xs);
   min-height: auto;
-  margin-bottom: 2px;
+  margin-bottom: var(--osi-section-item-gap-xs);
 }
 
 .metric-label {
-  @include typo.label-uppercase;
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.6));
-  opacity: 0.85;
-  line-height: 1.2;
+  @include unified.unified-item-label;
   flex: 1;
   min-width: 0;
   // Allow label to wrap to 2 lines
@@ -174,53 +129,35 @@
   max-height: calc(1.2em * 2); // 2 lines max
   word-wrap: break-word;
   overflow-wrap: break-word;
-
-  @include responsive-down("sm") {
-    font-size: 0.575rem;
-  }
 }
 
 // Main Values: Realized + Objective
 .metric-values {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--osi-section-item-gap-xs);
   min-height: auto;
 }
 
 .metric-value-primary {
   display: flex;
   align-items: baseline;
-  gap: 4px; // Reduced gap for inline appearance
+  gap: var(--osi-section-item-gap-xs); // Reduced gap for inline appearance
   flex-wrap: nowrap; // Keep on same line
 }
 
 .metric-value {
-  @include typo.number-display-medium;
-  font-size: 1.02rem !important; // Increased by 70% from 0.6rem
-  font-weight: 700;
-  line-height: 1.1;
-  color: var(--foreground, #ffffff);
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  transition: color 200ms var(--ease-out);
-
-  @include responsive-down("sm") {
-    font-size: 0.935rem !important; // Increased by 70% from 0.55rem
-  }
-
-  @include responsive-down("xs") {
-    font-size: 0.85rem !important; // Increased by 70% from 0.5rem
-  }
+  @include unified.unified-number-display;
+  transition: color var(--osi-section-item-transition);
 }
 
 .metric-period {
-  font-size: 0.6rem;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.5));
-  font-weight: 500;
-  line-height: 1.2;
+  @include unified.unified-item-description;
+  font-size: var(--text-xs); // Use standardized token
+  font-weight: var(--font-medium); // Use standardized token
+  line-height: var(--leading-tight);
   white-space: nowrap; // Keep period on same line
-  margin-left: 3px; // Small inline spacing for "47.3% YoY" appearance
+  margin-left: var(--osi-spacing-2px); // Small inline spacing for "47.3% YoY" appearance
   display: inline; // Ensure inline display
 }
 
@@ -230,17 +167,13 @@
 }
 
 .metric-objective-label {
-  font-size: 0.575rem;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.5));
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  @include unified.unified-item-label;
 }
 
 .metric-objective-value {
-  font-size: 0.7rem;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.7));
-  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  font-weight: var(--font-semibold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -248,15 +181,15 @@
 .metric-progress-row {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--osi-section-item-gap-xs);
   min-height: 18px;
-  margin-top: 2px;
+  margin-top: var(--osi-section-item-gap-xs);
 }
 
 .metric-progress-wrapper {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--osi-section-item-gap-xs);
   width: 100%;
 }
 
@@ -264,12 +197,8 @@
   position: relative;
   flex: 1;
   height: 3px;
-  background: color-mix(
-    in srgb,
-    var(--muted-foreground, rgba(255, 255, 255, 0.3)) 15%,
-    transparent 85%
-  );
-  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted-foreground) 15%, transparent 85%);
+  border-radius: var(--osi-radius-full);
   overflow: visible; // Allow target marker to extend
 }
 
@@ -278,7 +207,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  border-radius: 9999px;
+  border-radius: var(--osi-radius-full);
   transition:
     width 400ms cubic-bezier(0.4, 0, 0.2, 1),
     background-color 200ms var(--ease-out);
@@ -289,21 +218,21 @@
 .metric-progress-fill--default {
   background: linear-gradient(
     90deg,
-    var(--accent, #ff7900) 0%,
-    color-mix(in srgb, var(--accent, #ff7900) 80%, white 20%) 100%
+    var(--accent, var(--osi-accent)) 0%,
+    color-mix(in srgb, var(--accent, var(--osi-accent)) 80%, white 20%) 100%
   );
 }
 
 .metric-progress-fill--success {
-  background: linear-gradient(90deg, #22c55e 0%, #34d87b 100%); // Green = good
+  background: linear-gradient(90deg, var(--osi-success) 0%, var(--osi-success-bright) 100%);
 }
 
 .metric-progress-fill--warning {
-  background: linear-gradient(90deg, #eab308 0%, #fbbf24 100%); // Amber = watch
+  background: linear-gradient(90deg, var(--osi-warning) 0%, var(--osi-warning-bright) 100%);
 }
 
 .metric-progress-fill--error {
-  background: linear-gradient(90deg, #ef4444 0%, #f87171 100%); // Red = bad
+  background: linear-gradient(90deg, var(--osi-error) 0%, var(--osi-error-bright) 100%);
 }
 
 // Target marker (bullet-style) - Subtle in dark mode
@@ -311,11 +240,15 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 2px;
-  height: 6px;
-  // More subtle contrast in dark mode - use tokenized border color
-  background: color-mix(in srgb, var(--card-border, #333333) 70%, transparent 30%);
-  border-radius: 1px;
+  width: var(--osi-spacing-2px);
+  height: var(--osi-spacing-6px);
+  // Use standardized border token
+  background: color-mix(
+    in srgb,
+    var(--osi-section-item-border, var(--border)) 70%,
+    transparent 30%
+  );
+  border-radius: var(--osi-radius-xs);
   z-index: 2;
   pointer-events: none;
 
@@ -325,34 +258,37 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 5px;
-    height: 5px;
+    width: var(--osi-spacing-4px);
+    height: var(--osi-spacing-4px);
     border-radius: 50%;
-    background: color-mix(in srgb, var(--card-border, #333333) 50%, transparent 50%);
-    border: 1px solid color-mix(in srgb, var(--card-border, #333333) 70%, transparent 30%);
+    background: color-mix(
+      in srgb,
+      var(--osi-section-item-border, var(--border)) 50%,
+      transparent 50%
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--osi-section-item-border, var(--border)) 70%, transparent 30%);
   }
 }
 
 // Progress label - Always visible at end of bar
 .metric-progress-label {
+  @include unified.unified-item-description;
   flex-shrink: 0;
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.65));
+  font-weight: var(--font-semibold);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   display: inline-block;
-  margin-left: 5px;
+  margin-left: var(--osi-spacing-4px);
 }
 
 // Description - Only visible when expanded
 .metric-description {
-  font-size: 0.65rem;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.6));
-  line-height: 1.4;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, var(--card-border, #333333) 30%, transparent 70%);
+  @include unified.unified-item-description;
+  margin-top: var(--osi-section-item-gap-sm);
+  padding-top: var(--osi-section-item-padding-compact);
+  border-top: 1px solid
+    color-mix(in srgb, var(--osi-section-item-border, var(--border)) 30%, transparent 70%);
   animation: fadeIn 200ms var(--ease-out);
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -363,7 +299,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(-4px);
+      transform: translateY(calc(var(--osi-spacing-4px) * -1));
     }
     to {
       opacity: 1;
@@ -373,23 +309,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .metric-card {
-    // Enhanced dark-mode depth
-    background: color-mix(in srgb, var(--card-background, #1a1a1a) 96%, white 4%);
-    border-color: color-mix(in srgb, var(--card-border, #333333) 60%, transparent 40%);
-
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.2),
-      0 0 0 0.5px color-mix(in srgb, var(--card-border, #333333) 25%, transparent 75%);
-  }
-
-  .metric-card:hover {
-    background: color-mix(in srgb, var(--card-background, #1a1a1a) 98%, white 2%);
-    border-color: color-mix(in srgb, var(--card-border, #333333) 80%, transparent 20%);
-
-    box-shadow:
-      0 6px 12px rgba(0, 0, 0, 0.25),
-      0 0 0 0.5px color-mix(in srgb, var(--card-border, #333333) 35%, transparent 65%);
+  .section-item {
+    // Use standardized border token - no custom overrides
+    // Background and border are handled by @include card('normal') mixin
+    // Only enhance shadow if needed, but keep border standardized
   }
 }
 

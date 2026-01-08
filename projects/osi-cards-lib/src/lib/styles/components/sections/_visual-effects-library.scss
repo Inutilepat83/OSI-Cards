@@ -192,10 +192,10 @@
   }
 }
 
-// Left accent border (quotations, highlights)
+// Left accent border (quotations, highlights) - removed
 @mixin accent-line-left {
-  border-left: 3px solid var(--accent);
-  padding-left: calc(var(--osi-default-card-padding) - 3px);
+  // Left border removed per user request
+  padding-left: var(--osi-default-card-padding);
 }
 
 // ═══════════════════════════════════════════════════════════════════

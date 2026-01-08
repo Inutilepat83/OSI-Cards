@@ -237,7 +237,6 @@ test.describe('OSI Cards Library Integration', () => {
     test('should render various section types correctly', async ({ page }) => {
       // Check for different section type classes
       const sectionTypes = [
-        'info-section',
         'overview-section',
         'analytics-section',
         'list-section',

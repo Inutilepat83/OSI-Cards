@@ -48,21 +48,22 @@
 // COMPACT CARD VARIANTS
 // =====================================================================
 
+// =====================================================================
+// CARD VARIANT: COMPACT
+// =====================================================================
+// Compact spacing variant using standardized tokens
+
 @mixin card-compact {
-  @include base.card;
-  padding: var(--spacing-compact-base) var(--spacing-compact-md);
-  gap: var(--spacing-compact-sm);
-  min-height: var(--section-card-compact-height);
+  @include base.card("compact");
+  // Gap already set by base.card with compact spacing
 }
 
 @mixin card-compact-elevated {
-  @include card-compact;
-  @include effects.elevated-card;
+  @include components.card-elevated("compact");
 }
 
 @mixin card-compact-glass {
-  @include card-compact;
-  @include effects.glass-card;
+  @include components.card-glass("compact");
 }
 
 // =====================================================================

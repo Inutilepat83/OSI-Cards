@@ -345,7 +345,6 @@ export function mapPriorityToNumber(
  * UPDATED: Increased preferred widths to better fill rows and avoid gaps
  */
 const TYPE_PREFERRED_WIDTHS: Record<string, number> = {
-  overview: 4,
   chart: 2,
   map: 2,
   locations: 2,
@@ -381,7 +380,7 @@ function calculatePreferredWidth(section: CardSection, maxColumns: number): numb
   }
 
   // Type-based default
-  const type = section.type?.toLowerCase() ?? 'info';
+  const type = section.type?.toLowerCase() ?? 'list';
   const typeDefault = TYPE_PREFERRED_WIDTHS[type] ?? 1;
 
   // Content-aware adjustments
@@ -409,19 +408,6 @@ function calculatePreferredWidth(section: CardSection, maxColumns: number): numb
     if (fieldCount >= 6) return Math.min(3, maxColumns);
     if (fieldCount >= 4) return Math.min(2, maxColumns);
     return 1;
-  }
-
-  // Overview sections should expand based on field count
-  if (type === 'overview') {
-    if (fieldCount >= 8) return Math.min(4, maxColumns);
-    if (fieldCount >= 6) return Math.min(3, maxColumns);
-    if (fieldCount >= 4) return Math.min(2, maxColumns);
-    return Math.min(typeDefault, maxColumns);
-  }
-
-  // Info sections with many fields should expand
-  if (type === 'info' && fieldCount >= 6) {
-    return Math.min(2, maxColumns);
   }
 
   // Lists with many items should stay narrow (vertical scrolling)

@@ -246,25 +246,94 @@ export class SectionCompletenessService {
 
   /**
    * Check if field has non-empty value
+   * Checks common field properties used by different section types:
+   * - value, label (standard fields)
+   * - name, title (map, solutions sections)
+   * - platform, handle, url (social-media sections)
+   * - x, y, coordinates (map sections)
    */
   private isFieldValueNonEmpty(field: CardField): boolean {
+    // Check standard value property
     if (field.value !== undefined && field.value !== null) {
       if (typeof field.value === 'string') {
         return field.value.trim().length > 0;
       }
       return true;
     }
-    // Check if field has label (some fields might be valid with just label)
+
+    // Check label property
     if (field.label && field.label.trim().length > 0) {
       return true;
     }
+
+    // Check common field properties used by different section types
+    // Map sections: name, x, y, coordinates
+    if (
+      (field as any).name &&
+      typeof (field as any).name === 'string' &&
+      (field as any).name.trim().length > 0
+    ) {
+      return true;
+    }
+
+    // Solutions sections: title, description
+    if (
+      (field as any).title &&
+      typeof (field as any).title === 'string' &&
+      (field as any).title.trim().length > 0
+    ) {
+      return true;
+    }
+    if (
+      (field as any).description &&
+      typeof (field as any).description === 'string' &&
+      (field as any).description.trim().length > 0
+    ) {
+      return true;
+    }
+
+    // Social-media sections: platform, handle, url
+    if (
+      (field as any).platform &&
+      typeof (field as any).platform === 'string' &&
+      (field as any).platform.trim().length > 0
+    ) {
+      return true;
+    }
+    if (
+      (field as any).handle &&
+      typeof (field as any).handle === 'string' &&
+      (field as any).handle.trim().length > 0
+    ) {
+      return true;
+    }
+    if (
+      (field as any).url &&
+      typeof (field as any).url === 'string' &&
+      (field as any).url.trim().length > 0
+    ) {
+      return true;
+    }
+
+    // Map sections: coordinates (object) or x/y (numbers)
+    if ((field as any).coordinates && typeof (field as any).coordinates === 'object') {
+      return true;
+    }
+    if (typeof (field as any).x === 'number' || typeof (field as any).y === 'number') {
+      return true;
+    }
+
     return false;
   }
 
   /**
    * Check if item has non-empty value
+   * Checks common item properties used by different section types:
+   * - title, description, value (standard items)
+   * - platform, handle, url (social-media sections)
    */
   private isItemValueNonEmpty(item: CardItem): boolean {
+    // Check standard properties
     if (item.title && item.title.trim().length > 0) {
       return true;
     }
@@ -277,6 +346,30 @@ export class SectionCompletenessService {
       }
       return true;
     }
+
+    // Check social-media item properties: platform, handle, url
+    if (
+      (item as any).platform &&
+      typeof (item as any).platform === 'string' &&
+      (item as any).platform.trim().length > 0
+    ) {
+      return true;
+    }
+    if (
+      (item as any).handle &&
+      typeof (item as any).handle === 'string' &&
+      (item as any).handle.trim().length > 0
+    ) {
+      return true;
+    }
+    if (
+      (item as any).url &&
+      typeof (item as any).url === 'string' &&
+      (item as any).url.trim().length > 0
+    ) {
+      return true;
+    }
+
     return false;
   }
 

@@ -385,7 +385,7 @@ export class PerfectBinPacker {
   private getPreferredSpan(section: CardSection): number {
     if (section.colSpan) return section.colSpan;
     const type = (section.type || '').toLowerCase();
-    if (type === 'overview' || type === 'header') return this.columns;
+    if (type === 'header') return this.columns;
     if (type === 'chart' || type === 'analytics') return Math.min(2, this.columns);
     return 1;
   }
@@ -404,7 +404,7 @@ export class PerfectBinPacker {
 
   private canExpand(section: CardSection): boolean {
     const type = (section.type || '').toLowerCase();
-    const expandable = ['overview', 'header', 'chart', 'analytics', 'info', 'list', 'timeline'];
+    const expandable = ['header', 'chart', 'analytics', 'info', 'list', 'timeline'];
     return expandable.includes(type);
   }
 

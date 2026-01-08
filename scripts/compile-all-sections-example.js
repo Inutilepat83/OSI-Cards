@@ -17,7 +17,8 @@ const path = require('path');
 
 const ROOT_DIR = path.join(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT_DIR, 'projects', 'osi-cards-lib', 'src', 'lib', 'components', 'sections');
-const OUTPUT_PATH = path.join(ROOT_DIR, 'src', 'assets', 'configs', 'all', 'all-components.json');
+const GENERATED_OUTPUT_PATH = path.join(ROOT_DIR, 'src', 'assets', 'configs', 'generated', 'all-sections-complete.json');
+const ALL_COMPONENTS_PATH = path.join(ROOT_DIR, 'src', 'assets', 'configs', 'all', 'all-components.json');
 const REGISTRY_PATH = path.join(ROOT_DIR, 'projects', 'osi-cards-lib', 'section-registry.json');
 
 const colors = {
@@ -81,15 +82,20 @@ function main() {
   let loaded = 0;
   let skipped = 0;
   let errors = 0;
+  const loadedTypes = [];
+  const skippedTypes = [];
 
   for (const folder of sectionFolders) {
     const sectionType = folder.replace('-section', '');
-    const definitionPath = path.join(SECTIONS_DIR, folder, `${sectionType}.definition.json`);
+    // Handle special case: contact-card-section folder has contact-card.definition.json
+    const definitionFileName = sectionType === 'contact' ? 'contact-card.definition.json' : `${sectionType}.definition.json`;
+    const definitionPath = path.join(SECTIONS_DIR, folder, definitionFileName);
 
     // Check if internal
     if (isInternalSection(sectionType, registry)) {
       log(`  ⏭️  Skipping internal section: ${sectionType}`, colors.yellow);
       skipped++;
+      skippedTypes.push(sectionType);
       continue;
     }
 
@@ -103,12 +109,19 @@ function main() {
       const content = fs.readFileSync(definitionPath, 'utf8');
       const definition = JSON.parse(content);
 
-      // Get example from examples.example (or fallback to complete for backwards compatibility)
-      const example = definition.examples?.example || definition.examples?.complete;
+      // Get example from examples (try multiple keys in priority order)
+      // Priority: example > demo > complete > doc > first available
+      const example = 
+        definition.examples?.example || 
+        definition.examples?.demo || 
+        definition.examples?.complete || 
+        definition.examples?.doc ||
+        (definition.examples && Object.values(definition.examples)[0]);
 
       if (!example) {
         log(`  ⚠️  No example found in ${sectionType} definition`, colors.yellow);
         skipped++;
+        skippedTypes.push(sectionType);
         continue;
       }
 
@@ -119,6 +132,7 @@ function main() {
 
       sections.push(example);
       loaded++;
+      loadedTypes.push(sectionType);
       log(`  ✓ Loaded ${sectionType}`, colors.green);
     } catch (error) {
       log(`  ❌ Error loading ${definitionPath}: ${error.message}`, colors.red);
@@ -176,19 +190,33 @@ function main() {
     ]
   };
 
-  // Ensure output directory exists
-  const outputDir = path.dirname(OUTPUT_PATH);
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
+  // Ensure output directories exist
+  const generatedOutputDir = path.dirname(GENERATED_OUTPUT_PATH);
+  const allComponentsOutputDir = path.dirname(ALL_COMPONENTS_PATH);
+  if (!fs.existsSync(generatedOutputDir)) {
+    fs.mkdirSync(generatedOutputDir, { recursive: true });
+  }
+  if (!fs.existsSync(allComponentsOutputDir)) {
+    fs.mkdirSync(allComponentsOutputDir, { recursive: true });
   }
 
-  // Write the compiled card
+  // Write the compiled card to generated folder (primary output)
+  const cardJson = JSON.stringify(allSectionsCard, null, 2) + '\n';
   try {
-    fs.writeFileSync(OUTPUT_PATH, JSON.stringify(allSectionsCard, null, 2) + '\n', 'utf8');
-    log(`\n  ✓ Written to ${OUTPUT_PATH}`, colors.green);
+    fs.writeFileSync(GENERATED_OUTPUT_PATH, cardJson, 'utf8');
+    log(`\n  ✓ Written to ${GENERATED_OUTPUT_PATH}`, colors.green);
   } catch (error) {
-    log(`  ❌ Error writing ${OUTPUT_PATH}: ${error.message}`, colors.red);
+    log(`  ❌ Error writing ${GENERATED_OUTPUT_PATH}: ${error.message}`, colors.red);
     process.exit(1);
+  }
+
+  // Also copy to all/all-components.json for backward compatibility with manifest
+  try {
+    fs.writeFileSync(ALL_COMPONENTS_PATH, cardJson, 'utf8');
+    log(`  ✓ Copied to ${ALL_COMPONENTS_PATH}`, colors.green);
+  } catch (error) {
+    log(`  ⚠️  Error copying to ${ALL_COMPONENTS_PATH}: ${error.message}`, colors.yellow);
+    // Don't exit on copy error, as the primary output was successful
   }
 
   // Also update registry if it exists
@@ -206,9 +234,16 @@ function main() {
   log('\n' + '═'.repeat(70), colors.cyan);
   log(`  Summary:`, colors.cyan);
   log(`    ✓ Loaded: ${loaded} sections`, colors.green);
+  if (loadedTypes.length > 0) {
+    log(`    Loaded types: ${loadedTypes.join(', ')}`, colors.dim || '');
+  }
   log(`    ⏭️  Skipped: ${skipped} sections`, colors.yellow);
+  if (skippedTypes.length > 0) {
+    log(`    Skipped types: ${skippedTypes.join(', ')}`, colors.dim || '');
+  }
   log(`    ❌ Errors: ${errors}`, colors.red);
-  log(`    📄 Output: ${OUTPUT_PATH}`, colors.blue);
+  log(`    📄 Primary Output: ${GENERATED_OUTPUT_PATH}`, colors.blue);
+  log(`    📄 Copied to: ${ALL_COMPONENTS_PATH}`, colors.blue);
   log('═'.repeat(70) + '\n', colors.cyan);
 
   // Return the card for potential use in registry

@@ -58,18 +58,18 @@ export class SectionComponentRegistryService {
   }
 
   /**
-   * Get fallback component
+   * Get fallback component (list section for unknown types)
    */
   private async getFallbackComponent(): Promise<Type<SectionComponentInstance>> {
-    const fallbackLoader = this.loaders.get('fallback');
-    if (fallbackLoader) {
-      return fallbackLoader.loadComponent();
+    const listLoader = this.loaders.get('list');
+    if (listLoader) {
+      return listLoader.loadComponent();
     }
 
     // Default fallback - from library
     const module =
-      await import('projects/osi-cards-lib/src/lib/components/sections/fallback-section/fallback-section.component');
-    return module.FallbackSectionComponent;
+      await import('projects/osi-cards-lib/src/lib/components/sections/list-section/list-section.component');
+    return module.ListSectionComponent;
   }
 
   /**

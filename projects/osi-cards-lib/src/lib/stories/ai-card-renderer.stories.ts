@@ -16,18 +16,6 @@ import type { AICardConfig, CardSection, CardField, CardAction } from '../models
 /**
  * Sample card configurations for stories
  */
-const sampleInfoSection: CardSection = {
-  id: 'info-1',
-  title: 'Company Information',
-  type: 'info',
-  fields: [
-    { id: 'f1', label: 'Industry', value: 'Technology', icon: '🏢' },
-    { id: 'f2', label: 'Founded', value: '2010', icon: '📅' },
-    { id: 'f3', label: 'Headquarters', value: 'San Francisco, CA', icon: '📍' },
-    { id: 'f4', label: 'Employees', value: '5,000+', icon: '👥', trend: 'up' },
-  ],
-};
-
 const sampleAnalyticsSection: CardSection = {
   id: 'analytics-1',
   title: 'Performance Metrics',
@@ -107,14 +95,14 @@ const completeCard: AICardConfig = {
   id: 'demo-card-1',
   cardTitle: 'Acme Corporation',
   description: 'Leading technology solutions provider',
-  sections: [sampleInfoSection, sampleAnalyticsSection, sampleListSection, sampleContactSection],
+  sections: [sampleAnalyticsSection, sampleListSection, sampleContactSection],
   actions: sampleActions,
 };
 
 const minimalCard: AICardConfig = {
   id: 'minimal-card',
   cardTitle: 'Simple Card',
-  sections: [sampleInfoSection],
+  sections: [sampleAnalyticsSection],
 };
 
 /**
@@ -241,7 +229,7 @@ export const Streaming: Story = {
   args: {
     cardConfig: {
       ...minimalCard,
-      sections: [sampleInfoSection],
+      sections: [sampleAnalyticsSection],
     },
     streamingStage: 'streaming',
     isStreaming: true,
@@ -339,11 +327,10 @@ export const ManySections: Story = {
       id: 'many-sections',
       cardTitle: 'Comprehensive Overview',
       sections: [
-        sampleInfoSection,
         sampleAnalyticsSection,
         sampleListSection,
         sampleContactSection,
-        { ...sampleInfoSection, id: 'info-2', title: 'Additional Info' },
+        { ...sampleAnalyticsSection, id: 'analytics-2', title: 'Additional Metrics' },
         { ...sampleListSection, id: 'list-2', title: 'More Updates' },
       ],
     },

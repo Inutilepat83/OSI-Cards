@@ -20,6 +20,8 @@ import { CardSection } from '../../../models';
 })
 export class GallerySectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+  private readonly failedImages = new Set<string>(); // Track failed image URLs
+  private readonly loadingImages = new Map<string, boolean>(); // Track images currently loading
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -83,9 +85,86 @@ export class GallerySectionComponent extends BaseSectionComponent implements OnI
   }
   /**
    * Get image URL from item
+   * Prioritizes meta.url, then meta.src, then item.url
    */
   getImageUrl(item: any): string {
-    return item.meta?.url || item.meta?.src || item.url || '';
+    // Try multiple possible locations for image URL
+    const url = item.meta?.url || item.meta?.src || item.url || item.image || '';
+    const imageUrl = url?.trim() || '';
+
+    // If no URL provided, return placeholder immediately
+    if (!imageUrl) {
+      console.warn('GallerySection: No image URL found for item:', item.title || item);
+      return this.generatePlaceholderUrl(item);
+    }
+
+    // If this image has failed before, return placeholder
+    if (this.failedImages.has(imageUrl)) {
+      console.debug('GallerySection: Using placeholder for previously failed image:', imageUrl);
+      return this.generatePlaceholderUrl(item);
+    }
+
+    // Log successful URL extraction for debugging
+    console.debug(
+      'GallerySection: Loading image from URL:',
+      imageUrl,
+      'for item:',
+      item.title || item
+    );
+
+    return imageUrl;
+  }
+
+  /**
+   * Generate a placeholder image URL with alt text
+   */
+  private generatePlaceholderUrl(item: any): string {
+    const altText = this.getAltText(item);
+    const width = 400;
+    const height = 300;
+
+    // Truncate text if too long (max 50 chars for display)
+    const displayText = altText.length > 50 ? altText.substring(0, 47) + '...' : altText;
+
+    // Create SVG placeholder with alt text
+    // Use URL encoding instead of base64 for better compatibility
+    const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#e0e0e0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#666" font-family="system-ui, -apple-system, sans-serif" font-size="14" dominant-baseline="middle">${displayText}</text></svg>`;
+
+    // Use URL encoding for SVG data URI (more reliable than base64 for SVGs)
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+
+  /**
+   * Handle image load error
+   */
+  onImageError(event: Event, item: any): void {
+    const img = event.target as HTMLImageElement;
+    // Prevent infinite error loop
+    if (img.src.startsWith('data:image/svg+xml')) {
+      return;
+    }
+
+    // Get the original URL before it was potentially replaced
+    const originalUrl = item.meta?.url || item.meta?.src || item.url || item.image || '';
+
+    // Log the error for debugging
+    console.error(
+      'GallerySection: Failed to load image:',
+      originalUrl,
+      'for item:',
+      item.title || item
+    );
+
+    // Mark this image as failed if it was a real URL
+    if (originalUrl && !originalUrl.startsWith('data:')) {
+      this.failedImages.add(originalUrl);
+    }
+
+    // Always set placeholder on error
+    const placeholderUrl = this.generatePlaceholderUrl(item);
+    img.src = placeholderUrl;
+    img.classList.add('image-error');
+    img.alt = this.getAltText(item) + ' (Image unavailable)';
   }
 
   /**
@@ -100,6 +179,27 @@ export class GallerySectionComponent extends BaseSectionComponent implements OnI
    */
   getAltText(item: any): string {
     return item.meta?.alt || item.title || 'Gallery image';
+  }
+
+  /**
+   * Handle successful image load
+   */
+  onImageLoad(event: Event, item: any): void {
+    const img = event.target as HTMLImageElement;
+    img.classList.remove('image-error');
+    img.classList.add('image-loaded');
+
+    // Mark as successfully loaded
+    const url = item.meta?.url || item.meta?.src || item.url || item.image || '';
+    if (url) {
+      this.loadingImages.delete(url);
+      console.debug(
+        'GallerySection: Successfully loaded image:',
+        url,
+        'for item:',
+        item.title || item
+      );
+    }
   }
 
   /**

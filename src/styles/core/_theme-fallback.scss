@@ -1,0 +1,16 @@
+/* ===================================================================
+   Theme Fallback Variables
+
+   Provides fallback CSS variables to prevent FOUC (Flash of Unstyled Content)
+   during theme initialization. These are minimal defaults that ensure
+   basic styling is available before the theme service loads.
+   =================================================================== */
+
+:root {
+  /* Basic color fallbacks */
+  --background: #ffffff;
+  --foreground: #000000;
+
+  /* OSI Cards library will provide its own theme variables */
+  /* These are just minimal fallbacks for the app */
+}

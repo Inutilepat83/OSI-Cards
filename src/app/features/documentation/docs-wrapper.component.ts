@@ -341,7 +341,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'brand-colors', title: 'Brand Colors' },
         { path: 'news', title: 'News' },
         { path: 'social-media', title: 'Social Media' },
-        { path: 'base', title: 'Base (Fallback)' },
+        { path: 'base', title: 'Base' },
       ],
     },
     {
@@ -703,7 +703,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
       'network-card': 'Display network connections and relationships...',
       'brand-colors': 'Show brand color palettes...',
       'text-reference': 'Display referenced text content...',
-      base: 'Fallback section type for unknown types...',
+      base: 'Info section type used for unknown types...',
     };
 
     const key = title.toLowerCase().replace(/ /g, '-');

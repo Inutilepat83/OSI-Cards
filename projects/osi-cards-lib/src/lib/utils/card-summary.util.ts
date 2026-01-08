@@ -170,14 +170,16 @@ export function generateBriefSummary(card: AICardConfig): string {
     parts.push(card.cardTitle);
   }
 
-  // Get first overview or info section for brief summary
-  const overviewSection = card.sections.find((s) => s.type === 'overview' || s.type === 'info');
+  // Get first section with description or fields for brief summary
+  const summarySection = card.sections.find(
+    (s) => s.description || (s.fields && s.fields.length > 0)
+  );
 
-  if (overviewSection) {
-    if (overviewSection.description) {
-      parts.push(overviewSection.description);
-    } else if (overviewSection.fields && overviewSection.fields.length > 0) {
-      const firstField = overviewSection.fields[0];
+  if (summarySection) {
+    if (summarySection.description) {
+      parts.push(summarySection.description);
+    } else if (summarySection.fields && summarySection.fields.length > 0) {
+      const firstField = summarySection.fields[0];
       if (firstField) {
         const value = formatFieldValue(firstField);
         if (value) {

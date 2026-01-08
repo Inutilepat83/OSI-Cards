@@ -8,6 +8,11 @@
   // ═══════════════════════════════════════════════════════════════════
   // SPACING SCALE (4px base unit)
   // ═══════════════════════════════════════════════════════════════════
+  --osi-spacing-2px: 2px;
+  --osi-spacing-4px: 4px;
+  --osi-spacing-6px: 6px;
+  --osi-spacing-8px: 8px;
+  --osi-spacing-10px: 10px; // Base gap for section items
   --osi-spacing-xs: 4px;
   --osi-spacing-sm: 8px;
   --osi-spacing-md: 12px;
@@ -38,11 +43,27 @@
   --osi-text-2xl: 1.875rem; // 30px
   --osi-text-3xl: 2.25rem; // 36px
 
+  // Unprefixed font sizes (for unified-sections mixins)
+  --text-xs: 0.6875rem; // 11px - Small labels, captions
+  --text-sm: 0.75rem; // 12px - Secondary text, metadata
+  --text-base: 0.8125rem; // 13px - Body text, item titles
+  --text-md: 0.875rem; // 14px - Emphasized text
+  --text-lg: 1.0625rem; // 17px - Sub-headers
+  --text-xl: 1.1875rem; // 19px - Section headers
+  --text-2xl: 1.375rem; // 22px - Large values, metrics
+  --text-3xl: 1.625rem; // 26px - Large headers
+
   // Font Weights
   --osi-font-normal: 400;
   --osi-font-medium: 500;
   --osi-font-semibold: 600;
   --osi-font-bold: 700;
+
+  // Unprefixed font weights (for unified-sections mixins)
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
 
   // Line Heights
   --osi-leading-tight: 1.25;
@@ -50,6 +71,13 @@
   --osi-leading-normal: 1.5;
   --osi-leading-relaxed: 1.625;
   --osi-leading-loose: 2;
+
+  // Unprefixed line heights (for unified-sections mixins)
+  --leading-tight: 1.2;
+  --leading-snug: 1.3;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.75;
 
   // Letter Spacing
   --osi-tracking-tight: -0.025em;
@@ -67,11 +95,27 @@
   --osi-surface-hover: hsl(0, 0%, 20%); // #333333
   --osi-surface-subtle: hsl(0, 0%, 12%); // #1f1f1f
 
-  // Text Colors
-  --osi-foreground: hsl(0, 0%, 95%); // #f2f2f2
-  --osi-foreground-strong: hsl(0, 0%, 100%); // #ffffff
-  --osi-muted-foreground: hsl(0, 0%, 60%); // #999999
-  --osi-disabled-foreground: hsl(0, 0%, 40%); // #666666
+  // Text Colors - Theme-Responsive
+  // These reference theme-aware tokens set by theme mixins (osi-theme-dark, osi-theme-light)
+  // Theme mixins set --foreground and --muted-foreground directly with theme-appropriate values
+  // OSI tokens reference these theme tokens, making them automatically theme-responsive
+  // Fallback values provided for when theme mixins haven't been called
+  --osi-foreground: var(
+    --foreground,
+    hsl(0, 0%, 95%)
+  ); // References theme-aware --foreground (set by theme mixins)
+  --osi-foreground-strong: var(--foreground, hsl(0, 0%, 100%)); // Theme-responsive
+  --osi-muted-foreground: var(
+    --muted-foreground,
+    hsl(0, 0%, 60%)
+  ); // References theme-aware --muted-foreground (set by theme mixins)
+  --osi-disabled-foreground: var(--muted-foreground, hsl(0, 0%, 40%)); // Theme-responsive
+
+  // Unprefixed color variables (for unified-sections mixins and backward compatibility)
+  // Note: --foreground and --muted-foreground are set by theme mixins (osi-theme-dark, osi-theme-light)
+  // We do NOT redefine them here to avoid overwriting theme values
+  // Components can use either --foreground (set by theme) or --osi-foreground (references theme)
+  // Both are theme-responsive
 
   // Brand/Accent Colors
   --osi-accent: hsl(25, 100%, 50%); // #ff7900
@@ -104,6 +148,7 @@
   // BORDER RADIUS
   // ═══════════════════════════════════════════════════════════════════
   --osi-radius-none: 0;
+  --osi-radius-xs: 2px;
   --osi-radius-sm: 4px;
   --osi-radius-md: 8px;
   --osi-radius-lg: 12px;
@@ -159,11 +204,28 @@
   --osi-grid-min-medium: 200px; // Contact cards
   --osi-grid-min-large: 300px; // Gallery items
 
+  // Grid min-width tokens (for responsive grid layouts)
+  --osi-grid-min-xs: 120px;
+  --osi-grid-min-sm: 140px;
+  --osi-grid-min-md: 160px;
+  --osi-grid-min-lg: 180px;
+  --osi-grid-min-xl: 200px;
+  --osi-grid-min-2xl: 250px;
+  --osi-grid-min-3xl: 280px;
+  --osi-grid-min-4xl: 300px;
+
   // ═══════════════════════════════════════════════════════════════════
   // COMPACT SIZES (for min-heights, etc.)
   // ═══════════════════════════════════════════════════════════════════
   --osi-card-min-height: 90px; // Compact metric cards (was 120px)
   --osi-card-min-height-large: 120px; // Larger cards when needed
+
+  // Min-height tokens for cards/items
+  --osi-card-min-height-xs: 70px;
+  --osi-card-min-height-sm: 80px;
+  --osi-card-min-height-md: 90px;
+  --osi-card-min-height-lg: 95px;
+  --osi-card-min-height-xl: 110px;
 }
 
 // ═══════════════════════════════════════════════════════════════════

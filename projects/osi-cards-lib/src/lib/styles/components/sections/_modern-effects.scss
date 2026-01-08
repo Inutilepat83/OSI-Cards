@@ -157,9 +157,7 @@
 
   // Focus state (keyboard navigation)
   &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.1);
+    outline: none;
   }
 
   // Disabled state

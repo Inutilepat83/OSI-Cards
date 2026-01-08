@@ -2,29 +2,17 @@
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
-  <div class="list list--continuous" *ngIf="section.fields?.length">
-    <div class="continuous-text-wrapper">
+  <div class="overview-grid" *ngIf="section.fields?.length">
+    <div class="overview-item" *ngFor="let field of section.fields" [class.overview-item--single-text]="!field.label">
+      <div class="overview-item__label" *ngIf="field.label">{{ field.label }}</div>
       <div
-        class="continuous-text markdown-content"
-        [class.continuous-text--expanded]="isTextExpanded"
-        [id]="'overview-continuous-text'"
-        [attr.aria-live]="isTextExpanded ? 'polite' : 'off'"
-        [innerHTML]="getRenderedMarkdown()"
+        class="overview-item__value"
+        [innerHTML]="formatFieldValue(field)"
+        [class.overview-item__value--single-text]="!field.label"
       ></div>
-      <button
-        *ngIf="shouldShowExpandButtonForText()"
-        class="value-expand-btn"
-        type="button"
-        (click)="toggleTextExpanded($event)"
-        [attr.aria-expanded]="isTextExpanded"
-        [attr.aria-label]="(isTextExpanded ? 'Collapse' : 'Expand') + ' executive summary text'"
-        [attr.aria-controls]="'overview-continuous-text'"
-      >
-        <span class="expand-text">{{ isTextExpanded ? 'Show less' : 'Show more' }}</span>
-      </button>
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No overview data" icon="📊" variant="minimal">
+  <lib-empty-state *ngIf="!section.fields?.length" message="No overview data" icon="📋" variant="minimal">
   </lib-empty-state>
 </div>

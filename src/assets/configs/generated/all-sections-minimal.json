@@ -57,10 +57,6 @@
       ]
     },
     {
-      "title": "Fallback",
-      "type": "fallback"
-    },
-    {
       "title": "FAQ",
       "type": "faq",
       "items": [

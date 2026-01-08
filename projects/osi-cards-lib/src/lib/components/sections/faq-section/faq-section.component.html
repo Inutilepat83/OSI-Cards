@@ -3,23 +3,13 @@
   </lib-section-header>
 
   <div class="list" *ngIf="section.items?.length">
-    <div class="item" *ngFor="let item of section.items; let i = index" [class.expanded]="isExpanded(i)">
+    <div class="section-item" *ngFor="let item of section.items; let i = index" [class.expanded]="isExpanded(i)">
       <button class="question" (click)="toggle(i)" [attr.aria-expanded]="isExpanded(i)">
         <span class="text">{{ getQuestion(item) }}</span>
         <span class="icon" [class.rotated]="isExpanded(i)">›</span>
       </button>
       <div class="answer" *ngIf="isExpanded(i)" [@fadeInOut]>
-        <p class="text" [class.expanded]="isAnswerExpanded(i)">{{ getAnswer(item) }}</p>
-        <button
-          *ngIf="shouldShowExpandButton(item)"
-          class="answer-expand-button"
-          type="button"
-          (click)="toggleAnswerExpanded(i); $event.stopPropagation()"
-          [attr.aria-expanded]="isAnswerExpanded(i)"
-          [attr.aria-label]="(isAnswerExpanded(i) ? 'Show less' : 'Show more') + ' answer'"
-        >
-          {{ isAnswerExpanded(i) ? 'Show less' : 'Show more' }}
-        </button>
+        <p class="text expanded">{{ getAnswer(item) }}</p>
         <span class="cat" *ngIf="item.meta?.category">{{ item.meta?.category }}</span>
       </div>
     </div>

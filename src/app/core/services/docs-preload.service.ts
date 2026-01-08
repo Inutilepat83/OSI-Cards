@@ -41,7 +41,6 @@ export class DocsPreloadService {
       'contact-card',
       'event',
       'faq',
-      'fallback',
       'financials',
       'gallery',
       'info',

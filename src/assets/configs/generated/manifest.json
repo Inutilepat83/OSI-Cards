@@ -1,14 +1,13 @@
 {
   "generatedAt": "2025-12-02T10:32:24.371Z",
   "generatedFrom": "section-registry.json",
-  "registryVersion": "1.5.42",
+  "registryVersion": "1.5.43",
   "sectionTypes": [
     "analytics",
     "brand-colors",
     "chart",
     "contact-card",
     "event",
-    "fallback",
     "faq",
     "financials",
     "gallery",

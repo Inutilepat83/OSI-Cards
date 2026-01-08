@@ -68,20 +68,20 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
     customActions = [],
   } = options;
 
-  const overviewFields: CardField[] = [];
-  if (industry) overviewFields.push({ id: 'industry', label: 'Industry', value: industry });
-  if (founded) overviewFields.push({ id: 'founded', label: 'Founded', value: founded });
-  if (employees) overviewFields.push({ id: 'employees', label: 'Employees', value: employees });
+  const companyFields: CardField[] = [];
+  if (industry) companyFields.push({ id: 'industry', label: 'Industry', value: industry });
+  if (founded) companyFields.push({ id: 'founded', label: 'Founded', value: founded });
+  if (employees) companyFields.push({ id: 'employees', label: 'Employees', value: employees });
   if (headquarters)
-    overviewFields.push({ id: 'headquarters', label: 'Headquarters', value: headquarters });
-  if (revenue) overviewFields.push({ id: 'revenue', label: 'Annual Revenue', value: revenue });
+    companyFields.push({ id: 'headquarters', label: 'Headquarters', value: headquarters });
+  if (revenue) companyFields.push({ id: 'revenue', label: 'Annual Revenue', value: revenue });
 
   const sections: CardSection[] = [
     {
-      id: 'company-overview',
-      title: 'Company Overview',
-      type: 'info',
-      fields: overviewFields,
+      id: 'company-info',
+      title: 'Company Information',
+      type: 'analytics',
+      fields: companyFields,
     },
     ...(growthRate || marketShare
       ? [

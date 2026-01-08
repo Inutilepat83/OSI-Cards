@@ -466,14 +466,14 @@ $breakpoints: (
 @mixin osi-card-typography($variant: "demo") {
   // Both demo and integration now use the same compact values
   // Section Titles
-  --section-title-font-size: calc(0.92rem - 6px);
+  --section-title-font-size: calc(0.92rem - 8px); // Reduced by 2px
   --section-title-font-weight: 700;
   --section-title-letter-spacing: -0.02em;
   --section-title-line-height: 1.3;
   --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 
   // Card Header Title (main card title - larger)
-  --card-header-title-font-size: 1rem; /* 16px - fixed size for all screen sizes */
+  --card-header-title-font-size: 0.875rem; /* 14px - fixed size for all screen sizes */
   --card-header-title-font-weight: 700;
   --card-header-title-letter-spacing: -0.02em;
   --card-header-title-line-height: 1.3;
@@ -486,7 +486,7 @@ $breakpoints: (
   --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
 
   // Card Subtitles
-  --card-subtitle-font-size: 0.65rem;
+  --card-subtitle-font-size: 0.525rem;
   --card-subtitle-font-weight: 500;
   --card-subtitle-letter-spacing: 0.015em;
   --card-subtitle-line-height: 1.3;
@@ -533,7 +533,7 @@ $breakpoints: (
   --section-padding: 8px;
   --section-container-padding: 12px;
   --card-min-height: auto;
-  --card-gap: 6px;
+  --card-gap: 10px;
   --card-gap-large: 10px;
   --card-nested-gap: 3px;
   --section-header-gap: 2px;
@@ -544,12 +544,20 @@ $breakpoints: (
   --section-card-gap: 8px;
   --section-card-border-radius: 10px;
 
-  // Element gaps within cards
-  --card-element-gap-xs: 2px;
-  --card-element-gap-sm: 3px;
-  --card-element-gap-md: 4px;
-  --card-element-gap-lg: 6px;
-  --card-element-gap-xl: 8px;
+  // Element gaps within cards - DEPRECATED: Use --osi-section-item-gap-* instead
+  // @deprecated Use --osi-section-item-gap-xs instead
+  --card-element-gap-xs: var(--osi-section-item-gap-xs, 2px);
+  // @deprecated Use --osi-section-item-gap-sm instead
+  --card-element-gap-sm: var(--osi-section-item-gap-sm, 3px);
+  // @deprecated Use --osi-section-item-gap-md instead
+  --card-element-gap-md: var(--osi-section-item-gap-md, 4px);
+  // @deprecated Use --osi-section-item-gap-lg instead
+  --card-element-gap-lg: var(--osi-section-item-gap-lg, 12px);
+  // @deprecated Use --osi-section-item-gap-xl instead
+  --card-element-gap-xl: var(--osi-section-item-gap-xl, 8px);
+
+  // @deprecated Use --osi-section-item-gap instead
+  --card-gap: var(--osi-section-item-gap, 10px);
 
   // Border widths
   --border-width-default: 1px;
@@ -586,8 +594,14 @@ $breakpoints: (
   // Section-specific gaps
   --section-grid-gap: var(--gap-md);
   --section-stack-gap: var(--gap-lg);
-  --section-item-gap: var(--gap-sm);
-  --section-item-padding: var(--gap-lg);
+  // @deprecated Use --osi-section-item-gap instead
+  --section-item-gap: var(--osi-section-item-gap, var(--gap-sm));
+  // @deprecated Use --osi-section-item-padding instead
+  --section-item-padding: var(--osi-section-item-padding-normal, var(--gap-lg));
+
+  // Renamed from --section-element-gap for consistency
+  // @deprecated Use --osi-section-item-gap instead
+  --section-element-gap: var(--osi-section-item-gap);
   --metric-item-padding: 10px 12px;
   --list-item-padding: 10px 12px;
 }
@@ -638,8 +652,17 @@ $breakpoints: (
   --osi-card-backdrop-filter: var(--theme-ai-card-backdrop-filter, blur(12px));
 
   // Card Border
-  --osi-card-border: var(--theme-ai-card-border, 1px solid #{$white-05});
-  --osi-card-border-hover: var(--theme-ai-card-border-hover, 1px solid #{$brand-color-12});
+  --osi-card-border: var(--theme-ai-card-border, 1px solid #{$brand-color-20});
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    --osi-card-border: var(
+      --theme-ai-card-border,
+      1px solid color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent)
+    );
+  }
+  --osi-card-border-hover: var(
+    --theme-ai-card-border-hover,
+    1px solid var(--color-brand, #{$brand-color})
+  );
   --osi-card-border-fullscreen: none;
 
   // Card Shadow
@@ -765,12 +788,31 @@ $breakpoints: (
   --osi-section-border: var(--theme-section-border, 1px solid rgba(0, 0, 0, 0.06));
   --osi-section-border-hover: var(--theme-section-border-hover, 1px solid #{$brand-color-15});
 
+  // Section Border Hover Enhanced (theme-aware grey, amplified by 30%)
+  // Light theme: rgba(0, 0, 0, 0.1) → rgba(0, 0, 0, 0.13)
+  // Dark theme: rgba(255, 255, 255, 0.1) → rgba(255, 255, 255, 0.13)
+  // This is just the color value (not the full border property) for use with border-color
+  // Default fallback for light theme
+  --osi-section-border-hover-enhanced-color: var(
+    --theme-section-border-hover-enhanced-color,
+    rgba(0, 0, 0, 0.13)
+  );
+
   // Section Shadow
   --osi-section-shadow: var(--theme-section-box-shadow, var(--shadow-md));
   --osi-section-shadow-hover: var(
     --theme-section-box-shadow-hover,
     var(--shadow-lg),
     var(--shadow-glow-sm)
+  );
+
+  // Section Shadow Hover Enhanced (gentle shadow with cool color, 10% less contrasty than border)
+  // Uses a cool blue color (rgb(59, 130, 246) - blue-500)
+  // Border is at 0.13 opacity, shadow is 10% less contrasty = 0.13 * 0.9 = 0.117 opacity
+  --osi-section-shadow-hover-enhanced: var(
+    --theme-section-shadow-hover-enhanced,
+    var(--shadow-lg),
+    0 0 16px rgba(59, 130, 246, 0.117)
   );
   --osi-section-shadow-fullscreen: none;
 
@@ -799,12 +841,28 @@ $breakpoints: (
   // Section Border Radius
   --osi-section-border-radius: var(--section-card-border-radius);
 
-  // Section Typography
-  --osi-section-title-font-size: calc(1.1rem - 4px);
-  --osi-section-title-font-weight: var(--section-title-font-weight, 700);
-  --osi-section-title-letter-spacing: var(--section-title-letter-spacing, -0.02em);
-  --osi-section-title-line-height: var(--section-title-line-height, 1.3);
-  --osi-section-title-color: var(--card-text-primary);
+  // Section Typography - Using OSI Font Theme Variables
+  // Section Title Font Sizes (mapped to heading levels) - Reduced by 2px each
+  --osi-section-title-font-size-xs: 0.625rem; // h6: 10px (reduced from 12px)
+  --osi-section-title-font-size-sm: 0.75rem; // h5: 12px (reduced from 14px)
+  --osi-section-title-font-size-md: 0.875rem; // h4: 14px (reduced from 16px)
+  --osi-section-title-font-size-lg: 1.125rem; // h3: 18px (reduced from 20px) - default
+  --osi-section-title-font-size-xl: 1.375rem; // h2: 22px (reduced from 24px)
+  --osi-section-title-font-size-2xl: 1.75rem; // h1: 28px (reduced from 30px)
+
+  // Default section title (h3) - Reduced from lg to md for better proportions
+  --osi-section-title-font-size: var(--osi-section-title-font-size-md);
+
+  // Section Title Font Weight - Using OSI Font Weights
+  --osi-section-title-font-weight: var(--osi-font-bold); // 700
+
+  // Section Title Other Properties - Using OSI Theme Variables
+  --osi-section-title-letter-spacing: var(--osi-tracking-tight); // -0.025em
+  --osi-section-title-line-height: var(--osi-leading-snug); // 1.375
+  // Use foreground directly from theme mixins for maximum contrast
+  // Theme mixins set --foreground to dark (#1c1c1f) in light theme and white (#ffffff) in dark theme
+  // Fallback to dark color for light themes if theme mixin hasn't been called
+  --osi-section-title-color: var(--foreground, #1c1c1f);
   --osi-section-title-margin-bottom: var(--section-title-margin-bottom);
   --osi-section-title-underline-length: var(--space-8);
   --osi-section-title-underline-hover-length: var(--space-10);
@@ -814,8 +872,12 @@ $breakpoints: (
   // Fallback for browsers without color-mix support
   --osi-section-title-hover-color: var(--color-brand);
 
-  --osi-section-description-color: var(--muted-foreground);
-  --osi-section-description-color-hover: var(--foreground);
+  // Section Description Typography - Using OSI Font Scale
+  --osi-section-description-font-size: 0.75rem; // 12px (reduced from 14px by 2px)
+  --osi-section-description-font-weight: var(--osi-font-normal); // 400
+  --osi-section-description-line-height: var(--osi-leading-relaxed); // 1.625
+  --osi-section-description-color: var(--osi-muted-foreground);
+  --osi-section-description-color-hover: var(--osi-foreground);
 
   // Section Accent
   --osi-section-accent: var(--section-accent, var(--accent, #{$osi-color-brand}));
@@ -877,19 +939,43 @@ $breakpoints: (
 /// Generate OSI Section Item component tokens (--osi-section-item-*)
 /// SINGLE SOURCE OF TRUTH for all section item/field styling variables
 @mixin osi-section-item-tokens() {
-  // Section Item Background
+  // Section Item Background (Single Source of Truth)
+  // Background hierarchy: Card → Section → Item
+  // - Card background: Used for entire card container (--osi-card-background)
+  // - Section background: Used for section wrapper (--osi-section-background)
+  // - Item background: Used for individual items/fields (--osi-section-item-background) ← THIS
   --osi-section-item-background: var(--theme-section-item-background, var(--card-section-bg));
   --osi-section-item-background-hover: var(
     --theme-section-item-background-hover,
     var(--card-section-bg)
   );
 
-  // Section Item Border
+  // Background usage guidelines:
+  // - Always use --osi-section-item-background for item/field backgrounds
+  // - Do NOT use --card-background for item styling (different purpose)
+  // - Use --osi-section-item-background-hover for consistent hover states
+
+  // Section Item Border (Single Source of Truth)
   --osi-section-item-border: var(--theme-section-item-border, 1px solid rgba(0, 0, 0, 0.06));
   --osi-section-item-border-hover: var(
     --theme-section-item-border-hover,
     1px solid #{$brand-color-08}
   );
+
+  // Section Item Border Hover Enhanced (50% stronger than section hover)
+  // Section border: 0.13 opacity, Section item border: 0.13 × 1.5 = 0.195 opacity
+  // Light theme: rgba(0, 0, 0, 0.195), Dark theme: rgba(255, 255, 255, 0.195)
+  // This is just the color value (not the full border property) for use with border-color
+  --osi-section-item-border-hover-enhanced-color: var(
+    --theme-section-item-border-hover-enhanced-color,
+    rgba(0, 0, 0, 0.195)
+  );
+
+  // Standardized border width
+  --osi-section-item-border-width: var(--border-width-default, 1px);
+
+  // Standardized border style
+  --osi-section-item-border-style: solid;
 
   // Section Item Shadow
   --osi-section-item-shadow: var(--theme-section-item-box-shadow, var(--shadow-sm));
@@ -899,47 +985,100 @@ $breakpoints: (
     var(--shadow-glow-sm)
   );
 
-  // Section Item Spacing - Padding
-  --osi-section-item-padding: var(--section-item-padding);
-  --osi-section-item-padding-top: var(--gap-lg);
-  --osi-section-item-padding-bottom: var(--gap-lg);
-  --osi-section-item-padding-left: var(--gap-lg);
-  --osi-section-item-padding-right: var(--gap-lg);
-  --osi-section-item-metric-padding: var(--metric-item-padding);
-  --osi-section-item-list-padding: var(--list-item-padding);
+  // Section Item Shadow Hover Enhanced (50% stronger than section hover)
+  // Section shadow: 0.117 opacity, Section item shadow: 0.117 × 1.5 = 0.1755 opacity
+  // Uses cool blue color (rgb(59, 130, 246) - blue-500)
+  --osi-section-item-shadow-hover-enhanced: var(
+    --theme-section-item-shadow-hover-enhanced,
+    var(--shadow-lg),
+    0 0 16px rgba(59, 130, 246, 0.1755)
+  );
 
-  // Section Item Spacing - Margins
+  // Section Item Spacing - Padding (Single Source of Truth)
+  // Base padding value
+  --osi-section-item-padding: var(--section-item-padding, 12px);
+  --osi-section-item-padding-top: var(--osi-section-item-padding);
+  --osi-section-item-padding-bottom: var(--osi-section-item-padding);
+  --osi-section-item-padding-left: var(--osi-section-item-padding);
+  --osi-section-item-padding-right: var(--osi-section-item-padding);
+
+  // Responsive padding variants
+  --osi-section-item-padding-compact: 10px;
+  --osi-section-item-padding-normal: 16px;
+  --osi-section-item-padding-spacious: 20px;
+
+  // Specialized padding variants (for backward compatibility)
+  --osi-section-item-metric-padding: var(--metric-item-padding, 10px 12px);
+  --osi-section-item-list-padding: var(--list-item-padding, 10px 12px);
+
+  // Section Item Spacing - Margins (Standardized)
+  // By default, items use padding instead of margins for spacing
+  // Margins should only be used for special layout cases
   --osi-section-item-margin-top: 0;
   --osi-section-item-margin-bottom: 0;
   --osi-section-item-margin-left: 0;
   --osi-section-item-margin-right: 0;
 
-  // Section Item Spacing - Gaps
-  --osi-section-item-gap: var(--section-item-gap);
-  --osi-section-item-grid-gap: var(--section-item-gap);
+  // Margin variants for special cases
+  --osi-section-item-margin-xs: 2px;
+  --osi-section-item-margin-sm: 4px;
+  --osi-section-item-margin-md: 8px;
+  --osi-section-item-margin-lg: 12px;
+  --osi-section-item-margin-xl: 16px;
 
-  // Section Item Border Radius
+  // Usage guidelines:
+  // - Use padding for internal item spacing
+  // - Use margin only for:
+  //   * Separating items in lists (margin-bottom on non-last items)
+  //   * Special layout requirements
+  //   * Negative spacing cases
+
+  // Section Item Spacing - Gaps (Single Source of Truth)
+  // Gap scale (for consistent spacing)
+  --osi-section-item-gap-xs: 2px;
+  --osi-section-item-gap-sm: 4px;
+  --osi-section-item-gap-md: 8px;
+  --osi-section-item-gap: 10px; // Base gap (standard spacing between items)
+  --osi-section-item-gap-lg: 12px;
+  --osi-section-item-gap-xl: 16px;
+
+  // Base gap value (references scale)
+  --osi-section-item-grid-gap: var(--osi-section-item-gap);
+
+  // Section Item Border Radius (Standardized)
   --osi-section-item-border-radius: var(--radius-md);
 
-  // Section Item Typography - Label
-  --osi-section-item-label-font-size: var(--text-sm);
-  --osi-section-item-label-font-weight: var(--font-weight-medium);
-  --osi-section-item-label-color: var(--muted-foreground);
-  --osi-section-item-label-letter-spacing: 0.01em;
+  // Border radius variants for consistency
+  --osi-section-item-border-radius-sm: var(--radius-sm);
+  --osi-section-item-border-radius-md: var(--radius-md);
+  --osi-section-item-border-radius-lg: var(--radius-lg);
+
+  // Section Container Spacing (for section wrappers, not individual items)
+  --osi-section-container-padding: var(--osi-section-item-padding-normal);
+  --osi-section-container-gap: var(--osi-section-item-gap-md);
+  --osi-section-header-margin-bottom: var(--osi-section-item-gap-md);
+
+  // Section Item Typography - Label (Using OSI Font Scale)
+  --osi-section-item-label-font-size: var(--osi-text-sm); // 0.875rem (14px)
+  --osi-section-item-label-font-weight: var(--osi-font-medium); // 500
+  --osi-section-item-label-line-height: var(--osi-leading-tight); // 1.25
+  --osi-section-item-label-letter-spacing: var(--osi-tracking-wider); // 0.05em
+  --osi-section-item-label-color: var(--osi-muted-foreground);
   --osi-section-item-label-text-transform: uppercase;
 
-  // Section Item Typography - Value
-  --osi-section-item-value-font-size: var(--text-base);
-  --osi-section-item-value-font-weight: var(--font-weight-normal);
-  --osi-section-item-value-color: var(--foreground);
-  --osi-section-item-value-letter-spacing: 0;
+  // Section Item Typography - Value (Using OSI Font Scale)
+  --osi-section-item-value-font-size: var(--osi-text-base); // 1rem (16px)
+  --osi-section-item-value-font-weight: var(--osi-font-normal); // 400
+  --osi-section-item-value-line-height: var(--osi-leading-normal); // 1.5
+  --osi-section-item-value-color: var(--osi-foreground);
+  --osi-section-item-value-letter-spacing: var(--osi-tracking-normal); // 0
 
   // Section Item Icon
   --osi-section-item-icon-size: var(--icon-md);
-  --osi-section-item-icon-color: var(--muted-foreground);
-  --osi-section-item-icon-color-hover: var(--accent);
+  --osi-section-item-icon-color: var(--osi-muted-foreground);
+  --osi-section-item-icon-color-hover: var(--accent, var(--osi-accent));
 
-  // Section Item Transitions
+  // Section Item Transitions (Standardized)
   --osi-section-item-transition: var(
     --theme-section-item-transition,
     background 220ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -947,6 +1086,28 @@ $breakpoints: (
     border-color 220ms cubic-bezier(0.4, 0, 0.2, 1)
   );
   --osi-section-item-hover-transform: var(--theme-section-item-hover-transform, none);
+
+  // Animation timing (standardized)
+  --osi-section-item-animation-duration: 220ms;
+  --osi-section-item-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-section-item-stagger-delay: 30ms;
+
+  // Motion distance for animations
+  --osi-motion-distance-sm: 8px;
+
+  // Card min-height variants
+  --osi-section-item-min-height-xs: 70px;
+  --osi-section-item-min-height-sm: 80px;
+  --osi-section-item-min-height-md: 90px;
+  --osi-section-item-min-height-lg: 95px;
+  --osi-section-item-min-height-xl: 110px;
+
+  // Grid column min-widths
+  --osi-section-item-grid-min-xs: 120px;
+  --osi-section-item-grid-min-sm: 160px;
+  --osi-section-item-grid-min-md: 180px;
+  --osi-section-item-grid-min-lg: 250px;
+  --osi-section-item-grid-min-xl: 300px;
 }
 
 /// Generate element type system tokens (Hero, Buttons, Cards, Sections, Section Items)
@@ -1001,7 +1162,8 @@ $breakpoints: (
   --section-hover-transform: none;
   --section-transition: var(--osi-section-transition);
 
-  // 5. SECTION ITEMS (aliases for backward compatibility)
+  // 5. SECTION ITEMS (aliases for backward compatibility - DEPRECATED)
+  // @deprecated Use --osi-section-item-* tokens instead. These will be removed in a future version.
   --section-item-border: var(--osi-section-item-border);
   --section-item-border-hover: var(--osi-section-item-border-hover);
   --section-item-background: var(--osi-section-item-background);
@@ -1013,13 +1175,21 @@ $breakpoints: (
   --section-item-hover-transform: var(--osi-section-item-hover-transform);
   --section-item-transition-default: var(--osi-section-item-transition);
   --section-item-transition: var(--osi-section-item-transition);
+  // @deprecated Use --osi-section-item-padding instead
+  --section-item-padding: var(--osi-section-item-padding-normal);
 
-  // Legacy card variables (theme-aware)
+  // Legacy card variables (theme-aware) - DEPRECATED: Use --osi-section-item-* tokens instead
+  // @deprecated Use --osi-section-item-border instead
   --card-border: var(--theme-card-border, 1px solid rgba(146, 153, 158, 0.15));
+  // @deprecated Use --osi-section-item-border-hover instead
   --card-border-hover: var(--theme-card-border-hover, #{$brand-color-15});
+  // @deprecated Use --osi-section-item-shadow instead
   --card-box-shadow: var(--theme-card-box-shadow, var(--shadow-md));
+  // @deprecated Use --osi-section-item-shadow-hover instead
   --card-box-shadow-hover: var(--theme-card-box-shadow-hover, var(--shadow-lg));
   --card-hover-transform: none;
+  // @deprecated Use --osi-section-item-padding instead
+  --card-padding: var(--osi-section-item-padding-normal, 12px);
 
   // Entrance animations
   --ai-card-entrance-animation: fadeInUpSoft var(--duration-moderate) var(--ease-out-smooth) 10ms 1
@@ -1059,15 +1229,19 @@ $breakpoints: (
   // Surface tokens - defaults (will be overridden by theme-specific mixins and JavaScript presets)
   // These are fallback values only - actual values come from osi-theme-dark/light mixins or JavaScript presets
   & {
-    --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
-    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.4);
+    --theme-ai-card-border: 1px solid #{$brand-color-20};
+    @supports (color: color-mix(in srgb, black 50%, white)) {
+      --theme-ai-card-border: 1px solid
+        color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
+    }
+    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
     --theme-ai-card-background: rgba(255, 255, 255, 0.85);
     --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
     --theme-ai-card-box-shadow:
       0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
     --theme-ai-card-box-shadow-hover:
-      0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25),
-      0 0 0 1px rgba(255, 121, 0, 0.15);
+      0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.5),
+      0 0 0 1px rgba(255, 121, 0, 0.3);
     --theme-ai-card-backdrop-filter: blur(12px);
     --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -1084,8 +1258,10 @@ $breakpoints: (
 
     --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
     --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+    --theme-section-border-hover-enhanced-color: rgba(0, 0, 0, 0.13);
     --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --theme-section-shadow-hover-enhanced: var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.117);
     --theme-section-transition:
       border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     // Flat backgrounds - no color-mix
@@ -1100,6 +1276,9 @@ $breakpoints: (
     --theme-section-item-background-hover: var(--background);
     --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
     --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
+    --theme-section-item-border-hover-enhanced-color: rgba(0, 0, 0, 0.195);
+    --theme-section-item-shadow-hover-enhanced:
+      var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.1755);
     --theme-section-item-hover-transform: none;
     --theme-section-item-transition:
       border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1136,13 +1315,18 @@ $breakpoints: (
 
   // AI Card surface - transparent with blur effect (matches preset)
   & {
-    --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
-    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-ai-card-border: 1px solid #{$brand-color-20};
+    @supports (color: color-mix(in srgb, black 50%, white)) {
+      --theme-ai-card-border: 1px solid
+        color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
+    }
+    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
     --theme-ai-card-background: rgba(20, 20, 20, 0.6);
     --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
     --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
     --theme-ai-card-box-shadow-hover:
-      0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 121, 0, 0.1);
+      0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 24px rgba(255, 121, 0, 0.5),
+      0 0 0 1px rgba(255, 121, 0, 0.3);
     --theme-ai-card-backdrop-filter: blur(12px);
     --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -1187,17 +1371,22 @@ $breakpoints: (
     // Section (matches preset)
     --theme-section-border: 1px solid rgba(255, 255, 255, 0.1);
     --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.1);
+    --theme-section-border-hover-enhanced-color: rgba(255, 255, 255, 0.13);
     --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.5);
+    --theme-section-shadow-hover-enhanced: var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.117);
     --theme-section-transition:
       border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     // Section Item (matches preset)
     --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.06);
     --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
+    --theme-section-item-border-hover-enhanced-color: rgba(255, 255, 255, 0.195);
     --theme-section-item-background: #202020;
     --theme-section-item-background-hover: #212121;
     --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     --theme-section-item-box-shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.3);
+    --theme-section-item-shadow-hover-enhanced:
+      var(--shadow-lg), 0 0 16px rgba(59, 130, 246, 0.1755);
     --theme-section-item-hover-transform: none;
     --theme-section-item-transition:
       background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -1240,15 +1429,19 @@ $breakpoints: (
     --card-section-card-bg: #f8f8f8;
 
     // AI Card surface - light theme with blur (matches preset)
-    --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
-    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-ai-card-border: 1px solid #{$brand-color-20};
+    @supports (color: color-mix(in srgb, black 50%, white)) {
+      --theme-ai-card-border: 1px solid
+        color-mix(in srgb, var(--color-brand, #{$brand-color}) 20%, transparent);
+    }
+    --theme-ai-card-border-hover: 1px solid var(--color-brand, #{$brand-color});
     --theme-ai-card-background: rgba(255, 255, 255, 0.85);
     --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
     --theme-ai-card-box-shadow:
       0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
     --theme-ai-card-box-shadow-hover:
-      0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.18),
-      0 0 0 1px rgba(255, 121, 0, 0.1);
+      0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.45),
+      0 0 0 1px rgba(255, 121, 0, 0.25);
     --theme-ai-card-backdrop-filter: blur(12px);
     --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 

@@ -458,7 +458,6 @@ export class SkylinePacker {
     // Type-based defaults
     const type = section.type?.toLowerCase() ?? '';
     const typeDefaults: Record<string, number> = {
-      overview: 4,
       chart: 2,
       map: 2,
       analytics: 1,

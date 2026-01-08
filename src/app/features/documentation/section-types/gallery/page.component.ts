@@ -54,16 +54,25 @@ The **Gallery Section** (\`type: "gallery"\`) is used for displays image galleri
       "title": "Austin Headquarters",
       "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
       "meta": {
-        "url": "https://images.nexustech.io/office/austin-hq.jpg",
+        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
         "caption": "Nexus HQ in Austin, Texas",
         "alt": "Modern office building with glass facade"
+      }
+    },
+    {
+      "title": "Engineering All-Hands",
+      "description": "Quarterly engineering town hall with product roadmap presentations and team celebrations",
+      "meta": {
+        "url": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
+        "caption": "Engineering team gathering",
+        "alt": "Large group of engineers in conference room"
       }
     },
     {
       "title": "NexusCon 2024 Keynote",
       "description": "CEO Sarah Mitchell delivering the opening keynote to 3,000+ attendees in San Francisco",
       "meta": {
-        "url": "https://images.nexustech.io/events/nexuscon-keynote.jpg",
+        "url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop",
         "caption": "NexusCon 2024 main stage",
         "alt": "Speaker on stage at large conference"
       }
@@ -117,9 +126,19 @@ const demoConfig = {
       description:
         'Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones',
       meta: {
-        url: 'https://images.nexustech.io/office/austin-hq.jpg',
+        url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
         caption: 'Nexus HQ in Austin, Texas',
         alt: 'Modern office building with glass facade',
+      },
+    },
+    {
+      title: 'Engineering All-Hands',
+      description:
+        'Quarterly engineering town hall with product roadmap presentations and team celebrations',
+      meta: {
+        url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop',
+        caption: 'Engineering team gathering',
+        alt: 'Large group of engineers in conference room',
       },
     },
     {
@@ -127,7 +146,7 @@ const demoConfig = {
       description:
         'CEO Sarah Mitchell delivering the opening keynote to 3,000+ attendees in San Francisco',
       meta: {
-        url: 'https://images.nexustech.io/events/nexuscon-keynote.jpg',
+        url: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop',
         caption: 'NexusCon 2024 main stage',
         alt: 'Speaker on stage at large conference',
       },

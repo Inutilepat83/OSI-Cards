@@ -136,11 +136,6 @@ export const NG_DOC_ROUTING: Routes = [
         loadComponent: () => import('./section-types/event/page.component').then((m) => m.default),
       },
       {
-        path: 'fallback',
-        loadComponent: () =>
-          import('./section-types/fallback/page.component').then((m) => m.default),
-      },
-      {
         path: 'faq',
         loadComponent: () => import('./section-types/faq/page.component').then((m) => m.default),
       },
@@ -153,10 +148,6 @@ export const NG_DOC_ROUTING: Routes = [
         path: 'gallery',
         loadComponent: () =>
           import('./section-types/gallery/page.component').then((m) => m.default),
-      },
-      {
-        path: 'info',
-        loadComponent: () => import('./section-types/info/page.component').then((m) => m.default),
       },
       {
         path: 'list',
@@ -174,11 +165,6 @@ export const NG_DOC_ROUTING: Routes = [
       {
         path: 'news',
         loadComponent: () => import('./section-types/news/page.component').then((m) => m.default),
-      },
-      {
-        path: 'overview',
-        loadComponent: () =>
-          import('./section-types/overview/page.component').then((m) => m.default),
       },
       {
         path: 'product',
@@ -245,10 +231,6 @@ export const NG_DOC_ROUTING: Routes = [
       {
         path: 'lifecycle',
         loadComponent: () => import('./streaming/lifecycle/page.component').then((m) => m.default),
-      },
-      {
-        path: 'overview',
-        loadComponent: () => import('./streaming/overview/page.component').then((m) => m.default),
       },
       {
         path: 'progressive-rendering',

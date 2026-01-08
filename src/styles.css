@@ -643,7 +643,6 @@
   position: relative;
   z-index: 10;
   padding: 1.5rem 1.5rem 1rem;
-  border-bottom: 1px solid rgba(255, 121, 0, 0.1);
 }
 
 /* Align title section and any decorative icon (emoji or svg) */
@@ -683,7 +682,7 @@
 }
 
 .card-title {
-  font-size: var(--card-header-title-font-size, 1.25rem);
+  font-size: var(--card-header-title-font-size, 1.125rem);
   font-weight: var(--card-header-title-font-weight, 700);
   color: var(--foreground);
   margin: 0;
@@ -702,7 +701,7 @@
 
 .card-subtitle {
   color: var(--muted-foreground);
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   line-height: 1.6;
   margin: 0;
 }
@@ -740,10 +739,11 @@
   box-shadow: var(--card-hover-shadow);
 }
 
-.section-card:focus-visible {
+/* Disabled focus outline - can re-enable for accessibility if needed */
+/* .section-card:focus-visible {
   outline: 2px solid rgba(255, 121, 0, 0.45);
   outline-offset: 2px;
-}
+} */
 
 .section-header {
   display: flex;

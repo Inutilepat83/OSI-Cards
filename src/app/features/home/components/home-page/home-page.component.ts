@@ -1,10 +1,10 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  computed,
   DestroyRef,
   ElementRef,
   EventEmitter,
@@ -13,13 +13,15 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  signal,
   ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { CardChangeType } from 'osi-cards-lib';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { ValidationService } from '../../../../core';
 import { AgentService } from '../../../../core/services/agent.service';
 import { AppConfigService } from '../../../../core/services/app-config.service';
 import { CardDataService } from '../../../../core/services/card-data/card-data.service';
@@ -52,11 +54,13 @@ import { ThemeService } from '../../../../../../projects/osi-cards-lib/src/lib/t
 
 // Import standalone components
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { ensureCardIds, removeAllIds } from '../../../../shared';
+// BackToTopComponent removed - not found
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
+import { measureAllSectionItems } from '../../../../core/utils/spacing-debug.util';
 import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
 import { PreviewControlsComponent } from '../../../../shared/components/preview-controls/preview-controls.component';
+// ScrollRevealDirective removed - not found
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
 @Component({
@@ -76,8 +80,9 @@ import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module'
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit, OnDestroy {
+export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly store: Store<AppState> = inject(Store);
+  private readonly actions$ = inject(Actions);
   private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggingService);
@@ -87,34 +92,46 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private readonly cardDataService = inject(CardDataService);
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
+  private readonly validationService: ValidationService = inject(ValidationService);
   private readonly document = inject(DOCUMENT);
   private readonly themeService = inject(ThemeService);
   private readonly http = inject(HttpClient);
   private readonly config = inject(AppConfigService);
+  private readonly route = inject(ActivatedRoute);
 
   // Expose current theme for template
   get currentTheme(): string {
     return this.themeService.getResolvedTheme();
   }
 
-  /**
-   * Get current theme normalized to 'day'/'night' format for component input
-   */
-  get cardTheme(): 'day' | 'night' {
-    const theme = this.themeService.getResolvedTheme();
-    // Normalize theme to 'day'/'night' format
-    if (theme === 'light' || theme === 'day') {
-      return 'day';
-    }
-    if (theme === 'dark' || theme === 'night') {
-      return 'night';
-    }
-    // For custom themes, default to 'day'
-    return 'day';
+  // Card theme getter for template
+  get cardTheme(): string {
+    return this.currentTheme;
   }
 
-  @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
-  @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent;
+  // Check if dark mode is active
+  isDarkMode(): boolean {
+    const theme = this.currentTheme;
+    return theme === 'night' || theme === 'dark' || theme === 'osi-night';
+  }
+
+  // Component selection methods
+  selectComponent(component: 'heading' | 'description' | 'feature-card'): void {
+    // Toggle selection - if clicking the same component, deselect it
+    if (this.selectedComponent === component) {
+      this.selectedComponent = null;
+    } else {
+      this.selectedComponent = component;
+    }
+    this.cd.markForCheck();
+  }
+
+  isComponentSelected(component: 'heading' | 'description' | 'feature-card'): boolean {
+    return this.selectedComponent === component;
+  }
+
+  @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement> | undefined;
+  @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent | undefined;
 
   // Phase 1: Direct Update Channel - bypass store for streaming updates
   @Output() streamingCardUpdate = new EventEmitter<{
@@ -124,29 +141,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }>();
 
   // Component properties
+  cardType: CardType = 'all';
   cardVariant = 1;
-
-  // Properties that wrap signals for backward compatibility
-  get generatedCard(): AICardConfig | null {
-    return this.generatedCardSignal();
-  }
-  set generatedCard(value: AICardConfig | null) {
-    this.generatedCardSignal.set(value);
-  }
-
-  get isGenerating(): boolean {
-    return this.isGeneratingSignal();
-  }
-  set isGenerating(value: boolean) {
-    this.isGeneratingSignal.set(value);
-  }
-
-  get cardType(): CardType {
-    return this.cardTypeSignal();
-  }
-  set cardType(value: CardType) {
-    this.cardTypeSignal.set(value);
-  }
+  generatedCard: AICardConfig | null = null;
+  isGenerating = false;
   isInitialized = false;
   isFullscreen = false;
   lastChangeType: CardChangeType = 'structural';
@@ -160,53 +158,60 @@ export class HomePageComponent implements OnInit, OnDestroy {
   livePreviewCard: AICardConfig | null = null;
   livePreviewChangeType: CardChangeType = 'structural';
 
+  // Component selection state
+  selectedComponent: 'heading' | 'description' | 'feature-card' | null = null;
+
   // Library Streaming State (replaces old LLMStreamingService)
-  streamingState = signal<StreamingState | null>(null);
+  streamingState: StreamingState | null = null;
   useStreaming = true;
-  streamingSpeed = 80; // tokens per second
-  thinkingDelay = 2000; // milliseconds to simulate LLM thinking
+  streamingSpeed = 200; // tokens per second (default: 200, can climb to 300 max)
+  thinkingDelay = 500; // 0.5s thinking time
+  private initialCardType: CardType = 'all';
 
   cardTypes: CardType[] = []; // Dynamically loaded from examples
+  private routeTargetSection: string | null = null;
+  private routeIntentApplied = false;
 
   // Track available variants for each card type
   availableVariants = new Map<CardType, number>();
 
-  // Signals for reactive state
-  private generatedCardSignal = signal<AICardConfig | null>(null);
-  private isGeneratingSignal = signal<boolean>(false);
-  private cardTypeSignal = signal<CardType>('company');
-
-  // Computed signals for better performance (replaces getters)
-  variants = computed(() => {
-    const maxVariants = this.availableVariants.get(this.cardTypeSignal()) || 1;
+  // Get available variants for current card type
+  get variants(): number[] {
+    const maxVariants = this.availableVariants.get(this.cardType) || 1;
     return Array.from({ length: maxVariants }, (_, i) => i + 1);
-  });
+  }
 
-  hasCard = computed(() => {
-    const card = this.generatedCardSignal();
-    return card !== null && card.sections !== undefined && card.sections.length > 0;
-  });
+  // TrackBy function for variants
+  trackByVariant(_index: number, variant: number): number {
+    return variant;
+  }
 
-  showCardRenderer = computed(() => {
-    return this.isGeneratingSignal() || this.hasCard();
-  });
+  // Streaming computed properties (following iLibrary pattern)
+  get showCardRenderer(): boolean {
+    return this.isGenerating || this.hasCard;
+  }
 
-  cardConfigForRenderer = computed((): LibraryCardConfig => {
-    const card = this.generatedCardSignal();
-    return (card ?? {
+  get hasCard(): boolean {
+    // Check both generatedCard and livePreviewCard
+    // Show card if it exists (even with empty sections for live preview)
+    const cardToCheck = this.livePreviewCard || this.generatedCard;
+    return cardToCheck !== null && cardToCheck !== undefined;
+  }
+
+  get cardConfigForRenderer(): LibraryCardConfig {
+    // Use previewCard getter which handles live preview + streaming properly
+    return (this.previewCard ?? {
       cardTitle: 'Generating...',
       sections: [],
     }) as LibraryCardConfig;
-  });
+  }
 
-  progressPercent = computed(() => {
-    const state = this.streamingState();
-    return Math.round((state?.progress ?? 0) * 100);
-  });
+  get progressPercent(): number {
+    return Math.round((this.streamingState?.progress ?? 0) * 100);
+  }
 
-  stageLabel = computed(() => {
-    const state = this.streamingState();
-    switch (state?.stage) {
+  get stageLabel(): string {
+    switch (this.streamingState?.stage) {
       case 'thinking':
         return 'Thinking...';
       case 'streaming':
@@ -220,11 +225,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
       default:
         return 'Idle';
     }
-  });
+  }
 
-  isStreamingActive = computed(() => {
-    return this.streamingState()?.isActive ?? false;
-  });
+  get isStreamingActive(): boolean {
+    return this.streamingState?.isActive ?? false;
+  }
 
   statusMessage = '';
   private statusTone: 'polite' | 'assertive' = 'polite';
@@ -233,9 +238,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private previousError = '';
   isGeneratingPPT = false;
 
-  // Debounced JSON input processing
+  // Dual-stream JSON input processing:
+  // - Immediate stream: Live preview updates (50ms debounce for responsiveness)
+  // - Debounced stream: Final validation and merging (300ms debounce for performance)
   private jsonInputSubject = new Subject<string>();
+  private immediateJsonSubject = new Subject<string>();
   private lastProcessedJson = '';
+  private lastImmediateJson = '';
   private previousJsonInput = ''; // For undo/redo tracking
   private jsonCommandSubject = new Subject<{ oldJson: string; newJson: string }>();
   // Cache sanitized cards so repeated objects don't require re-sanitization
@@ -245,15 +254,27 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private lastPersistedFingerprint: string | null = null;
 
   ngOnInit(): void {
-    // Theme is automatically initialized by ThemeService in app.config.ts
-    // Subscribe to theme changes to update UI
+    // Subscribe to theme changes to trigger change detection
     this.themeService.resolvedTheme$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      // Force change detection when theme changes
+      this.cd.markForCheck();
       this.cd.markForCheck();
     });
+    // Apply deep-link intent before initializing streams (e.g., /analytics)
+    const routeData =
+      (this.route.snapshot?.data as { targetSection?: string; cardType?: CardType }) || {};
+    const pathSection = this.route.snapshot?.routeConfig?.path;
+    this.routeTargetSection = routeData.targetSection ?? pathSection ?? null;
+    if (routeData.cardType) {
+      this.initialCardType = routeData.cardType;
+      this.cardType = routeData.cardType;
+    }
+
+    // Theme is automatically initialized by ThemeService in app.config.ts
 
     // Subscribe to streaming service state (following iLibrary pattern)
     this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.streamingState.set(state);
+      this.streamingState = state;
       this.isGenerating = state.isActive;
       this.cd.markForCheck();
     });
@@ -280,6 +301,25 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
         this.streamingCardUpdate.emit(eventPayload);
 
+        // If we have sections and route intent, try scrolling to target section
+        if (update.card?.sections?.length && this.routeTargetSection && !this.routeIntentApplied) {
+          const target = this.routeTargetSection.toLowerCase();
+          if (target === 'analytics') {
+            setTimeout(() => this.tryScrollToCardSection('analytics'), 100);
+          } else if (target === 'overview') {
+            setTimeout(() => this.tryScrollToCardSection('overview'), 100);
+          }
+        }
+
+        // #region agent log
+        // Measure spacing when card is updated and has sections
+        if (update.card?.sections?.length) {
+          setTimeout(() => {
+            measureAllSectionItems(5000);
+          }, 1000); // Wait 1 second for sections to render
+        }
+        // #endregion
+
         this.cd.markForCheck();
       });
 
@@ -288,7 +328,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((buffer) => {
         // Update JSON editor during streaming
-        if (this.isStreamingActive()) {
+        if (this.isStreamingActive) {
           this.jsonInput = buffer;
           this.lastProcessedJson = buffer;
         }
@@ -301,11 +341,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((card) => {
         // Only update from store if not actively streaming
-        if (!this.isStreamingActive() && !this.livePreviewCard) {
+        if (!this.isStreamingActive && !this.livePreviewCard) {
           const cardChanged = this.generatedCard !== card;
           this.generatedCard = card;
           if (cardChanged && card && !this.isGenerating && !this.jsonError) {
             this.announceStatus('Card preview updated.');
+            // If we have route intent and sections, try scrolling to target section
+            if (card.sections?.length && this.routeTargetSection && !this.routeIntentApplied) {
+              const target = this.routeTargetSection.toLowerCase();
+              if (target === 'overview') {
+                setTimeout(() => this.tryScrollToCardSection('overview'), 100);
+              }
+            }
           }
           this.cd.markForCheck();
         } else if (!this.livePreviewCard && card) {
@@ -328,7 +375,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((card) => {
-        if (card && !this.isStreamingActive()) {
+        if (card && !this.isStreamingActive) {
           // Update JSON editor with the loaded card (remove IDs and cardType for clean JSON)
           const cardWithoutIds = removeAllIds(card);
           delete cardWithoutIds.cardType;
@@ -365,7 +412,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((loading) => {
         // Only use store busy state if not streaming
-        if (!this.isStreamingActive()) {
+        if (!this.isStreamingActive) {
           this.isGenerating = loading;
         }
         if (loading && !this.previousLoading) {
@@ -385,13 +432,53 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
 
+    // Subscribe to loadTemplateSuccess to trigger streaming when template loads
+    this.actions$
+      .pipe(ofType(CardActions.loadTemplateSuccess), takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ template }) => {
+        if (this.useStreaming && !this.isStreamingActive) {
+          // Configure streaming service with current settings
+          this.streamingService.configure({
+            thinkingDelayMs: this.thinkingDelay,
+            tokensPerSecond: this.streamingSpeed,
+          });
+
+          // Prepare template JSON for streaming (remove IDs for clean JSON)
+          const templateWithoutIds = removeAllIds(template);
+          delete templateWithoutIds.cardType;
+          const templateJson = JSON.stringify(templateWithoutIds, null, 2);
+
+          // Start streaming with template (use streaming mode, not instant)
+          this.streamingService.start(templateJson, { instant: false });
+        }
+      });
+
     // Initialize system and load initial company card
     this.initializeSystem();
 
     // Load available variants for each card type
     this.loadAvailableVariants();
 
+    // Setup immediate JSON processing for live preview updates
+    // Very short debounce (50ms) for responsive feel while still batching rapid changes
+    this.immediateJsonSubject
+      .pipe(debounceTime(50), takeUntilDestroyed(this.destroyRef))
+      .subscribe((jsonInput) => {
+        // Skip if this JSON was already processed immediately (prevents loops)
+        if (jsonInput === this.lastImmediateJson) {
+          return;
+        }
+        // Skip if streaming is active (don't interfere with streaming)
+        if (this.isStreamingActive) {
+          return;
+        }
+        // Mark as processed and update card immediately
+        this.lastImmediateJson = jsonInput;
+        this.processJsonInputFast(jsonInput);
+      });
+
     // Setup debounced JSON processing for final validation and merging
+    // Longer debounce (300ms) for expensive operations like diffing
     this.jsonInputSubject
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((jsonInput) => {
@@ -431,9 +518,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.isInitialized = true;
     this.announceStatus('Loading the All Sections example.');
 
-    // Load the "all" type card by default (All Sections demo)
+    // Load the initial card type (defaults to "all") as demo content
     this.cardDataService
-      .getCardsByType('all')
+      .getCardsByType(this.initialCardType)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((cards) => {
         const card = cards?.[0];
@@ -504,6 +591,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         });
 
         this.cd.markForCheck();
+        this.applyRouteIntent();
       });
   }
 
@@ -528,7 +616,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.previousJsonInput = jsonInput;
     this.jsonInput = jsonInput;
 
-    // Process through debounced stream for validation
+    // Process through both streams:
+    // 1. Immediate stream for live preview (50ms debounce)
+    this.immediateJsonSubject.next(jsonInput);
+    // 2. Debounced stream for final validation (300ms debounce)
     this.jsonInputSubject.next(jsonInput);
   }
 
@@ -566,7 +657,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     // Stop streaming if active when switching cards
-    if (this.isStreamingActive()) {
+    if (this.isStreamingActive) {
       this.stopGeneration();
     }
 
@@ -579,6 +670,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
     // Reset processed JSON payloads before loading template to ensure updates
     this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     // Clear live preview and streaming state to allow store updates to come through
     this.livePreviewCard = null;
     // Update state and load template
@@ -595,6 +687,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.cardVariant = variant;
     // Reset processed JSON payloads before switching to ensure updates
     this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
   }
@@ -1423,14 +1516,50 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (!this.isInitialized) {
       return;
     }
-    if (!jsonInput || jsonInput.trim() === '') {
+    if (!jsonInput || jsonInput.trim() === '' || jsonInput.trim() === '{}') {
+      // Show empty card immediately for live feedback
       const emptyCard: AICardConfig = { cardTitle: '', sections: [] };
       this.updateLivePreviewCard(this.recheckCardStructure(emptyCard) ?? emptyCard, 'structural');
       return;
     }
-    // Use fallback parser for fast incremental rendering
-    const fallback = this.createFallbackPreviewCard(jsonInput);
-    this.updateLivePreviewCard(fallback);
+
+    // Try to parse JSON first (preferred for live editing)
+    let data: unknown;
+    try {
+      data = JSON.parse(jsonInput);
+    } catch (parseError) {
+      // Invalid JSON - use fallback parser for partial/incomplete JSON
+      const fallback = this.createFallbackPreviewCard(jsonInput);
+      this.updateLivePreviewCard(fallback);
+      return;
+    }
+
+    // Validate that data is an object
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      // Not a valid object - use fallback parser
+      const fallback = this.createFallbackPreviewCard(jsonInput);
+      this.updateLivePreviewCard(fallback);
+      return;
+    }
+
+    const cardData = data as Partial<AICardConfig> & Record<string, unknown>;
+
+    // Create a complete card config with defaults for missing required fields
+    // This ensures ALL JSON content is preserved and displayed, even if incomplete
+    const liveCard: AICardConfig = {
+      // Preserve all existing properties from JSON (cardSubtitle, description, columns, actions, meta, etc.)
+      ...cardData,
+      // Ensure required fields are always set (provide defaults if missing)
+      cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : '',
+      sections: Array.isArray(cardData.sections) ? cardData.sections : [],
+    };
+
+    // Lightweight processing - ensure IDs exist for rendering
+    const sanitized = ensureCardIds(liveCard);
+
+    // Update live preview immediately for instant feedback
+    // Use structural change type for new cards to ensure proper rendering
+    this.updateLivePreviewCard(sanitized, 'structural');
   }
 
   private updateLivePreviewCard(nextCard: AICardConfig, changeTypeOverride?: CardChangeType): void {
@@ -1749,7 +1878,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           // start new section
           currentSection = {
             title: titleMatch.trim(),
-            type: 'info',
+            type: 'overview',
             fields: [],
           } as CardSection;
           sections.push(currentSection);
@@ -1787,7 +1916,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
             if (maybeTitle) {
               currentSection = {
                 title: maybeTitle.trim(),
-                type: 'info',
+                type: 'overview',
                 fields: [],
               } as CardSection;
               sections.push(currentSection);
@@ -2066,27 +2195,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Parse JSON in a try-catch for performance
-    let data: unknown;
-    try {
-      data = JSON.parse(jsonInput);
-    } catch (e) {
-      const error = e instanceof Error ? e.message : 'Invalid JSON format';
-      this.store.dispatch(CardActions.generateCardFailure({ error: `Invalid JSON: ${error}` }));
-      return;
-    }
+    // Validate and sanitize JSON input using InputValidationService
+    const validationResult = this.validationService.validateJsonCardInput(jsonInput);
 
-    // Validate that data is an object
-    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    if (!validationResult.valid) {
       this.store.dispatch(
         CardActions.generateCardFailure({
-          error: 'Card configuration must be a valid JSON object.',
+          error: validationResult.errors?.join('; ') || 'Invalid card configuration',
         })
       );
       return;
     }
 
-    const cardData = data as AICardConfig;
+    // Use sanitized card from validation
+    const cardData = validationResult.data as AICardConfig;
 
     // Validate and use the card data
     if (CardTypeGuards.isAICardConfig(cardData)) {
@@ -2212,7 +2334,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
    * Toggle streaming simulation (called from template)
    */
   onSimulateLLMStart(): void {
-    if (this.isStreamingActive()) {
+    if (this.isStreamingActive) {
       this.stopGeneration();
     } else {
       this.generateCard();
@@ -2243,7 +2365,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const newSection: CardSection = {
       ...section,
       id: section.id || `section-${Date.now()}`,
-      type: section.type || 'info',
+      type: section.type || 'overview',
       title: section.title || '',
       // Deep clone fields array to ensure change detection
       fields: Array.isArray(section.fields)
@@ -2577,14 +2699,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
     }
     // During streaming, fall back to generated card
-    if (this.isStreamingActive()) {
+    if (this.isStreamingActive) {
       return this.generatedCard;
     }
     return this.generatedCard ?? null;
   }
 
   get previewChangeType(): CardChangeType {
-    if (this.isStreamingActive()) {
+    if (this.isStreamingActive) {
       // During streaming, use structural changes for layout recalculation
       return 'structural';
     }
@@ -2825,10 +2947,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     return type;
   }
 
-  trackByVariant(_index: number, variant: number): number {
-    return variant;
-  }
-
   @HostListener('document:keydown', ['$event'])
   handleGlobalKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape' && this.isFullscreen) {
@@ -2846,6 +2964,61 @@ export class HomePageComponent implements OnInit, OnDestroy {
     });
   }
 
+  private scrollToSection(sectionId: string): void {
+    const target = this.document?.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    }
+  }
+
+  /**
+   * Apply deep-link intent (e.g., /analytics) to select a card type and scroll
+   */
+  private applyRouteIntent(): void {
+    if (this.routeIntentApplied) {
+      return;
+    }
+
+    const target = this.routeTargetSection?.toLowerCase();
+    if (target === 'analytics') {
+      if (this.cardTypes.includes('analytics') && this.cardType !== 'analytics') {
+        this.switchCardType('analytics');
+      }
+      // Defer to ensure the section is in the DOM before scrolling
+      setTimeout(() => this.tryScrollToCardSection('analytics'), 0);
+      this.routeIntentApplied = true;
+      return;
+    }
+
+    if (target === 'overview') {
+      // Defer to ensure the section is in the DOM before scrolling
+      setTimeout(() => this.tryScrollToCardSection('overview'), 0);
+      this.routeIntentApplied = true;
+      return;
+    }
+
+    if (target === 'demo' || target === 'interactive' || target === 'cards') {
+      setTimeout(() => this.scrollToSection('interactive-demo'), 0);
+      this.routeIntentApplied = true;
+    }
+  }
+
+  private tryScrollToCardSection(target: string, attemptsLeft = 6): void {
+    if (!target || attemptsLeft <= 0) {
+      return;
+    }
+
+    // scrollToSection method doesn't exist on AICardRendererComponent
+    // Use native scrollIntoView instead
+    const element = document.getElementById(target);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    setTimeout(() => this.tryScrollToCardSection(target, attemptsLeft - 1), 250);
+  }
+
   private announceStatus(message: string, assertive = false): void {
     this.statusMessage = message;
     this.statusTone = assertive ? 'assertive' : 'polite';
@@ -2859,6 +3032,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   get liveStatusRole(): 'status' | 'alert' {
     return this.statusRole;
+  }
+
+  ngAfterViewInit(): void {
+    // #region agent log
+    // Measure spacing after view is initialized and all sections are rendered
+    // The measurement function will wait for sections to appear
+    setTimeout(() => {
+      measureAllSectionItems(15000); // Wait up to 15 seconds for sections to appear
+    }, 1000); // Initial delay
+    // #endregion
   }
 
   ngOnDestroy(): void {

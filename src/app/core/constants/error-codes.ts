@@ -13,7 +13,7 @@
  * ```
  */
 
-export interface ErrorCodeInfo {
+export interface IErrorCodeInfo {
   code: string;
   message: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -242,9 +242,9 @@ export const ERROR_CODES = {
  */
 export class ApplicationError extends Error {
   constructor(
-    public readonly errorInfo: ErrorCodeInfo,
+    public readonly errorInfo: IErrorCodeInfo,
     additionalMessage?: string,
-    public readonly context?: Record<string, any>
+    public readonly context?: Record<string, unknown>
   ) {
     super(additionalMessage || errorInfo.message);
     this.name = 'ApplicationError';
@@ -253,28 +253,28 @@ export class ApplicationError extends Error {
   /**
    * Get user-friendly error message
    */
-  getUserMessage(): string {
+  public getUserMessage(): string {
     return this.errorInfo.userMessage || 'An error occurred. Please try again.';
   }
 
   /**
    * Get error code
    */
-  getCode(): string {
+  public getCode(): string {
     return this.errorInfo.code;
   }
 
   /**
    * Check if error is critical
    */
-  isCritical(): boolean {
+  public isCritical(): boolean {
     return this.errorInfo.severity === 'critical';
   }
 
   /**
    * Convert to JSON for logging
    */
-  toJSON(): Record<string, any> {
+  public toJSON(): Record<string, unknown> {
     return {
       code: this.errorInfo.code,
       message: this.message,
@@ -289,25 +289,25 @@ export class ApplicationError extends Error {
 /**
  * Error Code utilities
  */
-export const ErrorCodeUtils = {
+export const errorCodeUtils = {
   /**
    * Get error by code
    */
-  getErrorByCode(code: string): ErrorCodeInfo | undefined {
+  getErrorByCode(code: string): IErrorCodeInfo | undefined {
     return Object.values(ERROR_CODES).find((e) => e.code === code);
   },
 
   /**
    * Get errors by category
    */
-  getErrorsByCategory(category: string): ErrorCodeInfo[] {
+  getErrorsByCategory(category: string): IErrorCodeInfo[] {
     return Object.values(ERROR_CODES).filter((e) => e.category === category);
   },
 
   /**
    * Get errors by severity
    */
-  getErrorsBySeverity(severity: ErrorCodeInfo['severity']): ErrorCodeInfo[] {
+  getErrorsBySeverity(severity: IErrorCodeInfo['severity']): IErrorCodeInfo[] {
     return Object.values(ERROR_CODES).filter((e) => e.severity === severity);
   },
 
@@ -322,9 +322,9 @@ export const ErrorCodeUtils = {
    * Create error from code
    */
   createError(
-    errorInfo: ErrorCodeInfo,
+    errorInfo: IErrorCodeInfo,
     additionalMessage?: string,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): ApplicationError {
     return new ApplicationError(errorInfo, additionalMessage, context);
   },

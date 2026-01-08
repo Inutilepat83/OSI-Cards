@@ -156,9 +156,7 @@ a {
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--color-brand, #{tokens.$osi-color-brand});
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: none;
   }
 }
 
@@ -205,8 +203,7 @@ button,
   background-image: none;
 
   &:focus-visible {
-    outline: 2px solid var(--color-brand, #{tokens.$osi-color-brand});
-    outline-offset: 2px;
+    outline: none;
   }
 }
 
@@ -303,8 +300,7 @@ summary {
 
 // Focus visible styles for keyboard navigation
 :focus-visible {
-  outline: 2px solid var(--color-brand, #{tokens.$osi-color-brand});
-  outline-offset: 2px;
+  outline: none;
 }
 
 // Remove focus outline for mouse users

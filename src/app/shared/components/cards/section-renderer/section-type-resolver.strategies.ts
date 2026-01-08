@@ -18,9 +18,6 @@ export class DefaultSectionTypeResolver implements ISectionTypeResolver {
       const title = (section.title ?? '').toLowerCase();
 
       // Type-based resolution
-      if (type === 'info' && title.includes('overview')) {
-        return 'overview';
-      }
       if (type === 'timeline') {
         return 'event';
       }
@@ -48,10 +45,7 @@ export class DefaultSectionTypeResolver implements ISectionTypeResolver {
 
       // Title-based fallback
       if (!type) {
-        if (title.includes('overview')) {
-          return 'overview';
-        }
-        return 'fallback';
+        return 'info';
       }
 
       return type;
@@ -69,15 +63,14 @@ export class DefaultSectionTypeResolver implements ISectionTypeResolver {
 export class TitleBasedSectionTypeResolver implements ISectionTypeResolver {
   resolve(section: CardSection): string {
     if (!section?.title) {
-      return 'fallback';
+      return 'info';
     }
 
     const title = section.title.toLowerCase();
 
     // Title keywords mapping
     const titleMappings: Record<string, string> = {
-      overview: 'overview',
-      summary: 'overview',
+      summary: 'analytics',
       analytics: 'analytics',
       metrics: 'analytics',
       statistics: 'analytics',
@@ -114,7 +107,7 @@ export class TitleBasedSectionTypeResolver implements ISectionTypeResolver {
       }
     }
 
-    return 'fallback';
+    return 'info';
   }
 }
 

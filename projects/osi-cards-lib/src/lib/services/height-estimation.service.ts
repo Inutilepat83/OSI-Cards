@@ -24,7 +24,6 @@ export interface HeightEstimationContext {
  * Default height estimates per section type (in pixels)
  */
 const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
-  overview: 180,
   'contact-card': 160,
   'network-card': 160,
   analytics: 200,

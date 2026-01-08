@@ -24,3 +24,10 @@
 // ALL SECTION STYLES (Unified)
 // ============================================================================
 @import "all-sections";
+
+// ============================================================================
+// INDIVIDUAL SECTION COMPONENT STYLES
+// ============================================================================
+// Import individual section component SCSS files
+// These are the styles from each section's component styleUrls
+@import "section-types.generated";

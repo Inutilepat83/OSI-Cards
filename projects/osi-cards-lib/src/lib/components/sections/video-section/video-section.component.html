@@ -5,16 +5,18 @@
   <!-- Videos Grid -->
   <div class="video-container" *ngIf="section.items && section.items.length > 0">
     <div class="video-grid">
-      <div class="video-card" *ngFor="let video of section.items; let i = index">
+      <div class="section-item" *ngFor="let video of section.items; let i = index">
         <!-- Video Player/Thumbnail -->
         <div class="video-wrapper">
           <!-- Embedded Video (YouTube/Vimeo) -->
           <iframe
             [src]="getSafeVideoUrl(video)"
-            *ngIf="isEmbeddable(getVideoUrl(video))"
+            *ngIf="isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
+            loading="lazy"
+            title="{{ video.title || 'Video player' }}"
           >
           </iframe>
 
@@ -24,15 +26,21 @@
             controls
             *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
             [poster]="getThumbnail(video)"
+            [title]="video.title"
           ></video>
 
-          <!-- Thumbnail Only -->
+          <!-- Thumbnail Only (fallback when no video URL or embed failed) -->
           <img
             [src]="getThumbnail(video)"
             [alt]="video.title"
             *ngIf="!getVideoUrl(video) && getThumbnail(video)"
             class="video-thumbnail"
           />
+
+          <!-- Error state when no video URL and no thumbnail -->
+          <div *ngIf="!getVideoUrl(video) && !getThumbnail(video)" class="video-error">
+            <p>Video unavailable</p>
+          </div>
         </div>
 
         <!-- Video Info -->

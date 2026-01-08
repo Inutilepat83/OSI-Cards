@@ -5,7 +5,9 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/design-system/unified-sections" as unified;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -25,30 +27,28 @@
 .product {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 .list {
-  @include card;
+  @include card("normal"); // Use normal spacing for consistency
   width: 100%; // Ensure full width
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  // Padding handled by card('normal') mixin - 12px uniform
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  gap: var(--osi-section-item-gap);
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box; // Include padding in width
-  // Background inherited from @include card mixin
 }
 
-.item {
+.section-item {
+  @include card("normal"); // Use normal spacing for consistency
   width: 100%; // Ensure full width expansion
-  padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
-  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
-  transition: all 250ms var(--ease-out);
+  gap: var(--osi-section-item-gap-xs);
+  // Padding handled by card('normal') mixin - 12px uniform
   max-width: 100%;
   overflow-x: hidden;
   word-wrap: break-word;
@@ -56,12 +56,13 @@
   box-sizing: border-box;
 
   &:not(:last-child) {
-    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+    // Margin removed - parent container has gap: 6px
   }
 
-  &:hover {
-    background: var(--surface-hover);
+  // Unified hover effect
+  @include section-card-hover;
 
+  &:hover {
     .icon {
       color: var(--accent);
     }
@@ -75,7 +76,7 @@
 .top {
   display: flex;
   align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs);
   flex-wrap: wrap;
   max-width: 100%;
   min-width: 0;
@@ -85,25 +86,23 @@
   font-size: var(--text-xl);
   flex-shrink: 0;
   color: var(--muted-foreground);
-  transition: all 250ms var(--ease-out);
+  transition:
+    color var(--osi-section-item-transition),
+    opacity var(--osi-section-item-transition);
 }
 
 .label {
-  @include typo.label-base;
+  @include unified.unified-item-label;
   flex: 1;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color 150ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
   min-width: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .value {
-  @include body-text("base");
-  color: var(--foreground);
-  line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
+  @include unified.unified-item-value;
+  font-family: inherit; // Ensure consistent font with other values
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
@@ -118,10 +117,10 @@
 
 @include responsive-down("sm") {
   .list {
-    padding: var(--osi-spacing-compact-sm, 6px);
+    // Padding handled by card('normal') mixin
   }
 
-  .item {
-    padding: var(--osi-spacing-compact-xs, 2px);
+  .section-item {
+    // Padding handled by card('normal') mixin
   }
 }

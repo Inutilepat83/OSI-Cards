@@ -10,9 +10,7 @@ export type SectionType =
   | 'chart'
   | 'contact-card'
   | 'event'
-  | 'fallback'
   | 'financials'
-  | 'info'
   | 'list'
   | 'map'
   | 'network-card'
@@ -156,21 +154,6 @@ export class SectionFactory {
         },
       },
       {
-        type: 'fallback',
-        loader: () =>
-          import('../components/sections/fallback-section/fallback-section.component').then(
-            (m) => m.FallbackSectionComponent
-          ),
-        metadata: {
-          type: 'fallback',
-          displayName: 'Fallback',
-          description: 'Fallback for unknown section types',
-          category: 'system',
-          icon: 'alert-circle',
-          defaultColumnSpan: 1,
-        },
-      },
-      {
         type: 'financials',
         loader: () =>
           import('../components/sections/financials-section/financials-section.component').then(
@@ -183,21 +166,6 @@ export class SectionFactory {
           category: 'data-visualization',
           icon: 'dollar-sign',
           defaultColumnSpan: 2,
-        },
-      },
-      {
-        type: 'info',
-        loader: () =>
-          import('../components/sections/info-section/info-section.component').then(
-            (m) => m.InfoSectionComponent
-          ),
-        metadata: {
-          type: 'info',
-          displayName: 'Info',
-          description: 'Display general information',
-          category: 'content',
-          icon: 'info',
-          defaultColumnSpan: 1,
         },
       },
       {
@@ -374,7 +342,7 @@ export class SectionFactory {
 
   /**
    * Get the component class for a section type.
-   * Returns FallbackSection if type is not found.
+   * Returns OverviewSection if type is not found.
    */
   async createSection(type: SectionType | string): Promise<Type<unknown>> {
     const sectionType = type as SectionType;
@@ -393,8 +361,8 @@ export class SectionFactory {
     // Check built-in registry
     const entry = this.registry.get(sectionType);
     if (!entry) {
-      console.warn(`Unknown section type: ${type}, using fallback`);
-      return this.createSection('fallback');
+      console.warn(`Unknown section type: ${type}, using overview section`);
+      return this.createSection('overview');
     }
 
     try {
@@ -403,7 +371,7 @@ export class SectionFactory {
       return component;
     } catch (error) {
       console.error(`Failed to load section: ${type}`, error);
-      return this.createSection('fallback');
+      return this.createSection('overview');
     }
   }
 

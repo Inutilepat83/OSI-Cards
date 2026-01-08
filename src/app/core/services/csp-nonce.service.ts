@@ -137,6 +137,7 @@ export class CSPNonceService {
       "font-src 'self' data: https:",
       "connect-src 'self' https:",
       "media-src 'self' https://videos.nexustech.io",
+      "frame-src 'self' https://www.youtube.com https://youtube.com https://player.vimeo.com https://vimeo.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

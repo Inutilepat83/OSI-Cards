@@ -89,7 +89,6 @@ Leverage TypeScript for better developer experience:
 import type { 
   AICardConfig, 
   CardSection, 
-  InfoSection,
   AnalyticsSection 
 } from 'osi-cards-lib';
 \`\`\`
@@ -264,10 +263,10 @@ Use the section-registry fixtures for testing:
 \`\`\`typescript
 import { sectionFixtures } from 'osi-cards-lib/testing';
 
-it('should render info section', () => {
-  component.cardConfig = sectionFixtures.info;
+it('should render analytics section', () => {
+  component.cardConfig = sectionFixtures.analytics;
   fixture.detectChanges();
-  expect(compiled.querySelector('.info-section')).toBeTruthy();
+  expect(compiled.querySelector('.analytics-section')).toBeTruthy();
 });
 \`\`\`
 

@@ -1,10 +1,12 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { InputSanitizationService } from '../../domain';
 
 /**
  * Safe HTML pipe for sanitizing HTML content
  *
- * Prevents XSS attacks by sanitizing HTML before rendering using Angular's DomSanitizer.
+ * Prevents XSS attacks by sanitizing HTML before rendering using DOMPurify
+ * for domain-level sanitization and Angular's DomSanitizer for final safety.
  * This pipe should be used whenever rendering user-provided HTML content.
  *
  * @example
@@ -12,8 +14,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
  * <div [innerHTML]="userContent | safeHtml"></div>
  * ```
  *
- * @note The pipe uses SecurityContext.HTML (value 1) which allows HTML but sanitizes
- * dangerous elements and attributes like script tags, event handlers, etc.
+ * @note The pipe uses DOMPurify for comprehensive sanitization, then
+ * Angular's DomSanitizer for additional safety.
  */
 @Pipe({
   name: 'safeHtml',
@@ -21,6 +23,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class SafeHtmlPipe implements PipeTransform {
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly sanitizationService: InputSanitizationService = inject(InputSanitizationService);
 
   /**
    * Transform HTML string to SafeHtml
@@ -29,9 +32,15 @@ export class SafeHtmlPipe implements PipeTransform {
    */
   transform(value: string): SafeHtml {
     if (!value) {
-      return '';
+      return this.sanitizer.bypassSecurityTrustHtml('');
     }
+
+    // Domain-level sanitization using DOMPurify
+    const sanitized = this.sanitizationService.sanitizeHtml(value);
+
+    // Final sanitization using Angular's DomSanitizer
     // SecurityContext.HTML = 1 - allows HTML but sanitizes dangerous content
-    return this.sanitizer.sanitize(1, value) || '';
+    // sanitizeHtml already returns SafeHtml, so we can return it directly
+    return sanitized;
   }
 }

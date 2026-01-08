@@ -20,61 +20,34 @@
 // STANDARD CARD (For 200px grids)
 // =====================================================================
 
-@mixin section-card {
-  @include card;
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+// =====================================================================
+// SECTION CARD MIXIN - DEPRECATED
+// =====================================================================
+// @deprecated Use @include card instead
+// This mixin is kept for backward compatibility but simply redirects to the base card mixin.
 
-  &:hover {
-    box-shadow: var(--shadow-lg);
-    background: var(--osi-section-item-background-hover);
-  }
+@mixin section-card {
+  @include card("normal");
+  @warn "section-card mixin is deprecated. Use @include card instead.";
 }
 
 // =====================================================================
 // STANDARD LIST (For 400px width sections)
 // =====================================================================
 
-@mixin section-list-container {
-  @include card;
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: box-shadow 300ms var(--ease-out);
+// =====================================================================
+// SECTION LIST MIXINS - DEPRECATED
+// =====================================================================
+// @deprecated Use @include list-container and @include list-item from _sections-base.scss instead
 
-  &:hover {
-    box-shadow: var(--shadow-lg);
-  }
+@mixin section-list-container {
+  @include list-container("normal");
+  @warn "section-list-container is deprecated. Use @include list-container instead.";
 }
 
 @mixin section-list-item {
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  transition:
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out);
-
-  &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
-  }
-
-  &:hover {
-    background: var(--surface-hover);
-    color: var(--accent);
-  }
+  @include list-item("normal");
+  @warn "section-list-item is deprecated. Use @include list-item instead.";
 }
 
 // =====================================================================

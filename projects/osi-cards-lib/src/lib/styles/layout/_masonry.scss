@@ -135,13 +135,6 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
 
-  /* Smooth transitions for position and size changes */
-  transition:
-    top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.35s ease-out;
-
   /* GLOBALLY DEFINED: Use shared mixins for discrete section borders */
   @include surface-section-base;
   padding: var(--section-container-padding) !important;
@@ -149,8 +142,28 @@
   /* Gap between header and body - standardized to 12px */
   gap: var(--section-card-gap);
 
+  /* Smooth transitions for position, size, border, and shadow changes */
+  transition:
+    top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease-out,
+    border-color var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1);
+
   &:hover {
     @include surface-section-hover;
+    // Enhanced hover: gentle shadow with 30% more contrasty cool color and 20% more contrasty border
+    border-color: var(--osi-section-border-hover-enhanced-color) !important;
+    box-shadow: var(--osi-section-shadow-hover-enhanced) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition:
+      top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.35s ease-out;
   }
 }
 
@@ -278,19 +291,7 @@
 }
 
 /* Priority-based visual indicators */
-.masonry-item[data-priority="1"] {
-  /* Priority 1 (highest) sections get subtle emphasis */
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--color-brand, #ff7900);
-    border-radius: 0 2px 2px 0;
-  }
-}
+/* Removed left brand color bar - no longer showing visual indicator for priority 1 items */
 
 /* Flex grow sections - expand to fill space */
 .masonry-item--flex-grow {
@@ -657,8 +658,7 @@
 
 /* Focus styles for keyboard navigation following aria-flowto */
 .masonry-item:focus-visible {
-  outline: 2px solid var(--focus-color, #3b82f6);
-  outline-offset: 2px;
+  outline: none;
   z-index: 10;
 }
 

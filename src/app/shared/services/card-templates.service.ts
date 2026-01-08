@@ -322,7 +322,7 @@ export class CardTemplatesService {
         sections: [
           {
             title: 'Opportunity Details',
-            type: 'info',
+            type: 'overview',
             fields: [
               { label: 'Stage', value: 'Qualification', status: 'in-progress' },
               { label: 'Value', value: '$50,000', format: 'currency' },

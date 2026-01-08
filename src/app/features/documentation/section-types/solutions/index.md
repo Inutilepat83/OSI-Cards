@@ -45,6 +45,7 @@ interface CardSection {
       ],
       "deliveryTime": "12-16 weeks",
       "complexity": "high",
+      "score": 8,
       "outcomes": [
         "80% faster data access",
         "95% data accuracy",
@@ -63,6 +64,7 @@ interface CardSection {
       ],
       "deliveryTime": "8-12 weeks",
       "complexity": "high",
+      "score": 9,
       "outcomes": [
         "10x faster model deployment",
         "40% improved model accuracy",
@@ -81,6 +83,7 @@ interface CardSection {
       ],
       "deliveryTime": "10-14 weeks",
       "complexity": "high",
+      "score": 7,
       "outcomes": [
         "60% infrastructure cost reduction",
         "99.99% availability",
@@ -99,6 +102,7 @@ interface CardSection {
       ],
       "deliveryTime": "4-6 weeks",
       "complexity": "low",
+      "score": 6,
       "outcomes": [
         "Real-time visibility",
         "50% reduced reporting time",

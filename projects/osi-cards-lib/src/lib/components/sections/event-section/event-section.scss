@@ -6,8 +6,9 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
-// Import base section styles
+// Import base section styles (using @import for compatibility with existing structure)
 @import "../../../styles/components/sections/sections-base";
 @import "../../../styles/components/sections/section-shell";
 
@@ -26,45 +27,46 @@
 .events {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 .list {
-  @include card;
-  width: 100%; // Ensure full width
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  display: flex;
-  flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
-  box-sizing: border-box; // Include padding in width
-  // Background inherited from @include card mixin
+  @include card("normal"); // Use normal spacing for consistency
+  & {
+    width: 100%; // Ensure full width
+    // Padding handled by card('normal') mixin - 12px uniform
+    display: flex;
+    flex-direction: column;
+    gap: var(--osi-section-item-gap) !important;
+    box-sizing: border-box; // Include padding in width
+  }
 }
 
-.event {
-  width: 100%; // Ensure full width expansion
-  padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
-  border-radius: var(--radius-sm);
-  display: flex;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  box-sizing: border-box; // Include padding in width
-  transition:
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out);
-  cursor: pointer;
+.section-item {
+  @include card("normal");
+  & {
+    width: 100%; // Ensure full width expansion
+    display: flex;
+    align-items: flex-start;
+    gap: var(--osi-section-item-gap);
+    box-sizing: border-box; // Include padding in width
+  }
+
+  // Unified hover effect
+  @include section-card-hover;
 
   &:not(:last-child) {
-    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+    // Margin removed - parent container has gap: 6px
   }
 
   &:hover {
-    background: var(--surface-hover);
-
     .date {
       background: var(--accent);
-      color: white;
+      color: var(--accent-foreground);
 
       .month {
-        color: rgba(255, 255, 255, 0.9);
+        color: var(--accent-foreground);
+        opacity: 0.9;
       }
     }
 
@@ -72,26 +74,34 @@
       color: var(--accent);
     }
   }
+
+  .status {
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: var(--osi-section-item-gap-xs);
+  }
 }
 
 .date {
   flex-shrink: 0;
   width: 50px; // Compact: 50px (was 54px)
-  padding: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  padding: var(--osi-section-item-padding-compact);
   background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   text-align: center;
-  transition: all 250ms var(--ease-out);
+  transition:
+    background var(--osi-section-item-transition),
+    color var(--osi-section-item-transition);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px; // Compact: 1px (was 2px)
+  gap: var(--osi-section-item-gap-xs);
 
   .day {
     display: block;
-    font-size: 1.125rem; // Compact: 18px (was var(--text-xl) ~20px)
+    font-size: var(--text-xl);
     font-weight: var(--font-bold);
     line-height: 1;
     color: var(--foreground);
@@ -99,9 +109,9 @@
 
   .month {
     display: block;
-    font-size: 0.625rem; // Compact: 10px (was 0.65rem)
+    font-size: var(--text-xs);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--osi-tracking-wider);
     color: var(--muted-foreground);
   }
 }
@@ -110,7 +120,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs);
   min-width: 0;
   width: 100%; // Ensure full width expansion
   box-sizing: border-box;
@@ -120,7 +130,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
+  gap: var(--osi-section-item-gap);
   flex-wrap: wrap;
 }
 
@@ -128,7 +138,7 @@
   @include heading(6);
   flex: 1;
   margin: 0;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
   @include text-overflow-ellipsis(2); // Limit to 2 lines
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -137,31 +147,30 @@
 .details {
   @include typo.caption;
   display: flex;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--osi-section-item-gap-xs);
   width: 100%; // Ensure full width expansion
   overflow-wrap: break-word;
   word-wrap: break-word;
   box-sizing: border-box;
 
-  > span {
-    display: flex;
-    align-items: center;
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  .detail-item {
+    display: block;
     overflow-wrap: break-word;
     word-wrap: break-word;
     max-width: 100%;
+    line-height: var(--leading-normal);
+    color: var(--muted-foreground);
   }
 }
 
 @include responsive-down("sm") {
   .list {
-    padding: var(--osi-spacing-compact-sm, 6px);
+    // Padding handled by card('normal') mixin
   }
 
-  .event {
+  .section-item {
     flex-direction: column;
-    padding: var(--osi-spacing-compact-xs, 2px);
 
     .date {
       width: 100%;

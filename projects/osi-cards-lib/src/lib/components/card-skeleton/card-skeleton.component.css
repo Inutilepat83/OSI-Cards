@@ -29,7 +29,7 @@
 }
 
 .skeleton-title {
-  font-size: var(--card-header-title-font-size, 1.25rem);
+  font-size: var(--card-header-title-font-size, 1.125rem);
   font-weight: var(--card-header-title-font-weight, 700);
   color: var(--foreground, #1c1c1f);
   min-height: 2rem;

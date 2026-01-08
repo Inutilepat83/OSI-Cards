@@ -198,32 +198,6 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = [
     "isInternal": false
   },
   {
-    "type": "fallback",
-    "name": "Fallback Section",
-    "description": "Default section renderer for unknown or unsupported section types.",
-    "selector": "lib-fallback-section",
-    "componentPath": "./lib/components/sections/fallback-section/fallback-section.component",
-    "useCases": [
-      "Unknown types",
-      "Error handling",
-      "Graceful degradation"
-    ],
-    "bestPractices": [
-      "Display section data in readable format",
-      "Show section type for debugging",
-      "Provide helpful error messages"
-    ],
-    "rendering": {
-      "usesFields": true,
-      "usesItems": true,
-      "defaultColumns": 1,
-      "supportsCollapse": true,
-      "supportsEmoji": true
-    },
-    "aliases": [],
-    "isInternal": false
-  },
-  {
     "type": "faq",
     "name": "FAQ Section",
     "description": "Displays frequently asked questions with expandable answers.",
@@ -317,36 +291,6 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = [
       "photos",
       "images"
     ],
-    "isInternal": false
-  },
-  {
-    "type": "info",
-    "name": "Info Section",
-    "description": "Displays key-value pairs in a clean, scannable format. Ideal for metadata, contact information, and general data display.",
-    "selector": "lib-info-section",
-    "componentPath": "./lib/components/sections/info-section/info-section.component",
-    "useCases": [
-      "Company information",
-      "Contact details",
-      "Metadata display",
-      "Key-value pairs",
-      "Profile summaries"
-    ],
-    "bestPractices": [
-      "Use for structured data with clear labels and values",
-      "Keep labels concise and descriptive",
-      "Use trend indicators for dynamic data",
-      "Group related fields together",
-      "Use icons to enhance visual hierarchy"
-    ],
-    "rendering": {
-      "usesFields": true,
-      "usesItems": false,
-      "defaultColumns": 1,
-      "supportsCollapse": true,
-      "supportsEmoji": true
-    },
-    "aliases": [],
     "isInternal": false
   },
   {
@@ -510,39 +454,6 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = [
     "aliases": [
       "press",
       "articles"
-    ],
-    "isInternal": false
-  },
-  {
-    "type": "overview",
-    "name": "Overview Section",
-    "description": "Displays high-level summaries, executive dashboards, and key highlights.",
-    "selector": "lib-overview-section",
-    "componentPath": "./lib/components/sections/overview-section/overview-section.component",
-    "useCases": [
-      "Executive summaries",
-      "Dashboard overviews",
-      "Key highlights",
-      "Quick insights",
-      "Company profiles"
-    ],
-    "bestPractices": [
-      "Keep content high-level",
-      "Focus on key metrics",
-      "Use visual indicators",
-      "Limit to essential information",
-      "Use as entry point to details"
-    ],
-    "rendering": {
-      "usesFields": true,
-      "usesItems": false,
-      "defaultColumns": 1,
-      "supportsCollapse": false,
-      "supportsEmoji": true
-    },
-    "aliases": [
-      "summary",
-      "executive"
     ],
     "isInternal": false
   },
@@ -819,8 +730,8 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
  * Manifest metadata
  */
 export const MANIFEST_META = {
-  generatedAt: '2025-12-16T20:54:19.387Z',
-  registryVersion: '1.5.42',
-  totalSections: 23,
-  publicSections: 23
+  generatedAt: '2026-01-08T09:55:08.283Z',
+  registryVersion: '1.5.43',
+  totalSections: 20,
+  publicSections: 20
 };

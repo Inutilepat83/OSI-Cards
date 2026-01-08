@@ -18,8 +18,8 @@
 
 .section-card,
 .unified-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 // =====================================================================
@@ -31,8 +31,8 @@
 }
 
 .analytics-metric {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .analytics-metric__label {
@@ -72,8 +72,8 @@
 }
 
 .financial-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .financial-card__label {
@@ -108,8 +108,8 @@
 }
 
 .overview-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -135,23 +135,56 @@
 // =====================================================================
 
 .info-matrix {
-  @include stack(var(--gap-xs));
+  @include stack(var(--gap-sm));
+  // Ensure proper spacing and visual separation
+  padding: var(--space-2) 0;
 }
 
 .info-row {
-  @include unified-card;
-  @include stream-animation;
+  // Remove nested card styling - use cleaner, flatter design
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
   gap: var(--space-4);
+  border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  transition: all 0.2s ease;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  position: relative;
+
+  // Remove nested white box effect
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // Subtle hover effect
+  &:hover {
+    background: var(--osi-section-item-background-hover, rgba(0, 0, 0, 0.02));
+  }
+
+  // Focus state for accessibility
+  &:focus-within {
+    outline: 2px solid var(--accent, var(--osi-accent));
+    outline-offset: -2px;
+    border-radius: var(--radius-sm, 4px);
+  }
+
+  @include item-animation;
 }
 
 .info-row__label {
   @include type-label;
   margin-bottom: 0;
-  min-width: 80px;
+  min-width: 100px;
+  font-weight: 600;
+  color: var(--osi-muted-foreground, var(--muted-foreground));
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  // Remove orange color - use muted foreground for better hierarchy
+  opacity: 0.85;
 }
 
 .info-row__value {
@@ -159,6 +192,12 @@
   text-align: right;
   flex: 1;
   color: var(--foreground);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  // Ensure proper text wrapping
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .info-empty {
@@ -174,8 +213,8 @@
 }
 
 .news-item {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .news-item__header {
@@ -219,8 +258,8 @@
 }
 
 .contact-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   flex-direction: row;
   align-items: flex-start;
   gap: var(--space-3);
@@ -283,8 +322,8 @@
 }
 
 .event-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   flex-direction: row;
   align-items: flex-start;
   gap: var(--space-3);
@@ -343,8 +382,8 @@
 }
 
 .quotation-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .quotation-card__icon {
@@ -356,7 +395,6 @@
   font-style: italic;
   line-height: 1.6;
   padding-left: var(--space-3);
-  border-left: 2px solid var(--accent);
   color: var(--foreground);
 }
 
@@ -387,8 +425,8 @@
 }
 
 .reference-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .reference-card__header {
@@ -439,8 +477,8 @@
 }
 
 .network-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .network-card__icon {
@@ -476,8 +514,8 @@
 }
 
 .product-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .product-card__header {
@@ -531,8 +569,8 @@
 }
 
 .solution-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .solution-card__icon {
@@ -597,8 +635,8 @@
 }
 
 .timeline-item {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   position: relative;
 
   &::before {
@@ -642,8 +680,8 @@
 }
 
 .brand-color-tile {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   padding: 0;
   overflow: hidden;
 }
@@ -681,8 +719,8 @@
 }
 
 .social-post {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .social-post__header {
@@ -726,8 +764,8 @@
 }
 
 .gallery-item {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   padding: 0;
   overflow: hidden;
   aspect-ratio: 4/3;
@@ -763,8 +801,8 @@
 }
 
 .video-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   padding: 0;
   overflow: hidden;
 }
@@ -837,7 +875,7 @@
 // =====================================================================
 
 .chart-container {
-  @include unified-card;
+  @include card;
   min-height: 180px;
 
   canvas {
@@ -886,8 +924,8 @@
 }
 
 .list-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   flex-direction: row;
   align-items: center;
   gap: var(--space-3);
@@ -926,7 +964,7 @@
 // =====================================================================
 
 .map-container {
-  @include unified-card;
+  @include card;
   padding: var(--space-5);
   min-height: 120px;
   display: flex;
@@ -942,8 +980,8 @@
 }
 
 .map-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .map-card__icon {
@@ -987,8 +1025,8 @@
 }
 
 .faq-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
 }
 
 .faq-card__question {
@@ -1000,7 +1038,6 @@
   @include type-subtitle;
   margin: 0;
   padding-left: var(--space-3);
-  border-left: 2px solid var(--accent);
   opacity: 0.9;
 }
 
@@ -1017,8 +1054,8 @@
 }
 
 .pricing-card {
-  @include unified-card;
-  @include stream-animation;
+  @include card;
+  @include item-animation;
   text-align: center;
 }
 
@@ -1061,19 +1098,6 @@
 
 .pricing-empty {
   @include empty-state;
-}
-
-// =====================================================================
-// FALLBACK SECTION
-// =====================================================================
-
-.fallback-empty {
-  @include empty-state;
-}
-
-.fallback-message {
-  @include type-subtitle;
-  margin: 0;
 }
 
 // =====================================================================

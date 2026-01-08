@@ -411,7 +411,7 @@
     {
       "title": "Unknown Section Type",
       "type": "unknown-custom-type",
-      "description": "This section type is not recognized and will render using fallback",
+      "description": "This section type is not recognized",
       "fields": [
         {
           "label": "Custom Field 1",
@@ -643,7 +643,7 @@
           "title": "Austin Headquarters",
           "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
           "meta": {
-            "url": "https://images.nexustech.io/office/austin-hq.jpg",
+            "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
             "caption": "Nexus HQ in Austin, Texas",
             "alt": "Modern office building with glass facade"
           }
@@ -652,7 +652,7 @@
           "title": "Engineering All-Hands",
           "description": "Quarterly engineering town hall with product roadmap presentations and team celebrations",
           "meta": {
-            "url": "https://images.nexustech.io/events/eng-allhands.jpg",
+            "url": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
             "caption": "Engineering team gathering",
             "alt": "Large group of engineers in conference room"
           }
@@ -661,81 +661,10 @@
           "title": "NexusCon 2024 Keynote",
           "description": "CEO Sarah Mitchell delivering the opening keynote to 3,000+ attendees in San Francisco",
           "meta": {
-            "url": "https://images.nexustech.io/events/nexuscon-keynote.jpg",
+            "url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop",
             "caption": "NexusCon 2024 main stage",
             "alt": "Speaker on stage at large conference"
           }
-        }
-      ]
-    },
-    {
-      "title": "Nexus Technologies Inc.",
-      "type": "info",
-      "description": "Enterprise SaaS company specializing in AI-powered analytics",
-      "fields": [
-        {
-          "label": "Industry",
-          "value": "Enterprise Software & AI",
-          "icon": "🏢"
-        },
-        {
-          "label": "Founded",
-          "value": "2018",
-          "icon": "📅"
-        },
-        {
-          "label": "Headquarters",
-          "value": "Austin, Texas, USA",
-          "icon": "📍"
-        },
-        {
-          "label": "Employees",
-          "value": "2,847",
-          "icon": "👥",
-          "trend": "up",
-          "change": 23.5
-        },
-        {
-          "label": "Annual Revenue",
-          "value": "$127M ARR",
-          "icon": "💰",
-          "trend": "up",
-          "change": 45.2
-        },
-        {
-          "label": "Funding Stage",
-          "value": "Series C ($85M raised)",
-          "icon": "🚀"
-        },
-        {
-          "label": "Customer Base",
-          "value": "450+ Enterprise Clients",
-          "icon": "🎯"
-        },
-        {
-          "label": "Global Offices",
-          "value": "Austin, London, Singapore, São Paulo",
-          "icon": "🌐"
-        },
-        {
-          "label": "Tech Stack",
-          "value": "Python, Kubernetes, AWS, Snowflake",
-          "icon": "⚙️"
-        },
-        {
-          "label": "CEO",
-          "value": "Dr. Maya Chen",
-          "icon": "👤"
-        },
-        {
-          "label": "Stock Symbol",
-          "value": "NXUS (NASDAQ)",
-          "icon": "📈"
-        },
-        {
-          "label": "Website",
-          "value": "www.nexustech.io",
-          "icon": "🔗"
         }
       ]
     },
@@ -997,36 +926,8 @@
       "description": "Strategic company overview and positioning",
       "fields": [
         {
-          "label": "About",
-          "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth."
-        },
-        {
-          "label": "Mission",
-          "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions."
-        },
-        {
-          "label": "Vision",
-          "value": "A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency."
-        },
-        {
-          "label": "Core Values",
-          "value": "Innovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence"
-        },
-        {
-          "label": "Market Position",
-          "value": "Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years."
-        },
-        {
-          "label": "Industry Focus",
-          "value": "Enterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology"
-        },
-        {
-          "label": "Competitive Advantage",
-          "value": "Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools."
-        },
-        {
-          "label": "Key Differentiators",
-          "value": "Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
+          "label": "",
+          "value": "ABOUT\nNexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth.\n\nMISSION\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions.\n\nVISION\nA world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency.\n\nCORE VALUES\nInnovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence\n\nMARKET POSITION\nLeader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years.\n\nINDUSTRY FOCUS\nEnterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology\n\nCOMPETITIVE ADVANTAGE\nProprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools.\n\nKEY DIFFERENTIATORS\nReal-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
         }
       ]
     },
@@ -1219,6 +1120,7 @@
           ],
           "deliveryTime": "12-16 weeks",
           "complexity": "high",
+          "score": 8,
           "outcomes": [
             "80% faster data access",
             "95% data accuracy",
@@ -1237,6 +1139,7 @@
           ],
           "deliveryTime": "8-12 weeks",
           "complexity": "high",
+          "score": 9,
           "outcomes": [
             "10x faster model deployment",
             "40% improved model accuracy",
@@ -1255,6 +1158,7 @@
           ],
           "deliveryTime": "6-8 weeks",
           "complexity": "medium",
+          "score": 7,
           "outcomes": [
             "90% self-service adoption",
             "75% reduced IT requests",
@@ -1427,8 +1331,8 @@
           "title": "Nexus Analytics Platform Overview",
           "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
           "meta": {
-            "url": "https://videos.nexustech.io/platform-overview",
-            "thumbnail": "https://images.nexustech.io/thumbnails/overview.jpg",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
             "duration": "12:45",
             "views": 45000,
             "category": "Product Demo"
@@ -1438,8 +1342,8 @@
           "title": "Getting Started with Nexus in 5 Minutes",
           "description": "Quick-start guide covering account setup, data connection, and your first dashboard",
           "meta": {
-            "url": "https://videos.nexustech.io/quickstart",
-            "thumbnail": "https://images.nexustech.io/thumbnails/quickstart.jpg",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "thumbnail": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=450&fit=crop",
             "duration": "5:23",
             "views": 125000,
             "category": "Tutorial"
@@ -1449,8 +1353,8 @@
           "title": "AI-Powered Insights Demo",
           "description": "See how our AI engine automatically discovers insights and explains metric changes",
           "meta": {
-            "url": "https://videos.nexustech.io/ai-demo",
-            "thumbnail": "https://images.nexustech.io/thumbnails/ai-demo.jpg",
+            "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop",
             "duration": "8:15",
             "views": 67000,
             "category": "Product Demo"

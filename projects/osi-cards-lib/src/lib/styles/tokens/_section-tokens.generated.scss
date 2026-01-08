@@ -75,10 +75,6 @@
   // Social Media Section
   --osi-section-social-media-columns: 1;
   --osi-section-social-media-collapse: 1;
-
-  // Fallback Section
-  --osi-section-fallback-columns: 1;
-  --osi-section-fallback-collapse: 1;
 }
 
 // Section type display properties
@@ -133,8 +129,5 @@
   }
   @if $type == "social-media" {
     --section-columns: var(--osi-section-social-media-columns, 1);
-  }
-  @if $type == "fallback" {
-    --section-columns: var(--osi-section-fallback-columns, 1);
   }
 }

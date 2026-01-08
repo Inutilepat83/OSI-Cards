@@ -10,30 +10,59 @@
 @use "design-tokens" as *;
 @use "modern-effects" as effects;
 @use "sections-base" as base;
+@use "section-animations" as *;
 
 // =====================================================================
 // ENHANCED CARD VARIANTS
 // =====================================================================
 
-@mixin card-elevated {
-  @include base.card;
-  @include effects.elevated-card;
-  @include effects.shimmer-effect;
+// =====================================================================
+// CARD VARIANT: ELEVATED
+// =====================================================================
+// Extends base card with shadow and lift effects on hover
+// Uses standardized tokens for consistency
+
+@mixin card-elevated($spacing: "normal") {
+  @include base.card($spacing);
+
+  // Enhanced shadow for elevation
+  box-shadow: var(--osi-section-item-shadow);
+  position: relative;
+
+  // Unified hover effect - no transforms for consistency
+  @include section-card-hover;
 }
 
-@mixin card-glass {
+// =====================================================================
+// CARD VARIANT: GLASS
+// =====================================================================
+// Glass morphism effect
+// Uses standardized tokens for consistency
+
+@mixin card-glass($spacing: "normal") {
+  @include base.card($spacing);
   @include effects.glass-card;
-  padding: var(--spacing-base);
-  border-radius: var(--radius-lg);
 }
 
-@mixin card-neumorphic {
+// =====================================================================
+// CARD VARIANT: NEUMORPHIC
+// =====================================================================
+// Soft UI neumorphic effect
+// Uses standardized tokens for consistency
+
+@mixin card-neumorphic($spacing: "normal") {
+  @include base.card($spacing);
   @include effects.neumorphic-card(true);
-  padding: var(--spacing-base);
 }
 
-@mixin card-with-gradient {
-  @include base.card;
+// =====================================================================
+// CARD VARIANT: WITH GRADIENT
+// =====================================================================
+// Card with gradient background and accent
+// Uses standardized tokens for consistency
+
+@mixin card-with-gradient($spacing: "normal") {
+  @include base.card($spacing);
   @include effects.gradient-background;
   @include effects.gradient-accent-top;
 }

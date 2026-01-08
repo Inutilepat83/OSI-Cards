@@ -42,6 +42,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 | \`benefits\` | array | List of benefits |
 | \`deliveryTime\` | string | Delivery timeframe |
 | \`complexity\` | string | Implementation complexity |
+| \`score\` | number | Match score from 1-10 indicating how well the solution matches requirements |
 | \`outcomes\` | array | Expected outcomes |
 
 ### Items Schema
@@ -54,6 +55,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 | \`benefits\` | array | List of benefits |
 | \`deliveryTime\` | string | Delivery timeframe |
 | \`complexity\` | string | Implementation complexity |
+| \`score\` | number | Match score from 1-10 indicating how well the solution matches requirements |
 | \`outcomes\` | array | Expected outcomes |
 
 ## Complete Example
@@ -77,6 +79,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
       ],
       "deliveryTime": "12-16 weeks",
       "complexity": "high",
+      "score": 8,
       "outcomes": [
         "80% faster data access",
         "95% data accuracy",
@@ -95,6 +98,7 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
       ],
       "deliveryTime": "8-12 weeks",
       "complexity": "high",
+      "score": 9,
       "outcomes": [
         "10x faster model deployment",
         "40% improved model accuracy",
@@ -160,6 +164,7 @@ const demoConfig = {
       ],
       deliveryTime: '12-16 weeks',
       complexity: 'high',
+      score: 8,
       outcomes: ['80% faster data access', '95% data accuracy', '50% reduced operational costs'],
     },
     {
@@ -175,6 +180,7 @@ const demoConfig = {
       ],
       deliveryTime: '8-12 weeks',
       complexity: 'high',
+      score: 9,
       outcomes: [
         '10x faster model deployment',
         '40% improved model accuracy',

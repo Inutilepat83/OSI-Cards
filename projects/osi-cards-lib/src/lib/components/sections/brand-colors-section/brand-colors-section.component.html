@@ -3,10 +3,15 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <div class="color" *ngFor="let c of section.fields" (click)="copyColor(c.value)" [attr.title]="'Copy ' + c.value">
+    <div
+      class="section-item"
+      *ngFor="let c of section.fields"
+      (click)="copyColor(c.value)"
+      [attr.title]="'Copy ' + c.value"
+    >
       <div
         class="swatch"
-        [style.background]="isValidColor(c.value) ? c.value : '#ccc'"
+        [style.background]="isValidColor(c.value) ? c.value : 'var(--osi-muted-foreground)'"
         [class.invalid]="!isValidColor(c.value)"
       ></div>
       <div class="info">

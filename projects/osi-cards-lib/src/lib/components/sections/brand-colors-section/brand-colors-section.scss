@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,17 +20,17 @@
 .colors {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); // Compact: 170px (was 200px)
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-section-item-grid-min-sm), 1fr));
+  gap: var(--osi-section-item-gap) !important;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-section-item-gap);
   }
 
   @include responsive-down("sm") {
@@ -41,21 +42,17 @@
   }
 }
 
-.color {
-  @include card-elevated;
-  background: var(--card);
+.section-item {
+  @include card("normal");
   overflow: hidden;
-  padding: 0;
-  min-height: 110px; // Compact: 110px (was 130px)
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+  // Padding handled by card('normal') mixin - 12px uniform
+  min-height: var(--osi-section-item-min-height-xl);
   cursor: pointer;
 
-  &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
+  // Unified hover effect
+  @include section-card-hover;
 
+  &:hover {
     .name {
       color: var(--accent);
     }
@@ -64,47 +61,51 @@
 
 .swatch {
   width: 100%;
-  height: 60px; // Compact: 60px (was 70px)
-  transition: box-shadow var(--duration-slow) var(--ease-out);
+  height: 60px; // Specific height for color swatch display
+  transition: box-shadow var(--osi-section-item-transition);
 
   &.invalid {
-    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #999 10px, #999 20px);
+    background: repeating-linear-gradient(
+      45deg,
+      var(--osi-muted-foreground),
+      var(--osi-muted-foreground) 10px,
+      var(--osi-disabled-foreground) 10px,
+      var(--osi-disabled-foreground) 20px
+    );
   }
 }
 
 .info {
-  padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px); // Compact: 2-6px (was 8-16px)
+  // Padding removed - section-item now has 12px padding from card mixin
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs);
 }
 
 .name {
   @include heading(6);
-  font-size: 0.75rem;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
 }
 
 .value {
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-family: "Monaco", "Courier New", monospace;
   color: var(--muted-foreground);
 }
 
 .cat {
   @include typo.label-uppercase;
-  font-size: 0.6rem;
   opacity: 0.7;
 }
 
 .desc {
   @include typo.caption;
   font-style: italic;
-  line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
+  line-height: var(--leading-relaxed);
 }
 
 @include responsive-down("sm") {
   .info {
-    padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
+    // Padding removed - section-item padding handled by card mixin
   }
 }

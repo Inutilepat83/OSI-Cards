@@ -1,20 +1,55 @@
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
+  Injectable,
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 // Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
-import { AICardRendererComponent } from '../../shared/components/cards/ai-card-renderer.component';
+import { AICardRendererComponent } from 'osi-cards-lib';
+import { LucideIconsModule } from '../../../../projects/osi-cards-lib/src/lib/icons/lucide-icons.module';
 import { AICardConfig } from '../../../../projects/osi-cards-lib/src/lib/models';
+// SafariCompatibilityService - create minimal implementation if needed
+// For now, comment out to unblock compilation
+// import {
+//   SafariCompatibility,
+//   SafariCompatibilityService,
+// } from '../../../../projects/osi-cards-lib/src/lib/services/safari-compatibility.service';
+
+// Minimal SafariCompatibilityService implementation
+export interface SafariCompatibility {
+  isSafari: boolean;
+  version: string;
+  supportsIntersectionObserver: boolean;
+  supportsResizeObserver: boolean;
+  supportsCustomProperties: boolean;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SafariCompatibilityService {
+  getCompatibility(): SafariCompatibility {
+    const ua = navigator.userAgent;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    const match = ua.match(/Version\/(\d+)/);
+    return {
+      isSafari,
+      version: match && match[1] ? match[1] : 'unknown',
+      supportsIntersectionObserver: 'IntersectionObserver' in window,
+      supportsResizeObserver: 'ResizeObserver' in window,
+      supportsCustomProperties: CSS.supports('--custom-property', 'value'),
+    };
+  }
+}
 import {
   CardUpdate,
   OSICardsStreamingService,
@@ -24,7 +59,6 @@ import {
   ThemePreset,
   ThemeService,
 } from '../../../../projects/osi-cards-lib/src/lib/themes/theme.service';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 
 /**
  * Simulated client environment configuration
@@ -67,6 +101,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
   private readonly streamingService = inject(OSICardsStreamingService);
   private readonly themeService = inject(ThemeService);
   private readonly route = inject(ActivatedRoute);
+  private readonly safariService: SafariCompatibilityService = inject(SafariCompatibilityService);
 
   // Client environments for simulation
   readonly environments: ClientEnvironment[] = [
@@ -95,10 +130,34 @@ export class IlibraryComponent implements OnInit, OnDestroy {
       cssClass: 'env-marketing',
     },
     {
+      id: 'material',
+      name: 'Material Design',
+      description: 'Google Material Design 3 with elevation and ripples',
+      cssClass: 'env-material',
+    },
+    {
+      id: 'tailwind',
+      name: 'Tailwind CSS',
+      description: 'Utility-first Tailwind CSS with aggressive resets',
+      cssClass: 'env-tailwind',
+    },
+    {
+      id: 'antd',
+      name: 'Ant Design',
+      description: 'Ant Design system with Chinese design language',
+      cssClass: 'env-antd',
+    },
+    {
       id: 'legacy',
       name: 'Legacy System',
       description: 'Aggressive CSS resets and overrides',
       cssClass: 'env-legacy',
+    },
+    {
+      id: 'safari',
+      name: 'Safari Browser',
+      description: 'Safari-specific compatibility mode with fallbacks',
+      cssClass: 'env-safari',
     },
   ];
 
@@ -165,10 +224,15 @@ export class IlibraryComponent implements OnInit, OnDestroy {
   selectedTemplate: CardTemplate = this.cardTemplates[0]!;
   selectedTheme: ThemePreset = 'dark';
 
+  // Theme getter for template
+  get cardTheme(): ThemePreset {
+    return this.selectedTheme;
+  }
+
   // Streaming configuration
   useStreaming = true;
-  streamingSpeed = 80; // tokens per second
-  thinkingDelay = 2000; // milliseconds to simulate LLM thinking (waiting for JSON)
+  streamingSpeed = 200; // tokens per second (default: 200, can climb to 300 max)
+  thinkingDelay = 500; // 0.5s thinking time
 
   // Card state
   currentCard: AICardConfig | null = null;
@@ -177,6 +241,22 @@ export class IlibraryComponent implements OnInit, OnDestroy {
   // UI state
   isGenerating = false;
   cardJson = '';
+
+  // Safari compatibility info
+  get safariCompatibility(): SafariCompatibility & { issues: string[] } {
+    const compatibility = this.safariService.getCompatibility();
+    const issues: string[] = [];
+    if (!compatibility.supportsIntersectionObserver) {
+      issues.push('IntersectionObserver not supported');
+    }
+    if (!compatibility.supportsResizeObserver) {
+      issues.push('ResizeObserver not supported');
+    }
+    if (!compatibility.supportsCustomProperties) {
+      issues.push('CSS Custom Properties not supported');
+    }
+    return { ...compatibility, issues };
+  }
 
   ngOnInit(): void {
     // Subscribe to streaming service state
@@ -204,6 +284,25 @@ export class IlibraryComponent implements OnInit, OnDestroy {
 
     // Load initial card
     this.loadCardTemplate();
+
+    // Log Safari compatibility if Safari
+    const compatibility = this.safariService.getCompatibility();
+    if (compatibility.isSafari) {
+      console.log('🍎 Safari Detected:', compatibility);
+      const issues: string[] = [];
+      if (!compatibility.supportsIntersectionObserver) {
+        issues.push('IntersectionObserver not supported');
+      }
+      if (!compatibility.supportsResizeObserver) {
+        issues.push('ResizeObserver not supported');
+      }
+      if (!compatibility.supportsCustomProperties) {
+        issues.push('CSS Custom Properties not supported');
+      }
+      if (issues.length > 0) {
+        console.warn('⚠️ Safari Compatibility Issues:', issues);
+      }
+    }
   }
 
   /**
@@ -432,22 +531,6 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    */
   get cardConfigForRenderer(): AICardConfig {
     return this.currentCard ?? { cardTitle: 'Generating...', sections: [] };
-  }
-
-  /**
-   * Get current theme normalized to 'day'/'night' format for component input
-   */
-  get cardTheme(): 'day' | 'night' {
-    const theme = this.themeService.getResolvedTheme();
-    // Normalize theme to 'day'/'night' format
-    if (theme === 'light' || theme === 'day') {
-      return 'day';
-    }
-    if (theme === 'dark' || theme === 'night') {
-      return 'night';
-    }
-    // For custom themes, default to 'day'
-    return 'day';
   }
 
   /**

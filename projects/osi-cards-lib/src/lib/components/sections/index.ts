@@ -21,17 +21,14 @@ export { BrandColorsSectionComponent } from './brand-colors-section/brand-colors
 export { ChartSectionComponent } from './chart-section/chart-section.component';
 export { ContactCardSectionComponent } from './contact-card-section/contact-card-section.component';
 export { EventSectionComponent } from './event-section/event-section.component';
-export { FallbackSectionComponent } from './fallback-section/fallback-section.component';
 export { FaqSectionComponent } from './faq-section/faq-section.component';
 export { FinancialsSectionComponent } from './financials-section/financials-section.component';
 export { GallerySectionComponent } from './gallery-section/gallery-section.component';
-export { InfoSectionComponent } from './info-section/info-section.component';
 export { ListSectionComponent } from './list-section/list-section.component';
 export { MapSectionComponent } from './map-section/map-section.component';
 export { TableSectionComponent } from './table-section/table-section.component';
 export { NetworkCardSectionComponent } from './network-card-section/network-card-section.component';
 export { NewsSectionComponent } from './news-section/news-section.component';
-export { OverviewSectionComponent } from './overview-section/overview-section.component';
 export { ProductSectionComponent } from './product-section/product-section.component';
 export { QuotationSectionComponent } from './quotation-section/quotation-section.component';
 export { SocialMediaSectionComponent } from './social-media-section/social-media-section.component';
@@ -39,3 +36,4 @@ export { SolutionsSectionComponent } from './solutions-section/solutions-section
 export { TextReferenceSectionComponent } from './text-reference-section/text-reference-section.component';
 export { TimelineSectionComponent } from './timeline-section/timeline-section.component';
 export { VideoSectionComponent } from './video-section/video-section.component';
+export { OverviewSectionComponent } from './overview-section/overview-section.component';

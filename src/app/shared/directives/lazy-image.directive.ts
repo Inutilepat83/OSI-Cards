@@ -1,5 +1,6 @@
 import { Directive, ElementRef, inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { LoggingService } from '../../core/services/logging.service';
+import { generatePlaceholderUrl } from '../utils/image-loading.util';
 
 /**
  * Lazy loading directive for images
@@ -27,6 +28,8 @@ export class LazyImageDirective implements OnInit, OnDestroy {
   @Input() retryDelay = 1000;
   @Input() enableWebP = true;
   @Input() enableProgressive = true;
+  @Input() blurUp = true; // Enable blur-up technique
+  @Input() placeholder?: string; // Low-quality placeholder image
 
   private readonly el = inject(ElementRef<HTMLImageElement>);
   private readonly renderer = inject(Renderer2);
@@ -109,11 +112,17 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     this.renderer.addClass(img, 'lazy-loading');
     this.renderer.setAttribute(img, 'loading', 'lazy');
 
-    // Progressive loading: load low-quality placeholder first if enabled
-    if (this.enableProgressive) {
-      const placeholderSrc = this.getPlaceholderSource(src);
+    // Progressive loading with blur-up: load low-quality placeholder first if enabled
+    if (this.enableProgressive && this.blurUp) {
+      const placeholderSrc = this.placeholder || this.getPlaceholderSource(src);
       if (placeholderSrc) {
-        this.renderer.setAttribute(img, 'src', placeholderSrc);
+        // Set placeholder as background with blur effect
+        this.renderer.setStyle(img, 'background-image', `url(${placeholderSrc})`);
+        this.renderer.setStyle(img, 'background-size', 'cover');
+        this.renderer.setStyle(img, 'background-position', 'center');
+        this.renderer.setStyle(img, 'filter', 'blur(10px)');
+        this.renderer.setStyle(img, 'transform', 'scale(1.1)'); // Slight scale to hide blur edges
+        this.renderer.addClass(img, 'lazy-blur-up');
       }
     }
 
@@ -121,6 +130,16 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     const imageLoader = new Image();
 
     imageLoader.onload = () => {
+      // Remove blur-up styles
+      if (this.enableProgressive && this.blurUp) {
+        this.renderer.removeStyle(img, 'background-image');
+        this.renderer.removeStyle(img, 'background-size');
+        this.renderer.removeStyle(img, 'background-position');
+        this.renderer.removeStyle(img, 'filter');
+        this.renderer.removeStyle(img, 'transform');
+        this.renderer.removeClass(img, 'lazy-blur-up');
+      }
+
       this.renderer.setAttribute(img, 'src', src);
       this.renderer.removeClass(img, 'lazy-loading');
       this.renderer.addClass(img, 'lazy-loaded');
@@ -204,14 +223,15 @@ export class LazyImageDirective implements OnInit, OnDestroy {
    * Returns a low-quality version if available (e.g., image.jpg?w=20)
    */
   private getPlaceholderSource(src: string): string | null {
-    // For progressive loading, we can use a query parameter approach
-    // or a separate low-quality image
-    // This is a simple implementation - can be enhanced with actual image processing
-    if (src.includes('?')) {
-      return null; // Already has query params
+    if (this.placeholder) {
+      return this.placeholder;
     }
-    // Return null to skip placeholder for now
-    // Can be enhanced to use actual low-quality images
-    return null;
+
+    // Try to generate placeholder URL for supported services
+    try {
+      return generatePlaceholderUrl(400, 300, 'Loading...');
+    } catch {
+      return null;
+    }
   }
 }

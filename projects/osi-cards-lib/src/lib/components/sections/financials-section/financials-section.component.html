@@ -3,7 +3,7 @@
   </lib-section-header>
 
   <div class="financials-grid" *ngIf="section.fields?.length">
-    <div class="financial-card" *ngFor="let metric of section.fields">
+    <div class="section-item" *ngFor="let metric of section.fields">
       <!-- Trend indicator positioned in top-right corner -->
       <lib-trend-indicator
         *ngIf="metric.trend"

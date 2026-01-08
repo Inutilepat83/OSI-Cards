@@ -54,7 +54,7 @@ export class DynamicSectionLoaderService {
    * 1. Check plugin registry for custom overrides
    * 2. Resolve type aliases to canonical types
    * 3. Look up in generated component map
-   * 4. Fall back to FallbackSectionComponent
+   * 4. Fall back to OverviewSectionComponent
    */
   getComponentForSection(section: CardSection): AnySectionComponent {
     if (!section?.type) {
@@ -96,7 +96,7 @@ export class DynamicSectionLoaderService {
    * Get the fallback component for unknown types
    */
   private getFallbackComponent(): AnySectionComponent {
-    return SECTION_COMPONENT_MAP['fallback'];
+    return SECTION_COMPONENT_MAP['list'];
   }
 
   /**
@@ -109,7 +109,7 @@ export class DynamicSectionLoaderService {
       return resolveSectionType(typeInput);
     }
 
-    return 'fallback';
+    return 'overview';
   }
 
   /**

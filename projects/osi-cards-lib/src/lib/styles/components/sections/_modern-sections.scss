@@ -13,44 +13,15 @@
 // UNIFIED CARD - Single Source
 // =====================================================================
 
+// =====================================================================
+// UNIFIED CARD MIXIN - DEPRECATED
+// =====================================================================
+// @deprecated Use @include card instead
+// This mixin is kept for backward compatibility but simply redirects to the base card mixin.
+
 @mixin unified-card {
-  // Background & Border - from CSS vars
-  background: var(--osi-section-item-background);
-  border: var(--osi-section-item-border);
-  border-radius: var(--osi-section-item-border-radius);
-
-  // Layout
-  display: flex;
-  flex-direction: column;
-  gap: var(--card-element-gap-md);
-  padding: var(--space-3) var(--space-4);
-
-  // Interaction
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-
-  // Smooth transitions - subtle
-  transition:
-    background var(--duration-normal) var(--ease-out-smooth),
-    border-color var(--duration-normal) var(--ease-out-smooth),
-    box-shadow var(--duration-normal) var(--ease-out-smooth);
-
-  &:hover {
-    background: var(--osi-section-item-background-hover);
-    border-color: var(--osi-section-item-border-hover);
-    box-shadow: var(--osi-section-item-shadow-hover);
-  }
-
-  &:focus-visible {
-    outline: var(--border-width-accent-sm) solid var(--accent);
-    outline-offset: var(--border-width-accent-sm);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
+  @include card("normal");
+  @warn "unified-card mixin is deprecated. Use @include card instead.";
 }
 
 // =====================================================================
@@ -313,39 +284,12 @@
 }
 
 // =====================================================================
-// STREAMING ANIMATIONS
+// STREAMING ANIMATIONS - DEPRECATED
 // =====================================================================
-
-@keyframes unified-stream-in {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, var(--motion-distance-sm), 0);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
+// @deprecated Use @include item-animation from _sections-base.scss instead
+// This mixin is kept for backward compatibility but redirects to the standard animation mixin.
 
 @mixin stream-animation {
-  &.section-item-streaming,
-  &.item-streaming,
-  &.field-streaming {
-    animation: unified-stream-in var(--duration-moderate) var(--ease-out-smooth)
-      var(--animation-fill-mode);
-  }
-
-  &.section-item-entered,
-  &.item-entered,
-  &.field-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.section-item-stagger-#{$i},
-    &.item-stagger-#{$i},
-    &.field-stagger-#{$i} {
-      animation-delay: calc(#{$i} * var(--stagger-delay-base));
-    }
-  }
+  @include item-animation;
+  @warn "stream-animation is deprecated. Use @include item-animation instead.";
 }

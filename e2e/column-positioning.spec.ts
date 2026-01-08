@@ -921,21 +921,21 @@ test.describe('Gap Tests', () => {
 
   test('Section internal gaps should be consistent', async ({ page }) => {
     // Check gaps within sections (between fields, items, etc.)
-    const infoSections = page.locator('.ai-section--info');
-    const count = await infoSections.count();
+    const analyticsSections = page.locator('.ai-section--analytics');
+    const count = await analyticsSections.count();
     
     if (count === 0) {
-      logProgress('No info sections found');
+      logProgress('No analytics sections found');
       return;
     }
     
-    const section = infoSections.first();
+    const section = analyticsSections.first();
     const gap = await section.evaluate(el => {
       const style = window.getComputedStyle(el);
       return style.gap || style.rowGap || 'not set';
     });
     
-    logProgress(`Info section gap: ${gap}`);
+    logProgress(`Analytics section gap: ${gap}`);
     
     // Gap should be defined
     expect(gap).not.toBe('not set');

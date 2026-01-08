@@ -27,14 +27,14 @@ describe('HeightEstimationService', () => {
     });
 
     it('should return different heights for different types', () => {
-      const infoSection: CardSection = { id: '1', type: 'info' };
+      const analyticsSection: CardSection = { id: '1', type: 'analytics' };
       const chartSection: CardSection = { id: '2', type: 'chart' };
 
-      const infoHeight = service.estimate(infoSection);
+      const analyticsHeight = service.estimate(analyticsSection);
       const chartHeight = service.estimate(chartSection);
 
       // Chart sections should generally be taller
-      expect(chartHeight).toBeGreaterThanOrEqual(infoHeight);
+      expect(chartHeight).toBeGreaterThanOrEqual(analyticsHeight);
     });
 
     it('should consider content when estimating', () => {

@@ -85,13 +85,11 @@ export const MIGRATION_TRACKER: Record<string, MigrationItem[]> = {
       libPath: 'lib/components/sections/contact-card-section',
     },
     { name: 'event', status: 'completed', libPath: 'lib/components/sections/event-section' },
-    { name: 'fallback', status: 'completed', libPath: 'lib/components/sections/fallback-section' },
     {
       name: 'financials',
       status: 'completed',
       libPath: 'lib/components/sections/financials-section',
     },
-    { name: 'info', status: 'completed', libPath: 'lib/components/sections/info-section' },
     { name: 'list', status: 'completed', libPath: 'lib/components/sections/list-section' },
     { name: 'map', status: 'completed', libPath: 'lib/components/sections/map-section' },
     {

@@ -23,6 +23,9 @@
  * CSS Variables for a theme preset
  */
 export interface ThemePresetVariables {
+  // Core background and foreground (required for body/app-root)
+  '--background'?: string;
+  '--foreground'?: string;
   // AI Card Surface
   '--theme-ai-card-border': string;
   '--theme-ai-card-border-hover': string;
@@ -82,6 +85,9 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
   name: 'default',
   description: 'Default theme matching the demo app styling',
   dark: {
+    // Core background and foreground (required for body/app-root)
+    '--background': '#1a1a1a',
+    '--foreground': '#ffffff',
     // AI Card - transparent with blur effect
     '--theme-ai-card-border': '1px solid rgba(255, 255, 255, 0.08)',
     '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',
@@ -123,6 +129,9 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
       'background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1), border-color 220ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
   light: {
+    // Core background and foreground (required for body/app-root)
+    '--background': '#ffffff',
+    '--foreground': '#1c1c1f',
     // AI Card - light theme with blur
     '--theme-ai-card-border': '1px solid rgba(0, 0, 0, 0.08)',
     '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',

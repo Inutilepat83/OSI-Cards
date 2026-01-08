@@ -116,8 +116,16 @@ export class EmailHandlerService {
     const email = action.email;
     const contact = email.contact;
 
-    // Validate email address
-    if (!validateEmail(contact.email)) {
+    // Determine recipient email address
+    let recipientEmail: string = '';
+    if (email.to) {
+      recipientEmail = Array.isArray(email.to) ? email.to[0] || '' : email.to || '';
+    } else if (contact?.email) {
+      recipientEmail = contact.email || '';
+    }
+
+    // Validate email address if provided (optional - can generate email without recipient)
+    if (recipientEmail && !validateEmail(recipientEmail)) {
       return { success: false, error: 'Invalid recipient email address' };
     }
 
@@ -125,7 +133,7 @@ export class EmailHandlerService {
     const ccArray = email.cc ? (Array.isArray(email.cc) ? email.cc : [email.cc]) : undefined;
     const bccArray = email.bcc ? (Array.isArray(email.bcc) ? email.bcc : [email.bcc]) : undefined;
     const config: EmailConfig = {
-      to: contact.email,
+      to: recipientEmail || '', // Empty string if no recipient (will create mailto:?subject=...&body=...)
       cc: ccArray?.filter((e: string) => validateEmail(e)),
       bcc: bccArray?.filter((e: string) => validateEmail(e)),
       subject: this.replacePlaceholders(email.subject || '', placeholders),
@@ -240,14 +248,31 @@ export class EmailHandlerService {
     if (!mailAction.email) {
       errors.push('Email configuration is required');
     } else {
-      if (!mailAction.email.contact) {
-        errors.push('Contact information is required');
-      } else {
-        if (!mailAction.email.contact.email) {
-          errors.push('Contact email is required');
-        } else if (!validateEmail(mailAction.email.contact.email)) {
+      // Subject and body are required
+      if (!mailAction.email.subject) {
+        errors.push('Email subject is required');
+      }
+      if (!mailAction.email.body) {
+        errors.push('Email body is required');
+      }
+
+      // Contact is optional, but if provided, validate it
+      if (mailAction.email.contact) {
+        if (mailAction.email.contact.email && !validateEmail(mailAction.email.contact.email)) {
           errors.push('Contact email is invalid');
         }
+      }
+
+      // Validate recipient email if provided via 'to' field
+      if (mailAction.email.to) {
+        const toEmails = Array.isArray(mailAction.email.to)
+          ? mailAction.email.to
+          : [mailAction.email.to];
+        toEmails.forEach((email: string, index: number) => {
+          if (!validateEmail(email)) {
+            errors.push(`Recipient email at index ${index} is invalid`);
+          }
+        });
       }
 
       // Validate CC emails
@@ -302,7 +327,9 @@ export class EmailHandlerService {
     }
 
     const queryString = params.length > 0 ? `?${params.join('&')}` : '';
-    const mailtoUrl = `mailto:${encodeURIComponent(config.to)}${queryString}`;
+    // If no recipient, use mailto:?subject=...&body=... format (opens email client with draft)
+    const recipient = config.to ? encodeURIComponent(config.to) : '';
+    const mailtoUrl = `mailto:${recipient}${queryString}`;
 
     // Convert to Outlook URL scheme (works on both Windows and Mac)
     return this.convertToOutlookUrl(mailtoUrl);
@@ -356,28 +383,47 @@ export class EmailHandlerService {
       if (legacyAction.email && typeof legacyAction.email === 'object') {
         const email = legacyAction.email as Record<string, unknown>;
 
-        // Try to construct valid mail action from legacy format
-        if (email['contact'] || email['to'] || email['recipient']) {
+        // Check if we have at least subject and body (contact is optional)
+        const hasSubject = email['subject'] && typeof email['subject'] === 'string';
+        const hasBody = email['body'] && typeof email['body'] === 'string';
+
+        if (hasSubject && hasBody) {
+          // Try to construct valid mail action from legacy format
           const contact = (email['contact'] as Record<string, unknown>) || {};
           const recipient = (email['to'] || email['recipient'] || contact['email']) as string;
 
+          // Contact is optional - can generate email with just subject and body
+          const emailConfig: {
+            contact?: { name: string; email: string; role: string };
+            subject: string;
+            body: string;
+            to?: string | string[];
+            cc?: string | string[];
+            bcc?: string | string[];
+          } = {
+            subject: email['subject'] as string,
+            body: email['body'] as string,
+            cc: email['cc'] as string[] | undefined,
+            bcc: email['bcc'] as string[] | undefined,
+          };
+
+          // Add contact if recipient is valid
           if (recipient && validateEmail(recipient)) {
-            return {
-              ...action,
-              type: 'mail',
-              email: {
-                contact: {
-                  name: (contact['name'] || '') as string,
-                  email: recipient,
-                  role: (contact['role'] || '') as string,
-                },
-                subject: (email['subject'] || '') as string,
-                body: (email['body'] || '') as string,
-                cc: email['cc'] as string[] | undefined,
-                bcc: email['bcc'] as string[] | undefined,
-              },
+            emailConfig.contact = {
+              name: (contact['name'] || '') as string,
+              email: recipient,
+              role: (contact['role'] || '') as string,
             };
+          } else if (email['to']) {
+            // If 'to' is provided but invalid, still include it (will be validated later)
+            emailConfig.to = email['to'] as string | string[];
           }
+
+          return {
+            ...action,
+            type: 'mail',
+            email: emailConfig,
+          };
         }
       }
     }

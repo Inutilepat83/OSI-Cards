@@ -65,20 +65,8 @@
       "description": "Strategic company overview and positioning",
       "fields": [
         {
-          "label": "About",
-          "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage."
-        },
-        {
-          "label": "Mission",
-          "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence."
-        },
-        {
-          "label": "Market Position",
-          "value": "Recognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership."
-        },
-        {
-          "label": "Key Differentiators",
-          "value": "Real-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs"
+          "label": "",
+          "value": "ABOUT\nNexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, transforming raw data into actionable insights that drive measurable business growth and competitive advantage.\n\nMISSION\nTo democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise. We empower organizations to make faster, smarter, data-driven decisions that accelerate innovation and operational excellence.\n\nMARKET POSITION\nRecognized as a Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ customer reviews. Named to Forbes Cloud 100 for three consecutive years, demonstrating sustained innovation and market leadership.\n\nKEY DIFFERENTIATORS\nReal-time streaming analytics • Intuitive no-code dashboard builder • Native AI/ML integration • Enterprise-grade security and compliance • Industry-specific solutions tailored to unique business needs"
         }
       ],
       "preferredColumns": 1,
@@ -120,6 +108,7 @@
     {
       "title": "Revenue & Growth Analysis",
       "type": "chart",
+      "description": "Multi-series bar chart showing revenue, costs, and profit with objectives",
       "chartType": "bar",
       "chartData": {
         "labels": [
@@ -133,6 +122,7 @@
           {
             "label": "Revenue ($M)",
             "data": [28.5, 32.1, 35.8, 42.4, 48.2],
+            "objectives": [30, 35, 38, 45, 50],
             "backgroundColor": "#FF7900",
             "borderColor": "#FF7900",
             "borderWidth": 1
@@ -140,6 +130,7 @@
           {
             "label": "Operating Costs ($M)",
             "data": [22.1, 24.3, 26.8, 31.2, 34.5],
+            "objectives": [25, 27, 29, 33, 36],
             "backgroundColor": "#4CAF50",
             "borderColor": "#4CAF50",
             "borderWidth": 1
@@ -147,6 +138,7 @@
           {
             "label": "Net Profit ($M)",
             "data": [6.4, 7.8, 9, 11.2, 13.7],
+            "objectives": [5, 8, 9, 12, 14],
             "backgroundColor": "#2196F3",
             "borderColor": "#2196F3",
             "borderWidth": 1
@@ -154,6 +146,8 @@
         ]
       },
       "preferredColumns": 2,
+      "minColumns": 2,
+      "maxColumns": 3,
       "priority": 2
     },
     {
@@ -193,6 +187,84 @@
         }
       ],
       "preferredColumns": 1,
+      "priority": 2
+    },
+    {
+      "title": "Sales Performance Q1 2025",
+      "type": "table",
+      "description": "Quarterly sales data by product and region",
+      "tableData": {
+        "columns": [
+          {
+            "key": "product",
+            "label": "Product",
+            "type": "string",
+            "sortable": true
+          },
+          {
+            "key": "region",
+            "label": "Region",
+            "type": "string",
+            "sortable": true
+          },
+          {
+            "key": "quantity",
+            "label": "Quantity",
+            "type": "number",
+            "sortable": true
+          },
+          {
+            "key": "revenue",
+            "label": "Revenue ($)",
+            "type": "number",
+            "sortable": true
+          },
+          {
+            "key": "date",
+            "label": "Sale Date",
+            "type": "date",
+            "sortable": true
+          }
+        ],
+        "rows": [
+          {
+            "product": "Widget A",
+            "region": "North",
+            "quantity": 150,
+            "revenue": 4498.5,
+            "date": "2025-01-15"
+          },
+          {
+            "product": "Widget B",
+            "region": "South",
+            "quantity": 200,
+            "revenue": 7998,
+            "date": "2025-01-20"
+          },
+          {
+            "product": "Widget A",
+            "region": "East",
+            "quantity": 100,
+            "revenue": 2999,
+            "date": "2025-01-18"
+          },
+          {
+            "product": "Widget C",
+            "region": "West",
+            "quantity": 75,
+            "revenue": 3749.25,
+            "date": "2025-01-22"
+          },
+          {
+            "product": "Widget B",
+            "region": "North",
+            "quantity": 120,
+            "revenue": 4798.8,
+            "date": "2025-01-25"
+          }
+        ]
+      },
+      "preferredColumns": 3,
       "priority": 2
     },
     {
@@ -265,14 +337,15 @@
           "attendees": 200
         },
         {
-          "label": "AWS re:Invent Presence",
-          "value": "Booth #1234 + Speaking Sessions",
-          "date": "2025-12-01",
-          "endDate": "2025-12-05",
+          "label": "Q1 Product Launch",
+          "value": "New Platform Release",
+          "date": "2025-03-10",
+          "endDate": "2025-03-12",
           "time": "08:00",
-          "category": "Conference",
+          "category": "Product",
           "status": "planned",
-          "location": "Las Vegas, NV"
+          "location": "San Francisco, CA",
+          "attendees": 150
         }
       ],
       "preferredColumns": 1,
@@ -326,7 +399,7 @@
           "title": "Austin Headquarters",
           "description": "Our 50,000 sq ft headquarters in downtown Austin featuring open workspaces and collaboration zones",
           "meta": {
-            "url": "https://images.nexustech.io/office/austin-hq.jpg",
+            "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
             "caption": "Nexus HQ in Austin, Texas",
             "alt": "Modern office building with glass facade"
           }
@@ -335,7 +408,7 @@
           "title": "Engineering All-Hands",
           "description": "Quarterly engineering town hall with product roadmap presentations and team celebrations",
           "meta": {
-            "url": "https://images.nexustech.io/events/eng-allhands.jpg",
+            "url": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
             "caption": "Engineering team gathering",
             "alt": "Large group of engineers in conference room"
           }
@@ -344,44 +417,12 @@
           "title": "NexusCon 2024 Keynote",
           "description": "CEO Sarah Mitchell delivering the opening keynote to 3,000+ attendees in San Francisco",
           "meta": {
-            "url": "https://images.nexustech.io/events/nexuscon-keynote.jpg",
+            "url": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=600&fit=crop",
             "caption": "NexusCon 2024 main stage",
             "alt": "Speaker on stage at large conference"
           }
         }
       ]
-    },
-    {
-      "title": "Nexus Technologies Inc.",
-      "type": "info",
-      "description": "Enterprise SaaS company specializing in AI-powered analytics",
-      "fields": [
-        {
-          "label": "Industry",
-          "value": "Enterprise Software & AI",
-          "icon": "🏢",
-          "format": "currency",
-          "trend": "up",
-          "change": 10.5
-        },
-        {
-          "label": "Founded",
-          "value": "2018",
-          "icon": "📅"
-        },
-        {
-          "label": "Customer Base",
-          "value": "450+ Enterprise Clients",
-          "icon": "🎯"
-        },
-        {
-          "label": "Website",
-          "value": "www.nexustech.io",
-          "icon": "🔗"
-        }
-      ],
-      "preferredColumns": 1,
-      "priority": 3
     },
     {
       "title": "Product Roadmap Q1-Q2 2025",
@@ -674,6 +715,7 @@
           ],
           "deliveryTime": "12-16 weeks",
           "complexity": "high",
+          "score": 8,
           "outcomes": [
             "80% faster data access",
             "95% data accuracy",
@@ -692,6 +734,7 @@
           ],
           "deliveryTime": "8-12 weeks",
           "complexity": "high",
+          "score": 9,
           "outcomes": [
             "10x faster model deployment",
             "40% improved model accuracy",
@@ -710,6 +753,7 @@
           ],
           "deliveryTime": "10-14 weeks",
           "complexity": "high",
+          "score": 7,
           "outcomes": [
             "60% infrastructure cost reduction",
             "99.99% availability",
@@ -728,6 +772,7 @@
           ],
           "deliveryTime": "4-6 weeks",
           "complexity": "low",
+          "score": 6,
           "outcomes": [
             "Real-time visibility",
             "50% reduced reporting time",
@@ -814,41 +859,6 @@
       "priority": 3
     },
     {
-      "title": "Unknown Section Type",
-      "type": "unknown-custom-type",
-      "description": "This section type is not recognized and will render using fallback",
-      "fields": [
-        {
-          "label": "Custom Field 1",
-          "value": "Some custom data"
-        },
-        {
-          "label": "Custom Field 2",
-          "value": "More data to display"
-        },
-        {
-          "label": "Numeric Data",
-          "value": 42
-        },
-        {
-          "label": "Status",
-          "value": "Active"
-        }
-      ],
-      "items": [
-        {
-          "title": "Custom Item 1",
-          "description": "Description for custom item"
-        },
-        {
-          "title": "Custom Item 2",
-          "description": "Another custom item"
-        }
-      ],
-      "preferredColumns": 1,
-      "priority": 3
-    },
-    {
       "title": "Video Resources",
       "type": "video",
       "description": "Product demos, tutorials, and webinar recordings",
@@ -857,8 +867,8 @@
           "title": "Nexus Analytics Platform Overview",
           "description": "Complete walkthrough of the Nexus platform capabilities, AI features, and enterprise integrations",
           "meta": {
-            "url": "https://videos.nexustech.io/platform-overview",
-            "thumbnail": "https://images.nexustech.io/thumbnails/overview.jpg",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "thumbnail": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
             "duration": "12:45",
             "views": 45000,
             "category": "Product Demo"
@@ -868,8 +878,8 @@
           "title": "Getting Started with Nexus in 5 Minutes",
           "description": "Quick-start guide covering account setup, data connection, and your first dashboard",
           "meta": {
-            "url": "https://videos.nexustech.io/quickstart",
-            "thumbnail": "https://images.nexustech.io/thumbnails/quickstart.jpg",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "thumbnail": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=450&fit=crop",
             "duration": "5:23",
             "views": 125000,
             "category": "Tutorial"
@@ -879,8 +889,8 @@
           "title": "AI-Powered Insights Demo",
           "description": "See how our AI engine automatically discovers insights and explains metric changes",
           "meta": {
-            "url": "https://videos.nexustech.io/ai-demo",
-            "thumbnail": "https://images.nexustech.io/thumbnails/ai-demo.jpg",
+            "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop",
             "duration": "8:15",
             "views": 67000,
             "category": "Product Demo"
@@ -889,84 +899,6 @@
       ],
       "preferredColumns": 1,
       "priority": 3
-    },
-    {
-      "title": "Sales Performance Q1 2025",
-      "type": "table",
-      "description": "Quarterly sales data by product and region",
-      "tableData": {
-        "columns": [
-          {
-            "key": "product",
-            "label": "Product",
-            "type": "string",
-            "sortable": true
-          },
-          {
-            "key": "region",
-            "label": "Region",
-            "type": "string",
-            "sortable": true
-          },
-          {
-            "key": "quantity",
-            "label": "Quantity",
-            "type": "number",
-            "sortable": true
-          },
-          {
-            "key": "revenue",
-            "label": "Revenue ($)",
-            "type": "number",
-            "sortable": true
-          },
-          {
-            "key": "date",
-            "label": "Sale Date",
-            "type": "date",
-            "sortable": true
-          }
-        ],
-        "rows": [
-          {
-            "product": "Widget A",
-            "region": "North",
-            "quantity": 150,
-            "revenue": 4498.5,
-            "date": "2025-01-15"
-          },
-          {
-            "product": "Widget B",
-            "region": "South",
-            "quantity": 200,
-            "revenue": 7998.0,
-            "date": "2025-01-20"
-          },
-          {
-            "product": "Widget A",
-            "region": "East",
-            "quantity": 100,
-            "revenue": 2999.0,
-            "date": "2025-01-18"
-          },
-          {
-            "product": "Widget C",
-            "region": "West",
-            "quantity": 75,
-            "revenue": 3749.25,
-            "date": "2025-01-22"
-          },
-          {
-            "product": "Widget B",
-            "region": "North",
-            "quantity": 120,
-            "revenue": 4798.8,
-            "date": "2025-01-25"
-          }
-        ]
-      },
-      "preferredColumns": 3,
-      "priority": 2
     }
   ],
   "actions": [

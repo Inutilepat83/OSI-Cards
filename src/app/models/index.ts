@@ -55,8 +55,6 @@ export {
 // Discriminated section unions (type-safe section handling)
 export {
   DiscriminatedSection,
-  isOverviewSection,
-  isInfoSection,
   isAnalyticsSection,
   isListSection,
   isChartSection,
@@ -72,7 +70,6 @@ export {
   isBrandColorsSection,
   isNewsSection,
   isSocialMediaSection,
-  isFallbackSection,
 } from '../../../projects/osi-cards-lib/src/lib/models';
 
 // Alias for backward compatibility

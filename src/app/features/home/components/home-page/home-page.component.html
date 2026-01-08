@@ -41,11 +41,36 @@
 
       <!-- Hero Header -->
       <div class="hero-header">
-        <h1 class="hero-title" id="osi-hero-heading">
+        <h1
+          class="hero-title selectable-component"
+          [class.selected]="isComponentSelected('heading')"
+          id="osi-hero-heading"
+          (click)="selectComponent('heading')"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            isComponentSelected('heading') ? 'Heading selected. Click to deselect.' : 'Click to select heading'
+          "
+          (keydown.enter)="selectComponent('heading')"
+          (keydown.space)="selectComponent('heading'); $event.preventDefault()"
+        >
           <span class="hero-title-primary">Orange</span>
           <span class="hero-title-accent"> Sales Intelligence</span>
         </h1>
-        <p class="hero-description">
+        <p
+          class="hero-description selectable-component"
+          [class.selected]="isComponentSelected('description')"
+          (click)="selectComponent('description')"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            isComponentSelected('description')
+              ? 'Description selected. Click to deselect.'
+              : 'Click to select description'
+          "
+          (keydown.enter)="selectComponent('description')"
+          (keydown.space)="selectComponent('description'); $event.preventDefault()"
+        >
           Transform raw business data into stunning, interactive intelligence cards in seconds. OSI Cards empowers sales
           teams with a powerful visual framework that turns complex information into actionable insights through
           elegant, customizable card layouts.
@@ -55,7 +80,20 @@
       <!-- Feature Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-16 lg:mb-20">
         <!-- Feature Card 1 -->
-        <div class="hero-feature-card">
+        <div
+          class="hero-feature-card selectable-component"
+          [class.selected]="isComponentSelected('feature-card')"
+          (click)="selectComponent('feature-card')"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            isComponentSelected('feature-card')
+              ? 'Dynamic Intelligence feature card selected. Click to deselect.'
+              : 'Click to select Dynamic Intelligence feature card'
+          "
+          (keydown.enter)="selectComponent('feature-card')"
+          (keydown.space)="selectComponent('feature-card'); $event.preventDefault()"
+        >
           <div class="p-6 sm:p-8 text-center">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
               <lucide-icon
@@ -141,7 +179,7 @@
         <span class="text-sm font-semibold text-muted-foreground">Variants:</span>
         <div class="variant-selector">
           <button
-            *ngFor="let variant of variants()"
+            *ngFor="let variant of variants"
             (click)="onCardVariantChange(variant)"
             [class.active]="cardVariant === variant"
             [disabled]="switchingType"
@@ -177,22 +215,19 @@
                 <span class="font-bold text-lg" style="letter-spacing: -0.01em">Live Preview</span>
               </div>
               <!-- Streaming Status Badges -->
-              <span *ngIf="streamingState()?.stage === 'thinking'" class="status-badge status-badge--thinking">
+              <span *ngIf="streamingState?.stage === 'thinking'" class="status-badge status-badge--thinking">
                 <span class="status-badge-spinner"></span>
                 Thinking...
               </span>
-              <span *ngIf="streamingState()?.stage === 'streaming'" class="status-badge status-badge--streaming">
+              <span *ngIf="streamingState?.stage === 'streaming'" class="status-badge status-badge--streaming">
                 <span class="status-badge-spinner"></span>
-                Streaming {{ progressPercent() }}%
+                Streaming {{ progressPercent }}%
               </span>
-              <span *ngIf="streamingState()?.stage === 'complete'" class="status-badge status-badge--complete">
+              <span *ngIf="streamingState?.stage === 'complete'" class="status-badge status-badge--complete">
                 <lucide-icon name="check-circle-2" [size]="12" aria-hidden="true"></lucide-icon>
                 Complete
               </span>
-              <span
-                *ngIf="!isStreamingActive() && jsonInput?.trim() !== ''"
-                class="status-badge status-badge--live-edit"
-              >
+              <span *ngIf="!isStreamingActive && jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
                 <span class="status-badge-dot"></span>
                 Live edit
               </span>
@@ -211,14 +246,14 @@
               style="display: flex; flex-direction: column; overflow: visible"
             >
               <!-- Card Renderer with Streaming Support -->
-              @if (showCardRenderer()) {
+              @if (showCardRenderer) {
                 <app-ai-card-renderer
                   #cardRenderer
-                  [cardConfig]="cardConfigForRenderer()"
+                  [cardConfig]="cardConfigForRenderer"
                   [theme]="cardTheme"
-                  [streamingStage]="streamingState()?.stage"
-                  [streamingProgress]="streamingState()?.progress ?? 0"
-                  [isStreaming]="streamingState()?.stage === 'streaming'"
+                  [streamingStage]="streamingState?.stage"
+                  [streamingProgress]="streamingState?.progress ?? 0"
+                  [isStreaming]="streamingState?.stage === 'streaming'"
                   [isFullscreen]="isFullscreen"
                   [tiltEnabled]="true"
                   [showLoadingByDefault]="true"
@@ -304,7 +339,7 @@
 
                   <!-- Generate/Stop Button -->
                   <div class="streaming-control-actions">
-                    @if (!isStreamingActive()) {
+                    @if (!isStreamingActive) {
                       <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput.trim()">
                         <lucide-icon name="play" [size]="16"></lucide-icon>
                         Generate
@@ -355,18 +390,18 @@
                 }
 
                 <!-- Progress Bar (during streaming) -->
-                @if (isStreamingActive() && streamingState()?.stage === 'streaming') {
+                @if (isStreamingActive && streamingState?.stage === 'streaming') {
                   <div class="streaming-progress">
                     <div class="progress-bar">
-                      <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+                      <div class="progress-fill" [style.width.%]="progressPercent"></div>
                     </div>
-                    <span class="progress-label">{{ progressPercent() }}%</span>
+                    <span class="progress-label">{{ progressPercent }}%</span>
                   </div>
                 }
               </div>
 
               <!-- JSON Editor Component -->
-              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive()" aria-hidden="true">
+              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive" aria-hidden="true">
                 <div class="json-editor-overlay__inner">
                   <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
                     <circle cx="25" cy="25" r="20" stroke-width="5" stroke-opacity="0.25"></circle>

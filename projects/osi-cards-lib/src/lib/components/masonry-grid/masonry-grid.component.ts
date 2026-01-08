@@ -111,6 +111,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private cachedPadding: { left: number; right: number; total: number } | null = null;
   private isFirstCalculation = true;
   private isFirstPositioning = true;
+  private animationMonitorInterval?: ReturnType<typeof setInterval>;
+  private previousSectionKeys = new Set<string>(); // Track previous sections to detect new ones
 
   ngAfterViewInit(): void {
     this.detectGridMode();
@@ -194,6 +196,35 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       changes['minColumnWidth'] ||
       changes['maxColumns']
     ) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'masonry-grid.component.ts:189',
+          message: 'ngOnChanges: sections changed',
+          data: {
+            sectionsChanged: !!changes['sections'],
+            sectionsCount: this.sections?.length || 0,
+            prevSectionsCount: changes['sections']?.previousValue?.length || 0,
+            isStreaming: this.isStreaming,
+            streamingChanged: !!changes['isStreaming'],
+            prevStreaming: changes['isStreaming']?.previousValue,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'animation-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
+
+      // If streaming stopped, clean up any stuck animations
+      if (changes['isStreaming'] && !this.isStreaming && changes['isStreaming'].previousValue) {
+        this.cleanupStuckAnimations();
+      }
+
       // Clear cached padding when container width or gap changes to force recalculation
       if (changes['containerWidth'] || changes['gap']) {
         this.cachedPadding = null;
@@ -214,6 +245,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
     if (this.initialLayoutPollingTimeout) {
       clearTimeout(this.initialLayoutPollingTimeout);
+    }
+    if (this.animationMonitorInterval) {
+      clearInterval(this.animationMonitorInterval);
     }
     this.cleanupAbsolutePositionPolyfill();
     if (this.absolutePositionUpdateRafId !== null) {
@@ -406,6 +440,39 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Clear element cache when sections change
     this.clearItemElementCache();
 
+    // Detect new sections for animation
+    const currentSectionKeys = new Set(this.sections.map((s, idx) => this.getSectionKey(s, idx)));
+    const newSectionKeys = new Set(
+      Array.from(currentSectionKeys).filter((key) => !this.previousSectionKeys.has(key))
+    );
+
+    // #region agent log
+    if (newSectionKeys.size > 0) {
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'masonry-grid.component.ts:updateLayout',
+          message: 'New sections detected',
+          data: {
+            newSectionKeys: Array.from(newSectionKeys),
+            previousCount: this.previousSectionKeys.size,
+            currentCount: currentSectionKeys.size,
+            isStreaming: this.isStreaming,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'animation-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+    }
+    // #endregion
+
+    // Update previous keys AFTER marking animations (so we can detect new ones)
+    this.previousSectionKeys = currentSectionKeys;
+
     // Apply hybrid reordering
     const orderedSections = this.applyHybridReordering(this.sections, columns);
 
@@ -435,6 +502,54 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.layoutCompleted.emit({ version: this.layoutVersion, height: 0 });
 
     this.applyLayout(containerWidth, columns);
+
+    // Mark new sections for animation after layout and DOM update
+    // Use multiple delays to ensure DOM is ready
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            this.markNewSectionsForAnimation();
+          }, 100);
+        });
+      });
+    });
+
+    // #region agent log - Check animation class state after layout update
+    if (typeof window !== 'undefined' && this.containerRef?.nativeElement) {
+      setTimeout(() => {
+        const container = this.containerRef.nativeElement;
+        const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+        const animationStates = Array.from(items).map((item, idx) => ({
+          index: idx,
+          hasAnimating: item.classList.contains('masonry-item--animating'),
+          hasAnimated: item.classList.contains('masonry-item--animated'),
+          dataAnimated: item.getAttribute('data-animated'),
+          computedAnimation: window.getComputedStyle(item).animation,
+          computedAnimationName: window.getComputedStyle(item).animationName,
+        }));
+
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'masonry-grid.component.ts:437',
+            message: 'After applyLayout: animation class state',
+            data: {
+              itemsCount: items.length,
+              isStreaming: this.isStreaming,
+              animationStates,
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'animation-debug',
+            hypothesisId: 'B',
+          }),
+        }).catch(() => {});
+      }, 100);
+    }
+    // #endregion
 
     // Schedule absolute positioning updates for polyfill mode
     if (this.gridMode === 'absolute-polyfill') {
@@ -477,6 +592,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
                 if (this.isFirstPositioning) {
                   this.isFirstPositioning = false;
                 }
+
+                // #region agent log - Setup animation monitoring
+                this.setupAnimationMonitoring();
+                // #endregion
+
+                // Add animation classes to new sections
+                this.markNewSectionsForAnimation();
               }, delay);
             }
           });
@@ -945,6 +1067,367 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   getSectionId(section: CardSection): string {
     return `section-${section.id || section.title?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`;
+  }
+
+  /**
+   * Handle animation end event for masonry items
+   * This transitions items from animating to animated state
+   */
+  onAnimationEnd(event: AnimationEvent, element: HTMLElement, index: number): void {
+    // Only handle masonry item animations
+    if (
+      !event.animationName ||
+      (!event.animationName.includes('section-magic-appear') &&
+        !event.animationName.includes('masonry-gentle-enter'))
+    ) {
+      return;
+    }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'masonry-grid.component.ts:onAnimationEnd',
+        message: 'Animation end event fired',
+        data: {
+          index,
+          animationName: event.animationName,
+          elapsedTime: event.elapsedTime,
+          targetClasses: Array.from(element.classList),
+          hasAnimating: element.classList.contains('masonry-item--animating'),
+          hasAnimated: element.classList.contains('masonry-item--animated'),
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'animation-debug',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    // Transition from animating to animated
+    if (element.classList.contains('masonry-item--animating')) {
+      element.classList.remove('masonry-item--animating');
+      element.classList.add('masonry-item--animated');
+      element.setAttribute('data-animated', 'true');
+
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'masonry-grid.component.ts:onAnimationEnd',
+          message: 'Transitioned to animated state',
+          data: {
+            index,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'animation-debug',
+          hypothesisId: 'B',
+        }),
+      }).catch(() => {});
+      // #endregion
+    }
+  }
+
+  /**
+   * Mark new sections with animation class
+   * This ensures new sections get the animating class when they first appear
+   */
+  private markNewSectionsForAnimation(): void {
+    if (!this.containerRef?.nativeElement) return;
+
+    const container = this.containerRef.nativeElement;
+    const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+
+    // Track which sections we've already marked as animated (persist across renders)
+    const animatedSectionKeys = new Set<string>();
+
+    items.forEach((item, idx) => {
+      const sectionWithSpan = this.sectionsWithSpan[idx];
+      if (!sectionWithSpan) return;
+
+      const sectionKey = sectionWithSpan.key;
+      const hasAnimating = item.classList.contains('masonry-item--animating');
+      const hasAnimated = item.classList.contains('masonry-item--animated');
+      const dataAnimated = item.getAttribute('data-animated') === 'true';
+
+      // Check if this section was previously animated (check data attribute for persistence)
+      const wasAnimated = dataAnimated || animatedSectionKeys.has(sectionKey);
+
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
+          message: 'Checking section animation state',
+          data: {
+            index: idx,
+            sectionKey,
+            hasAnimating,
+            hasAnimated,
+            dataAnimated,
+            wasAnimated,
+            isStreaming: this.isStreaming,
+            previousKeysCount: this.previousSectionKeys.size,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'animation-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
+
+      // If already animated, ensure it has the animated class and data attribute
+      if (wasAnimated) {
+        if (!hasAnimated) {
+          item.classList.add('masonry-item--animated');
+        }
+        if (!dataAnimated) {
+          item.setAttribute('data-animated', 'true');
+        }
+        if (hasAnimating) {
+          item.classList.remove('masonry-item--animating');
+        }
+        animatedSectionKeys.add(sectionKey);
+        return;
+      }
+
+      // For new sections during streaming: add animating class
+      // For non-streaming: skip animation (immediate display)
+      if (this.isStreaming && !hasAnimating && !hasAnimated) {
+        // Check if this is truly a new section (not in previous keys)
+        const isNew = !this.previousSectionKeys.has(sectionKey);
+
+        if (isNew) {
+          item.classList.add('masonry-item--animating');
+
+          // Set timeout fallback in case animationend event doesn't fire
+          // Animation duration is 0.7s (700ms) for section-magic-appear, add buffer
+          setTimeout(() => {
+            if (
+              item.classList.contains('masonry-item--animating') &&
+              !item.classList.contains('masonry-item--animated')
+            ) {
+              // #region agent log
+              fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
+                  message:
+                    'Timeout fallback: transitioning to animated (animationend did not fire)',
+                  data: {
+                    index: idx,
+                    sectionKey,
+                    timestamp: Date.now(),
+                  },
+                  timestamp: Date.now(),
+                  sessionId: 'debug-session',
+                  runId: 'animation-debug',
+                  hypothesisId: 'C',
+                }),
+              }).catch(() => {});
+              // #endregion
+
+              item.classList.remove('masonry-item--animating');
+              item.classList.add('masonry-item--animated');
+              item.setAttribute('data-animated', 'true');
+            }
+          }, 1000); // 1 second timeout (700ms animation + 300ms buffer)
+
+          // #region agent log
+          fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
+              message: 'Added masonry-item--animating class to new section',
+              data: {
+                index: idx,
+                sectionKey,
+                timestamp: Date.now(),
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'animation-debug',
+              hypothesisId: 'A',
+            }),
+          }).catch(() => {});
+          // #endregion
+        }
+      } else if (!this.isStreaming && hasAnimating) {
+        // If streaming stopped, clean up animating class
+        item.classList.remove('masonry-item--animating');
+        if (!hasAnimated) {
+          item.classList.add('masonry-item--animated');
+          item.setAttribute('data-animated', 'true');
+        }
+      }
+    });
+  }
+
+  /**
+   * Clean up any stuck animations (items with animating class but no active animation)
+   */
+  private cleanupStuckAnimations(): void {
+    if (!this.containerRef?.nativeElement) return;
+
+    const container = this.containerRef.nativeElement;
+    const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+
+    items.forEach((item) => {
+      const hasAnimating = item.classList.contains('masonry-item--animating');
+      const hasAnimated = item.classList.contains('masonry-item--animated');
+      const computedStyle = window.getComputedStyle(item);
+      const animationName = computedStyle.animationName;
+      const animationPlayState = computedStyle.animationPlayState;
+
+      // If item has animating class but animation is not running or is paused
+      if (
+        hasAnimating &&
+        !hasAnimated &&
+        (animationPlayState === 'paused' || animationName === 'none' || !animationName)
+      ) {
+        // #region agent log
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'masonry-grid.component.ts:cleanupStuckAnimations',
+            message: 'Cleaning up stuck animation',
+            data: {
+              animationName,
+              animationPlayState,
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'animation-debug',
+            hypothesisId: 'D',
+          }),
+        }).catch(() => {});
+        // #endregion
+
+        item.classList.remove('masonry-item--animating');
+        item.classList.add('masonry-item--animated');
+        item.setAttribute('data-animated', 'true');
+      }
+    });
+  }
+
+  /**
+   * Monitor animation state periodically to detect stuck animations
+   */
+  private setupAnimationMonitoring(): void {
+    if (this.animationMonitorInterval) {
+      clearInterval(this.animationMonitorInterval);
+    }
+
+    this.animationMonitorInterval = setInterval(() => {
+      if (!this.containerRef?.nativeElement) return;
+
+      const container = this.containerRef.nativeElement;
+      const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+      const surface = container.closest('.ai-card-surface');
+      const hasStreamingActive = surface?.classList.contains('streaming-active');
+
+      const stuckItems: Array<{
+        index: number;
+        hasAnimating: boolean;
+        hasAnimated: boolean;
+        animationName: string;
+        animationPlayState: string;
+        animationDuration: string;
+      }> = [];
+
+      items.forEach((item, idx) => {
+        const hasAnimating = item.classList.contains('masonry-item--animating');
+        const hasAnimated = item.classList.contains('masonry-item--animated');
+        const computedStyle = window.getComputedStyle(item);
+        const animationName = computedStyle.animationName;
+        const animationPlayState = computedStyle.animationPlayState;
+        const animationDuration = computedStyle.animationDuration;
+
+        // #region agent log - Check each item's animation state
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'masonry-grid.component.ts:setupAnimationMonitoring',
+            message: 'Animation state check',
+            data: {
+              itemIndex: idx,
+              hasAnimating,
+              hasAnimated,
+              hasStreamingActive,
+              animationName,
+              animationPlayState,
+              animationDuration,
+              isStreaming: this.isStreaming,
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'animation-debug',
+            hypothesisId: 'C',
+          }),
+        }).catch(() => {});
+        // #endregion
+
+        // Detect stuck: has animating class but animation is not running or is paused
+        if (
+          hasAnimating &&
+          !hasAnimated &&
+          (animationPlayState === 'paused' || animationName === 'none' || !animationName)
+        ) {
+          stuckItems.push({
+            index: idx,
+            hasAnimating,
+            hasAnimated,
+            animationName,
+            animationPlayState,
+            animationDuration,
+          });
+
+          // Auto-fix: Clean up stuck animation
+          item.classList.remove('masonry-item--animating');
+          item.classList.add('masonry-item--animated');
+          item.setAttribute('data-animated', 'true');
+        }
+      });
+
+      if (stuckItems.length > 0) {
+        // #region agent log - Stuck animations detected
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'masonry-grid.component.ts:setupAnimationMonitoring',
+            message: 'STUCK ANIMATIONS DETECTED',
+            data: {
+              stuckCount: stuckItems.length,
+              stuckItems,
+              hasStreamingActive,
+              isStreaming: this.isStreaming,
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'animation-debug',
+            hypothesisId: 'D',
+          }),
+        }).catch(() => {});
+        // #endregion
+      }
+    }, 500); // Check every 500ms
   }
 
   /**

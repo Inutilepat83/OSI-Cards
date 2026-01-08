@@ -4,13 +4,13 @@
 
   <!-- References List -->
   <div class="references-list" *ngIf="section.fields && section.fields.length > 0">
-    <div class="reference-item" *ngFor="let ref of section.fields; let i = index">
-      <!-- Reference Number -->
-      <span class="reference-number">[{{ i + 1 }}]</span>
-
+    <div class="section-item" *ngFor="let ref of section.fields; let i = index">
       <!-- Reference Content -->
       <div class="reference-content">
-        <h4 class="reference-title">{{ getReferenceTitle(ref) }}</h4>
+        <h4 class="reference-title">
+          <span class="reference-number">[{{ i + 1 }}]</span>
+          {{ getReferenceTitle(ref) }}
+        </h4>
         <div class="reference-text-wrapper" *ngIf="getReferenceContent(ref)">
           <p class="reference-text" [class.reference-text--expanded]="isExpanded(i)" *ngIf="getReferenceContent(ref)">
             {{ getReferenceContent(ref) }}

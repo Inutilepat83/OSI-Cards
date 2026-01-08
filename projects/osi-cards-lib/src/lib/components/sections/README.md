@@ -40,11 +40,9 @@ section-name/
 | chart-section | `chart` | - | Data visualization (Frappe Charts) |
 | contact-card-section | `contact-card` | contacts, team | Contact information cards |
 | event-section | `event` | timeline | Event and calendar displays |
-| fallback-section | `fallback` | - | Fallback for unknown types |
 | faq-section | `faq` | - | Frequently asked questions |
 | financials-section | `financials` | - | Financial data display |
 | gallery-section | `gallery` | - | Image galleries |
-| info-section | `info` | - | Key-value information |
 | list-section | `list` | checklist | Lists and structured items |
 | table-section | `table` | data-table, grid | Tabular data with sorting, filtering, pagination |
 | map-section | `map` | location | Location maps (Leaflet) |

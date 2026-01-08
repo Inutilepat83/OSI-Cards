@@ -3,9 +3,12 @@
  *
  * App-specific card utility functions.
  * For core card utilities, use CardUtil from 'osi-cards-lib'.
+ *
+ * These utilities now use domain entities for ID generation and validation.
  */
 
 import { AICardConfig } from 'osi-cards-lib';
+import { CardAggregate, CardIdUtils, SectionIdUtils } from '../../domain/index';
 
 // Placeholder for sanitizer - implement as needed
 export class Sanitizer {
@@ -18,17 +21,25 @@ export class Sanitizer {
   }
 }
 
-// Card ID utilities
+// Card ID utilities - now using domain entities
 export function ensureCardIds(card: AICardConfig): AICardConfig {
+  // Use domain entity to ensure proper ID generation
+  const cardResult = CardAggregate.fromDomainModel(card);
+
+  if (cardResult.success) {
+    return cardResult.value.toDomainModel();
+  }
+
+  // Fallback to legacy behavior if domain conversion fails
   const cardWithId = {
     ...card,
-    id: card.id || `card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: card.id || (CardIdUtils.generate() as string),
   };
 
   if (cardWithId.sections) {
-    cardWithId.sections = cardWithId.sections.map((section, index) => ({
+    cardWithId.sections = cardWithId.sections.map((section) => ({
       ...section,
-      id: section.id || `section-${index}-${Date.now()}`,
+      id: section.id || (SectionIdUtils.generate() as string),
     }));
   }
 

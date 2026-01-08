@@ -866,7 +866,7 @@ export class LLMStreamingService implements OnDestroy {
     const section: CardSection = {
       id: `section_${index}`,
       title: '', // Will be populated if found
-      type: 'info',
+      type: 'overview',
       fields: [],
       items: [],
     };
@@ -906,7 +906,7 @@ export class LLMStreamingService implements OnDestroy {
     }
 
     // Only return if we have at least a title or type
-    if (section.title || section.type !== 'info') {
+    if (section.title || section.type !== 'overview') {
       return section;
     }
 

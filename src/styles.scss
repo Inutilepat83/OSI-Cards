@@ -1,21 +1,74 @@
 /* ===================================================================
    OSI Cards Demo App Styles
 
-   Note: Sass @import deprecation warnings can be safely ignored until
-   Dart Sass 3.0.0. Migration to @use/@forward requires significant
-   restructuring of the SCSS architecture.
+   Modern Sass architecture using @use/@forward modules
    =================================================================== */
 
-/* Demo-specific tokens - must come first */
-@use "styles/core/demo-tokens" as *;
+// ===================================================================
+// 1. ALL @use RULES MUST COME FIRST (SCSS requirement)
+// ===================================================================
 
-/* App-specific styles - must use @use BEFORE any @import */
-@use "styles/components/config-panel" as *;
-@use "styles/pages/home" as *;
-@use "styles/ng-doc-overrides" as *;
+// Token system (Foundation) - tokens come from library
+// @use "styles/tokens/_index" as *;
 
-/* Import all styles from the OSI Cards library */
+// Theme fallback variables - must be early to prevent FOUC
+@use "./styles/core/theme-fallback" as *;
+
+// Core base styles
+@use "./styles/core/base" as *;
+
+// Core mixins
+@use "./styles/core/mixins" as *;
+
+// Color contrast utilities
+@use "./styles/core/color-contrast" as *;
+
+// Theme transitions
+@use "./styles/core/theme-transitions" as *;
+
+// Focus styles
+@use "./styles/core/focus-styles" as *;
+
+// Micro-interactions
+@use "./styles/core/micro-interactions" as *;
+
+// Card animations
+@use "./styles/core/card-animations" as *;
+
+// Accessibility utilities
+@use "./styles/core/accessibility" as *;
+
+// Responsive utilities
+@use "./styles/core/responsive" as *;
+
+// Container queries
+@use "./styles/core/container-queries" as *;
+
+// Core enhancements and utilities
+@use "./styles/core/design-system-enhancements" as *;
+@use "./styles/core/component-consistency" as *;
+
+// Utility classes
+@use "./styles/utilities/utilities" as *;
+
+// Component styles
+@use "./styles/components/config-panel" as *;
+@use "./styles/components/lazy-image" as *;
+
+// Page styles
+@use "./styles/pages/home" as *;
+
+// Third-party overrides
+@use "./styles/ng-doc-overrides" as *;
+
+// ===================================================================
+// 2. LIBRARY STYLES (@import after @use)
+// ===================================================================
+// Import all styles from the OSI Cards library
 @import "../projects/osi-cards-lib/src/lib/styles/styles";
+
+// Import button styles for app components
+// @import "../projects/osi-cards-lib/src/lib/styles/components/buttons"; // File doesn't exist
 
 /* Tailwind directives */
 @tailwind base;
@@ -63,40 +116,11 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Card styles are now handled by the library's scoped styles */
-/* No overrides needed - library uses --osi- prefixed self-contained variables */
-
-/* Documentation demo context - full width cards with no padding */
-.demo-preview,
-.demo-card,
-.live-demo-preview {
-  --osi-card-padding: 0 !important;
-  --osi-card-padding-top: 0 !important;
-  --osi-card-padding-bottom: 0 !important;
-  --osi-card-padding-left: 0 !important;
-  --osi-card-padding-right: 0 !important;
-  --card-main-padding: 0 !important;
-  --section-container-padding: 0 !important;
-  --section-padding: 0 !important;
-}
-
-/* Ensure app-ai-card-renderer in demo context has no padding */
-.demo-preview app-ai-card-renderer,
-.demo-card app-ai-card-renderer,
-.live-demo-preview app-ai-card-renderer,
-.demo-content app-ai-card-renderer {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  display: block !important;
-  box-sizing: border-box !important;
-}
-
-/* Ensure card container takes full width in demo context */
-.demo-content .card-container-wrapper,
-.live-demo-preview .card-container-wrapper {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
+body {
+  overflow-anchor: none;
+  /* Ensure body uses theme variables - these cascade from :root/html */
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  min-height: 100vh;
+  /* Force theme application to body element */
 }

@@ -98,7 +98,7 @@ export class CachedSectionNormalizationService {
 
   private getDefaultColumnSpanForType(sectionType: string): number {
     // Wide sections that benefit from more space
-    const wideTypes = ['chart', 'map', 'analytics', 'network', 'overview', 'timeline'];
+    const wideTypes = ['chart', 'map', 'analytics', 'network', 'timeline'];
     // Narrow sections that work well in single column
     const narrowTypes = ['contact', 'quotation', 'brand-colors'];
 

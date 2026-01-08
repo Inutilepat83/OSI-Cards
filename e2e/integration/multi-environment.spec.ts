@@ -191,15 +191,6 @@ test.describe('Section Type Rendering', () => {
     await navigateToEnvironment(page, testEnv, 'complete');
   });
 
-  test('should render info section', async ({ page }) => {
-    const infoSection = page.locator('[class*="info-section"], .masonry-item').filter({
-      has: page.locator('text=Company Information')
-    });
-    
-    if (await infoSection.count() > 0) {
-      await expect(infoSection.first()).toBeVisible();
-    }
-  });
 
   test('should render analytics section with metrics', async ({ page }) => {
     const analyticsSection = page.locator('[class*="analytics"], .masonry-item').filter({

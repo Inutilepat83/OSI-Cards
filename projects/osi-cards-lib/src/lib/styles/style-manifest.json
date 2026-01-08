@@ -58,11 +58,6 @@
       "hasStyle": true
     },
     {
-      "type": "overview",
-      "stylePath": "./lib/styles/components/sections/_overview.scss",
-      "hasStyle": true
-    },
-    {
       "type": "quotation",
       "stylePath": "./lib/styles/components/sections/_quotation.scss",
       "hasStyle": true
@@ -86,11 +81,6 @@
       "type": "social-media",
       "stylePath": "./lib/styles/components/sections/_social-media.scss",
       "hasStyle": true
-    },
-    {
-      "type": "fallback",
-      "stylePath": "./lib/styles/components/sections/_fallback.scss",
-      "hasStyle": true
     }
   ],
   "discoveredFiles": [
@@ -108,7 +98,6 @@
     "_map.scss",
     "_network.scss",
     "_news.scss",
-    "_overview.scss",
     "_product.scss",
     "_quotation.scss",
     "_section-shell.scss",

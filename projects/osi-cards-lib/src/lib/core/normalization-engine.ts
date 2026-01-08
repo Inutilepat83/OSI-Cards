@@ -225,7 +225,7 @@ export class NormalizationEngine {
     }
 
     const input = data as Record<string, unknown>;
-    const type = this.normalizeString(input['type'], `${path}.type`, errors) || 'info';
+    const type = this.normalizeString(input['type'], `${path}.type`, errors) || 'overview';
     const schema = this.schemas.get(type);
 
     const normalized: NormalizedSection = {
@@ -415,9 +415,9 @@ export class NormalizationEngine {
   // ==========================================================================
 
   private registerDefaultSchemas(): void {
-    // Info section
+    // Overview section (replaces deprecated info section)
     this.registerSchema({
-      type: 'info',
+      type: 'overview',
       fields: {
         label: { type: 'string', required: true },
         value: { type: 'string', required: true },

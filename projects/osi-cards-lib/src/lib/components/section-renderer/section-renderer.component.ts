@@ -32,10 +32,10 @@ import { LazySectionPlaceholderComponent } from './lazy-section-placeholder.comp
 
 /**
  * Interface for sections with custom field interaction output
- * Used by InfoSectionComponent
+ * Used by OverviewSectionComponent
  */
-interface InfoSectionComponentLike extends BaseSectionComponent {
-  infoFieldInteraction?: Observable<{ field: CardField; sectionTitle?: string }>;
+interface OverviewSectionComponentLike extends BaseSectionComponent {
+  overviewFieldInteraction?: Observable<{ field: CardField; sectionTitle?: string }>;
 }
 
 export interface SectionRenderEvent {
@@ -143,7 +143,7 @@ export class SectionRendererComponent implements OnChanges {
       return;
     }
 
-    const sectionType = this.section.type?.toLowerCase() || 'fallback';
+    const sectionType = this.section.type?.toLowerCase() || 'overview';
     const resolvedType = this.loader.resolveType(sectionType);
 
     this.logger.debug('loadComponent', {
@@ -177,22 +177,22 @@ export class SectionRendererComponent implements OnChanges {
         });
         this.createComponentFromClass(resolution.component);
       } else {
-        // CRITICAL: Always render a fallback component instead of leaving empty
-        this.logger.warn('No component found for section type, using fallback', {
+        // CRITICAL: Always render a component instead of leaving empty
+        this.logger.warn('No component found for section type, using list section', {
           resolvedType,
           sectionType: this.section?.type,
           sectionTitle: this.section?.title,
         });
-        // Force fallback component creation
+        // Force list component creation
         const fallbackResolution = this.loader.resolveComponent({
           ...this.section,
-          type: 'fallback',
+          type: 'list',
         } as CardSection);
         if (fallbackResolution.component) {
           this.createComponentFromClass(fallbackResolution.component);
         } else {
           // Last resort: log error but still try to show something
-          this.logger.error('Even fallback component not available', { resolvedType });
+          this.logger.error('Even list component not available', { resolvedType });
         }
       }
 
@@ -390,10 +390,10 @@ export class SectionRendererComponent implements OnChanges {
         });
     }
 
-    // Handle InfoSectionComponent's custom output
-    const infoInstance = instance as InfoSectionComponentLike;
-    if (infoInstance.infoFieldInteraction) {
-      infoInstance.infoFieldInteraction
+    // Handle OverviewSectionComponent's custom output
+    const overviewInstance = instance as OverviewSectionComponentLike;
+    if (overviewInstance.overviewFieldInteraction) {
+      overviewInstance.overviewFieldInteraction
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((event: { field: CardField; sectionTitle?: string }) => {
           this.emitFieldInteraction(event.field, { sectionTitle: event.sectionTitle });
@@ -451,7 +451,7 @@ export class SectionRendererComponent implements OnChanges {
    * Get the resolved canonical type
    */
   get resolvedType(): string {
-    if (!this.section?.type) return 'fallback';
+    if (!this.section?.type) return 'overview';
     return this.loader.resolveType(this.section.type);
   }
 

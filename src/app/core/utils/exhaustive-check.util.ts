@@ -132,11 +132,11 @@ export function isOneOf<T extends readonly unknown[]>(
  * @example
  * ```typescript
  * type Section =
- *   | { type: 'info'; fields: Field[] }
+ *   | { type: 'analytics'; fields: Field[] }
  *   | { type: 'list'; items: Item[] };
  *
- * function isInfoSection(section: Section): section is { type: 'info'; fields: Field[] } {
- *   return hasDiscriminator(section, 'type', 'info');
+ * function isAnalyticsSection(section: Section): section is { type: 'analytics'; fields: Field[] } {
+ *   return hasDiscriminator(section, 'type', 'analytics');
  * }
  * ```
  */

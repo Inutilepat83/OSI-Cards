@@ -1,9 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
 import { CardSection } from '../../../models';
 import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
 import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+import { TooltipDirective } from '../../../directives/tooltip.directive';
 
 /**
  * Solutions Section Component
@@ -14,21 +23,96 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 @Component({
   selector: 'lib-solutions-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [
+    CommonModule,
+    SectionHeaderComponent,
+    EmptyStateComponent,
+    BadgeComponent,
+    TooltipDirective,
+  ],
   templateUrl: './solutions-section.component.html',
   styleUrl: './solutions-section.scss',
 })
-export class SolutionsSectionComponent extends BaseSectionComponent implements OnInit {
+export class SolutionsSectionComponent
+  extends BaseSectionComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  @ViewChild('solutionsGrid', { static: false }) solutionsGrid?: ElementRef<HTMLElement>;
 
   expandedIndex: number | null = null; // For benefits expansion
   descriptionExpandedStates: boolean[] = []; // For description expansion
+  isSingleColumn = false; // Track if grid is single column
+  private resizeObserver?: ResizeObserver;
 
   ngOnInit(): void {
     // Register layout preference function for this section type
     this.layoutService.register('solutions', (section: CardSection, availableColumns: number) => {
       return this.calculateSolutionsLayoutPreferences(section, availableColumns);
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Wait for next tick to ensure grid is fully rendered
+    setTimeout(() => {
+      this.checkGridColumns();
+
+      // Observe grid container for size changes
+      if (this.solutionsGrid?.nativeElement) {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.checkGridColumns();
+        });
+        this.resizeObserver.observe(this.solutionsGrid.nativeElement);
+      }
+    }, 0);
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  /**
+   * Check if grid is rendering as single column
+   */
+  private checkGridColumns(): void {
+    if (!this.solutionsGrid?.nativeElement) {
+      return;
+    }
+
+    const grid = this.solutionsGrid.nativeElement;
+    const children = Array.from(grid.children) as HTMLElement[];
+
+    if (children.length === 0) {
+      return;
+    }
+
+    // Get the first child's position
+    const firstChild = children[0];
+    if (!firstChild) {
+      return;
+    }
+    const firstRect = firstChild.getBoundingClientRect();
+    const gridRect = grid.getBoundingClientRect();
+
+    // Count how many items fit in the first row by checking their left positions
+    let columnCount = 0;
+    const firstRowItems: HTMLElement[] = [];
+
+    for (const child of children) {
+      const childRect = child.getBoundingClientRect();
+      // Items in the same row will have similar top positions (within a small threshold)
+      if (Math.abs(childRect.top - firstRect.top) < 5) {
+        firstRowItems.push(child);
+      } else {
+        break; // Stop when we hit the second row
+      }
+    }
+
+    columnCount = firstRowItems.length;
+    this.isSingleColumn = columnCount <= 1;
   }
 
   /**
@@ -114,7 +198,11 @@ export class SolutionsSectionComponent extends BaseSectionComponent implements O
 
   getVisibleBenefits(benefits: string[] | undefined, index: number): string[] {
     if (!benefits || benefits.length === 0) return [];
+    // If single column, show all benefits automatically
+    if (this.isSingleColumn) return benefits;
+    // If expanded, show all benefits
     if (this.isExpanded(index)) return benefits;
+    // Otherwise, show first 2 benefits
     return benefits.slice(0, 2);
   }
 
@@ -138,5 +226,73 @@ export class SolutionsSectionComponent extends BaseSectionComponent implements O
    */
   isDescriptionExpanded(index: number): boolean {
     return !!this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Get meta label for solution - can be deliveryTime, label, or any string property
+   * Returns formatted label with appropriate icon/prefix
+   */
+  getMetaLabel(solution: any): string | null {
+    // Priority: label > deliveryTime > metaLabel > any other string property
+    if (solution.label) {
+      return solution.label;
+    }
+    if (solution.deliveryTime) {
+      return `⏱️ ${solution.deliveryTime}`;
+    }
+    if (solution.metaLabel) {
+      return solution.metaLabel;
+    }
+    // Check for other common label properties
+    if (solution.duration) {
+      return `⏱️ ${solution.duration}`;
+    }
+    if (solution.timeframe) {
+      return `⏱️ ${solution.timeframe}`;
+    }
+    if (solution.period) {
+      return `⏱️ ${solution.period}`;
+    }
+    return null;
+  }
+
+  /**
+   * Get the count of remaining benefits (total - 2 visible)
+   */
+  getRemainingBenefitsCount(solution: any): number {
+    if (!solution.benefits || solution.benefits.length <= 2) {
+      return 0;
+    }
+    return solution.benefits.length - 2;
+  }
+
+  /**
+   * Check if "+X more" button should be shown
+   * Only show if there are more than 2 benefits AND not in single column layout
+   */
+  shouldShowMoreButton(solution: any, index: number): boolean {
+    if (!solution.benefits || solution.benefits.length <= 2) {
+      return false;
+    }
+
+    // Don't show "+X more" if in single column layout
+    return !this.isSingleColumn;
+  }
+
+  /**
+   * Get the score percentage for the progress bar
+   * Safely converts score to a number and calculates percentage (0-100)
+   */
+  getScorePercentage(solution: any): number {
+    if (solution.score === undefined || solution.score === null) {
+      return 0;
+    }
+    const score = typeof solution.score === 'number' ? solution.score : Number(solution.score);
+    if (isNaN(score)) {
+      return 0;
+    }
+    // Clamp between 0 and 10, then convert to percentage
+    const clampedScore = Math.max(0, Math.min(10, score));
+    return (clampedScore / 10) * 100;
   }
 }

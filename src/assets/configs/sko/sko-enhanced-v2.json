@@ -10,7 +10,8 @@
           "title": "Secure Data Exchange",
           "description": "HIPAA-compliant messaging",
           "category": "Security",
-          "benefits": ["HIPAA compliant", "Audit trails"]
+          "benefits": ["HIPAA compliant", "Audit trails"],
+          "score": 9
         }
       ]
     }

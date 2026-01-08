@@ -21,15 +21,19 @@ export * from './services/app-config.service';
 export * from './services/card-generation.service';
 export * from './services/card-search.service';
 // Removed - implement in your app if needed
-// export * from './services/circuit-breaker.service';
 // export * from './services/development-warnings.service';
+export * from './services/circuit-breaker.service';
 export * from './services/error-handling.service';
 export * from './services/error-reporting.service';
 export * from './services/feature-flag.service';
 export * from './services/health-check.service';
 // i18n service now in library - use osi-cards-lib
 // export * from './services/i18n.service';
+export * from './services/conflict-resolution.service';
 export * from './services/indexeddb-cache.service';
+// InputValidationService removed - use ValidationService instead
+// export * from './services/input-validation.service';
+// export { InputValidationService } from './services/input-validation.service';
 export * from './services/json-processing.service';
 export * from './services/json-validation.service';
 export * from './services/llm-streaming.service';
@@ -38,11 +42,13 @@ export * from './services/performance.service';
 export * from './services/request-queue.service';
 export * from './services/retry-queue.service';
 export * from './services/rum.service';
+export * from './services/secrets.service';
 export * from './services/validation.service';
 
 // Interceptors
 export * from './interceptors/error.interceptor';
 export * from './interceptors/http-cache.interceptor';
+export * from './interceptors/input-validation.interceptor';
 export * from './interceptors/security-headers.interceptor';
 
 // Guards and Resolvers

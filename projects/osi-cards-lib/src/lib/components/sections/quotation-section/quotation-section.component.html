@@ -3,10 +3,16 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <blockquote class="quote" *ngFor="let q of section.fields; let i = index" [class.expanded]="isQuoteExpanded(i)">
+    <blockquote
+      class="section-item"
+      *ngFor="let q of section.fields; let i = index"
+      [class.section-item--expanded]="isQuoteExpanded(i)"
+    >
       <div class="icon">"</div>
       <div class="text-wrapper">
-        <p class="text" [class.text--expanded]="isQuoteExpanded(i)">{{ getQuoteText(q) }}</p>
+        <p class="text" [class.text--expanded]="isQuoteExpanded(i)" [class.section-item__text]="true">
+          {{ getQuoteText(q) }}
+        </p>
         <button
           *ngIf="shouldShowExpandButton(q)"
           class="quote-expand-btn"

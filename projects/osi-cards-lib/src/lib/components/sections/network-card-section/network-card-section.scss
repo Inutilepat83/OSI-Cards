@@ -5,7 +5,9 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/design-system/unified-sections" as unified;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,24 +21,24 @@
 .network-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 // Grid
 .network-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Compact: 180px (was 200px)
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   box-sizing: border-box;
 
   @include responsive-down("md") {
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 
   @include responsive-down("sm") {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 
   @include responsive-down("xs") {
@@ -44,18 +46,18 @@
   }
 }
 
-// Network Card
-.network-card {
-  @include card-elevated;
+// Section Item
+.section-item {
+  @include card("normal");
   position: relative;
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 14px)
+  // Padding handled by card('normal') mixin - 12px uniform
   min-height: 115px; // Compact: 115px (was 140px)
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+  gap: var(--osi-section-item-gap); // Compact: 6px (was 10px)
+
+  // Unified hover effect
+  @include section-card-hover;
 
   &::after {
     content: "";
@@ -66,13 +68,10 @@
     height: 2px;
     background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
     opacity: 0;
-    transition: opacity var(--duration-slow) var(--ease-out);
+    transition: opacity var(--osi-section-item-transition);
   }
 
   &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
-
     &::after {
       opacity: 0.8;
     }
@@ -88,23 +87,23 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
+  gap: var(--osi-section-item-gap); // Compact: 6px (was 8px)
 }
 
 .network-name {
   @include heading(5);
   flex: 1;
   margin: 0;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
 }
 
 .network-status {
-  padding: 4px 8px;
-  font-size: 0.625rem; // Compact: 10px (was 0.65rem)
+  padding: var(--osi-section-item-padding-compact) var(--osi-section-item-padding-normal); // 6px vertical, 12px horizontal for consistency
+  font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 4px;
+  letter-spacing: var(--osi-tracking-wider);
+  border-radius: var(--osi-radius-sm);
 
   &.active {
     background: rgba(34, 197, 94, 0.15);
@@ -127,11 +126,13 @@
   @include body-text("small");
   color: var(--muted-foreground);
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   @include text-overflow-ellipsis(2); // Limit to 2 lines by default
   overflow-wrap: break-word;
   word-wrap: break-word;
-  transition: all 0.2s ease-out;
+  transition:
+    opacity var(--osi-section-item-transition),
+    color var(--osi-section-item-transition);
 }
 
 .network-description.expanded {
@@ -140,9 +141,9 @@
 
 .network-expand-button {
   @include button-text-minimal;
-  margin-top: var(--osi-spacing-compact-xs, 2px);
+  margin-top: var(--osi-section-item-gap-xs);
   align-self: flex-start;
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   color: var(--accent);
   &:hover {
     text-decoration: underline;
@@ -152,9 +153,9 @@
 // Metrics
 .network-metrics {
   display: flex;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 12px - same)
+  gap: var(--osi-section-item-gap);
   margin-top: auto;
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
+  padding-top: var(--osi-section-item-padding-compact);
   border-top: 1px solid var(--border);
 }
 
@@ -162,32 +163,29 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs); // Compact: 2px (was 4px)
 }
 
 .metric-label {
-  @include typo.label-uppercase;
-  font-size: 0.625rem; // Compact: 10px (was 0.65rem)
+  @include unified.unified-item-label;
 }
 
 .metric-value {
-  font-size: var(--text-sm);
-  font-weight: var(--font-bold);
-  color: var(--foreground);
+  @include unified.unified-item-value;
   font-variant-numeric: tabular-nums;
 }
 
 // Responsive
 @include responsive-down("sm") {
-  .network-card {
-    padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px);
+  .section-item {
+    // Padding handled by card('normal') mixin
     min-height: 105px; // Compact: 105px (was 130px)
-    gap: var(--osi-spacing-compact-xs, 2px);
+    gap: var(--osi-section-item-gap-xs);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .network-card {
+  .section-item {
     transition: none;
   }
 }

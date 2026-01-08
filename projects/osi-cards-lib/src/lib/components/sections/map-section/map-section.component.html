@@ -5,6 +5,10 @@
   <!-- Map Display -->
   <div class="map-wrapper" *ngIf="!mapInitFailed && section.fields && section.fields.length > 0">
     <div #mapElement class="map-element"></div>
+    <div class="map-loading-overlay" *ngIf="tilesLoading">
+      <div class="map-loading-spinner"></div>
+      <span class="map-loading-text">Loading map...</span>
+    </div>
   </div>
 
   <lib-empty-state
@@ -17,7 +21,7 @@
 
   <!-- Location List (Optional) -->
   <div class="location-list" *ngIf="section.fields && section.fields.length > 1">
-    <div class="location-item" *ngFor="let location of section.fields">
+    <div class="section-item" *ngFor="let location of section.fields">
       <h4 class="location-name">{{ location.name }}</h4>
       <p class="location-address" *ngIf="location.address">{{ location.address }}</p>
       <span class="location-type" *ngIf="location.type">{{ location.type }}</span>

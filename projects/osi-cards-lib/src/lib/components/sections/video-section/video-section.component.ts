@@ -98,15 +98,91 @@ export class VideoSectionComponent extends BaseSectionComponent implements OnIni
    * Get safe video URL for iframe
    */
   getSafeVideoUrl(item: any): SafeResourceUrl {
-    const url = this.getVideoUrl(item);
+    let url = this.getVideoUrl(item);
+
+    if (!url || url.trim() === '') {
+      // Return a safe empty URL instead of empty string to prevent blocking
+      return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+    }
+
+    // Convert video URLs to embed format
+    try {
+      // Handle YouTube URLs
+      if (url.includes('youtube.com/watch')) {
+        const urlObj = new URL(url);
+        const videoId = urlObj.searchParams.get('v');
+        if (videoId && videoId.trim() !== '') {
+          url = `https://www.youtube.com/embed/${videoId}`;
+        } else {
+          console.warn('Invalid YouTube URL - missing video ID:', url);
+          return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+        }
+      } else if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1]?.split('?')[0]?.split('&')[0]?.trim();
+        if (videoId && videoId !== '') {
+          url = `https://www.youtube.com/embed/${videoId}`;
+        } else {
+          console.warn('Invalid YouTube short URL - missing video ID:', url);
+          return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+        }
+      }
+      // Handle Vimeo URLs
+      else if (url.includes('vimeo.com/')) {
+        // Extract Vimeo video ID from various URL formats
+        // Supports: https://vimeo.com/123456789, https://vimeo.com/123456789?share=copy
+        const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+        if (vimeoMatch && vimeoMatch[1]) {
+          url = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+        } else {
+          console.warn('Invalid Vimeo URL - missing video ID:', url);
+          return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+        }
+      }
+      // If already an embed URL (YouTube or Vimeo), validate and use as-is
+      else if (url.includes('youtube.com/embed') || url.includes('player.vimeo.com')) {
+        // Already in embed format, validate it's a proper URL
+        try {
+          new URL(url); // Validate URL format
+        } catch {
+          console.warn('Invalid embed URL format:', url);
+          return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+        }
+      } else {
+        // Unknown URL format - might be a direct video file or invalid URL
+        console.warn('Unknown video URL format - may not be embeddable:', url);
+        // Return blank to prevent blocking error, component will fall back to native video or thumbnail
+        return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+      }
+    } catch (error) {
+      // If URL parsing fails, log and return blank
+      console.warn('Failed to parse video URL:', url, error);
+      return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+    }
+
+    // Final validation - ensure URL is not empty before sanitizing
+    if (!url || url.trim() === '') {
+      return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+    }
+
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   /**
    * Check if URL is embeddable (YouTube/Vimeo)
+   * Direct video files (.mp4, .webm, etc.) are not embeddable and use native <video> tag
    */
   isEmbeddable(url: string): boolean {
-    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+    if (!url) {
+      return false;
+    }
+    // Check for embeddable platforms
+    const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+    const isVimeo = url.includes('vimeo.com');
+
+    // Direct video files should use native <video> tag, not iframe
+    const isDirectVideo = /\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)(\?|$)/i.test(url);
+
+    return (isYouTube || isVimeo) && !isDirectVideo;
   }
 
   /**

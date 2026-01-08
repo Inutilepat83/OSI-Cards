@@ -48,8 +48,8 @@
 .tilt-container:hover {
   /* Hint browser about upcoming transform changes */
   will-change: transform;
-  /* Orange glow only - no dark shadows, intensified by 50% */
-  box-shadow: 0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
+  /* Orange glow only - no dark shadows, more vivid on hover */
+  box-shadow: 0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.6));
   /* Smooth transition for glow only - transform handled by JavaScript */
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 }
@@ -57,7 +57,7 @@
 /* Glow container for filter-based effects - Cross-browser compatible */
 .glow-container {
   position: relative;
-  /* Always show base glow - smooth transitions, intensified by 50% */
+  /* Always show base glow - smooth transitions */
   -webkit-filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
   filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
   -webkit-transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);

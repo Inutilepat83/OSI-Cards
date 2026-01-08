@@ -159,7 +159,7 @@ function calculateColSpan(section: WorkerSection, maxColumns: number): number {
  * Generates section key
  */
 function getSectionKey(section: WorkerSection, index: number): string {
-  return section.id ?? `${section.title ?? 'section'}-${section.type ?? 'info'}-${index}`;
+  return section.id ?? `${section.title ?? 'section'}-${section.type ?? 'overview'}-${index}`;
 }
 
 /**

@@ -3,7 +3,7 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <a [href]="s.url" class="card" *ngFor="let s of section.fields" target="_blank" rel="noopener">
+    <a [href]="s.url" class="section-item" *ngFor="let s of section.fields" target="_blank" rel="noopener">
       <div class="icon">{{ getPlatformIcon(s.platform) }}</div>
       <span class="platform">{{ s.platform }}</span>
       <lib-badge *ngIf="s.verified" class="verify" variant="primary" size="sm">✓</lib-badge>

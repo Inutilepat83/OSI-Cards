@@ -271,7 +271,7 @@ export interface SectionColumnPreferences {
  * Provides variety: 1, 2, 3, or 4 columns based on section type
  * - 1 column: compact sections (contact-card, project)
  * - 2 columns: medium sections (most common)
- * - 3 columns: wide sections (overview, timeline, financials)
+ * - 3 columns: wide sections (timeline, financials)
  * - 4 columns: full-width sections (hero, header)
  */
 export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
@@ -301,7 +301,6 @@ export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
   'brand-colors': 2,
 
   // 3 columns - wide sections
-  overview: 3,
   timeline: 3,
   financials: 3,
 
@@ -345,7 +344,6 @@ export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
   quotation: 3, // Quotes can expand for readability
 
   // Medium sections - can expand more freely
-  info: 3, // Info sections work at 1-3 columns
   list: 3, // Lists can expand for better readability
   event: 3, // Events can expand
   timeline: 3, // Timelines can expand
@@ -362,7 +360,6 @@ export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
   // Full-width capable sections
   chart: 4, // Charts benefit from full width
   map: 4, // Maps benefit from full width
-  overview: 4, // Overview sections can span full width
 
   // More permissive default for unknown types
   default: 3,

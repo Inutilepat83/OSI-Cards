@@ -109,7 +109,11 @@ export function designParamsToCssVars(params: SectionDesignParams): Record<strin
   if (params.itemGap) cssVars['--section-item-gap'] = params.itemGap;
   if (params.itemPadding) cssVars['--section-item-padding'] = params.itemPadding;
   if (params.itemPaddingSmall) cssVars['--section-item-padding-small'] = params.itemPaddingSmall;
-  if (params.elementGap) cssVars['--section-element-gap'] = params.elementGap;
+  // @deprecated Use --osi-section-item-gap instead of --section-element-gap
+  if (params.elementGap) {
+    cssVars['--section-element-gap'] = params.elementGap; // Legacy support
+    cssVars['--osi-section-item-gap'] = params.elementGap; // Modern token
+  }
   if (params.containerPadding) cssVars['--section-container-padding'] = params.containerPadding;
   if (params.gridGap) cssVars['--section-grid-gap'] = params.gridGap;
   if (params.gridRowGap) cssVars['--section-grid-row-gap'] = params.gridRowGap;

@@ -48,9 +48,7 @@ export class FocusIndicatorComponent implements OnInit, OnDestroy {
     const styleElement = this.renderer.createElement('style');
     styleElement.textContent = `
       *:focus-visible {
-        outline: 2px solid var(--color-brand, #FF7900);
-        outline-offset: 2px;
-        border-radius: 2px;
+        outline: none;
       }
 
       button:focus-visible,
@@ -58,8 +56,7 @@ export class FocusIndicatorComponent implements OnInit, OnDestroy {
       input:focus-visible,
       textarea:focus-visible,
       select:focus-visible {
-        outline: 2px solid var(--color-brand, #FF7900);
-        outline-offset: 2px;
+        outline: none;
       }
 
       /* Remove default outline for mouse users */

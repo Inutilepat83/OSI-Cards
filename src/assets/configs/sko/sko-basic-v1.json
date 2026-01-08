@@ -10,7 +10,8 @@
           "title": "Secure Cloud Banking",
           "description": "Compliant cloud infrastructure",
           "category": "Infrastructure",
-          "benefits": ["Compliance", "Security"]
+          "benefits": ["Compliance", "Security"],
+          "score": 8
         }
       ]
     }

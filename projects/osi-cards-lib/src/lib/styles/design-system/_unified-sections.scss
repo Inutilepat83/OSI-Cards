@@ -12,46 +12,46 @@
 // Item titles (h4, h5, h6 in cards/items)
 @mixin unified-item-title {
   margin: 0;
-  font-size: var(--osi-text-sm); // 14px - Consistent size
-  font-weight: var(--osi-font-semibold); // 600
-  line-height: var(--osi-leading-snug); // 1.375
-  color: var(--osi-foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--foreground);
 }
 
 // Item labels (small uppercase text)
 @mixin unified-item-label {
-  font-size: 0.7rem; // 11.2px - Compact, fixed size
-  font-weight: var(--osi-font-medium); // 500
-  line-height: var(--osi-leading-tight); // 1.25
-  color: var(--osi-muted-foreground);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-tight);
+  color: var(--muted-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 // Item values (prominent text/numbers)
 @mixin unified-item-value {
-  font-size: var(--osi-text-sm); // 14px - Consistent
-  font-weight: var(--osi-font-semibold); // 600
-  line-height: var(--osi-leading-normal); // 1.5
-  color: var(--osi-foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-normal);
+  color: var(--foreground);
 }
 
 // Item descriptions (secondary text)
 @mixin unified-item-description {
-  font-size: var(--osi-text-xs); // 12px
-  font-weight: var(--osi-font-normal); // 400
-  line-height: var(--osi-leading-relaxed); // 1.625
-  color: var(--osi-muted-foreground);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-relaxed);
+  color: var(--muted-foreground);
 }
 
 // Number displays (metrics, analytics)
 @mixin unified-number-display {
-  font-size: var(--osi-text-xl); // 24px - Fixed size for all screen sizes
-  font-weight: var(--osi-font-bold); // 700
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
   line-height: 1;
-  letter-spacing: var(--osi-tracking-tight);
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  color: var(--osi-foreground);
+  color: var(--foreground);
 }
 
 // ═══════════════════════════════════════════════════════════════════

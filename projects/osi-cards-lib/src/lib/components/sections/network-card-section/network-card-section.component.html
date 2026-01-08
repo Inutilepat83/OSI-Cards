@@ -3,7 +3,7 @@
   </lib-section-header>
 
   <div class="network-grid" *ngIf="section.items?.length">
-    <div class="network-card" *ngFor="let node of section.items; let i = index">
+    <div class="section-item" *ngFor="let node of section.items; let i = index">
       <div class="network-header">
         <h4 class="network-name">{{ node.title }}</h4>
         <span class="network-status" [ngClass]="getStatusClass(node.meta?.status)" *ngIf="node.meta?.status">

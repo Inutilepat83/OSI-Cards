@@ -13,7 +13,6 @@ import type {
   AnalyticsSection as AnalyticsSectionType,
   CardSection,
   ContactCardSection as ContactCardSectionType,
-  InfoSection as InfoSectionType,
   ListSection as ListSectionType,
 } from '../models';
 
@@ -71,62 +70,6 @@ Each section type is optimized for displaying specific kinds of data.
 
 export default meta;
 type Story = StoryObj<SectionRendererComponent>;
-
-// =============================================================================
-// INFO SECTION STORIES
-// =============================================================================
-
-const infoSection: InfoSectionType = {
-  id: 'info-demo',
-  title: 'Company Information',
-  type: 'info',
-  fields: [
-    { id: 'f1', label: 'Company Name', value: 'Acme Corporation', icon: '🏢' },
-    { id: 'f2', label: 'Industry', value: 'Technology', icon: '💻' },
-    { id: 'f3', label: 'Founded', value: '2010', icon: '📅' },
-    { id: 'f4', label: 'Headquarters', value: 'San Francisco, CA', icon: '📍' },
-    { id: 'f5', label: 'Employees', value: '5,000+', icon: '👥' },
-    {
-      id: 'f6',
-      label: 'Website',
-      value: 'www.acme.com',
-      icon: '🌐',
-      type: 'url',
-      url: 'https://acme.com',
-    },
-  ],
-};
-
-export const InfoSection: Story = {
-  args: {
-    section: infoSection,
-    isStreaming: false,
-    index: 0,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Info sections display key-value pairs with optional icons and formatting.',
-      },
-    },
-  },
-};
-
-export const InfoSectionMinimal: Story = {
-  args: {
-    section: {
-      id: 'info-minimal',
-      title: 'Basic Info',
-      type: 'info',
-      fields: [
-        { id: 'f1', label: 'Name', value: 'John Doe' },
-        { id: 'f2', label: 'Role', value: 'Developer' },
-      ],
-    },
-    isStreaming: false,
-    index: 0,
-  },
-};
 
 // =============================================================================
 // ANALYTICS SECTION STORIES
@@ -379,8 +322,8 @@ export const NewsSection: Story = {
 export const StreamingSection: Story = {
   args: {
     section: {
-      ...infoSection,
-      id: 'streaming-info',
+      ...analyticsSection,
+      id: 'streaming-analytics',
     },
     isStreaming: true,
     index: 0,
@@ -395,36 +338,8 @@ export const StreamingSection: Story = {
 };
 
 // =============================================================================
-// OVERVIEW SECTION STORIES
+// OVERVIEW SECTION STORIES - REMOVED
 // =============================================================================
-
-export const OverviewSection: Story = {
-  args: {
-    section: {
-      id: 'overview-demo',
-      title: 'Company Overview',
-      type: 'overview',
-      fields: [
-        {
-          id: 'o1',
-          label: 'Mission',
-          value: 'Empowering businesses through innovative technology solutions',
-        },
-        {
-          id: 'o2',
-          label: 'Vision',
-          value: 'To be the leading provider of AI-powered enterprise solutions',
-        },
-      ],
-      items: [
-        { id: 'k1', title: 'Core Values', description: 'Innovation, Integrity, Customer Focus' },
-        { id: 'k2', title: 'Market Position', description: 'Top 3 in enterprise AI solutions' },
-      ],
-    },
-    isStreaming: false,
-    index: 0,
-  },
-};
 
 // =============================================================================
 // PRODUCT SECTION STORIES
@@ -569,10 +484,10 @@ export const EventSection: Story = {
 };
 
 // =============================================================================
-// FALLBACK SECTION
+// UNKNOWN SECTION (renders as info section)
 // =============================================================================
 
-export const FallbackSection: Story = {
+export const UnknownSection: Story = {
   args: {
     section: {
       id: 'unknown-type',
@@ -586,7 +501,7 @@ export const FallbackSection: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Unknown section types gracefully fallback to a generic renderer.',
+        story: 'Unknown section types are rendered using the info section component.',
       },
     },
   },

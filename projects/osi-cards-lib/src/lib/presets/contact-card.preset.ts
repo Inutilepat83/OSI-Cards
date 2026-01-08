@@ -82,7 +82,7 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
     {
       id: 'professional-profile',
       title: 'Professional Profile',
-      type: 'info',
+      type: 'analytics',
       fields: profileFields,
     },
     ...(metrics.length > 0

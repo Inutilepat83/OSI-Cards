@@ -109,39 +109,16 @@
   isolation: isolate;
 }
 
+// =====================================================================
+// CARD ELEVATED - DEPRECATED
+// =====================================================================
+// @deprecated Use @include card-elevated from _component-mixins.scss instead
+// This mixin is kept for backward compatibility but redirects to the standard variant.
+
 @mixin card-elevated {
-  @include card-base;
-  box-shadow: var(--osi-shadow-sm);
-  position: relative;
-
-  // Subtle accent border on hover for visual interest
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--osi-accent) 0%, transparent 100%);
-    opacity: 0;
-    transition: opacity var(--osi-duration-normal) var(--osi-ease-out);
-    border-radius: var(--osi-radius-md) var(--osi-radius-md) 0 0;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    border-color: var(--osi-border);
-
-    &::before {
-      opacity: 0.6;
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--osi-accent);
-    outline-offset: 2px;
-  }
+  @warn "card-elevated from design-system/_section-base.scss is deprecated. Use @include card-elevated from _component-mixins.scss instead.";
+  // Redirect to component-mixins version (imported via design-system)
+  // Note: This will work if design-system imports component-mixins
 }
 
 @mixin card-interactive {

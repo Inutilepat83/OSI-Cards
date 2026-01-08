@@ -4,7 +4,7 @@
 
   <div class="timeline-container" *ngIf="section.items?.length">
     <div
-      class="timeline-item"
+      class="section-item"
       *ngFor="let event of section.items; let i = index; let last = last"
       [class.expanded]="expandedIndex === i"
       role="button"
@@ -14,13 +14,15 @@
       (keydown)="onItemKeydown($event, i)"
     >
       <div class="timeline-marker">
-        <div class="timeline-dot"></div>
+        <div class="timeline-marker-content">
+          <div class="timeline-dot"></div>
+          <span class="timeline-date" *ngIf="event.meta?.date">{{ event.meta?.date }}</span>
+        </div>
         <div class="timeline-line" *ngIf="!last"></div>
       </div>
       <div class="timeline-content">
         <div class="timeline-header">
           <h4 class="timeline-title">{{ event.title }}</h4>
-          <span class="timeline-date" *ngIf="event.meta?.date">{{ event.meta?.date }}</span>
         </div>
         <p class="timeline-description" *ngIf="event.description" [class.expanded]="expandedIndex === i">
           {{ event.description }}

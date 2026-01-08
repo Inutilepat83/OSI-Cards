@@ -3,7 +3,7 @@
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
-    <div class="event" *ngFor="let e of section.fields">
+    <div class="section-item" *ngFor="let e of section.fields">
       <div class="date" *ngIf="e.date">
         <ng-container *ngIf="formatDate(e.date) as d">
           <span class="day">{{ d.day }}</span>
@@ -13,13 +13,13 @@
       <div class="content">
         <h4 class="title">{{ e.label || e.value }}</h4>
         <div class="details">
-          <span *ngIf="e.time">{{ e.time }}</span>
-          <span *ngIf="e.location">{{ e.location }}</span>
-          <span *ngIf="e.attendees">{{ e.attendees }} people</span>
+          <span class="detail-item" *ngIf="e.time">{{ e.time }}</span>
+          <span class="detail-item" *ngIf="e.location">{{ e.location }}</span>
+          <span class="detail-item" *ngIf="e.attendees">{{ e.attendees }} people</span>
         </div>
       </div>
       <lib-badge *ngIf="e.status" class="status" [variant]="getStatusVariant(e.status)" size="sm">
-        {{ e.status }}
+        {{ formatStatus(e.status) }}
       </lib-badge>
     </div>
   </div>

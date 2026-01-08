@@ -13,11 +13,9 @@ export type SectionType =
   | 'chart'
   | 'contact-card'
   | 'event'
-  | 'fallback'
   | 'faq'
   | 'financials'
   | 'gallery'
-  | 'info'
   | 'list'
   | 'map'
   | 'network-card'
@@ -151,17 +149,6 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-event-section',
   },
-  fallback: {
-    name: 'Fallback Section',
-    usesFields: true,
-    usesItems: true,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'lib-fallback-section',
-  },
   faq: {
     name: 'FAQ Section',
     usesFields: false,
@@ -194,17 +181,6 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsEmoji: false,
     requiresExternalLib: undefined,
     selector: 'lib-gallery-section',
-  },
-  info: {
-    name: 'Info Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'lib-info-section',
   },
   list: {
     name: 'List Section',
@@ -429,7 +405,6 @@ export const PUBLIC_SECTION_TYPES: SectionType[] = [
   'faq',
   'financials',
   'gallery',
-  'info',
   'list',
   'map',
   'network-card',
@@ -454,11 +429,9 @@ export const ALL_SECTION_TYPES: SectionType[] = [
   'chart',
   'contact-card',
   'event',
-  'fallback',
   'faq',
   'financials',
   'gallery',
-  'info',
   'list',
   'map',
   'network-card',

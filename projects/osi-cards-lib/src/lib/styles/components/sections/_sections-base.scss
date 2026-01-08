@@ -7,6 +7,7 @@
 // =====================================================================
 
 @use "../../tokens/master" as *;
+@use "section-animations" as *;
 
 // =====================================================================
 // GRID MIXINS
@@ -139,68 +140,113 @@
 }
 
 // =====================================================================
-// UNIVERSAL CARD MIXIN - Uses CSS Variables Only
+// UNIVERSAL CARD MIXIN - Single Source of Truth
 // =====================================================================
+// This is the PRIMARY base mixin for all card styling.
+// All card variants should extend this mixin.
+// Uses standardized --osi-section-item-* tokens.
 
-@mixin card {
+@mixin card($spacing: "normal") {
+  // Background & Border - using standardized tokens
   background: var(--osi-section-item-background);
   border: var(--osi-section-item-border);
   border-radius: var(--osi-section-item-border-radius);
   box-shadow: var(--osi-section-item-shadow);
-  padding: var(--card-padding);
 
+  // Padding - using standardized tokens with spacing parameter
+  @if $spacing == "compact" {
+    padding: var(--osi-section-item-padding-compact);
+  } @else if $spacing == "spacious" {
+    padding: var(--osi-section-item-padding-spacious);
+  } @else {
+    padding: var(--osi-section-item-padding-normal);
+  }
+
+  // Layout
   display: flex;
   flex-direction: column;
-  gap: var(--card-gap);
+  gap: var(--osi-section-item-gap);
   min-height: var(--card-min-height, auto);
 
+  // Interaction
   cursor: pointer;
   position: relative;
   overflow: hidden;
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  max-width: 100%;
-  box-sizing: border-box;
+  width: 100% !important; // Ensure full width
+  max-width: 100% !important; // Ensure full width
+  box-sizing: border-box !important; // Include padding/border in width
   text-align: left;
   word-wrap: break-word;
   overflow-wrap: break-word;
 
-  transition:
-    background var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+  // Transitions - using standardized transition token
+  transition: var(--osi-section-item-transition);
 
-  // Subtle accent border indicator
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--border-width-default);
-    background: linear-gradient(90deg, var(--accent, var(--osi-accent)) 0%, transparent 100%);
-    opacity: 0;
-    transition: opacity var(--duration-base) var(--ease-out);
-    border-radius: var(--osi-section-item-border-radius) var(--osi-section-item-border-radius) 0 0;
-  }
+  // Metal reflection effect (default left-to-right)
+  // Position-based direction will be handled by CSS selectors
+  @include section-metal-reflection("ltr");
 
   &:hover {
-    background: var(--osi-section-item-background-hover);
-    border-color: var(--osi-section-item-border-hover);
-    box-shadow: var(--osi-section-item-shadow-hover);
-
-    &::before {
-      opacity: 0.6;
-    }
+    // Keep background unchanged - only border and shadow change
+    // background: var(--osi-section-item-background-hover); // Removed - background stays the same
+    border-color: var(--osi-section-item-border-hover-enhanced-color);
+    box-shadow: var(--osi-section-item-shadow-hover-enhanced);
   }
 
   &:focus-visible {
-    outline: var(--border-width-accent-sm) solid var(--accent, var(--osi-accent));
-    outline-offset: var(--border-width-accent-sm);
+    outline: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+}
+
+// =====================================================================
+// LIST ITEM MIXIN
+// =====================================================================
+// Standardized list item styling extending base card
+// Used for items within list sections
+
+@mixin list-item($spacing: "normal") {
+  @include card($spacing);
+
+  // List-specific styling
+  // Items in lists typically don't need borders or shadows
+  border: none;
+  box-shadow: none;
+  background: transparent;
+
+  // Use margin for list item separation (not padding)
+  margin-bottom: var(--osi-section-item-margin-sm);
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--osi-section-item-gap-md);
+    margin-bottom: var(--osi-section-item-gap-md);
+  }
+
+  &:hover {
+    background: var(--osi-section-item-background-hover);
+  }
+
+  // No accent border for list items
+  &::before {
+    display: none;
+  }
+}
+
+// =====================================================================
+// LIST CONTAINER MIXIN
+// =====================================================================
+// Container for list items - uses standardized tokens
+
+@mixin list-container($spacing: "normal") {
+  @include card($spacing);
+
+  // List containers can have different styling if needed
+  gap: var(--osi-section-item-gap);
 }
 
 // =====================================================================
@@ -213,6 +259,91 @@
 
 .section-card {
   @include card;
+  & {
+    width: 100% !important; // Ensure full width
+    max-width: 100% !important; // Ensure full width
+    box-sizing: border-box !important; // Include padding/border in width
+  }
+}
+
+// =====================================================================
+// GLOBAL SECTION ITEM HOVER ENHANCEMENT
+// =====================================================================
+// Ensure all section items get enhanced hover effects
+// This applies to any element with .section-item class
+// Higher specificity to ensure it overrides component-specific styles
+// Each section item gets its own independent hover animation
+
+.section-item {
+  // Enhanced hover effects for all section items
+  // Ensure border and shadow transitions are included
+  transition:
+    border-color var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1),
+    var(--osi-section-item-transition);
+
+  // Ensure each section item has its own metal reflection animation
+  position: relative;
+  overflow: hidden;
+
+  // Metal reflection pseudo-element for each individual item
+  // Using ::before to avoid conflicts with components that use ::after
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    border-radius: inherit;
+    animation: none;
+
+    // Default: left-to-right reflection with sweep animation (more discrete)
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.3) 40%,
+      rgba(255, 255, 255, 0.2) 60%,
+      transparent 100%
+    );
+    width: 50%;
+
+    // Use overlay blend mode for metallic appearance
+    mix-blend-mode: overlay;
+  }
+
+  &:hover {
+    // Keep background unchanged - only border and shadow change
+    // Use !important to ensure these styles take precedence
+    border-color: var(--osi-section-item-border-hover-enhanced-color) !important;
+    box-shadow: var(--osi-section-item-shadow-hover-enhanced) !important;
+    // Ensure background doesn't change
+    background: var(--osi-section-item-background) !important;
+
+    // Trigger metal sweep animation for this specific item independently
+    // Default direction (will be overridden by position-based selectors below)
+    &::before {
+      opacity: 1;
+      animation: metal-sweep-ltr 0.23s ease-out forwards;
+    }
+  }
+
+  // Reset animation when hover ends so it can play again on next hover for this item
+  &:not(:hover)::before {
+    animation: none;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &::after {
+      display: none;
+    }
+  }
 }
 
 // =====================================================================
@@ -227,6 +358,7 @@
   color: var(--muted-foreground);
   line-height: 1.3;
   font-family: inherit;
+  margin-bottom: 0.05em; // Reduced gap between label and value
 }
 
 @mixin metric-value {
@@ -241,7 +373,7 @@
 @mixin section-description {
   font-size: var(--card-subtitle-font-size);
   color: var(--muted-foreground);
-  line-height: 1.5;
+  line-height: 1.3; // Reduced from 1.5 for tighter spacing
   font-weight: 400;
   font-family: inherit;
 }
@@ -260,13 +392,16 @@
 // =====================================================================
 
 @mixin section-empty-state {
-  padding: var(--osi-section-padding);
+  padding: var(--osi-section-container-padding);
   text-align: center;
   color: var(--muted-foreground);
-  border: var(--border-width-default) dashed var(--border);
+  border: var(--osi-section-item-border-width) dashed var(--border);
   border-radius: var(--osi-section-item-border-radius);
   background: var(--osi-section-item-background);
   min-height: auto;
+
+  // Use standardized spacing
+  margin: var(--osi-section-item-margin-md);
 }
 
 @mixin section-empty-icon {
@@ -357,6 +492,136 @@
 }
 
 // =====================================================================
+// POSITION-BASED METAL REFLECTION DIRECTION
+// =====================================================================
+//
+// Detects card position in grid and applies appropriate reflection direction.
+// Left-positioned cards: left-to-right reflection
+// Right-positioned cards: right-to-left reflection
+//
+
+// For masonry grid items - detect position based on column
+// Targets section items nested within masonry items
+// Left side items: right-to-left animation (rtl)
+// Right side items: left-to-right animation (ltr)
+.masonry-container,
+.masonry-grid-container {
+  // Items in first columns (left side) - right-to-left reflection
+  .masonry-item:nth-child(4n + 1),
+  .masonry-item:nth-child(4n + 2) {
+    // Target all section items and cards within the masonry item
+    .section-item,
+    .unified-card,
+    .section-card,
+    [class*="-card"]:not([class*="__"]),
+    [class*="-item"]:not([class*="__"]) {
+      &::before {
+        // Right-to-left reflection for left side items
+        background: linear-gradient(
+          270deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.2) 20%,
+          rgba(255, 255, 255, 0.3) 40%,
+          rgba(255, 255, 255, 0.2) 60%,
+          transparent 100%
+        ) !important;
+      }
+
+      &:hover::before {
+        animation: metal-sweep-rtl 0.23s ease-out forwards !important;
+      }
+    }
+  }
+
+  // Items in last columns (right side) - left-to-right reflection
+  .masonry-item:nth-child(4n + 3),
+  .masonry-item:nth-child(4n + 4),
+  .masonry-item[data-col-span="2"]:nth-child(odd),
+  .masonry-item[data-col-span="3"],
+  .masonry-item[data-col-span="4"] {
+    // Target all section items and cards within the masonry item
+    .section-item,
+    .unified-card,
+    .section-card,
+    [class*="-card"]:not([class*="__"]),
+    [class*="-item"]:not([class*="__"]) {
+      &::before {
+        // Left-to-right reflection for right side items
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.2) 20%,
+          rgba(255, 255, 255, 0.3) 40%,
+          rgba(255, 255, 255, 0.2) 60%,
+          transparent 100%
+        ) !important;
+      }
+
+      &:hover::before {
+        animation: metal-sweep-ltr 0.23s ease-out forwards !important;
+      }
+    }
+  }
+}
+
+// For CSS Grid layouts - detect based on grid column position
+@supports (grid-template-rows: masonry) {
+  .masonry-container--native {
+    // Items starting in first columns (left side) - right-to-left reflection
+    .masonry-item:nth-child(4n + 1),
+    .masonry-item:nth-child(4n + 2) {
+      .section-item,
+      .unified-card,
+      .section-card,
+      [class*="-card"]:not([class*="__"]),
+      [class*="-item"]:not([class*="__"]) {
+        &::before {
+          // Right-to-left reflection for left side items
+          background: linear-gradient(
+            270deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.3) 40%,
+            rgba(255, 255, 255, 0.2) 60%,
+            transparent 100%
+          ) !important;
+        }
+
+        &:hover::before {
+          animation: metal-sweep-rtl 0.23s ease-out forwards !important;
+        }
+      }
+    }
+
+    // Items in last columns (right side) - left-to-right reflection
+    .masonry-item:nth-child(4n + 3),
+    .masonry-item:nth-child(4n + 4) {
+      .section-item,
+      .unified-card,
+      .section-card,
+      [class*="-card"]:not([class*="__"]),
+      [class*="-item"]:not([class*="__"]) {
+        &::before {
+          // Left-to-right reflection for right side items
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.3) 40%,
+            rgba(255, 255, 255, 0.2) 60%,
+            transparent 100%
+          ) !important;
+        }
+
+        &:hover::before {
+          animation: metal-sweep-ltr 0.23s ease-out forwards !important;
+        }
+      }
+    }
+  }
+}
+
+// =====================================================================
 // REDUCED MOTION
 // =====================================================================
 
@@ -373,13 +638,14 @@
 }
 
 // =====================================================================
-// ANIMATION SYSTEM
+// ANIMATION SYSTEM - Standardized
 // =====================================================================
+// Single unified animation system for all items/fields
 
-@keyframes section-item-stream {
+@keyframes item-stream {
   0% {
     opacity: 0;
-    transform: translate3d(0, var(--motion-distance-sm), 0);
+    transform: translate3d(0, var(--osi-motion-distance-sm, 8px), 0);
   }
   100% {
     opacity: 1;
@@ -387,50 +653,60 @@
   }
 }
 
-@mixin section-item-animation {
-  &.section-item-streaming {
-    animation: section-item-stream 0.25s ease-out forwards;
-  }
-
-  &.section-item-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.section-item-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
-    }
-  }
-}
-
-@mixin legacy-item-animation {
+// Unified animation mixin for all items and fields
+@mixin item-animation {
+  // Standard streaming state
   &.item-streaming {
-    animation: section-item-stream 0.25s ease-out forwards;
+    animation: item-stream var(--osi-section-item-animation-duration, 220ms)
+      var(--osi-section-item-animation-easing, cubic-bezier(0.4, 0, 0.2, 1)) forwards;
   }
 
+  // Completed state (animation done)
   &.item-entered {
     animation: none;
   }
 
+  // Stagger delays for sequential animations
   @for $i from 0 through 15 {
     &.item-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
+      animation-delay: calc(#{$i} * var(--osi-section-item-stagger-delay, 30ms));
     }
+  }
+
+  // Respect reduced motion preferences
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
   }
 }
 
+// Legacy support mixins (deprecated but kept for backward compatibility)
+@mixin section-item-animation {
+  @include item-animation;
+  @warn "section-item-animation is deprecated. Use @include item-animation instead.";
+
+  // Legacy class name support
+  &.section-item-streaming {
+    @extend .item-streaming;
+  }
+  &.section-item-entered {
+    @extend .item-entered;
+  }
+}
+
+@mixin legacy-item-animation {
+  @include item-animation;
+  @warn "legacy-item-animation is deprecated. Use @include item-animation instead.";
+}
+
 @mixin legacy-field-animation {
+  @include item-animation;
+  @warn "legacy-field-animation is deprecated. Use @include item-animation instead.";
+
+  // Legacy class name support
   &.field-streaming {
-    animation: section-item-stream 0.25s ease-out forwards;
+    @extend .item-streaming;
   }
-
   &.field-entered {
-    animation: none;
-  }
-
-  @for $i from 0 through 15 {
-    &.field-stagger-#{$i} {
-      animation-delay: calc(#{$i} * 30ms);
-    }
+    @extend .item-entered;
   }
 }

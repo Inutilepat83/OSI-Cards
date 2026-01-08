@@ -116,13 +116,19 @@ export class ListSectionComponent extends BaseSectionComponent implements OnInit
 
   /**
    * Map priority to badge variant
+   * Priority hierarchy: critical > high > medium > low
    */
   getPriorityVariant(priority?: string): 'error' | 'warning' | 'success' | 'default' {
     if (!priority) return 'default';
     const priorityLower = priority.toLowerCase();
 
+    // Critical is highest priority - use error variant (red) for maximum visibility
+    if (priorityLower === 'critical') return 'error';
+    // High priority - use error variant (red) as well, but could be distinguished visually
     if (priorityLower === 'high' || priorityLower === 'urgent') return 'error';
+    // Medium priority - use warning variant (amber/yellow)
     if (priorityLower === 'medium' || priorityLower === 'normal') return 'warning';
+    // Low priority - use success variant (green) to indicate it's less urgent
     if (priorityLower === 'low') return 'success';
 
     return 'default';

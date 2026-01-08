@@ -3,11 +3,51 @@
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Solutions Grid -->
-  <div class="solutions-grid" *ngIf="section.fields && section.fields.length > 0">
-    <div class="solution-card" *ngFor="let solution of section.fields; let i = index" [class.expanded]="isExpanded(i)">
+  <div class="solutions-grid" #solutionsGrid *ngIf="section.fields && section.fields.length > 0">
+    <div class="section-item" *ngFor="let solution of section.fields; let i = index" [class.expanded]="isExpanded(i)">
       <!-- Solution Header -->
       <div class="solution-header">
-        <h4 class="solution-title">{{ solution.title }}</h4>
+        <!-- Title and Logo on same line -->
+        <div class="solution-title-row">
+          <h4 class="solution-title">{{ solution.title }}</h4>
+          <!-- Expresso Logo -->
+          <div class="solution-logo-container">
+            <svg
+              class="solution-logo"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid meet"
+              appTooltip="expresso product page"
+              tooltipPosition="top"
+              [tooltipDelay]="200"
+              role="img"
+              aria-label="Expresso logo"
+              width="16"
+              height="16"
+            >
+              <!-- Orange square background -->
+              <rect width="16" height="16" fill="#ff7e00" />
+              <!-- White circular "O" - large and prominent -->
+              <circle cx="8" cy="8" r="5.6" fill="none" stroke="white" stroke-width="1.6" />
+              <!-- White banner with expresso text, positioned diagonally from top right -->
+              <g transform="translate(8, 8) rotate(35) translate(-8, -8)">
+                <rect x="7.2" y="2.4" width="8" height="3.2" fill="white" rx="0.64" />
+                <text
+                  x="11.2"
+                  y="4.48"
+                  font-family="Arial, sans-serif"
+                  font-size="1.76"
+                  font-weight="600"
+                  fill="#ff7e00"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >
+                  expresso
+                </text>
+              </g>
+            </svg>
+          </div>
+        </div>
         <span class="solution-category" *ngIf="solution.category">{{ solution.category }}</span>
       </div>
 
@@ -33,18 +73,26 @@
         <li *ngFor="let benefit of getVisibleBenefits(solution.benefits, i)">{{ benefit }}</li>
       </ul>
 
-      <button
-        class="solution-more"
-        type="button"
-        *ngIf="solution.benefits && solution.benefits.length > 2"
-        (click)="toggleExpanded(i)"
-      >
-        {{ isExpanded(i) ? 'Show less' : '+' + (solution.benefits.length - 2) + ' more' }}
+      <button class="solution-more" type="button" *ngIf="shouldShowMoreButton(solution, i)" (click)="toggleExpanded(i)">
+        {{ isExpanded(i) ? 'Show less' : '+' + getRemainingBenefitsCount(solution) + ' more' }}
       </button>
+
+      <!-- Match Score Bar -->
+      <div class="solution-score" *ngIf="solution.score !== undefined && solution.score !== null">
+        <div class="solution-score-label">
+          <span>Match Score</span>
+          <span class="solution-score-value">{{ solution.score }}/10</span>
+        </div>
+        <div class="solution-score-bar">
+          <div class="solution-score-fill" [style.width.%]="getScorePercentage(solution)"></div>
+        </div>
+      </div>
 
       <!-- Meta Info -->
       <div class="solution-meta">
-        <span class="delivery-time" *ngIf="solution.deliveryTime"> ⏱️ {{ solution.deliveryTime }} </span>
+        <span class="solution-meta-label" *ngIf="getMetaLabel(solution) as label">
+          {{ label }}
+        </span>
         <lib-badge *ngIf="solution.complexity" [variant]="getComplexityVariant(solution.complexity)" size="sm">
           {{ solution.complexity }}
         </lib-badge>

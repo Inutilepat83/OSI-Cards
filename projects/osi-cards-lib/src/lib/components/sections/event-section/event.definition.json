@@ -113,14 +113,15 @@
           "attendees": 200
         },
         {
-          "label": "AWS re:Invent Presence",
-          "value": "Booth #1234 + Speaking Sessions",
-          "date": "2025-12-01",
-          "endDate": "2025-12-05",
+          "label": "Q1 Product Launch",
+          "value": "New Platform Release",
+          "date": "2025-03-10",
+          "endDate": "2025-03-12",
           "time": "08:00",
-          "category": "Conference",
+          "category": "Product",
           "status": "planned",
-          "location": "Las Vegas, NV"
+          "location": "San Francisco, CA",
+          "attendees": 150
         }
       ],
       "preferredColumns": 1,

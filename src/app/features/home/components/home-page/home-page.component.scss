@@ -172,6 +172,67 @@
   }
 }
 
+// Selectable component styles
+.selectable-component {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 8px;
+  user-select: none;
+
+  &:hover:not(.selected) {
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 8px;
+  }
+
+  &.selected {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 2px solid var(--accent);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent),
+      0 4px 12px color-mix(in srgb, var(--accent) 20%, transparent);
+
+    &::before {
+      content: "✓ Selected";
+      position: absolute;
+      top: -0.75rem;
+      right: 0.5rem;
+      background: var(--accent);
+      color: white;
+      font-size: 0.625rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      white-space: nowrap;
+    }
+  }
+}
+
+// Specific adjustments for hero title
+.hero-title.selectable-component {
+  padding: 0.75rem;
+  margin: -0.75rem;
+  display: inline-block;
+  width: calc(100% + 1.5rem);
+  box-sizing: border-box;
+}
+
+// Specific adjustments for hero description
+.hero-description.selectable-component {
+  padding: 0.75rem;
+  margin: 0.75rem auto;
+  display: block;
+  max-width: calc(52rem + 1.5rem);
+  box-sizing: border-box;
+}
+
 .hero-title-primary {
   color: var(--foreground);
   display: inline-block;
@@ -212,6 +273,11 @@
     font-size: var(--text-lg);
     line-height: var(--leading-relaxed);
   }
+
+  &.selectable-component {
+    padding: calc(0.5rem + var(--spacing-base));
+    margin: calc(-0.5rem - var(--spacing-base));
+  }
 }
 
 .hero-features {
@@ -242,7 +308,7 @@
   box-shadow: var(--shadow-sm);
   transition: all 0.3s var(--ease-out);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Changed from hidden to visible for selection indicator */
   animation: fadeInUp 0.5s ease-out backwards;
 
   /* Stagger animation for cards */
@@ -257,21 +323,19 @@
   }
 
   /* Minimalist hover - no decorative borders */
-  &:hover {
+  &:hover:not(.selected) {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   @media (min-width: 640px) {
     padding: 2.5rem;
   }
 
-  &:hover {
+  &:hover:not(.selected) {
     transform: translateY(-2px) !important;
-    border: var(--hero-card-border-hover) !important;
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent) !important;
     box-shadow:
       0 8px 20px color-mix(in srgb, var(--foreground) 8%, transparent),
       0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent) !important;
@@ -288,6 +352,15 @@
       transform: scale(1.05);
       background: color-mix(in srgb, var(--accent) 10%, transparent);
     }
+  }
+
+  &.selected {
+    border: 2px solid var(--accent) !important;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent),
+      0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent) !important;
+    transform: translateY(-2px) !important;
+    background: color-mix(in srgb, var(--accent) 8%, var(--card)) !important;
   }
 
   &:nth-child(3) {

@@ -285,16 +285,16 @@ export interface EmailContact {
 
 /**
  * Email configuration - required when type is 'mail'
- * Must include contact, subject, and body
+ * Must include subject and body. Contact is optional - can generate email with just title and body.
  */
 export interface EmailConfig {
-  /** Contact information - required */
-  contact: EmailContact;
-  /** Email subject - required */
+  /** Contact information - optional, allows generating email with just subject and body */
+  contact?: EmailContact;
+  /** Email subject (title) - required */
   subject: string;
   /** Email body - required */
   body: string;
-  /** Direct recipient email(s) - optional, defaults to contact.email */
+  /** Direct recipient email(s) - optional, defaults to contact.email if contact is provided */
   to?: string | string[];
   /** CC recipient(s) - optional */
   cc?: string | string[];

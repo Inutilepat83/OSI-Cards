@@ -30,8 +30,8 @@ export class SectionLoaderService {
       canHandle: () => true,
       loadComponent: async () =>
         (
-          await import('projects/osi-cards-lib/src/lib/components/sections/info-section/info-section.component')
-        ).InfoSectionComponent,
+          await import('projects/osi-cards-lib/src/lib/components/sections/overview-section/overview-section.component')
+        ).OverviewSectionComponent,
     });
 
     // Analytics section - from library
@@ -153,15 +153,6 @@ export class SectionLoaderService {
         ).ChartSectionComponent,
     });
 
-    // Overview section - from library
-    this.registry.register('overview', {
-      canHandle: () => true,
-      loadComponent: async () =>
-        (
-          await import('projects/osi-cards-lib/src/lib/components/sections/overview-section/overview-section.component')
-        ).OverviewSectionComponent,
-    });
-
     // Quotation section - from library
     this.registry.register(
       'quotation',
@@ -218,15 +209,6 @@ export class SectionLoaderService {
           await import('projects/osi-cards-lib/src/lib/components/sections/social-media-section/social-media-section.component')
         ).SocialMediaSectionComponent,
     });
-
-    // Fallback section - from library
-    this.registry.register('fallback', {
-      canHandle: () => true,
-      loadComponent: async () =>
-        (
-          await import('projects/osi-cards-lib/src/lib/components/sections/fallback-section/fallback-section.component')
-        ).FallbackSectionComponent,
-    });
   }
 
   /**
@@ -246,9 +228,9 @@ export class SectionLoaderService {
     try {
       return await componentPromise;
     } catch (error) {
-      // If loading fails, return fallback component
+      // If loading fails, return info component
       console.error(`Failed to load component for type: ${sectionType}`, error);
-      return this.registry.getComponentType('fallback');
+      return this.registry.getComponentType('info');
     }
   }
 

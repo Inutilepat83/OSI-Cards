@@ -501,7 +501,7 @@ export function validateCardConfig(config: unknown): ValidationResult<Record<str
  */
 function sanitizeSection(section: unknown): Record<string, unknown> {
   if (!section || typeof section !== 'object') {
-    return { title: '', type: 'fallback' };
+    return { title: '', type: 'list' };
   }
 
   const sectionObj = section as Record<string, unknown>;

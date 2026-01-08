@@ -170,7 +170,13 @@
 .ai-card-surface {
   // Use theme variables, but ensure they're applied with proper specificity
   // The theme mixins set these, but we need to ensure they're not overridden
-  border: var(--osi-card-border, 1px solid rgba(255, 255, 255, 0.08)) !important;
+  border: var(--osi-card-border, 1px solid rgba(255, 121, 0, 0.2)) !important;
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    border: var(
+      --osi-card-border,
+      1px solid color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent)
+    ) !important;
+  }
   background: var(--osi-card-background, rgba(20, 20, 20, 0.6)) !important;
   backdrop-filter: var(--osi-card-backdrop-filter, blur(12px)) !important;
   -webkit-backdrop-filter: var(--osi-card-backdrop-filter, blur(12px)) !important;
@@ -179,12 +185,13 @@
 }
 
 .ai-card-surface:hover {
-  border: var(--osi-card-border-hover, 1px solid rgba(255, 121, 0, 0.5)) !important;
+  border: var(--osi-card-border-hover, 1px solid var(--color-brand, #ff7900)) !important;
   background: var(--osi-card-background-hover, rgba(30, 30, 30, 0.8)) !important;
   box-shadow: var(
     --osi-card-shadow-hover,
     0 20px 40px -5px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 121, 0, 0.2)
+    0 0 24px rgba(255, 121, 0, 0.5),
+    0 0 0 1px rgba(255, 121, 0, 0.3)
   ) !important;
 }
 

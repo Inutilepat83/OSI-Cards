@@ -82,9 +82,9 @@ export function createAnalyticsDashboard(options: AnalyticsDashboardOptions): AI
     ...(dashboardType || dataSource || updateFrequency || timeRange
       ? [
           {
-            id: 'analytics-overview',
-            title: 'Analytics Overview',
-            type: 'info' as const,
+            id: 'analytics-info',
+            title: 'Analytics Information',
+            type: 'analytics' as const,
             fields: [
               ...(dashboardType
                 ? [{ id: 'dashboard-type', label: 'Dashboard Type', value: dashboardType }]

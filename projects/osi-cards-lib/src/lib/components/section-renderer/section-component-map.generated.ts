@@ -13,16 +13,13 @@ import { BrandColorsSectionComponent } from '../sections/brand-colors-section/br
 import { ChartSectionComponent } from '../sections/chart-section/chart-section.component';
 import { ContactCardSectionComponent } from '../sections/contact-card-section/contact-card-section.component';
 import { EventSectionComponent } from '../sections/event-section/event-section.component';
-import { FallbackSectionComponent } from '../sections/fallback-section/fallback-section.component';
 import { FaqSectionComponent } from '../sections/faq-section/faq-section.component';
 import { FinancialsSectionComponent } from '../sections/financials-section/financials-section.component';
 import { GallerySectionComponent } from '../sections/gallery-section/gallery-section.component';
-import { InfoSectionComponent } from '../sections/info-section/info-section.component';
 import { ListSectionComponent } from '../sections/list-section/list-section.component';
 import { MapSectionComponent } from '../sections/map-section/map-section.component';
 import { NetworkCardSectionComponent } from '../sections/network-card-section/network-card-section.component';
 import { NewsSectionComponent } from '../sections/news-section/news-section.component';
-import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
 import { ProductSectionComponent } from '../sections/product-section/product-section.component';
 import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
 import { SocialMediaSectionComponent } from '../sections/social-media-section/social-media-section.component';
@@ -31,6 +28,7 @@ import { TableSectionComponent } from '../sections/table-section/table-section.c
 import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
 import { TimelineSectionComponent } from '../sections/timeline-section/timeline-section.component';
 import { VideoSectionComponent } from '../sections/video-section/video-section.component';
+import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
 
 /**
  * Map of section types to their component classes
@@ -44,11 +42,9 @@ export const SECTION_COMPONENT_MAP: Record<SectionType, Type<BaseSectionComponen
   'chart': ChartSectionComponent,
   'contact-card': ContactCardSectionComponent,
   'event': EventSectionComponent,
-  'fallback': FallbackSectionComponent,
   'faq': FaqSectionComponent,
   'financials': FinancialsSectionComponent,
   'gallery': GallerySectionComponent,
-  'info': InfoSectionComponent,
   'list': ListSectionComponent,
   'map': MapSectionComponent,
   'network-card': NetworkCardSectionComponent,

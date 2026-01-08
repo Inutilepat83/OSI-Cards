@@ -219,8 +219,8 @@
   text-align: center;
 
   .metric-value {
-    font-size: var(--metric-value-size, 1.5rem);
-    font-weight: var(--metric-value-weight, 700);
+    font-size: var(--metric-value-size, var(--text-2xl));
+    font-weight: var(--metric-value-weight, var(--font-bold));
     margin-bottom: 0.25rem;
   }
 

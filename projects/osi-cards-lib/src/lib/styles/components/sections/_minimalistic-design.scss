@@ -72,18 +72,15 @@
   }
 }
 
-// Minimal card accent - left border only
+// Minimal card accent - no left border
 @mixin minimal-card-accent {
   background: transparent;
   border: none;
-  border-left: var(--minimal-accent-line) solid var(--accent);
   padding: var(--minimal-card-padding);
-  padding-left: calc(var(--minimal-card-padding) + 4px);
   transition: all 200ms var(--ease-out);
 
   &:hover {
     background: var(--minimal-surface-hover);
-    padding-left: calc(var(--minimal-card-padding) + 6px);
   }
 }
 

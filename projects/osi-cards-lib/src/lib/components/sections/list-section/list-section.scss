@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -25,47 +26,38 @@
 .list-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
-// Container
+// Container - minimal styling, design moved to section-item
 .list-container {
-  @include card;
   width: 100%; // Ensure full width
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 12px)
+  box-sizing: border-box; // Include padding in width
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
-  box-sizing: border-box; // Include padding in width
-  // Background inherited from @include card mixin
+  gap: var(--osi-section-item-gap) !important;
 }
 
-// List Item
-.list-item {
+// Section Item - apply card design to items
+.section-item {
+  @include card("normal");
   width: 100%; // Ensure full width expansion
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 10-12px)
-  border-radius: var(--radius-sm);
   display: flex;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   box-sizing: border-box; // Include padding in width
-  transition:
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-  cursor: pointer;
+  // Margin removed - parent container has gap: 10px
   -webkit-tap-highlight-color: transparent;
 
+  // Unified hover effect
+  @include section-card-hover;
+
   &:not(:last-child) {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
-    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    // Margin removed - parent container has gap: 10px
   }
 
   &:hover {
-    background: var(--surface-raised);
-
-    .list-bullet {
+    .list-bullet,
+    .list-icon {
       color: var(--accent);
       opacity: 1;
     }
@@ -75,26 +67,41 @@
     }
   }
 
-  &:active {
-    transform: translateY(1px);
-  }
-
   &:focus-visible {
     outline: 2px solid rgba(var(--accent-rgb), 0.7);
     outline-offset: 2px;
   }
 }
 
-// Bullet
+// Bullet - fallback when no icon is provided
 .list-bullet {
   font-size: var(--text-lg);
   color: var(--accent);
   opacity: 0.6;
   line-height: 1;
   font-weight: var(--font-bold);
-  transition: all 200ms var(--ease-out);
-  margin-top: 2px;
+  transition:
+    color var(--osi-section-item-transition),
+    opacity var(--osi-section-item-transition);
+  margin-top: var(--osi-spacing-2px);
   flex-shrink: 0;
+}
+
+// Icon - uses emoji or icon from item data
+.list-icon {
+  font-size: var(--text-2xl);
+  line-height: 1;
+  transition:
+    color var(--osi-section-item-transition),
+    opacity var(--osi-section-item-transition);
+  margin-top: var(--osi-spacing-2px);
+  flex-shrink: 0;
+  opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 // Content
@@ -102,7 +109,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
   min-width: 0;
   width: 100%; // Ensure full width expansion
   box-sizing: border-box;
@@ -113,7 +120,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
+  gap: var(--osi-section-item-gap); // Standardized gap token
   flex-wrap: wrap;
 }
 
@@ -121,12 +128,12 @@
   @include heading(6);
   flex: 1;
   margin: 0;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
 }
 
 .list-badges {
   display: flex;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
   flex-shrink: 0;
 }
 
@@ -134,18 +141,20 @@
 .list-description-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px);
+  gap: var(--osi-section-item-gap-xs); // Standardized gap token
 }
 
-// Description
+// Description - improved contrast for better readability
 .list-description {
   @include body-text("small");
   @include expandable-text(2); // Show 2 lines by default
-  color: var(--muted-foreground);
+  // Enhanced contrast - using foreground with reduced opacity instead of muted-foreground
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-weight: var(--font-normal);
 
   &--expanded {
     display: block;
@@ -159,12 +168,12 @@
   background: none;
   border: none;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  padding: var(--osi-section-item-padding-compact) 0;
   text-decoration: underline;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity var(--osi-section-item-transition);
 
   &:hover {
     opacity: 0.8;
@@ -173,38 +182,32 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--osi-radius-xs);
   }
 }
 
 // Expanded item reveals full description without changing global padding
 .list-item.expanded {
-  background: var(--surface-raised);
+  background: var(--osi-section-item-background-hover);
+  border-color: var(--osi-section-item-border-hover);
+  box-shadow: var(--osi-section-item-shadow-hover);
 }
 
-// Responsive
+// Responsive - mixin handles spacing, only override layout if needed
 @include responsive-down("sm") {
   .list-container {
-    padding: var(--osi-spacing-compact-sm, 6px);
-    gap: var(--osi-spacing-compact-xs, 2px);
     max-width: 100%;
     overflow-x: hidden;
   }
 
   .list-item {
-    padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
     max-width: 100%;
     overflow-x: hidden;
-
-    &:not(:last-child) {
-      padding-bottom: var(--osi-spacing-compact-xs, 2px);
-      margin-bottom: var(--osi-spacing-compact-xs, 2px);
-    }
   }
 
   .list-header {
     flex-direction: column;
-    gap: var(--osi-spacing-compact-xs, 2px);
+    gap: var(--osi-section-item-gap-xs); // Standardized gap token
   }
 
   .list-content {
@@ -222,9 +225,11 @@
 @media (prefers-reduced-motion: reduce) {
   .list-item {
     transition: none;
+    transform: none !important;
   }
 
-  .list-bullet {
+  .list-bullet,
+  .list-icon {
     transition: none;
   }
 }

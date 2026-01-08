@@ -203,6 +203,30 @@ export class ValidationService {
   }
 
   /**
+   * Validate JSON card input string
+   */
+  validateJsonCardInput(jsonString: string): {
+    valid: boolean;
+    data?: AICardConfig;
+    errors?: string[];
+  } {
+    try {
+      const parsed = JSON.parse(jsonString);
+      const result = this.validateCard(parsed);
+      return {
+        valid: result.success,
+        data: result.success && result.data ? result.data : undefined,
+        errors: result.success ? undefined : result.errorMessages,
+      };
+    } catch (error) {
+      return {
+        valid: false,
+        errors: [`JSON parse error: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      };
+    }
+  }
+
+  /**
    * Validate multiple cards
    */
   validateCards(cards: unknown[]): {

@@ -143,25 +143,6 @@ export function createMockItem(
 }
 
 /**
- * Create a mock info section
- */
-export function createMockInfoSection(overrides: DeepPartial<CardSection> = {}): CardSection {
-  return deepMerge<CardSection>(
-    {
-      id: generateId('section'),
-      type: 'info',
-      title: 'Information',
-      fields: [
-        createMockField({ label: 'Status', value: 'Active' }) as CardField,
-        createMockField({ label: 'Created', value: new Date().toISOString() }) as CardField,
-        createMockField({ label: 'Updated', value: new Date().toISOString() }) as CardField,
-      ],
-    },
-    overrides
-  );
-}
-
-/**
  * Create a mock analytics section
  */
 export function createMockAnalyticsSection(overrides: DeepPartial<CardSection> = {}): CardSection {
@@ -222,17 +203,16 @@ export function createMockActionsSection(overrides: DeepPartial<CardSection> = {
  * Create a mock section of any type
  */
 export function createMockSection(
-  type: string = 'info',
+  type: string = 'analytics',
   overrides: DeepPartial<CardSection> = {}
 ): CardSection {
   const factories: Record<string, (o: DeepPartial<CardSection>) => CardSection> = {
-    info: createMockInfoSection,
     analytics: createMockAnalyticsSection,
     list: createMockListSection,
     actions: createMockActionsSection,
   };
 
-  const factory = factories[type] || createMockInfoSection;
+  const factory = factories[type] || createMockAnalyticsSection;
   return factory(overrides);
 }
 
@@ -251,7 +231,7 @@ export function createMockCard(overrides: DeepPartial<AICardConfig> = {}): AICar
       id,
       cardTitle: `Test Card ${id}`,
       description: 'A test card for unit testing',
-      sections: [createMockInfoSection(), createMockAnalyticsSection(), createMockListSection()],
+      sections: [createMockAnalyticsSection(), createMockListSection()],
       theme: {
         preset: 'default',
       },
@@ -519,10 +499,6 @@ export class CardBuilder {
     }
     this.card.sections.push(section);
     return this;
-  }
-
-  withInfoSection(overrides?: DeepPartial<CardSection>): this {
-    return this.withSection(createMockInfoSection(overrides));
   }
 
   withAnalyticsSection(overrides?: DeepPartial<CardSection>): this {

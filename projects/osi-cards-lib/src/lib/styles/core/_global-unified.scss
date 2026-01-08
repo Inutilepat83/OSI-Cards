@@ -44,9 +44,7 @@
 
   // Enhanced focus indicators for accessibility
   &:focus-visible {
-    outline: 2px solid var(--color-brand, #ff7900);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: none;
   }
 
   &:focus:not(:focus-visible) {
@@ -62,9 +60,7 @@
 & textarea,
 & [tabindex]:not([tabindex="-1"]) {
   &:focus-visible {
-    outline: 2px solid var(--color-brand, #ff7900);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: none;
   }
 
   &:focus:not(:focus-visible) {

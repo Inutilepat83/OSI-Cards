@@ -9,10 +9,6 @@
  * ```typescript
  * function handleSection(section: DiscriminatedSection): void {
  *   switch (section.type) {
- *     case 'info':
- *       // TypeScript knows section is InfoSection here
- *       console.log(section.fields);
- *       break;
  *     case 'chart':
  *       // TypeScript knows section is ChartSection here
  *       console.log(section.chartData);
@@ -77,17 +73,6 @@ export interface BaseSectionProps {
 // ============================================================================
 // FIELD-BASED SECTIONS
 // ============================================================================
-
-/**
- * Info Section - displays key-value pairs
- */
-export interface InfoSection extends BaseSectionProps {
-  type: 'info';
-  fields: CardField[];
-  items?: never;
-  chartData?: never;
-  chartType?: never;
-}
 
 /**
  * Analytics Section - displays metrics with trends
@@ -169,19 +154,6 @@ export interface ProductSection extends BaseSectionProps {
   price?: string | number;
   /** Product SKU */
   sku?: string;
-}
-
-/**
- * Overview Section - displays summary information
- */
-export interface OverviewSection extends BaseSectionProps {
-  type: 'overview';
-  fields: CardField[];
-  items?: never;
-  chartData?: never;
-  chartType?: never;
-  /** Overview text content */
-  content?: string;
 }
 
 /**
@@ -423,23 +395,6 @@ export interface ChartSection extends BaseSectionProps {
 }
 
 // ============================================================================
-// FALLBACK SECTION
-// ============================================================================
-
-/**
- * Fallback Section - handles unknown section types
- */
-export interface FallbackSection extends BaseSectionProps {
-  type: 'fallback';
-  fields?: CardField[];
-  items?: CardItem[];
-  chartData?: ChartData;
-  chartType?: 'bar' | 'line' | 'pie' | 'doughnut';
-  /** Original type that was not recognized */
-  originalType?: string;
-}
-
-// ============================================================================
 // DISCRIMINATED UNION
 // ============================================================================
 
@@ -450,7 +405,6 @@ export interface FallbackSection extends BaseSectionProps {
  * TypeScript will ensure all section types are handled in switch statements.
  */
 export type DiscriminatedSection =
-  | InfoSection
   | AnalyticsSection
   | ContactCardSection
   | NetworkCardSection
@@ -462,7 +416,6 @@ export type DiscriminatedSection =
   | ChartSection
   | ProductSection
   | SolutionsSection
-  | OverviewSection
   | QuotationSection
   | TextReferenceSection
   | BrandColorsSection
@@ -471,19 +424,11 @@ export type DiscriminatedSection =
   | TimelineSection
   | GallerySection
   | FaqSection
-  | VideoSection
-  | FallbackSection;
+  | VideoSection;
 
 // ============================================================================
 // TYPE GUARDS
 // ============================================================================
-
-/**
- * Type guard for Info Section
- */
-export function isInfoSection(section: DiscriminatedSection): section is InfoSection {
-  return section.type === 'info';
-}
 
 /**
  * Type guard for Analytics Section
@@ -556,13 +501,6 @@ export function isSolutionsSection(section: DiscriminatedSection): section is So
 }
 
 /**
- * Type guard for Overview Section
- */
-export function isOverviewSection(section: DiscriminatedSection): section is OverviewSection {
-  return section.type === 'overview';
-}
-
-/**
  * Type guard for Quotation Section
  */
 export function isQuotationSection(section: DiscriminatedSection): section is QuotationSection {
@@ -600,25 +538,16 @@ export function isSocialMediaSection(section: DiscriminatedSection): section is 
 }
 
 /**
- * Type guard for Fallback Section
- */
-export function isFallbackSection(section: DiscriminatedSection): section is FallbackSection {
-  return section.type === 'fallback';
-}
-
-/**
  * Type guard for field-based sections
  */
 export function hasFields(
   section: DiscriminatedSection
 ): section is
-  | InfoSection
   | AnalyticsSection
   | ContactCardSection
   | MapSection
   | FinancialsSection
   | ProductSection
-  | OverviewSection
   | QuotationSection
   | TextReferenceSection
   | BrandColorsSection {
@@ -654,7 +583,6 @@ export function hasChartData(section: DiscriminatedSection): section is ChartSec
  * ```typescript
  * function handleSection(section: DiscriminatedSection): string {
  *   switch (section.type) {
- *     case 'info': return 'Info';
  *     case 'analytics': return 'Analytics';
  *     // ... all other cases
  *     default:
@@ -672,7 +600,6 @@ export function assertNever(x: never): never {
  * Useful for creating type-safe section handlers.
  */
 export type SectionTypeMap = {
-  info: InfoSection;
   analytics: AnalyticsSection;
   'contact-card': ContactCardSection;
   'network-card': NetworkCardSection;
@@ -684,7 +611,6 @@ export type SectionTypeMap = {
   chart: ChartSection;
   product: ProductSection;
   solutions: SolutionsSection;
-  overview: OverviewSection;
   quotation: QuotationSection;
   'text-reference': TextReferenceSection;
   'brand-colors': BrandColorsSection;
@@ -694,7 +620,6 @@ export type SectionTypeMap = {
   gallery: GallerySection;
   faq: FaqSection;
   video: VideoSection;
-  fallback: FallbackSection;
 };
 
 /**
@@ -705,4 +630,4 @@ export type ExtractSectionType<T extends DiscriminatedSection> = T['type'];
 /**
  * Get discriminated section type from section type string
  */
-export type GetDiscriminatedSection<T extends SectionType> = SectionTypeMap[T];
+export type GetDiscriminatedSection<T extends keyof SectionTypeMap> = SectionTypeMap[T];

@@ -26,6 +26,7 @@ export * from './services/section-completion.service';
 export { ensureCardIds, removeAllIds, CardUtil } from './utils/card-utils';
 export * from './utils/error-messages';
 export * from './utils/validation.util';
+export * from './utils/result.util';
 // Note: Constants not exported to avoid StreamingStage conflict with components/cards
 // Import directly from './utils/constants' if needed
 

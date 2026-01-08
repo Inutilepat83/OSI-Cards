@@ -51,23 +51,6 @@ export function createMockSection(overrides: Partial<CardSection> = {}): CardSec
 }
 
 /**
- * Creates an info section with fields
- */
-export function createInfoSection(title: string, fields: Partial<CardField>[]): CardSection {
-  return {
-    id: `info-${Date.now()}`,
-    title,
-    type: 'info',
-    fields: fields.map((f, i) => ({
-      id: `field-${i}`,
-      label: 'Label',
-      value: 'Value',
-      ...f,
-    })),
-  };
-}
-
-/**
  * Creates an analytics section with metrics
  */
 export function createAnalyticsSection(

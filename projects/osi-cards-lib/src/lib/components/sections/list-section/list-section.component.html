@@ -3,8 +3,9 @@
   </lib-section-header>
 
   <div class="list-container" *ngIf="section.items?.length">
-    <div class="list-item" *ngFor="let item of section.items; let i = index" [class.expanded]="expandedIndex === i">
-      <span class="list-bullet">•</span>
+    <div class="section-item" *ngFor="let item of section.items; let i = index" [class.expanded]="expandedIndex === i">
+      <span class="list-icon" *ngIf="item.icon">{{ item.icon }}</span>
+      <span class="list-bullet" *ngIf="!item.icon">•</span>
       <div class="list-content">
         <div class="list-header">
           <h4 class="list-title">{{ item.title }}</h4>

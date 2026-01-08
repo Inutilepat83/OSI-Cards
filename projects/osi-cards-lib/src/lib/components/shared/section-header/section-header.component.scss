@@ -12,8 +12,8 @@
 .section-header {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 12px;
+  gap: var(--osi-section-item-gap-xs);
+  margin-bottom: var(--osi-spacing-md);
   align-items: flex-start;
   text-align: left;
   max-width: 100%;
@@ -25,13 +25,13 @@
 .section-title {
   margin: 0;
   padding: 0;
-  color: var(--foreground, #f2f2f2);
-  line-height: 1.3;
-  font-size: calc(1.1rem - 4px);
-  letter-spacing: -0.01em;
-  font-weight: 700;
+  font-size: var(--osi-section-title-font-size);
+  font-weight: var(--osi-section-title-font-weight);
+  letter-spacing: var(--osi-section-title-letter-spacing);
+  line-height: var(--osi-section-title-line-height);
+  color: var(--osi-section-title-color);
   position: relative;
-  transition: color 0.22s ease;
+  transition: var(--osi-section-title-transition);
   text-align: left;
   max-width: 100%;
   word-wrap: break-word;
@@ -49,50 +49,49 @@
     content: "";
     position: absolute;
     left: 0;
-    bottom: -6px;
-    width: 36px;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 2px;
+    bottom: calc(var(--osi-spacing-6px) * -1);
+    width: var(--osi-section-title-underline-length);
+    height: var(--osi-section-title-underline-height);
+    background: var(--osi-section-title-underline-color);
+    border-radius: var(--osi-radius-xs);
     opacity: 0.55;
     transition:
-      width 0.22s ease,
-      opacity 0.22s ease;
+      width var(--osi-section-title-transition),
+      opacity var(--osi-section-title-transition);
   }
 
   &:hover::before {
-    width: 56px;
+    width: var(--osi-section-title-underline-hover-length);
     opacity: 1;
   }
 
   &:is(h1) {
-    font-size: 1.6rem;
+    font-size: var(--osi-section-title-font-size-2xl);
   }
   &:is(h2) {
-    font-size: 1.3rem;
+    font-size: var(--osi-section-title-font-size-xl);
   }
   &:is(h3) {
-    font-size: calc(1.1rem - 4px);
-    letter-spacing: -0.01em;
+    font-size: var(--osi-section-title-font-size-md); // Reduced from lg to md
   }
   &:is(h4) {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: var(--osi-section-title-font-size-md);
+    font-weight: var(--osi-font-semibold);
   }
   &:is(h5) {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: var(--osi-section-title-font-size-sm);
+    font-weight: var(--osi-font-semibold);
   }
   &:is(h6) {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--osi-section-title-font-size-xs);
+    font-weight: var(--osi-font-semibold);
   }
 }
 
 .section-description-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px);
+  gap: var(--osi-section-item-gap-xs);
   max-width: 100%;
   width: 100%;
 }
@@ -102,10 +101,10 @@
   padding: 0;
   padding-top: 0;
   margin-top: 0;
-  font-size: calc(0.8rem - 1px);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--muted-foreground, rgba(255, 255, 255, 0.7));
+  font-size: var(--osi-section-description-font-size);
+  font-weight: var(--osi-section-description-font-weight);
+  line-height: var(--osi-section-description-line-height);
+  color: var(--osi-section-description-color);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -115,11 +114,16 @@
   text-align: left;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  transition: var(--osi-section-description-transition);
 
   &--expanded {
     display: block;
     -webkit-line-clamp: unset;
     overflow: visible;
+  }
+
+  &:hover {
+    color: var(--osi-section-description-color-hover);
   }
 }
 
@@ -127,57 +131,57 @@
   align-self: flex-start;
   background: none;
   border: none;
-  color: var(--accent);
-  font-size: 0.7rem;
-  font-weight: var(--font-medium);
+  color: var(--accent, var(--osi-accent));
+  font-size: var(--osi-text-xs);
+  font-weight: var(--osi-font-medium);
   cursor: pointer;
-  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  padding: var(--osi-section-item-gap-xs) 0;
   text-decoration: underline;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity var(--osi-duration-normal) var(--osi-ease-out);
 
   &:hover {
     opacity: 0.8;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: var(--osi-spacing-2px) solid var(--accent, var(--osi-accent));
+    outline-offset: var(--osi-spacing-2px);
+    border-radius: var(--osi-radius-xs);
   }
 }
 
 @media (max-width: 640px) {
   .section-header {
-    margin-bottom: 10px;
+    margin-bottom: var(--osi-spacing-10px);
   }
 
   .section-title {
     &:is(h1) {
-      font-size: 1.4rem;
+      font-size: var(--osi-section-title-font-size-xl);
     }
     &:is(h2) {
-      font-size: 1.1rem;
+      font-size: var(--osi-section-title-font-size-md);
     }
     &:is(h3) {
-      font-size: 0.9rem;
+      font-size: var(--osi-section-title-font-size-sm);
     }
   }
 
   .section-description {
-    font-size: 0.65rem;
+    font-size: var(--osi-text-xs);
   }
 }
 
 :host-context([data-compact]) {
   .section-header {
-    margin-bottom: 6px;
+    margin-bottom: var(--osi-spacing-6px);
   }
 
   .section-title {
-    font-size: 0.9rem;
+    font-size: var(--osi-section-title-font-size-md);
   }
 
   .section-description {
-    font-size: 0.65rem;
+    font-size: var(--osi-text-xs);
   }
 }

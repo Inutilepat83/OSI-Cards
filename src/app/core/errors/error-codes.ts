@@ -97,7 +97,7 @@ export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
 // ERROR METADATA
 // =============================================================================
 
-interface ErrorMetadata {
+interface IErrorMetadata {
   /** Human-readable error message */
   message: string;
   /** Detailed description */
@@ -112,7 +112,7 @@ interface ErrorMetadata {
   related?: ErrorCode[];
 }
 
-const ERROR_METADATA: Record<ErrorCode, ErrorMetadata> = {
+const ERROR_METADATA: Record<ErrorCode, IErrorMetadata> = {
   // Configuration Errors
   [ErrorCodes.INVALID_CARD_CONFIG]: {
     message: 'Invalid card configuration',
@@ -623,7 +623,7 @@ const ERROR_METADATA: Record<ErrorCode, ErrorMetadata> = {
 // OSI ERROR CLASS
 // =============================================================================
 
-export interface OsiErrorOptions {
+export interface IOsiErrorOptions {
   /** Additional error details */
   details?: string;
   /** Context data */
@@ -639,12 +639,12 @@ export interface OsiErrorOptions {
  */
 export class OsiError extends Error {
   public readonly code: ErrorCode;
-  public readonly metadata: ErrorMetadata;
+  public readonly metadata: IErrorMetadata;
   public readonly details?: string;
   public readonly context?: Record<string, unknown>;
   public readonly timestamp: number;
 
-  constructor(code: ErrorCode, options: OsiErrorOptions = {}) {
+  constructor(code: ErrorCode, options: IOsiErrorOptions = {}) {
     const metadata = ERROR_METADATA[code] || ERROR_METADATA[ErrorCodes.UNKNOWN_ERROR];
 
     super(metadata.message);
@@ -677,28 +677,28 @@ export class OsiError extends Error {
   /**
    * Get documentation URL for this error
    */
-  get docsUrl(): string {
+  public get docsUrl(): string {
     return this.metadata.docsUrl;
   }
 
   /**
    * Get recovery suggestions
    */
-  get suggestions(): string[] {
+  public get suggestions(): string[] {
     return this.metadata.suggestions;
   }
 
   /**
    * Get error severity
    */
-  get severity(): 'error' | 'warning' | 'info' {
+  public get severity(): 'error' | 'warning' | 'info' {
     return this.metadata.severity;
   }
 
   /**
    * Get full error message with details
    */
-  get fullMessage(): string {
+  public get fullMessage(): string {
     let message = `[${this.code}] ${this.message}`;
     if (this.details) {
       message += `: ${this.details}`;
@@ -719,14 +719,14 @@ export class OsiError extends Error {
     );
 
     if (this.details) {
-      console.log('Details:', this.details);
+      console.warn('Details:', this.details);
     }
 
     if (this.context) {
-      console.log('Context:', this.context);
+      console.warn('Context:', this.context);
     }
 
-    console.log('Documentation:', this.docsUrl);
+    console.warn('Documentation:', this.docsUrl);
     console.log('Suggestions:', this.suggestions);
   }
 
@@ -755,7 +755,7 @@ export class OsiError extends Error {
 /**
  * Get error metadata by code
  */
-export function getErrorMetadata(code: ErrorCode): ErrorMetadata {
+export function getErrorMetadata(code: ErrorCode): IErrorMetadata {
   return ERROR_METADATA[code] || ERROR_METADATA[ErrorCodes.UNKNOWN_ERROR];
 }
 

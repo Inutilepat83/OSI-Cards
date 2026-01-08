@@ -24,12 +24,12 @@
 
 // Table Container
 .table-container {
-  @include card;
+  @include card("normal"); // Use normal spacing for consistency
   width: 100%;
-  padding: var(--osi-spacing-compact-sm, 6px);
+  // Padding handled by card('normal') mixin - 12px uniform
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px);
+  gap: var(--osi-section-item-gap);
   box-sizing: border-box;
 }
 
@@ -38,21 +38,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--osi-spacing-compact-md, 12px);
+  gap: var(--osi-section-item-gap);
   flex-wrap: wrap;
-  padding-bottom: var(--osi-spacing-compact-sm, 6px);
+  padding-bottom: var(--osi-section-item-padding-compact);
   border-bottom: 1px solid var(--border);
 }
 
 .table-search {
   flex: 1;
-  min-width: 200px;
+  min-width: var(--osi-section-item-grid-min-xl);
   max-width: 400px;
 }
 
 .table-search-input {
   width: 100%;
-  padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
+  padding: var(--osi-section-item-padding-compact) var(--osi-section-item-padding-compact);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--background);
@@ -126,7 +126,7 @@
 }
 
 .table-header-cell {
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px);
+  padding: var(--osi-section-item-padding-compact) var(--osi-section-item-padding-normal); // 6px vertical, 12px horizontal for consistency
   text-align: left;
   font-weight: var(--font-semibold);
   color: var(--foreground);
@@ -156,12 +156,12 @@
 
 .table-header-label {
   display: inline-block;
-  margin-right: var(--osi-spacing-compact-xs, 2px);
+  margin-right: var(--osi-section-item-gap-xs);
 }
 
 .table-sort-indicator {
   display: inline-block;
-  margin-left: var(--osi-spacing-compact-xs, 2px);
+  margin-left: var(--osi-section-item-gap-xs);
   color: var(--muted-foreground);
   font-size: var(--text-xs);
   transition: color var(--duration-base) var(--ease-out);
@@ -190,7 +190,7 @@
 }
 
 .table-cell {
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px);
+  padding: var(--osi-section-item-padding-compact) var(--osi-section-item-padding-normal); // 6px vertical, 12px horizontal for consistency
   color: var(--foreground);
   vertical-align: middle;
 
@@ -213,22 +213,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px);
-  padding-top: var(--osi-spacing-compact-sm, 6px);
+  gap: var(--osi-section-item-gap-xs);
+  padding-top: var(--osi-section-item-padding-compact);
   border-top: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
 .table-pagination-pages {
   display: flex;
-  gap: var(--osi-spacing-compact-xs, 2px);
+  gap: var(--osi-section-item-gap-xs);
   align-items: center;
 }
 
 .table-pagination-btn {
   min-width: 32px;
   height: 32px;
-  padding: 0 var(--osi-spacing-compact-sm, 6px);
+  padding: 0 var(--osi-section-item-padding-compact);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--background);
@@ -267,7 +267,7 @@
     background: transparent;
     cursor: default;
     min-width: auto;
-    padding: 0 var(--osi-spacing-compact-xs, 2px);
+    padding: 0 var(--osi-section-item-padding-compact);
 
     &:hover {
       background: transparent;
@@ -283,7 +283,7 @@
 // Responsive
 @include responsive-down("md") {
   .table-container {
-    padding: var(--osi-spacing-compact-md, 12px);
+    // Padding handled by card('normal') mixin
   }
 
   .table-controls {
@@ -298,17 +298,17 @@
 
 @include responsive-down("sm") {
   .table-container {
-    padding: var(--osi-spacing-compact-sm, 6px);
+    // Padding handled by card('normal') mixin
   }
 
   .table-header-cell,
   .table-cell {
-    padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
+    padding: var(--osi-section-item-padding-compact) var(--osi-section-item-padding-normal); // 6px vertical, 12px horizontal for consistency
     font-size: var(--text-xs);
   }
 
   .table-pagination {
-    gap: var(--osi-spacing-compact-xs, 2px);
+    gap: var(--osi-section-item-gap-xs);
   }
 
   .table-pagination-btn {
@@ -318,7 +318,7 @@
   }
 
   .table-pagination-pages {
-    gap: var(--osi-spacing-compact-xs, 2px);
+    gap: var(--osi-section-item-gap-xs);
   }
 }
 

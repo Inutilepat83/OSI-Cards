@@ -4,19 +4,19 @@
 
   <div class="grid" *ngIf="section.fields?.length">
     <div
-      class="card"
-      [class.card--target]="isTarget(c)"
-      [class.card--note-expanded]="isNoteExpanded(c)"
+      class="section-item"
+      [class.section-item--target]="isTarget(c)"
+      [class.section-item--note-expanded]="isNoteExpanded(c)"
       *ngFor="let c of section.fields"
     >
       <!-- Target label (shown on hover) -->
       <span class="target-label" *ngIf="isTarget(c)">Target</span>
 
       <!-- 2-column layout: left (name, title, actions) | right (note) -->
-      <div class="card__content">
+      <div class="section-item__content">
         <!-- Left column: name, title, department, actions -->
-        <div class="card__left">
-          <div class="card__left-top">
+        <div class="section-item__left">
+          <div class="section-item__left-top">
             <h4 class="name">{{ getContactName(c) }}</h4>
             <p class="title" *ngIf="getContactRole(c)">{{ getContactRole(c) }}</p>
             <lib-badge *ngIf="c.department" class="department-badge" variant="primary" size="sm">
@@ -25,7 +25,7 @@
           </div>
 
           <!-- Bottom section: influence and actions -->
-          <div class="card__left-bottom">
+          <div class="section-item__left-bottom">
             <!-- Score indicator (1-10) -->
             <div class="score-indicator" *ngIf="getScore(c) !== null">
               <span class="score-label">Influence</span>
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Right column: note -->
-        <div class="card__right" (click)="$event.stopPropagation()">
+        <div class="section-item__right" (click)="$event.stopPropagation()">
           <div class="note" *ngIf="hasNote(c)" [class.note--expanded]="isNoteExpanded(c)">
             <span class="note__label">Note</span>
             <p class="note__text" [class.note__text--expanded]="isNoteExpanded(c)">{{ getNote(c) }}</p>

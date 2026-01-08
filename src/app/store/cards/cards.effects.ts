@@ -2,13 +2,22 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, take, withLatestFrom } from 'rxjs/operators';
-import * as CardsActions from './cards.state';
-import { CardDataService, PerformanceService } from '../../core';
+import {
+  catchError,
+  map,
+  mergeMap,
+  retry,
+  switchMap,
+  take,
+  takeUntil,
+  withLatestFrom,
+} from 'rxjs/operators';
+import { CardDataService, CircuitBreakerService, PerformanceService } from '../../core';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared';
 import { OptimisticUpdatesService } from '../../shared/services/optimistic-updates.service';
 import * as CardsSelectors from './cards.selectors';
+import * as CardsActions from './cards.state';
 
 type GenerateCardAction = ReturnType<typeof CardsActions.generateCard>;
 type LoadTemplateAction = ReturnType<typeof CardsActions.loadTemplate>;
@@ -23,35 +32,56 @@ export class CardsEffects {
   private readonly performanceService = inject(PerformanceService);
   private readonly store = inject(Store);
   private readonly optimisticUpdates = inject(OptimisticUpdatesService);
+  private readonly circuitBreaker: CircuitBreakerService = inject(CircuitBreakerService);
+  // CQRS: Command handlers (commented out - not yet used in effects)
+  // TODO: Integrate command handlers when migrating to full CQRS pattern
+  // private readonly createCardHandler = inject(CreateCardHandler);
+  // private readonly updateCardHandler = inject(UpdateCardHandler);
+  // private readonly deleteCardHandler = inject(DeleteCardHandler);
 
   loadCards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.loadCards),
-      mergeMap(() => {
+      switchMap(() => {
         const startTime = performance.now();
 
-        return this.cardConfigService.getAllCards().pipe(
-          map((cards: AICardConfig[]) => {
-            const totalDuration = performance.now() - startTime;
-            const totalSize = cards.reduce((sum, card) => sum + JSON.stringify(card).length, 0);
-
-            this.performanceService.recordMetric('loadCards', totalDuration, {
-              totalCards: cards.length,
-              totalSize,
-              avgSize: cards.length > 0 ? totalSize / cards.length : 0,
-            });
-
-            // Dispatch all cards at once
-            return CardsActions.loadCardsSuccess({ cards });
-          }),
-          catchError((error) => {
-            const duration = performance.now() - startTime;
-            this.performanceService.recordMetric('loadCards', duration, {
-              error: true,
-            });
-            return of(CardsActions.loadCardsFailure({ error: String(error) }));
+        return (this.circuitBreaker as CircuitBreakerService)
+          .execute('card-data-service', () => this.cardConfigService.getAllCards(), {
+            failureThreshold: 5,
+            timeout: 60000,
+            operationTimeout: 30000,
           })
-        );
+          .pipe(
+            // Retry with exponential backoff for transient errors
+            retry({
+              count: 3,
+              delay: (_error, retryCount) => {
+                // Exponential backoff: 1s, 2s, 4s
+                const delayMs = Math.pow(2, retryCount) * 1000;
+                return new Promise((resolve) => setTimeout(resolve, delayMs));
+              },
+            }),
+            map((cards: AICardConfig[]) => {
+              const totalDuration = performance.now() - startTime;
+              const totalSize = cards.reduce((sum, card) => sum + JSON.stringify(card).length, 0);
+
+              this.performanceService.recordMetric('loadCards', totalDuration, {
+                totalCards: cards.length,
+                totalSize,
+                avgSize: cards.length > 0 ? totalSize / cards.length : 0,
+              });
+
+              // Dispatch all cards at once
+              return CardsActions.loadCardsSuccess({ cards });
+            }),
+            catchError((error) => {
+              const duration = performance.now() - startTime;
+              this.performanceService.recordMetric('loadCards', duration, {
+                error: true,
+              });
+              return of(CardsActions.loadCardsFailure({ error: String(error) }));
+            })
+          );
       })
     )
   );
@@ -81,93 +111,111 @@ export class CardsEffects {
         const startTime = performance.now();
         // Use lazy loading: get specific card by type and variant instead of loading all cards of that type
         // This now uses instant cache-first loading
-        return this.cardConfigService.getCardByTypeAndVariant(cardType, variant).pipe(
-          map((template) => {
-            if (!template) {
+        return (this.circuitBreaker as CircuitBreakerService)
+          .execute(
+            'card-data-service',
+            () => this.cardConfigService.getCardByTypeAndVariant(cardType, variant),
+            {
+              failureThreshold: 5,
+              timeout: 60000,
+              operationTimeout: 30000,
+            }
+          )
+          .pipe(
+            // Retry with exponential backoff
+            retry({
+              count: 3,
+              delay: (_error, retryCount) => {
+                const delayMs = Math.pow(2, retryCount) * 1000;
+                return new Promise((resolve) => setTimeout(resolve, delayMs));
+              },
+            }),
+            map((template: AICardConfig | null) => {
+              if (!template) {
+                const duration = performance.now() - startTime;
+                this.performanceService.recordMetric('loadTemplate', duration, {
+                  cardType,
+                  variant,
+                  error: 'no_cards_found',
+                  lazyLoaded: true,
+                  cached: false,
+                });
+                return CardsActions.loadTemplateFailure({
+                  error: `No templates available for card type "${cardType}" variant ${variant}. The JSON file may be missing or invalid.`,
+                });
+              }
+
+              try {
+                const templateStartTime = performance.now();
+                const scrubbed = removeAllIds(template as AICardConfig);
+                const hydrated = ensureCardIds({ ...scrubbed });
+                delete hydrated.cardType;
+
+                const duration = performance.now() - startTime;
+                const processingTime = performance.now() - templateStartTime;
+                const isCached = duration < 10; // If loaded in < 10ms, it was from cache
+
+                this.performanceService.recordMetric('loadTemplate', duration, {
+                  cardType,
+                  variant,
+                  cardSize: JSON.stringify(template).length,
+                  processingTime,
+                  lazyLoaded: true,
+                  cached: isCached,
+                });
+
+                return CardsActions.loadTemplateSuccess({ template: hydrated });
+              } catch (processingError: unknown) {
+                const errorMessage =
+                  processingError instanceof Error
+                    ? processingError.message
+                    : 'Failed to process template';
+                const duration = performance.now() - startTime;
+                this.performanceService.recordMetric('loadTemplate', duration, {
+                  cardType,
+                  variant,
+                  error: 'processing_failed',
+                  lazyLoaded: true,
+                });
+                return CardsActions.loadTemplateFailure({
+                  error: `Failed to process template: ${errorMessage}`,
+                });
+              }
+            }),
+            catchError((error: unknown) => {
               const duration = performance.now() - startTime;
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              const statusCode =
+                error && typeof error === 'object' && 'status' in error
+                  ? (error as any).status
+                  : null;
+
               this.performanceService.recordMetric('loadTemplate', duration, {
                 cardType,
                 variant,
-                error: 'no_cards_found',
-                lazyLoaded: true,
-                cached: false,
-              });
-              return CardsActions.loadTemplateFailure({
-                error: `No templates available for card type "${cardType}" variant ${variant}. The JSON file may be missing or invalid.`,
-              });
-            }
-
-            try {
-              const templateStartTime = performance.now();
-              const scrubbed = removeAllIds(template);
-              const hydrated = ensureCardIds({ ...scrubbed });
-              delete hydrated.cardType;
-
-              const duration = performance.now() - startTime;
-              const processingTime = performance.now() - templateStartTime;
-              const isCached = duration < 10; // If loaded in < 10ms, it was from cache
-
-              this.performanceService.recordMetric('loadTemplate', duration, {
-                cardType,
-                variant,
-                cardSize: JSON.stringify(template).length,
-                processingTime,
-                lazyLoaded: true,
-                cached: isCached,
-              });
-
-              return CardsActions.loadTemplateSuccess({ template: hydrated });
-            } catch (processingError: unknown) {
-              const errorMessage =
-                processingError instanceof Error
-                  ? processingError.message
-                  : 'Failed to process template';
-              const duration = performance.now() - startTime;
-              this.performanceService.recordMetric('loadTemplate', duration, {
-                cardType,
-                variant,
-                error: 'processing_failed',
+                error: true,
+                errorMessage,
+                statusCode,
                 lazyLoaded: true,
               });
-              return CardsActions.loadTemplateFailure({
-                error: `Failed to process template: ${errorMessage}`,
-              });
-            }
-          }),
-          catchError((error: unknown) => {
-            const duration = performance.now() - startTime;
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            const statusCode =
-              error && typeof error === 'object' && 'status' in error
-                ? (error as any).status
-                : null;
 
-            this.performanceService.recordMetric('loadTemplate', duration, {
-              cardType,
-              variant,
-              error: true,
-              errorMessage,
-              statusCode,
-              lazyLoaded: true,
-            });
+              // Provide more helpful error messages
+              let userFriendlyError = errorMessage;
+              if (statusCode === 404) {
+                userFriendlyError = `Template file not found for card type "${cardType}" variant ${variant}.`;
+              } else if (
+                statusCode === 0 ||
+                errorMessage.includes('NetworkError') ||
+                errorMessage.includes('Failed to fetch')
+              ) {
+                userFriendlyError = `Network error: Unable to load template. Please check your connection.`;
+              } else if (errorMessage.includes('JSON') || errorMessage.includes('parse')) {
+                userFriendlyError = `Invalid JSON in template file: ${errorMessage}`;
+              }
 
-            // Provide more helpful error messages
-            let userFriendlyError = errorMessage;
-            if (statusCode === 404) {
-              userFriendlyError = `Template file not found for card type "${cardType}" variant ${variant}.`;
-            } else if (
-              statusCode === 0 ||
-              errorMessage.includes('NetworkError') ||
-              errorMessage.includes('Failed to fetch')
-            ) {
-              userFriendlyError = `Network error: Unable to load template. Please check your connection.`;
-            } else if (errorMessage.includes('JSON') || errorMessage.includes('parse')) {
-              userFriendlyError = `Invalid JSON in template file: ${errorMessage}`;
-            }
-
-            return of(CardsActions.loadTemplateFailure({ error: userFriendlyError }));
-          })
-        );
+              return of(CardsActions.loadTemplateFailure({ error: userFriendlyError }));
+            })
+          );
       })
     )
   );
@@ -328,8 +376,13 @@ export class CardsEffects {
   deleteCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.deleteCard),
-      mergeMap(({ id }: DeleteCardAction) =>
+      switchMap(({ id }: DeleteCardAction) =>
         of(id).pipe(
+          // Retry with exponential backoff
+          retry({
+            count: 2,
+            delay: 1000,
+          }),
           map((cardId: string) => CardsActions.deleteCardSuccess({ id: cardId })),
           catchError((error: unknown) =>
             of(
@@ -346,9 +399,16 @@ export class CardsEffects {
   searchCards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.searchCards),
-      mergeMap(({ query }: SearchCardsAction) => {
+      switchMap(({ query }: SearchCardsAction) => {
         const startTime = performance.now();
         return this.cardConfigService.searchCards(query).pipe(
+          // Retry with exponential backoff
+          retry({
+            count: 2,
+            delay: 1000,
+          }),
+          // Cancel if new search is initiated
+          takeUntil(this.actions$.pipe(ofType(CardsActions.searchCards))),
           map((results: AICardConfig[]) => {
             const duration = performance.now() - startTime;
             this.performanceService.recordMetric('searchCards', duration, {
@@ -383,7 +443,7 @@ export class CardsEffects {
     this.actions$.pipe(
       ofType(CardsActions.updateCard),
       withLatestFrom(this.store.select(CardsSelectors.selectCards)),
-      mergeMap(([{ id, changes }, cards]: [UpdateCardAction, AICardConfig[]]) => {
+      switchMap(([{ id, changes }, cards]: [UpdateCardAction, AICardConfig[]]) => {
         const originalCard = cards.find((c) => c.id === id);
         if (!originalCard) {
           return of(CardsActions.updateCardFailure({ id, error: 'Card not found' }));
@@ -409,6 +469,21 @@ export class CardsEffects {
         // Simulate API call (in real app, this would be an HTTP request)
         // For now, we'll use a timeout to simulate network delay
         return of(null).pipe(
+          // Retry with exponential backoff
+          retry({
+            count: 3,
+            delay: (_error, retryCount) => {
+              const delayMs = Math.pow(2, retryCount) * 1000;
+              return new Promise((resolve) => setTimeout(resolve, delayMs));
+            },
+          }),
+          // Cancel if another update for the same card is initiated
+          takeUntil(
+            this.actions$.pipe(
+              ofType(CardsActions.updateCard),
+              mergeMap((action) => (action.id === id ? of(action) : of()))
+            )
+          ),
           mergeMap(() => {
             // Simulate successful update
             // In real implementation, this would be: return this.cardDataService.updateCard(id, changes)

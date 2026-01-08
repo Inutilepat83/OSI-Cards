@@ -523,11 +523,11 @@ export class SectionFactory {
   }
 
   /**
-   * Create an info section
+   * Create an overview section (replaces deprecated info section)
    */
   static info(title: string, fields: CardField[]): CardSection {
     return /*#__PURE__*/ SectionFactory.create()
-      .withType('info')
+      .withType('overview')
       .withTitle(title)
       .withFields(fields)
       .build();

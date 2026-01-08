@@ -4,8 +4,8 @@
 
   <div class="analytics-grid" *ngIf="section.fields?.length" [attr.data-density]="density">
     <div
-      class="metric-card"
-      [class.metric-card--expanded]="isMetricExpanded(metric, i)"
+      class="section-item"
+      [class.section-item--expanded]="isMetricExpanded(metric, i)"
       *ngFor="let metric of section.fields; let i = index"
       (click)="toggleMetric(metric, i)"
       (keydown)="onMetricKeyDown($event, metric, i)"

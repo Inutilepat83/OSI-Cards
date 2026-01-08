@@ -43,8 +43,7 @@ The component resolves section types and renders:
 
 | Type | Component |
 |------|-----------|
-| `info` | InfoSectionComponent |
 | `analytics` | AnalyticsSectionComponent |
 | `list` | ListSectionComponent |
 | `chart` | ChartSectionComponent |
-| (unknown) | FallbackSectionComponent |
+| (unknown) | OverviewSectionComponent |

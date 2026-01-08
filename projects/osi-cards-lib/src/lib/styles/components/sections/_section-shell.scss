@@ -6,7 +6,9 @@
 
 .ai-section {
   --section-accent: var(--osi-section-accent);
+  --section-border: var(--osi-section-border);
   --section-border-hover: var(--osi-section-border-hover);
+  --section-box-shadow: var(--osi-section-shadow);
   --section-background: var(--osi-section-background);
   --section-background-hover: var(--osi-section-background-hover);
   --section-backdrop-filter: var(--osi-section-backdrop-filter);
@@ -49,17 +51,25 @@
     gap: var(--osi-section-gap, 8px) !important;
     height: auto !important;
   }
+
+  // Direct hover styles for sections (ensures they work regardless of mixin application)
+  // Smooth transitions for hover effects
+  transition:
+    border-color var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow var(--osi-card-transition-normal, 0.22s) cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Hover state: gentle shadow with 30% more contrasty cool color and 20% more contrasty border
+  &:hover {
+    border-color: var(--osi-section-border-hover-enhanced-color);
+    box-shadow: var(--osi-section-shadow-hover-enhanced);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
-.ai-section--main {
-  --section-background: var(--osi-section-background-main);
-  --section-background-hover: var(--osi-section-background-main-hover);
-}
-
-.ai-section--contrast {
-  --section-background: var(--osi-section-background-contrast);
-  --section-background-hover: var(--osi-section-background-contrast-hover);
-}
+/* All sections now use unified background - removed --main and --contrast variants for consistency */
 
 .ai-section__header {
   @include section-header(column, var(--osi-section-header-gap));
@@ -194,6 +204,10 @@
   @include section-body(var(--osi-section-gap-internal));
   padding: 0 !important;
   margin: 0 !important;
+  width: 100% !important; // Ensure section body uses full width
+  max-width: 100% !important; // Ensure section body uses full width
+  min-width: 0 !important; // Allow shrinking for proper resizing
+  box-sizing: border-box !important; // Include padding in width
 }
 
 /* Consistent empty state styling for all sections */
@@ -272,6 +286,11 @@
 
 .ai-section--overview {
   --section-accent: var(--osi-section-accent-overview);
+
+  // Reduce title font size by 1.5px for Executive Summary
+  .ai-section__title {
+    font-size: calc(var(--osi-section-title-font-size) - 1.5px) !important;
+  }
 }
 
 .ai-section--list,
@@ -357,7 +376,17 @@
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
-  padding: 4px !important;
+  padding: 0 !important; // No padding - sections should use 100% width
+  margin: 0 !important; // No margin - sections should use 100% width
+
+  /* Ensure all direct children use full width */
+  > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Design moved to section-item level - wrapper is now minimal */
 }
 
 /* Ensure FAQ section specifically resizes properly */

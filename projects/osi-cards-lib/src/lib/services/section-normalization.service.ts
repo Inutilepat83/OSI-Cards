@@ -77,14 +77,14 @@ export interface PriorityBandConfig {
 
 /**
  * Priority bands with condensation rules
- * - critical: Never condensed, always visible (overview, contact-card)
+ * - critical: Never condensed, always visible (contact-card)
  * - important: Condensed last (analytics, chart, stats, financials)
  * - standard: Normal condensation (info, list, product, solutions, map)
  * - optional: Condensed first (news, event, timeline, quotation)
  */
 export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
   critical: {
-    types: ['overview', 'contact-card'],
+    types: ['contact-card'],
     condensePriority: 'never',
     order: 1,
   },
@@ -94,7 +94,7 @@ export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
     order: 2,
   },
   standard: {
-    types: ['info', 'list', 'product', 'solutions', 'map'],
+    types: ['list', 'product', 'solutions', 'map'],
     condensePriority: 'always',
     order: 3,
   },
@@ -117,9 +117,6 @@ export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
  * UPDATED: Lowered thresholds to allow easier multi-column expansion and reduce gaps
  */
 const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
-  // Overview sections typically have 6-10 key-value pairs, should span 2-3 columns easily
-  overview: { two: 2, three: 6 }, // Lowered from { two: 5, three: 10 }
-
   // Charts and maps need space, should span 2 columns with minimal content
   chart: { two: 1, three: 4 }, // Lowered and added three
   map: { two: 1, three: 4 }, // Lowered and added three
@@ -277,7 +274,6 @@ export class SectionNormalizationService {
       quotation: 'Quotation',
       financials: 'Financials',
       solutions: 'Solutions',
-      overview: 'Overview',
       'text-reference': 'Text Reference',
       'brand-colors': 'Brand Colors',
       news: 'News',
@@ -376,7 +372,7 @@ export class SectionNormalizationService {
       // Priority is now numeric, use it directly for layout priority
       return section.priority as LayoutPriority;
     }
-    const priorityBand = this.getPriorityBandForType(section.type ?? 'info');
+    const priorityBand = this.getPriorityBandForType(section.type ?? 'overview');
     return this.mapPriorityBandToLayoutPriority(priorityBand);
   }
 
@@ -385,7 +381,7 @@ export class SectionNormalizationService {
    * Returns the order in which sections should be condensed (lower = condense first)
    */
   getCondensationOrder(section: CardSection): number {
-    const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+    const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'overview');
     const config = PRIORITY_BANDS[band as PriorityBand];
 
     switch (config?.condensePriority) {
@@ -427,7 +423,7 @@ export class SectionNormalizationService {
     // Apply collapsed flag while preserving original order
     return sections.map((section) => {
       const shouldCollapse = collapseIds.has(section.id ?? section.title);
-      const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+      const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'overview');
       const config = PRIORITY_BANDS[band as PriorityBand];
 
       // Never collapse critical sections
@@ -467,14 +463,9 @@ export class SectionNormalizationService {
    * Uses the generated type resolution from section-registry.json
    */
   private resolveSectionType(rawType: string, title: string): SectionType {
-    // Title-based overrides take precedence
-    if (!rawType && title.includes('overview')) {
-      return 'overview';
-    }
-
     // Handle empty type
     if (!rawType) {
-      return title.includes('overview') ? 'overview' : 'info';
+      return 'list';
     }
 
     // Handle legacy aliases not in registry
@@ -488,8 +479,8 @@ export class SectionNormalizationService {
     // Use the generated resolver which handles all registry aliases
     const resolved = resolveType(rawType as SectionTypeInput);
 
-    // If the resolved type is valid, use it; otherwise default to info
-    return isValidSectionType(resolved) ? resolved : 'info';
+    // If the resolved type is valid, use it; otherwise default to list
+    return isValidSectionType(resolved) ? resolved : 'list';
   }
 
   /**
@@ -507,7 +498,6 @@ export class SectionNormalizationService {
     const title = section.title?.toLowerCase() ?? '';
 
     // Title-based overrides
-    if (title.includes('overview')) return 1;
 
     // Use priority bands
     const band = this.getPriorityBandForType(type);
@@ -515,7 +505,6 @@ export class SectionNormalizationService {
 
     // Fine-grained ordering within bands
     const typeOrder: Record<string, number> = {
-      overview: 0,
       'contact-card': 1,
       analytics: 0,
       chart: 1,

@@ -5,7 +5,9 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/design-system/unified-sections" as unified;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,19 +21,19 @@
 .social {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); // Compact: 170px (was 200px)
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-section-item-gap);
   }
 
   @include responsive-down("sm") {
@@ -43,9 +45,9 @@
   }
 }
 
-.card {
-  @include card-elevated;
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+.section-item {
+  @include card("normal");
+  // Padding handled by card('normal') mixin
   text-decoration: none;
   color: inherit;
   text-align: center;
@@ -53,14 +55,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
-  transition: all 300ms var(--ease-out);
+  gap: var(--osi-section-item-gap-xs); // Compact: 2px (was 8px)
+
+  // Unified hover effect
+  @include section-card-hover;
 
   &:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
-
     .icon {
       color: var(--accent);
     }
@@ -72,16 +72,18 @@
 }
 
 .icon {
-  font-size: 1.625rem; // Compact: 26px (was var(--text-3xl) ~28px)
+  font-size: var(--text-2xl);
   line-height: 1;
-  transition: all 250ms var(--ease-out);
-  margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  transition:
+    color var(--osi-section-item-transition),
+    opacity var(--osi-section-item-transition);
+  margin-bottom: var(--osi-section-item-gap-xs); // Compact: 2px (was 4px)
 }
 
 .platform {
   @include heading(6);
   margin: 0;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
   @include text-overflow-ellipsis(1); // Limit to 1 line
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -98,9 +100,9 @@
 
 .stats {
   display: flex;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap);
   margin-top: auto;
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
+  padding-top: var(--osi-section-item-padding-compact); // Compact: 6px (was 8px)
   border-top: 1px solid var(--border);
   width: 100%;
   justify-content: center;
@@ -109,27 +111,23 @@
 .stat {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs); // Compact: 2px (was 4px)
   align-items: center;
 }
 
 .val {
-  font-size: var(--text-sm);
-  font-weight: var(--font-bold);
+  @include unified.unified-item-value;
+  font-weight: var(--font-bold); // Special case: bold for stats
   font-variant-numeric: tabular-nums;
-  color: var(--foreground);
 }
 
 .lbl {
-  font-size: 0.6rem;
-  font-weight: var(--font-semibold);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
+  @include unified.unified-item-label;
   opacity: 0.7;
 }
 
 @include responsive-down("sm") {
-  .card {
-    padding: var(--osi-spacing-compact-sm, 6px);
+  .section-item {
+    // Padding handled by card('normal') mixin
   }
 }

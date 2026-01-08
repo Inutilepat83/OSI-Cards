@@ -13,6 +13,7 @@ export * from './keyboard-shortcuts.service';
 export * from './layout-worker.service';
 export * from './magnetic-tilt.service';
 export * from './retry-policy.service';
+// export * from './safari-compatibility.service'; // Service not implemented
 export * from './section-plugin-registry.service';
 export * from './section-utils.service';
 export * from './streaming.service';

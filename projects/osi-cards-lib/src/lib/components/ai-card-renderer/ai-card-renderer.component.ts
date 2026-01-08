@@ -218,7 +218,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private _changeType: CardChangeType = 'structural';
 
   // Empty state animations
-  particles: Array<{ transform: string; opacity: number }> = [];
+  particles: { transform: string; opacity: number }[] = [];
   gradientTransform = 'translate(-50%, -50%)';
   contentTransform = 'translate(0, 0)';
   currentMessageIndex = 0;
@@ -291,6 +291,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         runId: 'card-debug',
         hypothesisId: 'C',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
     // #endregion
 
@@ -310,6 +311,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           runId: 'card-debug',
           hypothesisId: 'C',
         }),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
       }).catch(() => {});
       // #endregion
       this.resetProcessedSections();
@@ -340,6 +342,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         runId: 'card-debug',
         hypothesisId: 'C',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
     // #endregion
 
@@ -556,20 +559,101 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:494',
+        location: 'ai-card-renderer.component.ts:556',
         message: 'AICardRenderer ngOnInit starting',
         data: {
           hasCardConfig: !!this.cardConfig,
           hasSections: !!this.cardConfig?.sections,
           sectionsCount: this.cardConfig?.sections?.length || 0,
+          componentStyleUrls: ['../../styles/bundles/_ai-card.scss'],
+          encapsulation: 'ShadowDom',
           timestamp: Date.now(),
         },
         timestamp: Date.now(),
         sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'D',
+        runId: 'style-debug',
+        hypothesisId: 'A',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
+    console.log('[DEBUG] Component styleUrls:', ['../../styles/bundles/_ai-card.scss']);
+    // #endregion
+
+    // #region agent log - Check Shadow DOM and styles immediately
+    if (isPlatformBrowser(this.platformId)) {
+      // Check immediately (styles might not be injected yet)
+      setTimeout(() => {
+        const hostEl = this.el.nativeElement;
+        const shadowRoot = hostEl.shadowRoot;
+        const logData = {
+          location: 'ai-card-renderer.component.ts:ngOnInit',
+          message: 'Shadow DOM style check (ngOnInit)',
+          data: {
+            hasShadowRoot: !!shadowRoot,
+            shadowRootMode: shadowRoot?.mode,
+            styleSheetsCount: shadowRoot?.adoptedStyleSheets?.length || 0,
+            styleElementsCount: shadowRoot?.querySelectorAll('style').length || 0,
+            hostComputedStyles: shadowRoot
+              ? {
+                  display: window.getComputedStyle(hostEl).display,
+                  backgroundColor: window.getComputedStyle(hostEl).backgroundColor,
+                  border: window.getComputedStyle(hostEl).border,
+                }
+              : null,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'style-debug',
+          hypothesisId: 'B',
+        };
+        console.log('[DEBUG] Shadow DOM style check (ngOnInit):', logData);
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(logData),
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+        }).catch(() => {});
+
+        // Check CSS variables on :host
+        if (shadowRoot) {
+          const hostStyles = window.getComputedStyle(hostEl);
+          const cssVars = {
+            '--osi-section-item-background': hostStyles.getPropertyValue(
+              '--osi-section-item-background'
+            ),
+            '--osi-section-item-border': hostStyles.getPropertyValue('--osi-section-item-border'),
+            '--foreground': hostStyles.getPropertyValue('--foreground'),
+            '--background': hostStyles.getPropertyValue('--background'),
+            '--osi-card-background': hostStyles.getPropertyValue('--osi-card-background'),
+            '--osi-card-border': hostStyles.getPropertyValue('--osi-card-border'),
+          };
+          const cssVarLogData = {
+            location: 'ai-card-renderer.component.ts:ngOnInit',
+            message: 'CSS variables check on :host (ngOnInit)',
+            data: {
+              cssVariables: cssVars,
+              hasBackgroundVar: !!cssVars['--osi-section-item-background'],
+              hasBorderVar: !!cssVars['--osi-section-item-border'],
+              hasCardBackground: !!cssVars['--osi-card-background'],
+              hasCardBorder: !!cssVars['--osi-card-border'],
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'style-debug',
+            hypothesisId: 'C',
+          };
+          console.log('[DEBUG] CSS variables check (ngOnInit):', cssVarLogData);
+          fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cssVarLogData),
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+          }).catch(() => {});
+        }
+      }, 0);
+    }
     // #endregion
 
     // Ensure the host gets the correct data-theme even in Safari (no :host-context reliance).
@@ -603,6 +687,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           runId: 'card-debug',
           hypothesisId: 'D',
         }),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
       }).catch(() => {});
       // #endregion
       this.generateFallbackCard();
@@ -622,6 +707,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           runId: 'card-debug',
           hypothesisId: 'D',
         }),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
       }).catch(() => {});
       // #endregion
       this.refreshProcessedSections(true);
@@ -640,6 +726,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         runId: 'card-debug',
         hypothesisId: 'D',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
     // #endregion
 
@@ -689,15 +776,33 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:560',
+        location: 'ai-card-renderer.component.ts:693',
         message: 'AICardRenderer ngAfterViewInit',
         data: { timestamp: Date.now() },
         timestamp: Date.now(),
         sessionId: 'debug-session',
-        runId: 'card-debug',
+        runId: 'style-debug',
         hypothesisId: 'E',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
+    // #endregion
+
+    // #region agent log - Detailed Shadow DOM style inspection
+    if (isPlatformBrowser(this.platformId)) {
+      // Check immediately
+      this.inspectShadowDOMStyles('immediate');
+
+      // Check after a delay to ensure Angular has injected styles
+      setTimeout(() => {
+        this.inspectShadowDOMStyles('delayed-100ms');
+      }, 100);
+
+      // Check after longer delay
+      setTimeout(() => {
+        this.inspectShadowDOMStyles('delayed-500ms');
+      }, 500);
+    }
     // #endregion
 
     // Fragment handling removed for standalone library
@@ -719,8 +824,184 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         runId: 'card-debug',
         hypothesisId: 'E',
       }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(() => {});
     // #endregion
+  }
+
+  /**
+   * Inspect Shadow DOM styles for debugging
+   */
+  private inspectShadowDOMStyles(timing: string): void {
+    const hostEl = this.el.nativeElement;
+    const shadowRoot = hostEl.shadowRoot;
+
+    if (!shadowRoot) {
+      const noShadowLog = {
+        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
+        message: `No Shadow DOM found (${timing})`,
+        data: {
+          timing,
+          hasHostElement: !!hostEl,
+          hostTagName: hostEl?.tagName,
+          hostClassName: hostEl?.className,
+          hostAttributes: hostEl
+            ? Array.from(hostEl.attributes).map((a) => `${a.name}="${a.value}"`)
+            : [],
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'style-debug',
+        hypothesisId: 'B',
+      };
+      console.error('[DEBUG]', noShadowLog);
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(noShadowLog),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      }).catch(() => {});
+      return;
+    }
+
+    const styleSheets = shadowRoot.adoptedStyleSheets || [];
+    const styleElements = Array.from(shadowRoot.querySelectorAll('style'));
+    const styleContent = styleElements.map((el, idx) => ({
+      index: idx,
+      textContentLength: el.textContent?.length || 0,
+      hasContent: !!(el.textContent && el.textContent.trim().length > 0),
+      firstChars: el.textContent?.substring(0, 200) || '',
+      innerHTML: el.innerHTML?.substring(0, 200) || '',
+    }));
+
+    // Get sample of actual style content
+    const firstStyleElement = styleElements.length > 0 ? styleElements[0] : null;
+    const sampleStyleContent = firstStyleElement?.textContent
+      ? firstStyleElement.textContent.substring(0, 1000)
+      : 'NO_STYLE_CONTENT';
+
+    // Check host CSS variables
+    const hostStyles = window.getComputedStyle(hostEl);
+    const hostCssVars = {
+      '--osi-card-background': hostStyles.getPropertyValue('--osi-card-background'),
+      '--osi-card-border': hostStyles.getPropertyValue('--osi-card-border'),
+      '--osi-section-item-background': hostStyles.getPropertyValue('--osi-section-item-background'),
+      '--foreground': hostStyles.getPropertyValue('--foreground'),
+      '--background': hostStyles.getPropertyValue('--background'),
+    };
+
+    const styleInspectionLogData = {
+      location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
+      message: `Detailed Shadow DOM style inspection (${timing})`,
+      data: {
+        timing,
+        adoptedStyleSheetsCount: styleSheets.length,
+        styleElementsCount: styleElements.length,
+        styleElementsContent: styleContent,
+        totalStyleContentLength: styleContent.reduce((sum, s) => sum + s.textContentLength, 0),
+        hasAnyStyles:
+          styleSheets.length > 0 ||
+          styleElements.some((el) => el.textContent && el.textContent.trim().length > 0),
+        sampleStyleContent,
+        hostCssVariables: hostCssVars,
+        hostComputedStyles: {
+          display: hostStyles.display,
+          backgroundColor: hostStyles.backgroundColor,
+          border: hostStyles.border,
+          width: hostStyles.width,
+        },
+        shadowRootChildCount: shadowRoot.childElementCount,
+        shadowRootFirstChild: shadowRoot.firstElementChild?.tagName || 'none',
+        timestamp: Date.now(),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'style-debug',
+      hypothesisId: 'D',
+    };
+    console.log(`[DEBUG] Shadow DOM inspection (${timing}):`, styleInspectionLogData);
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(styleInspectionLogData),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+    }).catch(() => {});
+
+    // Check if card elements have any computed styles
+    const cardContainer = shadowRoot.querySelector(
+      '.card-container-wrapper, .ai-card-surface, [class*="card"]'
+    );
+    if (cardContainer) {
+      const computed = window.getComputedStyle(cardContainer as HTMLElement);
+      const cardStyleLogData = {
+        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
+        message: `Card element computed styles (${timing})`,
+        data: {
+          timing,
+          elementClass: cardContainer.className,
+          elementTag: cardContainer.tagName,
+          backgroundColor: computed.backgroundColor,
+          border: computed.border,
+          borderWidth: computed.borderWidth,
+          borderRadius: computed.borderRadius,
+          padding: computed.padding,
+          margin: computed.margin,
+          display: computed.display,
+          width: computed.width,
+          height: computed.height,
+          hasBackground:
+            computed.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+            computed.backgroundColor !== 'transparent',
+          hasBorder: computed.borderWidth !== '0px',
+          allComputedStyles: {
+            background: computed.background,
+            color: computed.color,
+            fontSize: computed.fontSize,
+            fontFamily: computed.fontFamily,
+            boxShadow: computed.boxShadow,
+          },
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'style-debug',
+        hypothesisId: 'B',
+      };
+      console.log(`[DEBUG] Card computed styles (${timing}):`, cardStyleLogData);
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cardStyleLogData),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      }).catch(() => {});
+    } else {
+      const noCardContainerLog = {
+        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
+        message: `No card container found (${timing})`,
+        data: {
+          timing,
+          shadowRootHTML: shadowRoot.innerHTML.substring(0, 1000),
+          shadowRootChildNodes: Array.from(shadowRoot.childNodes).map((n) => ({
+            nodeType: n.nodeType,
+            nodeName: n.nodeName,
+            textContent: n.textContent?.substring(0, 100) || '',
+          })),
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'style-debug',
+        hypothesisId: 'B',
+      };
+      console.warn(`[DEBUG] No card container (${timing}):`, noCardContainerLog);
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(noCardContainerLog),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      }).catch(() => {});
+    }
   }
 
   /**
@@ -1080,7 +1361,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           }
           return;
 
-        case 'website':
+        case 'website': {
           // Use url property if available, otherwise fall back to action property
           const url = actionObj.url || actionObj.action;
           if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
@@ -1089,8 +1370,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             console.warn('No valid URL provided for website button type');
           }
           return;
+        }
 
-        case 'agent':
+        case 'agent': {
           const agentEvent: {
             action: CardAction;
             card: AICardConfig;
@@ -1109,6 +1391,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           }
           this.agentAction.emit(agentEvent);
           return;
+        }
 
         case 'question':
           this.questionAction.emit({
@@ -1165,16 +1448,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Validate required fields for mail type
     if (action.type === 'mail') {
-      if (!email.contact) {
-        console.error('Mail action requires email.contact with name, email, and role');
-        return;
-      }
-      if (!email.contact.name || !email.contact.email || !email.contact.role) {
-        console.error(
-          'Mail action requires email.contact.name, email.contact.email, and email.contact.role'
-        );
-        return;
-      }
+      // Subject and body are required
       if (!email.subject) {
         console.error('Mail action requires email.subject');
         return;
@@ -1183,9 +1457,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         console.error('Mail action requires email.body');
         return;
       }
+      // Contact is optional - can generate email with just subject and body
     }
 
     // Determine recipient email address - prioritize to, then contact.email
+    // Recipient is optional - can generate email with just subject and body
     let recipientEmail = '';
     if (email.to) {
       recipientEmail = Array.isArray(email.to) ? email.to.join(',') : email.to;
@@ -1193,10 +1469,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       recipientEmail = email.contact.email;
     }
 
-    if (!recipientEmail) {
-      console.warn('No email address provided for email action');
-      return;
-    }
+    // Note: recipientEmail can be empty - this will create a mailto:?subject=...&body=... URL
+    // which opens the email client with a draft (no recipient)
 
     // Build mailto URL parameters manually for better control over encoding
     const params: string[] = [];
@@ -1266,15 +1540,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     // Construct mailto link
+    // If no recipient, use mailto:?subject=...&body=... format (opens email client with draft)
     const queryString = params.length > 0 ? '?' + params.join('&') : '';
-    const mailtoLink = `mailto:${recipientEmail}${queryString}`;
+    const recipient = recipientEmail ? encodeURIComponent(recipientEmail) : '';
+    const mailtoLink = `mailto:${recipient}${queryString}`;
 
     // Convert to Outlook URL scheme (platform-specific)
     // Windows: Use mailto: (New Outlook doesn't support custom schemes)
     // Mac: Use ms-outlook: (forces Outlook desktop app)
-    const isWindows =
-      typeof navigator !== 'undefined' &&
-      (/Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent));
     const outlookLink = mailtoLink;
 
     // Detect Edge browser for specific handling
@@ -1368,7 +1641,29 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get isStreamingActive(): boolean {
-    return this.isStreaming || this.streamingStage === 'streaming';
+    const result = this.isStreaming || this.streamingStage === 'streaming';
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'ai-card-renderer.component.ts:1370',
+        message: 'isStreamingActive getter',
+        data: {
+          isStreaming: this.isStreaming,
+          streamingStage: this.streamingStage,
+          result,
+          timestamp: Date.now(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'animation-debug',
+        hypothesisId: 'E',
+      }),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+    }).catch(() => {});
+    // #endregion
+    return result;
   }
 
   get hasLoadingOverlay(): boolean {
@@ -1434,6 +1729,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onLayoutChange(_layout: MasonryLayoutInfo): void {
     // Layout change handler - kept for potential future use
   }
@@ -1645,7 +1941,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const titleKey = section.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') ?? 'section';
-    const typeKey = section.type ?? 'info';
+    const typeKey = section.type ?? 'list';
     return `${titleKey}-${typeKey}`;
   }
 
@@ -1695,9 +1991,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.llmFallbackPrompt ||
       `Generate a complete OSI card configuration JSON following these guidelines:
 
-1. Use valid section types: analytics, brand-colors, chart, contact-card, event, faq, financials, gallery, info, list, map, network-card, news, overview, product, quotation, social-media, solutions, text-reference, timeline, or video.
+1. Use valid section types: analytics, brand-colors, chart, contact-card, event, faq, financials, gallery, list, map, network-card, news, product, quotation, social-media, solutions, text-reference, timeline, or video.
 
-2. Match data structure - use 'fields' for sections like info, analytics, overview, or 'items' for sections like list, gallery, timeline.
+2. Match data structure - use 'fields' for sections like analytics, or 'items' for sections like list, gallery, timeline.
 
 3. Include required properties: 'title' and 'type' are always required for each section.
 
@@ -1708,14 +2004,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    - actions: Optional array of action buttons
 
 5. Example structure:
-   - Overview section (type: overview) with key company information
-   - Info section (type: info) with detailed fields
-   - Analytics section (type: analytics) with metrics if applicable
+   - Analytics section (type: analytics) with key company information and metrics
    - Contact section (type: contact-card) with contact information
 
 6. Ensure all JSON is valid and properly formatted.
 
-Generate a default company card with comprehensive information including overview, key details, metrics, and contact information.`;
+Generate a default company card with comprehensive information including key details, metrics, and contact information.`;
 
     // Prepare the payload similar to Orange Sales Assistance pattern
     // Matches the structure used in Orange Sales Assistance chatbot component
@@ -1769,7 +2063,7 @@ Generate a default company card with comprehensive information including overvie
               if (parsed && typeof parsed === 'object') {
                 cardConfig = parsed as AICardConfig;
               }
-            } catch (parseError) {
+            } catch {
               // If result is not JSON, try to extract JSON from the string
               try {
                 // Look for JSON object in the response string
@@ -1855,7 +2149,7 @@ Generate a default company card with comprehensive information including overvie
             'See https://github.com/Inutilepat83/OSI-Cards for more information.'
         );
       }
-    } catch (error) {
+    } catch {
       // AnimationBuilder injection failed - likely no animations provider
       console.warn(
         '⚠️ OSI Cards Library: Animation providers are not configured.\n' +

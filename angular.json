@@ -35,6 +35,7 @@
               "src/styles.css"
             ],
             "stylePreprocessorOptions": {
+              "includePaths": ["src"],
               "sass": {
                 "silenceDeprecations": ["import", "mixed-decls"]
               }
@@ -146,6 +147,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "osi-cards:build",
+            "port": 4200,
             "liveReload": true,
             "watch": true,
             "poll": 500
@@ -206,6 +208,7 @@
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
+              "includePaths": ["src"],
               "sass": {
                 "silenceDeprecations": ["import", "mixed-decls"]
               }

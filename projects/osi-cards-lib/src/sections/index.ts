@@ -9,7 +9,6 @@ export * from '../lib/components/sections/chart-section/chart-section.component'
 export * from '../lib/components/sections/contact-card-section/contact-card-section.component';
 export * from '../lib/components/sections/event-section/event-section.component';
 export * from '../lib/components/sections/financials-section/financials-section.component';
-export * from '../lib/components/sections/info-section/info-section.component';
 export * from '../lib/components/sections/list-section/list-section.component';
 export * from '../lib/components/sections/map-section/map-section.component';
 export * from '../lib/components/sections/network-card-section/network-card-section.component';

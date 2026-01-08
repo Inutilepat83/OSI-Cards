@@ -38,8 +38,6 @@
   gap: var(--spacing-4xl) !important;
 }
 
-/* Overview grid uses compact spacing defined in _overview.scss */
-
 /* Global card styling enforced via variables - remove !important overrides */
 /* All cards now inherit from centralized --card-* variables */
 

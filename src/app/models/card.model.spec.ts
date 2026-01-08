@@ -45,7 +45,7 @@ describe('CardTypeGuards', () => {
     it('should return true for valid CardSection', () => {
       const validSection: CardSection = {
         title: 'Test Section',
-        type: 'info',
+        type: 'overview',
       };
 
       expect(CardTypeGuards.isCardSection(validSection)).toBe(true);
@@ -122,7 +122,7 @@ describe('CardUtils', () => {
         sections: [
           {
             title: 'Test Section',
-            type: 'info',
+            type: 'overview',
           },
         ],
       };
@@ -141,7 +141,7 @@ describe('CardUtils', () => {
       const config: AICardConfig = {
         cardTitle: 'Test Card',
         cardType: 'company',
-        sections: Array(25).fill({ title: 'Section', type: 'info' }),
+        sections: Array(25).fill({ title: 'Section', type: 'overview' }),
         actions: Array(15).fill({ label: 'Action' }),
       };
 

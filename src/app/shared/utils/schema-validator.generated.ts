@@ -41,7 +41,6 @@ export const VALID_SECTION_TYPES = [
   'data-grid', // NEW: Data grid sections
   'form', // NEW: Form sections
   'timeline', // Ensure timeline is included
-  'fallback',
 ];
 
 /**
@@ -154,11 +153,6 @@ export const SECTION_VALIDATION_RULES: Record<
     usesChartData: false,
   },
   'social-media': {
-    usesFields: true,
-    usesItems: true,
-    usesChartData: false,
-  },
-  fallback: {
     usesFields: true,
     usesItems: true,
     usesChartData: false,

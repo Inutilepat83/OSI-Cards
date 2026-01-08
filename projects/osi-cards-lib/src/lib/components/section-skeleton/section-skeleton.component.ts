@@ -184,17 +184,6 @@ export type SkeletonVariant = 'pulse' | 'shimmer' | 'none';
           </div>
         </ng-container>
 
-        <!-- Overview Section Skeleton -->
-        <ng-container *ngSwitchCase="'overview'">
-          <div class="skeleton-overview">
-            <div class="skeleton-bone skeleton-bone--paragraph"></div>
-            <div class="skeleton-bone skeleton-bone--paragraph skeleton-bone--paragraph-sm"></div>
-            <div class="skeleton-overview__tags">
-              <div class="skeleton-bone skeleton-bone--tag" *ngFor="let i of [1, 2, 3]"></div>
-            </div>
-          </div>
-        </ng-container>
-
         <!-- Financials Section Skeleton -->
         <ng-container *ngSwitchCase="'financials'">
           <div class="skeleton-financials">
@@ -707,12 +696,6 @@ export type SkeletonVariant = 'pulse' | 'shimmer' | 'none';
         align-items: flex-end;
         gap: 0.5rem;
         height: 120px;
-      }
-
-      .skeleton-overview__tags {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
       }
 
       .skeleton-financials__row {

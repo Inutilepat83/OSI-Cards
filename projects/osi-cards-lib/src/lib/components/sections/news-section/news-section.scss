@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,20 +20,20 @@
 .news {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Smaller min for compact
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
 
   @include responsive-down("md") {
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 
   @include responsive-down("sm") {
@@ -48,23 +49,20 @@
   }
 }
 
-.card {
-  @include card-elevated;
+.section-item {
+  @include card("normal");
   display: flex;
   flex-direction: column;
   overflow: hidden;
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  padding: 0;
+  // Padding handled by card('normal') mixin - 12px uniform
   max-width: 100%;
   box-sizing: border-box;
-  transition:
-    box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+
+  // Unified hover effect
+  @include section-card-hover;
 
   &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--osi-section-item-background-hover);
-
     .img {
       opacity: 0.94;
     }
@@ -79,15 +77,15 @@
   width: 100%;
   height: 110px; // Compact: 110px (was 140px)
   object-fit: cover;
-  transition: all 400ms var(--ease-out);
+  transition: opacity var(--osi-section-item-transition);
   background: var(--surface-hover);
 }
 
 .content {
-  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 16px)
+  // Padding removed - section-item now has 12px padding from card mixin
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  gap: var(--osi-section-item-gap-xs);
   flex: 1;
   width: 100%; // Ensure full width expansion
   max-width: 100%;
@@ -100,11 +98,11 @@
 .meta {
   @include typo.caption;
   display: flex;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  gap: var(--osi-section-item-gap-xs);
 
   > *:not(:last-child)::after {
     content: "·";
-    margin-left: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    margin-left: var(--osi-section-item-gap-xs);
     opacity: 0.5;
   }
 }
@@ -112,14 +110,14 @@
 .title {
   @include heading(5);
   margin: 0;
-  line-height: 1.4;
-  transition: color 200ms var(--ease-out);
+  line-height: var(--leading-normal);
+  transition: color var(--osi-section-item-transition);
 }
 
 .excerpt-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px);
+  gap: var(--osi-section-item-gap-xs);
 }
 
 .excerpt {
@@ -142,12 +140,12 @@
   background: none;
   border: none;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  padding: var(--osi-section-item-padding-compact) 0;
   text-decoration: underline;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity var(--osi-section-item-transition);
 
   &:hover {
     opacity: 0.8;
@@ -156,19 +154,19 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--osi-radius-xs);
   }
 }
 
 .link {
   margin-top: auto;
-  padding-top: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
-  font-size: 0.7rem;
+  padding-top: var(--osi-section-item-padding-compact);
+  font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   color: var(--accent);
   text-decoration: none;
   border-top: 1px solid var(--border);
-  transition: color 200ms var(--ease-out);
+  transition: color var(--osi-section-item-transition);
 
   &:hover {
     color: var(--accent-bright);
@@ -177,6 +175,6 @@
 
 @include responsive-down("sm") {
   .content {
-    padding: var(--osi-spacing-compact-sm, 6px);
+    // Padding removed - section-item padding handled by card mixin
   }
 }

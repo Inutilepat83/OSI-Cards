@@ -257,12 +257,10 @@ export { ChartSectionComponent } from './lib/components/sections/chart-section/c
 export { ContactCardSectionComponent } from './lib/components/sections/contact-card-section/contact-card-section.component';
 export { EventSectionComponent } from './lib/components/sections/event-section/event-section.component';
 export { FinancialsSectionComponent } from './lib/components/sections/financials-section/financials-section.component';
-export * from './lib/components/sections/info-section/info-section.component';
 export { ListSectionComponent } from './lib/components/sections/list-section/list-section.component';
 export { MapSectionComponent } from './lib/components/sections/map-section/map-section.component';
 export { NetworkCardSectionComponent } from './lib/components/sections/network-card-section/network-card-section.component';
 export { NewsSectionComponent } from './lib/components/sections/news-section/news-section.component';
-export { OverviewSectionComponent } from './lib/components/sections/overview-section/overview-section.component';
 export { ProductSectionComponent } from './lib/components/sections/product-section/product-section.component';
 export { QuotationSectionComponent } from './lib/components/sections/quotation-section/quotation-section.component';
 export { SocialMediaSectionComponent } from './lib/components/sections/social-media-section/social-media-section.component';

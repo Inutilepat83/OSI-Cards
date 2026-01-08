@@ -166,7 +166,6 @@ export const cardSectionSchema = z
     id: z.string().optional(),
     title: z.string(),
     type: z.enum([
-      'info',
       'timeline',
       'analytics',
       'metrics',
@@ -182,7 +181,6 @@ export const cardSectionSchema = z
       'chart',
       'product',
       'solutions',
-      'overview',
       'stats',
       'quotation',
       'reference',

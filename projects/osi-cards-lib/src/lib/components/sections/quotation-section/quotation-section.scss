@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/responsive" as *;
+@use "../../../styles/components/sections/section-animations" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -19,13 +20,13 @@
 .quotes {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  gap: var(--osi-section-item-gap) !important;
   width: 100%; // Ensure full width
   max-width: 100%;
   overflow-x: hidden;
@@ -33,7 +34,7 @@
 
   @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+    gap: var(--osi-section-item-gap); // 6px gap between section items
   }
 
   @include responsive-down("sm") {
@@ -45,15 +46,12 @@
   }
 }
 
-.quote {
-  @include card-elevated;
-  border-left: 3px solid var(--accent);
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+.section-item {
+  @include card-elevated("normal");
   min-height: 150px; // Compact: 150px (was 180px)
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
-  transition: all 300ms var(--ease-out);
+  gap: var(--osi-section-item-gap);
   margin: 0;
   max-width: 100%;
   overflow-x: hidden;
@@ -61,12 +59,11 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
 
-  &:hover {
-    box-shadow: var(--shadow-xl);
-    background: var(--surface-raised);
+  // Unified hover effect (card-elevated already includes hover, but ensure consistency)
 
+  &:hover {
     .icon {
-      opacity: 0.3;
+      opacity: 1;
     }
   }
 
@@ -81,17 +78,19 @@
 }
 
 .icon {
-  font-size: 1.625rem; // Compact: 26px (was var(--text-3xl) ~28px)
+  font-size: var(--text-2xl);
   line-height: 1;
   color: var(--accent);
-  opacity: 0.15;
-  transition: all 200ms var(--ease-out);
+  opacity: 1;
+  transition:
+    opacity var(--osi-section-item-transition),
+    color var(--osi-section-item-transition);
 }
 
 .text-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px);
+  gap: var(--osi-section-item-gap-xs);
   flex: 1;
 }
 
@@ -99,7 +98,7 @@
   @include body-text("base");
   @include expandable-text(3); // Show 3 lines by default
   font-style: italic;
-  line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
+  line-height: var(--leading-relaxed);
   margin: 0;
   color: var(--foreground);
   word-wrap: break-word;
@@ -117,12 +116,12 @@
   background: none;
   border: none;
   color: var(--accent);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  padding: var(--osi-section-item-padding-compact) 0;
   text-decoration: underline;
-  transition: opacity 200ms var(--ease-out);
+  transition: opacity var(--osi-section-item-transition);
   font-style: normal;
 
   &:hover {
@@ -132,7 +131,7 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--osi-radius-xs);
   }
 }
 
@@ -142,11 +141,11 @@
 
 .footer {
   margin-top: auto;
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
+  padding-top: var(--osi-section-item-padding-compact);
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: var(--osi-section-item-gap-xs); // Compact: 2px (was 4px)
 
   .name {
     font-size: var(--text-sm);
@@ -162,8 +161,7 @@
 }
 
 @include responsive-down("sm") {
-  .quote {
-    padding: var(--osi-spacing-compact-sm, 6px);
+  .section-item {
     min-height: 130px; // Compact: 130px (was 160px)
   }
 }

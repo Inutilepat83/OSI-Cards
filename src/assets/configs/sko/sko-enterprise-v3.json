@@ -10,7 +10,8 @@
           "title": "Global MPLS Network",
           "description": "Private enterprise network",
           "category": "Connectivity",
-          "benefits": ["Global coverage", "SLA-backed"]
+          "benefits": ["Global coverage", "SLA-backed"],
+          "score": 7
         }
       ]
     }
