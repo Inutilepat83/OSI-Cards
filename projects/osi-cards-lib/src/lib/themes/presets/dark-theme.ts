@@ -1,5 +1,5 @@
-import { OSICardsThemeConfig } from '../theme.service';
-import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '../tokens.constants';
+import { OSICardsThemeConfig } from '@osi-cards/themes';
+import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '@osi-cards/themes';
 
 /**
  * Dark theme preset configuration

@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CardSection, CardField, CardItem, CompletionRules } from '../models/card.model';
-import { resolveSectionType } from '../models/generated-section-types';
+import { CardSection, CardField, CardItem, CompletionRules } from '@osi-cards/models';
+import { resolveSectionType } from '@osi-cards/models';
 import { firstValueFrom } from 'rxjs';
+import { sendDebugLogToFile } from '@osi-cards/lib/utils/debug-log-file.util';
 
 /**
  * Interface for section definition from registry
@@ -31,6 +32,9 @@ interface SectionRegistry {
  * Uses completion rules defined in section definitions to determine
  * if a section should be rendered or filtered out.
  *
+ * @dependencies
+ * - HttpClient: For loading section registry definitions
+ *
  * @example
  * ```typescript
  * const service = inject(SectionCompletenessService);
@@ -47,30 +51,106 @@ export class SectionCompletenessService {
   private readonly http = inject(HttpClient);
   private registryCache: SectionRegistry | null = null;
   private registryLoadPromise: Promise<SectionRegistry> | null = null;
+  // Cache completeness results to avoid recomputing same sections
+  private completenessCache = new WeakMap<CardSection, boolean>();
+
+  constructor() {
+    // Preload registry on service initialization to avoid async delays
+    // This ensures completeness checks work correctly on page refresh
+    if (this.http) {
+      this.loadRegistry().catch((error) => {
+        if (isDevMode()) {
+          console.warn('[SectionCompleteness] Failed to preload registry:', error);
+        }
+      });
+    }
+  }
 
   /**
    * Check if a section is complete and should be displayed
+   * Uses WeakMap cache to avoid recomputing same sections
    */
   isSectionComplete(section: CardSection): boolean {
+    const checkStart = performance.now();
+
     if (!section || !section.type) {
       return false;
     }
 
+    // Check cache first
+    const cached = this.completenessCache.get(section);
+    if (cached !== undefined) {
+      // Cache hit - return immediately without logging overhead
+      return cached;
+    }
+
     const resolvedType = resolveSectionType(section.type);
     const definition = this.getSectionDefinitionSync(resolvedType);
+    const hasRegistryCache = !!this.registryCache;
 
-    if (!definition) {
-      // If no definition found, use default rules
-      return this.validateWithDefaultRules(section);
+    const validateStart = performance.now();
+    // CRITICAL FIX: If registry not loaded, always use lenient default rules
+    // This prevents sections from being filtered out during initial page load
+    let result: boolean;
+    if (!hasRegistryCache) {
+      // Registry not loaded - use lenient rules to avoid filtering out valid sections
+      result = this.validateWithDefaultRules(section);
+    } else if (!definition) {
+      // Registry loaded but definition not found - use lenient default rules
+      result = this.validateWithDefaultRules(section);
+    } else if (!definition.completionRules) {
+      // Definition found but no completion rules - use lenient default rules
+      result = this.validateWithDefaultRules(section);
+    } else {
+      // Definition found with completion rules - use specific rules
+      result = this.validateSectionCompleteness(
+        section,
+        definition.completionRules,
+        definition.rendering
+      );
     }
 
-    const rules = definition.completionRules;
-    if (!rules) {
-      // If no completion rules defined, use default validation
-      return this.validateWithDefaultRules(section);
-    }
+    const totalDuration = performance.now() - checkStart;
+    const validateDuration = performance.now() - validateStart;
 
-    return this.validateSectionCompleteness(section, rules, definition.rendering);
+    // #region agent log - log all completeness checks to identify filtering issues
+    if (typeof window !== 'undefined' && totalDuration > 1) {
+      // Only log if it took >1ms to avoid excessive logging
+      sendDebugLogToFile({
+        location: 'section-completeness.service.ts:isSectionComplete',
+        message: 'Completeness check',
+        data: {
+          sectionType: section.type,
+          resolvedType,
+          result,
+          hasDefinition: !!definition,
+          hasRegistryCache,
+          validateDuration,
+          totalDuration,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'perf-debug',
+        hypothesisId: 'M',
+      });
+    }
+    // #endregion
+
+    // Cache the result
+    this.completenessCache.set(section, result);
+
+    // Removed expensive fetch logging - was causing performance issues
+    // Performance is monitored via other means
+
+    return result;
+  }
+
+  /**
+   * Clear completeness cache (useful when sections are mutated)
+   */
+  clearCache(): void {
+    // WeakMap doesn't have clear() - entries are garbage collected when sections are no longer referenced
+    // This method exists for API consistency and future implementation if needed
   }
 
   /**
@@ -78,10 +158,43 @@ export class SectionCompletenessService {
    */
   private getSectionDefinitionSync(type: string): SectionDefinition | null {
     if (!this.registryCache) {
+      // #region agent log - registry not loaded
+      if (typeof window !== 'undefined') {
+        sendDebugLogToFile({
+          location: 'section-completeness.service.ts:getSectionDefinitionSync',
+          message: 'Registry not loaded',
+          data: { type, hasHttp: !!this.http },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'N',
+        });
+      }
+      // #endregion
       // Try to load synchronously if already loaded
       return null;
     }
-    return this.registryCache.sections?.[type] ?? null;
+    const definition = this.registryCache.sections?.[type] ?? null;
+    // #region agent log - definition lookup
+    if (typeof window !== 'undefined' && !definition) {
+      sendDebugLogToFile({
+        location: 'section-completeness.service.ts:getSectionDefinitionSync',
+        message: 'Definition not found in registry',
+        data: {
+          type,
+          hasRegistry: !!this.registryCache,
+          registryKeys: this.registryCache.sections
+            ? Object.keys(this.registryCache.sections).slice(0, 10)
+            : [],
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'perf-debug',
+        hypothesisId: 'N',
+      });
+    }
+    // #endregion
+    return definition;
   }
 
   /**
@@ -104,15 +217,63 @@ export class SectionCompletenessService {
       return this.registryLoadPromise;
     }
 
+    // #region agent log - registry load start
+    const loadStart = performance.now();
+    if (typeof window !== 'undefined') {
+      sendDebugLogToFile({
+        location: 'section-completeness.service.ts:loadRegistry',
+        message: 'Loading registry',
+        data: { hasHttp: !!this.http },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'perf-debug',
+        hypothesisId: 'N',
+      });
+    }
+    // #endregion
+
     this.registryLoadPromise = firstValueFrom(
       this.http.get<SectionRegistry>('/assets/section-registry.json')
     )
       .then((registry) => {
+        const loadDuration = performance.now() - loadStart;
+        // #region agent log - registry loaded
+        if (typeof window !== 'undefined') {
+          sendDebugLogToFile({
+            location: 'section-completeness.service.ts:loadRegistry',
+            message: 'Registry loaded successfully',
+            data: {
+              loadDuration,
+              sectionCount: registry.sections ? Object.keys(registry.sections).length : 0,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'perf-debug',
+            hypothesisId: 'N',
+          });
+        }
+        // #endregion
         this.registryCache = registry;
         return registry;
       })
       .catch((error) => {
-        console.warn('Failed to load section registry, using default rules:', error);
+        const loadDuration = performance.now() - loadStart;
+        // #region agent log - registry load failed
+        if (typeof window !== 'undefined') {
+          sendDebugLogToFile({
+            location: 'section-completeness.service.ts:loadRegistry',
+            message: 'Registry load FAILED',
+            data: { loadDuration, error: error.message || String(error), status: error.status },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'perf-debug',
+            hypothesisId: 'N',
+          });
+        }
+        // #endregion
+        if (isDevMode()) {
+          console.warn('Failed to load section registry, using default rules:', error);
+        }
         this.registryCache = { sections: {} };
         return this.registryCache;
       })
@@ -202,24 +363,73 @@ export class SectionCompletenessService {
 
   /**
    * Validate with default rules when no definition is found
+   * Uses lenient rules to avoid filtering out valid sections on page refresh
    */
   private validateWithDefaultRules(section: CardSection): boolean {
-    // Default: require at least one field or item
-    if (section.fields && section.fields.length > 0) {
-      const hasValidField = section.fields.some((field) => this.isFieldValueNonEmpty(field));
-      return hasValidField;
-    }
+    // CRITICAL FIX: Always use lenient rules to avoid filtering out valid sections
+    // This ensures sections render even if registry hasn't loaded or definition is missing
+    // The component-level hasMinimalData check already ensures basic data exists
 
-    if (section.items && section.items.length > 0) {
-      const hasValidItem = section.items.some((item) => this.isItemValueNonEmpty(item));
-      return hasValidItem;
-    }
+    // Very lenient: accept section if it has type and either fields, items, chartData, title, or description
+    // This prevents premature filtering during initial load or when registry/definitions are unavailable
+    // CRITICAL: Only require type - everything else is optional to be maximally lenient
+    const hasBasicData =
+      !!section.type && // Type is required
+      ((section.fields && section.fields.length > 0) ||
+        (section.items && section.items.length > 0) ||
+        (section.chartData &&
+          section.chartData.datasets &&
+          section.chartData.datasets.length > 0) ||
+        !!(section.title && section.title.trim().length > 0) || // Title is optional but preferred
+        !!(section.description && section.description.trim().length > 0)); // Description also counts
 
-    if (section.chartData && section.chartData.datasets && section.chartData.datasets.length > 0) {
-      return true;
+    // #region agent log - default rules validation
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'section-completeness.service.ts:validateWithDefaultRules',
+          message: 'Default rules validation',
+          data: {
+            sectionId: section.id,
+            sectionType: section.type,
+            hasBasicData,
+            fieldCount: section.fields?.length || 0,
+            itemCount: section.items?.length || 0,
+            hasChartData: !!section.chartData,
+            hasTitle: !!section.title,
+            hasDescription: !!section.description,
+            result: hasBasicData,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'empty-card-debug',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
     }
+    // #endregion
 
-    return false;
+    if (!hasBasicData && isDevMode()) {
+      console.warn('[SectionCompleteness] Section filtered (no basic data)', {
+        sectionType: section.type,
+        sectionTitle: section.title,
+        hasFields: !!(section.fields && section.fields.length > 0),
+        hasItems: !!(section.items && section.items.length > 0),
+        hasChartData: !!(
+          section.chartData &&
+          section.chartData.datasets &&
+          section.chartData.datasets.length > 0
+        ),
+        hasDescription: !!(section.description && section.description.trim().length > 0),
+      });
+    }
+    return hasBasicData;
   }
 
   /**

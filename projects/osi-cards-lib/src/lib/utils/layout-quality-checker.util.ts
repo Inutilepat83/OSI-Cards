@@ -5,7 +5,7 @@
  * Provides recommendations for improving layout quality.
  */
 
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 export interface LayoutQualityResult {
   quality: 'excellent' | 'good' | 'fair' | 'poor';

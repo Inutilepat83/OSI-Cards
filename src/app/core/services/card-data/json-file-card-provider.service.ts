@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
+import { DestroyRef, inject, Injectable, isDevMode, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, of, throwError, timer } from 'rxjs';
 import {
@@ -106,8 +106,24 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    * Bypasses all async operations if cached for truly instant loading
    */
   private loadJsonCard(card: CardManifestEntry): Observable<AICardConfig | null> {
+    // Validate card.path before constructing fullUrl
+    if (!card?.path || typeof card.path !== 'string' || card.path.trim().length === 0) {
+      this.logger.warn('Invalid card path provided', 'JsonFileCardProvider', { card });
+      return of(null);
+    }
+
     const jsonPath = card.path.endsWith('.json') ? card.path : `${card.path}.json`;
     const fullUrl = `/assets/configs/${jsonPath}`;
+
+    // Validate fullUrl is valid before using it
+    if (!fullUrl || fullUrl.trim().length === 0 || fullUrl === '/assets/configs/') {
+      this.logger.warn('Invalid fullUrl constructed', 'JsonFileCardProvider', {
+        card,
+        jsonPath,
+        fullUrl,
+      });
+      return of(null);
+    }
 
     // Check in-memory cache first (instant, synchronous, no async overhead)
     const cached = this.memoryCache.get(fullUrl);
@@ -207,15 +223,25 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
                 timestamp: now,
                 version: this.CURRENT_VERSION,
               });
-              this.indexedDBCache.set(fullUrl, text, now, this.CURRENT_VERSION).subscribe({
-                error: (err) => {
-                  this.logger.debug(
-                    'Failed to cache in IndexedDB (non-critical)',
-                    'JsonFileCardProvider',
-                    err
-                  );
-                },
-              });
+
+              // Validate fullUrl before caching to IndexedDB
+              if (fullUrl && fullUrl.trim().length > 0 && fullUrl !== '/assets/configs/') {
+                this.indexedDBCache.set(fullUrl, text, now, this.CURRENT_VERSION).subscribe({
+                  error: (err) => {
+                    this.logger.debug(
+                      'Failed to cache in IndexedDB (non-critical)',
+                      'JsonFileCardProvider',
+                      err
+                    );
+                  },
+                });
+              } else {
+                this.logger.warn(
+                  'Skipping IndexedDB cache due to invalid fullUrl',
+                  'JsonFileCardProvider',
+                  { fullUrl }
+                );
+              }
 
               return cardData;
             }),
@@ -388,12 +414,11 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       // Additional runtime type validation using Zod
       const zodResult = this.zodValidationService.validateCard(cardConfig);
       if (!zodResult.success) {
-        this.logger.warn('Zod validation failed for card', 'JsonFileCardProvider', {
-          errors: zodResult.errorMessages,
-          cardTitle: cardConfig.cardTitle,
-        });
+        // Validation failures are non-blocking and expected during schema evolution
+        // Log as debug to avoid console noise (only if debug is enabled)
         // Continue with cardConfig even if Zod validation fails (non-blocking)
         // This allows cards to work while we refine the schema
+        // Note: ValidationService already logs validation failures as debug, so we don't need to log here
       }
 
       // Sanitize and ensure IDs

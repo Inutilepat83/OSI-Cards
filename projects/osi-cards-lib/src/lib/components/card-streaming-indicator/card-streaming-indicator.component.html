@@ -3,6 +3,8 @@
   class="streaming-indicator"
   role="status"
   [attr.aria-live]="streamingStage === 'streaming' ? 'polite' : 'off'"
+  [attr.aria-atomic]="streamingStage === 'streaming' ? 'true' : null"
+  [attr.aria-relevant]="streamingStage === 'streaming' ? 'text' : null"
   [attr.aria-busy]="streamingStage === 'streaming' || streamingStage === 'thinking'"
   [attr.aria-label]="getAriaLabel()"
 >

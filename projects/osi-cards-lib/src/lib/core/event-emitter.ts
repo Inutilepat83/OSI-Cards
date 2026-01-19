@@ -112,7 +112,7 @@ export class EventEmitter<Events extends Record<string, unknown>> {
 }
 
 // Card Events
-export interface CardEvents {
+export interface CardEvents extends Record<string, unknown> {
   'card:created': { cardId: string };
   'card:updated': { cardId: string; changes: unknown };
   'card:deleted': { cardId: string };

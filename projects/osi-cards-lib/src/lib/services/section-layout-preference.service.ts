@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CardSection } from '../models/card.model';
-import { SectionLayoutPreferences } from '../components/sections/base-section.component';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferences } from '@osi-cards/components';
 
 /**
  * Cache key for memoization
@@ -16,9 +16,27 @@ interface CacheKey {
 }
 
 /**
+ * Section Layout Preference Service
+ *
  * Service to manage section layout preferences.
  * Allows sections to register their layout preference functions dynamically.
  * Includes memoization for performance optimization.
+ *
+ * @dependencies
+ * - None (uses internal Map for caching and function registry)
+ *
+ * @example
+ * ```typescript
+ * const layoutService = inject(SectionLayoutPreferenceService);
+ *
+ * // Register layout preference function
+ * layoutService.register('analytics', (section, availableColumns) => {
+ *   return { preferredColumns: 2, minColumns: 1, maxColumns: 3 };
+ * });
+ *
+ * // Get preferences
+ * const prefs = layoutService.getPreferences(section, 4);
+ * ```
  */
 @Injectable({
   providedIn: 'root',

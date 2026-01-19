@@ -1,9 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * Text Reference Section Component
@@ -17,6 +17,7 @@ import { CardSection } from '../../../models';
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './text-reference-section.component.html',
   styleUrl: './text-reference-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextReferenceSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

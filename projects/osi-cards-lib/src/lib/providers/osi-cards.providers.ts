@@ -1,18 +1,20 @@
 import { Provider, EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { MIGRATION_FLAGS_TOKEN } from '../services/feature-flags.service';
-import { MigrationFlags } from '../config/migration-flags.config';
-import { SectionFactory } from '../factories/section.factory';
-import { EventBusService } from '../services/event-bus.service';
-import { IconService } from '../services/icon.service';
-import { SectionNormalizationService } from '../services/section-normalization.service';
-import { SectionUtilsService } from '../services/section-utils.service';
-import { CardFacadeService } from '../services/card-facade.service';
-import { SectionPluginRegistry } from '../services/section-plugin-registry.service';
-import { FeatureFlagsService } from '../services/feature-flags.service';
-import { AccessibilityService } from '../services/accessibility.service';
+import { MIGRATION_FLAGS_TOKEN } from '@osi-cards/services';
+import { MigrationFlags } from '@osi-cards/lib/config/migration-flags.config';
+import { SectionFactory } from '@osi-cards/lib/factories';
+import { EventBusService } from '@osi-cards/services';
+import { IconService } from '@osi-cards/services';
+import { SectionNormalizationService } from '@osi-cards/services';
+import { SectionUtilsService } from '@osi-cards/services';
+import { CardFacadeService } from '@osi-cards/services';
+import { SectionPluginRegistry } from '@osi-cards/services';
+import { FeatureFlagsService } from '@osi-cards/services';
+import { AccessibilityService } from '@osi-cards/services';
+import { VERSION } from '@osi-cards/lib/version';
+import { checkVersionRequirement } from '@osi-cards/utils';
 // Removed - animation.service deleted
 // Use animation utilities instead
-// import { LayoutOptimizerService } from '../services/layout-optimizer.service';  // Service disabled due to type errors
+// import { LayoutOptimizerService } from '@osi-cards/services';  // Service disabled due to type errors
 
 /**
  * Configuration options for OSI Cards library
@@ -35,6 +37,9 @@ export interface OsiCardsConfig {
 
   /** Default theme */
   defaultTheme?: 'light' | 'dark' | 'system';
+
+  /** Minimum required library version (semver format, e.g., ">=1.5.0" or "^1.5.0") */
+  minVersion?: string;
 }
 
 /**
@@ -80,6 +85,9 @@ export function provideOsiCardsCore(): Provider[] {
  * ```
  */
 export function provideOsiCards(config?: OsiCardsConfig): EnvironmentProviders {
+  // Perform version check if minimum version is specified
+  checkVersionRequirement(VERSION, config?.minVersion);
+
   const providers: Provider[] = [...provideOsiCardsCore()];
 
   // Add migration flags if provided

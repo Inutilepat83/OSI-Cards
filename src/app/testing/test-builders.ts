@@ -174,7 +174,7 @@ export class SectionBuilder {
     return {
       id: this.section.id || `section-${Date.now()}`,
       title: this.section.title || 'Test Section',
-      type: this.section.type || 'info',
+      type: this.section.type || 'overview',
       fields: this.section.fields || [],
       items: this.section.items || [],
       ...this.section,

@@ -8,7 +8,7 @@
  * - custom: User-defined configuration
  */
 
-import { ColumnPackerConfig } from '../utils/column-packer.util';
+import { ColumnPackerConfig } from '@osi-cards/utils';
 
 export type LayoutPreset = 'performance' | 'quality' | 'balanced' | 'custom';
 
@@ -39,52 +39,52 @@ export interface LayoutPresetConfig {
  * Performance preset: Fast rendering, minimal optimization
  * Best for: Large datasets, real-time updates, mobile devices
  */
-export const PERFORMANCE_PRESET: LayoutPresetConfig = {
+export const PERFORMANCE_PRESET = {
   optimizeLayout: false,
   enableTwoPhaseLayout: false,
   optimizationPasses: 1,
   enableGapAwarePlacement: false,
   enableGapFilling: false,
-  packingMode: 'ffdh',
+  packingMode: 'ffdh' as const,
   allowReordering: false,
   sortByHeight: false,
   enableVirtualScroll: true,
   virtualThreshold: 20,
-};
+} as const satisfies LayoutPresetConfig;
 
 /**
  * Quality preset: Maximum space utilization, best layout quality
  * Best for: Static content, print layouts, presentations
  */
-export const QUALITY_PRESET: LayoutPresetConfig = {
+export const QUALITY_PRESET = {
   optimizeLayout: true,
   enableTwoPhaseLayout: true,
   optimizationPasses: 5,
   enableGapAwarePlacement: true,
   enableGapFilling: true,
-  packingMode: 'hybrid',
+  packingMode: 'hybrid' as const,
   allowReordering: true,
   sortByHeight: true,
   enableVirtualScroll: false,
   virtualThreshold: 100,
-};
+} as const satisfies LayoutPresetConfig;
 
 /**
  * Balanced preset: Good balance between performance and quality
  * Best for: Most use cases (default)
  */
-export const BALANCED_PRESET: LayoutPresetConfig = {
+export const BALANCED_PRESET = {
   optimizeLayout: true,
   enableTwoPhaseLayout: true,
   optimizationPasses: 2,
   enableGapAwarePlacement: true,
   enableGapFilling: true,
-  packingMode: 'ffdh',
+  packingMode: 'ffdh' as const,
   allowReordering: false,
   sortByHeight: true,
   enableVirtualScroll: false,
   virtualThreshold: 50,
-};
+} as const satisfies LayoutPresetConfig;
 
 /**
  * Get preset configuration by name

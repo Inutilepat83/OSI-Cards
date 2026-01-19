@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { CardSkeletonComponent } from '../components/card-skeleton/card-skeleton.component';
-import { provideOsiCards } from '../providers/osi-cards.providers';
+import { CardSkeletonComponent } from '@osi-cards/components';
+import { provideOsiCards } from '@osi-cards/providers';
 
 /**
  * Encapsulation Test Suite

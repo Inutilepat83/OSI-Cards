@@ -78,6 +78,28 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
+#### Version Enforcement (Optional)
+
+You can specify a minimum required library version to ensure compatibility. If the installed version doesn't meet the requirement, a warning will be logged but the library will continue to function (non-blocking):
+
+```typescript
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOsiCards({
+      minVersion: '>=1.5.0',  // Require at least version 1.5.55
+      // ... other options
+    }),
+  ]
+};
+```
+
+**Supported version formats:**
+- Exact version: `"1.5.52"`
+- Minimum version: `">=1.5.0"` or `">1.5.0"`
+- Range matching: `"^1.5.0"` (compatible within same major version) or `"~1.5.0"` (compatible within same minor version)
+
+**Note:** Version enforcement is non-blocking. If the requirement is not met, a warning will be logged to the console, but the library will continue to initialize and function normally. This allows for graceful degradation while alerting developers to potential compatibility issues.
+
 ### Step 2: Add Styles to angular.json
 
 Add the library styles directly to your `angular.json` file. This is the most reliable method and ensures styles are always loaded correctly:

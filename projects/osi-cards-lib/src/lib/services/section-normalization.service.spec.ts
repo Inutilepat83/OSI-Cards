@@ -4,7 +4,7 @@ import {
   PRIORITY_BANDS,
   PriorityBand,
 } from './section-normalization.service';
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 describe('SectionNormalizationService', () => {
   let service: SectionNormalizationService;

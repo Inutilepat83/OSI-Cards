@@ -1,0 +1,385 @@
+---
+description: "Angular component patterns: standalone, OnPush, signals, dependency injection"
+alwaysApply: true
+---
+
+# Angular Component Patterns
+
+## Standalone Components
+
+### Always Use Standalone
+
+**ALL components must be standalone** - NgModules are deprecated.
+
+```typescript
+@Component({
+  selector: 'app-my-component', // Library: app-* prefix, Main: osi-* prefix
+  standalone: true,
+  imports: [CommonModule, /* other dependencies */],
+  templateUrl: './my-component.component.html',
+  styleUrls: ['./my-component.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class MyComponent {
+  // Component implementation
+}
+```
+
+### Selector Prefix Patterns
+
+**Library components use `app-` prefix:**
+- `app-card-actions` - CardActionsComponent
+- `app-section-renderer` - SectionRendererComponent
+- `app-info-section` - InfoSectionComponent
+- `app-analytics-section` - AnalyticsSectionComponent
+
+**Main components use `osi-` prefix:**
+- `osi-cards` - OsiCardsComponent (main entry point)
+- `osi-cards-container` - OsiCardsContainerComponent
+
+**Sections use `app-*-section` pattern:**
+- `app-info-section` - InfoSectionComponent
+- `app-analytics-section` - AnalyticsSectionComponent
+- `app-list-section` - ListSectionComponent
+
+**Pattern:** Library/internal components: `app-*`, Public/main components: `osi-*`
+
+### Guidelines
+
+- Always set `standalone: true`
+- Declare all dependencies in `imports` array
+- Import from `@angular/common` for `CommonModule` (ngIf, ngFor, etc.)
+- No NgModule declarations needed
+- Import child components directly
+
+**Examples:**
+- See `CardActionsComponent` (`projects/osi-cards-lib/src/lib/components/card-actions/card-actions.component.ts`)
+- See `AICardRendererComponent` (`projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component.ts`)
+
+---
+
+## Change Detection Strategy
+
+### Always Use OnPush
+
+**ALL components must use OnPush change detection** for performance.
+
+```typescript
+@Component({
+  // ...
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class MyComponent {
+  // Component implementation
+}
+```
+
+### OnPush Requirements
+
+**When using OnPush, ensure:**
+- Input properties trigger change detection
+- Events trigger change detection
+- Use signals or observables for reactive data
+- Call `ChangeDetectorRef.markForCheck()` when needed (rarely)
+- Async pipe automatically triggers change detection
+
+### Manual Change Detection
+
+**Only use when absolutely necessary:**
+
+```typescript
+export class MyComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
+  
+  updateData() {
+    // Update data
+    this.cdr.markForCheck(); // Only if OnPush and not triggered automatically
+  }
+}
+```
+
+---
+
+## Dependency Injection
+
+### Use inject() Function
+
+**Prefer `inject()` function** over constructor injection for modern Angular.
+
+```typescript
+export class MyComponent {
+  private readonly myService = inject(MyService);
+  private readonly config = inject(CONFIG_TOKEN, { optional: true });
+  
+  // Component implementation
+}
+```
+
+**Real examples from codebase:**
+- See `CardActionsComponent` for service injection
+- See `OsiCardsComponent` for config injection
+- See `BaseSectionComponent` for ChangeDetectorRef injection
+
+### Constructor Injection (Alternative)
+
+**Can use constructor injection if preferred:**
+
+```typescript
+export class MyComponent {
+  constructor(
+    private readonly myService: MyService,
+    @Optional() @Inject(CONFIG_TOKEN) private readonly config?: Config
+  ) {}
+}
+```
+
+### Guidelines
+
+- Prefer `inject()` function (cleaner, more modern)
+- Use `{ optional: true }` for optional dependencies
+- Never manually instantiate services
+- Use `@Injectable({ providedIn: 'root' })` for services
+
+---
+
+## Input/Output Patterns
+
+### Input Properties
+
+```typescript
+export class MyComponent {
+  // Required input
+  @Input({ required: true }) data!: MyData;
+  
+  // Optional input with default
+  @Input() title = 'Default Title';
+  
+  // Input with setter (for side effects)
+  @Input() set config(value: Config | undefined) {
+    this._config = value;
+    this.processConfig(value);
+  }
+  get config(): Config | undefined {
+    return this._config;
+  }
+  private _config?: Config;
+}
+```
+
+### Output Events
+
+```typescript
+export class MyComponent {
+  @Output() itemClick = new EventEmitter<Item>();
+  @Output() dataChange = new EventEmitter<DataChangeEvent>();
+  
+  onItemClick(item: Item): void {
+    this.itemClick.emit(item);
+  }
+}
+```
+
+### Guidelines
+
+- Use `{ required: true }` for required inputs
+- Use `!` assertion for required inputs (TypeScript)
+- Emit typed events (not `void` unless intentional)
+- Use descriptive event names (past tense: `clicked`, `changed`)
+
+---
+
+## Signals (Angular 20+)
+
+### Use Signals for Reactive State
+
+**Signals provide fine-grained reactivity** - use for component state.
+
+```typescript
+import { signal, computed, effect } from '@angular/core';
+
+export class MyComponent {
+  // Writable signal
+  readonly count = signal(0);
+  
+  // Computed signal
+  readonly doubled = computed(() => this.count() * 2);
+  
+  // Read-only signal
+  readonly data = signal<Data>(initialData);
+  
+  increment(): void {
+    this.count.update(n => n + 1);
+  }
+  
+  setData(newData: Data): void {
+    this.data.set(newData);
+  }
+}
+```
+
+### Converting Observables to Signals
+
+```typescript
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  private readonly dataService = inject(DataService);
+  
+  // Convert observable to signal
+  readonly data = toSignal(this.dataService.data$, { initialValue: [] });
+}
+```
+
+### Guidelines
+
+- Use signals for component-local state
+- Use observables for async operations (HTTP, timers)
+- Convert observables to signals with `toSignal()`
+- Use `computed()` for derived state
+- Signals automatically trigger OnPush change detection
+
+---
+
+## View Encapsulation
+
+### Shadow DOM Integration
+
+**For components that integrate with Shadow DOM:**
+
+```typescript
+@Component({
+  // ...
+  encapsulation: ViewEncapsulation.None, // Allows Shadow DOM parent styles
+})
+export class MyComponent {
+  // Component implementation
+}
+```
+
+### Standard Encapsulation (Default)
+
+**For most components, use default encapsulation:**
+
+```typescript
+@Component({
+  // ...
+  // encapsulation: ViewEncapsulation.Emulated (default)
+})
+export class MyComponent {
+  // Component implementation
+}
+```
+
+### Guidelines
+
+- Use `ViewEncapsulation.None` only when integrating with Shadow DOM
+- Default encapsulation is preferred for style isolation
+- Shadow DOM parent can style `ViewEncapsulation.None` children
+- Don't use `ViewEncapsulation.ShadowDom` (conflicts with library Shadow DOM)
+
+---
+
+## Component Lifecycle
+
+### Common Lifecycle Hooks
+
+```typescript
+import { OnInit, OnDestroy, OnChanges, AfterViewInit } from '@angular/core';
+
+export class MyComponent implements OnInit, OnDestroy, OnChanges {
+  ngOnInit(): void {
+    // Component initialization
+  }
+  
+  ngOnDestroy(): void {
+    // Cleanup (subscriptions, timers, etc.)
+  }
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    // Input changes
+    if (changes['data']) {
+      this.processData(changes['data'].currentValue);
+    }
+  }
+  
+  ngAfterViewInit(): void {
+    // View initialization (access to ViewChild)
+  }
+}
+```
+
+### Guidelines
+
+- Implement interfaces for type safety
+- Always cleanup in `ngOnDestroy()`
+- Use `DestroyRef` for cleanup in Angular 16+
+- Avoid heavy work in `ngOnInit()` (use lazy loading)
+
+---
+
+## Component Template Patterns
+
+### Control Flow (@if, @for, @switch)
+
+```typescript
+// Modern Angular control flow (Angular 17+)
+@Component({
+  template: `
+    @if (showContent) {
+      <div>Content</div>
+    } @else {
+      <div>Loading...</div>
+    }
+    
+    @for (item of items(); track item.id) {
+      <div>{{ item.name }}</div>
+    } @empty {
+      <div>No items</div>
+    }
+    
+    @switch (status()) {
+      @case ('loading') {
+        <div>Loading...</div>
+      }
+      @case ('error') {
+        <div>Error</div>
+      }
+      @default {
+        <div>Success</div>
+      }
+    }
+  `,
+})
+```
+
+### Guidelines
+
+- Use new control flow syntax (@if, @for, @switch) - Angular 17+
+- Always use `track` with `@for` for performance
+- Prefer signals/observables in templates
+- Use async pipe for observables
+- Keep templates simple - move logic to component
+
+---
+
+## Component Checklist
+
+Before creating a component:
+
+- [ ] Standalone: `standalone: true`
+- [ ] OnPush: `changeDetection: ChangeDetectionStrategy.OnPush`
+- [ ] Dependencies in `imports` array
+- [ ] Use `inject()` for dependency injection
+- [ ] Inputs properly typed and required when needed
+- [ ] Outputs use EventEmitter with proper types
+- [ ] Signals for reactive state (when applicable)
+- [ ] ViewEncapsulation appropriate (None for Shadow DOM integration)
+- [ ] Lifecycle hooks implemented when needed
+- [ ] Cleanup in `ngOnDestroy()`
+
+**See also:** 
+- `section-components.mdc` - Section component patterns (BaseSectionComponent, definition.json, auto-discovery)
+- `angular-library.mdc` - Library patterns
+- `shadow-dom.mdc` - Shadow DOM patterns
+- `scss-styling.mdc` - SCSS patterns
+- `testing.mdc` - Testing patterns

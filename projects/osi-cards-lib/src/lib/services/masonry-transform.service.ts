@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CardSection } from '../models';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * Position info for a section after transform calculation
@@ -21,11 +21,16 @@ export interface TransformConfig {
 }
 
 /**
+ * Masonry Transform Service
+ *
  * Service for calculating CSS transforms to eliminate gaps in masonry layout.
  *
  * KEY PRINCIPLE: This service READS heights from DOM after browser layout,
  * calculates transforms, and returns them. It NEVER triggers re-renders or
  * DOM mutations during calculation, preventing circular dependencies.
+ *
+ * @dependencies
+ * - None (pure calculation service that reads from DOM)
  */
 @Injectable({
   providedIn: 'root',
@@ -48,7 +53,8 @@ export class MasonryTransformService {
     sections: CardSection[],
     itemElements: HTMLElement[],
     config: TransformConfig,
-    getColSpan: (section: CardSection, columns: number) => number
+    getColSpan: (section: CardSection, columns: number) => number,
+    preMeasuredHeights?: Map<number, number> // Optional pre-measured heights (by index) to avoid double DOM reads
   ): Map<string, TransformPosition> {
     if (sections.length === 0 || itemElements.length === 0) {
       return new Map();
@@ -73,11 +79,12 @@ export class MasonryTransformService {
     const MAX_RECENT_WIDTHS = 5;
 
     // Process sections - first create indexed array, then arrange for better distribution
+    // CRITICAL: Index is preserved from original mapping - this matches the index used in heightMap
     const indexedSections = sections
       .map((section, index) => ({
         section,
         element: itemElements[index],
-        index,
+        index, // This index matches the idx from items.map((item, idx) => ...) in updateAbsolutePositions
       }))
       .filter(
         (item): item is { section: CardSection; element: HTMLElement; index: number } =>
@@ -85,7 +92,7 @@ export class MasonryTransformService {
       );
 
     // Arrange sections: group by priority, sort by width within groups for better distribution
-    const arrangedSections = this.arrangeSections(indexedSections, getColSpan, config.columns);
+    const arrangedSections = this.arrangeSections(indexedSections, getColSpan);
 
     // Track placed items to skip items placed via look-ahead
     const placedIndices = new Set<number>();
@@ -102,20 +109,60 @@ export class MasonryTransformService {
         continue;
       }
 
-      // Read ACTUAL height from DOM - always measure, never cache
-      // Use offsetHeight as primary (most reliable for layout)
-      // Fallback to getBoundingClientRect if needed
-      const offsetHeight = element.offsetHeight || 0;
-      const rectHeight = element.getBoundingClientRect().height || 0;
+      // Read ACTUAL height from DOM
+      // CRITICAL: Use pre-measured height if available to avoid expensive double getBoundingClientRect() calls
+      // This eliminates the 10-second freeze caused by synchronous double DOM measurements
+      // BEFORE FIX: getBoundingClientRect() called here AFTER being called in updateAbsolutePositions (double measurement)
+      // AFTER FIX: Use pre-measured height from updateAbsolutePositions (single measurement)
+      let actualHeight = 0;
+      let usedPreMeasured = false;
 
-      // Use the larger value to ensure we don't underestimate
-      const actualHeight = Math.max(offsetHeight, rectHeight);
+      // Safety check: ensure element exists before accessing it
+      if (!element) {
+        console.warn(`[MasonryTransform] Element is null/undefined for section ${index}`);
+        continue;
+      }
+
+      // Use index-based lookup (sections and items are in same order)
+      // CRITICAL: Index is preserved from original mapping, even after arrangement
+      if (preMeasuredHeights && preMeasuredHeights.size > 0) {
+        const heightByIndex = preMeasuredHeights.get(index);
+        if (heightByIndex !== undefined && heightByIndex > 0) {
+          actualHeight = heightByIndex;
+          usedPreMeasured = true;
+        }
+      }
+
+      // If no valid pre-measured height found, measure now (fallback case)
+      // Only measure if we didn't get a valid pre-measured height
+      if (!usedPreMeasured || actualHeight <= 0) {
+        // Fallback: measure if not pre-measured or pre-measured value is invalid
+        // Use offsetHeight as primary (most reliable for layout)
+        // Fallback to getBoundingClientRect if needed
+        try {
+          const offsetHeight = element.offsetHeight || 0;
+          const rectHeight = element.getBoundingClientRect().height || 0;
+          // Use the larger value to ensure we don't underestimate
+          actualHeight = Math.max(offsetHeight, rectHeight);
+        } catch (error) {
+          console.error(`[MasonryTransform] Error measuring element ${index}:`, error);
+          actualHeight = element.offsetHeight || 0; // Fallback to offsetHeight only
+        }
+      }
 
       if (actualHeight <= 0) {
-        console.warn(`[MasonryTransform] Section ${index} has zero height`, {
-          rectHeight,
-          offsetHeight,
-        });
+        // Only log detailed info if we had to measure (fallback case)
+        const hasPreMeasured = preMeasuredHeights && preMeasuredHeights.has(index);
+        if (!hasPreMeasured) {
+          const offsetHeight = element.offsetHeight || 0;
+          const rectHeight = element.getBoundingClientRect().height || 0;
+          console.warn(`[MasonryTransform] Section ${index} has zero height`, {
+            rectHeight,
+            offsetHeight,
+          });
+        } else {
+          console.warn(`[MasonryTransform] Section ${index} has zero height (pre-measured)`);
+        }
         continue;
       }
 
@@ -257,9 +304,43 @@ export class MasonryTransformService {
             );
 
             // Get next item's actual height
-            const nextOffsetHeight = nextElement.offsetHeight || 0;
-            const nextRectHeight = nextElement.getBoundingClientRect().height || 0;
-            const nextActualHeight = Math.max(nextOffsetHeight, nextRectHeight);
+            // CRITICAL: Use pre-measured height if available to avoid expensive getBoundingClientRect()
+            let nextActualHeight = 0;
+            let usedPreMeasuredNext = false;
+
+            // Safety check: ensure nextElement exists
+            if (!nextElement) {
+              console.warn(
+                `[MasonryTransform] Next element is null/undefined for index ${fillStrategy.nextItem.index}`
+              );
+              continue;
+            }
+
+            // Use index-based lookup (sections and items are in same order)
+            if (preMeasuredHeights && preMeasuredHeights.size > 0) {
+              const heightByIndex = preMeasuredHeights.get(fillStrategy.nextItem.index);
+              if (heightByIndex !== undefined && heightByIndex > 0) {
+                nextActualHeight = heightByIndex;
+                usedPreMeasuredNext = true;
+              }
+            }
+
+            // If no valid pre-measured height found, measure now (fallback case)
+            // Only measure if we didn't get a valid pre-measured height
+            if (!usedPreMeasuredNext || nextActualHeight <= 0) {
+              // Fallback: measure if not pre-measured or pre-measured value is invalid
+              try {
+                const nextOffsetHeight = nextElement.offsetHeight || 0;
+                const nextRectHeight = nextElement.getBoundingClientRect().height || 0;
+                nextActualHeight = Math.max(nextOffsetHeight, nextRectHeight);
+              } catch (error) {
+                console.error(
+                  `[MasonryTransform] Error measuring next element ${fillStrategy.nextItem.index}:`,
+                  error
+                );
+                nextActualHeight = nextElement.offsetHeight || 0; // Fallback to offsetHeight only
+              }
+            }
 
             if (nextActualHeight > 0) {
               transforms.set(nextKey, {
@@ -306,9 +387,34 @@ export class MasonryTransformService {
             const nextTranslateY = nextTargetTop - nextCurrentTop;
             const nextKey = this.getSectionKey(nextItem.section, nextItem.index);
 
-            const nextOffsetHeight = nextElement.offsetHeight || 0;
-            const nextRectHeight = nextElement.getBoundingClientRect().height || 0;
-            const nextActualHeight = Math.max(nextOffsetHeight, nextRectHeight);
+            // CRITICAL: Use pre-measured height if available to avoid expensive getBoundingClientRect()
+            let nextActualHeight = 0;
+            let usedPreMeasuredMultiple = false;
+
+            // Use index-based lookup (sections and items are in same order)
+            if (preMeasuredHeights && preMeasuredHeights.size > 0) {
+              const heightByIndex = preMeasuredHeights.get(nextItem.index);
+              if (heightByIndex !== undefined && heightByIndex > 0) {
+                nextActualHeight = heightByIndex;
+                usedPreMeasuredMultiple = true;
+              }
+            }
+
+            // If no valid pre-measured height found, measure now (fallback case)
+            if (!usedPreMeasuredMultiple || nextActualHeight <= 0) {
+              // Fallback: measure if not pre-measured or pre-measured value is invalid
+              try {
+                const nextOffsetHeight = nextElement.offsetHeight || 0;
+                const nextRectHeight = nextElement.getBoundingClientRect().height || 0;
+                nextActualHeight = Math.max(nextOffsetHeight, nextRectHeight);
+              } catch (error) {
+                console.error(
+                  `[MasonryTransform] Error measuring multiple item element ${nextItem.index}:`,
+                  error
+                );
+                nextActualHeight = nextElement.offsetHeight || 0; // Fallback to offsetHeight only
+              }
+            }
 
             if (nextActualHeight > 0) {
               transforms.set(nextKey, {
@@ -360,14 +466,13 @@ export class MasonryTransformService {
    * @returns Ordered sections array
    */
   private arrangeSections(
-    indexedSections: Array<{
+    indexedSections: {
       section: CardSection;
       element: HTMLElement;
       index: number;
-    }>,
-    getColSpan: (section: CardSection, columns: number) => number,
-    totalColumns: number
-  ): Array<{ section: CardSection; element: HTMLElement; index: number }> {
+    }[],
+    getColSpan: (section: CardSection, columns: number) => number
+  ): { section: CardSection; element: HTMLElement; index: number }[] {
     // Get priority order (lower number = higher priority)
     // Priority is now numeric (1-3), so we can use it directly
     const getPriorityOrder = (section: CardSection): number => {
@@ -376,7 +481,7 @@ export class MasonryTransformService {
 
     // Get preferred width for sorting
     const getPreferredWidth = (section: CardSection): number => {
-      return section.preferredColumns || getColSpan(section, totalColumns) || 1;
+      return section.preferredColumns || getColSpan(section, 4) || 1;
     };
 
     // Stable sort: priority first, then width (wider first for variety)
@@ -422,7 +527,7 @@ export class MasonryTransformService {
    * @returns Next item from same group, or null if none found
    */
   private findNextItemInSameGroup(
-    arrangedSections: Array<{ section: CardSection; element: HTMLElement; index: number }>,
+    arrangedSections: { section: CardSection; element: HTMLElement; index: number }[],
     currentIndex: number,
     currentPriorityGroup: number
   ): { section: CardSection; element: HTMLElement; index: number } | null {
@@ -450,7 +555,7 @@ export class MasonryTransformService {
    * @returns Array of candidate items with their preferred spans and constraints
    */
   private findFillableItems(
-    arrangedSections: Array<{ section: CardSection; element: HTMLElement; index: number }>,
+    arrangedSections: { section: CardSection; element: HTMLElement; index: number }[],
     currentIndex: number,
     currentPriorityGroup: number,
     remainingCols: number,
@@ -458,24 +563,24 @@ export class MasonryTransformService {
     placedIndices: Set<number>,
     getColSpan: (section: CardSection, columns: number) => number,
     totalColumns: number
-  ): Array<{
+  ): {
     item: { section: CardSection; element: HTMLElement; index: number };
     preferredSpan: number;
     minSpan: number;
     maxSpan: number;
-  }> {
-    const sameGroupCandidates: Array<{
+  }[] {
+    const sameGroupCandidates: {
       item: { section: CardSection; element: HTMLElement; index: number };
       preferredSpan: number;
       minSpan: number;
       maxSpan: number;
-    }> = [];
-    const otherGroupCandidates: Array<{
+    }[] = [];
+    const otherGroupCandidates: {
       item: { section: CardSection; element: HTMLElement; index: number };
       preferredSpan: number;
       minSpan: number;
       maxSpan: number;
-    }> = [];
+    }[] = [];
 
     // Collect candidates, filtering out already-placed items
     for (let i = currentIndex + 1; i < arrangedSections.length; i++) {
@@ -593,20 +698,19 @@ export class MasonryTransformService {
    * @returns Best fill combination or null
    */
   private evaluateFillCombinations(
-    candidates: Array<{
+    candidates: {
       item: { section: CardSection; element: HTMLElement; index: number };
       preferredSpan: number;
       minSpan: number;
       maxSpan: number;
-    }>,
+    }[],
     remainingCols: number,
-    currentPriorityGroup: number,
-    totalColumns: number
+    currentPriorityGroup: number
   ): {
-    items: Array<{
+    items: {
       item: { section: CardSection; element: HTMLElement; index: number };
       span: number;
-    }>;
+    }[];
     score: number;
   } | null {
     if (candidates.length === 0 || remainingCols === 0) {
@@ -614,10 +718,10 @@ export class MasonryTransformService {
     }
 
     let bestCombination: {
-      items: Array<{
+      items: {
         item: { section: CardSection; element: HTMLElement; index: number };
         span: number;
-      }>;
+      }[];
       score: number;
     } | null = null;
     let bestScore = -1;
@@ -635,10 +739,10 @@ export class MasonryTransformService {
         if (totalMinSpan > remainingCols || totalMaxSpan < remainingCols) continue;
 
         // Distribute spans more intelligently
-        const items: Array<{
+        const items: {
           item: { section: CardSection; element: HTMLElement; index: number };
           span: number;
-        }> = [];
+        }[] = [];
         const canGrowFlags = combo.map((c) => c.item.section.canGrow !== false);
         const canShrinkFlags = combo.map((c) => c.item.section.canShrink !== false);
 
@@ -646,8 +750,7 @@ export class MasonryTransformService {
         const preferredSpans: number[] = [];
         let preferredTotal = 0;
 
-        for (let i = 0; i < combo.length; i++) {
-          const candidate = combo[i];
+        for (const candidate of combo) {
           if (!candidate) continue;
 
           let preferred = candidate.preferredSpan;
@@ -665,10 +768,10 @@ export class MasonryTransformService {
 
         for (let i = 0; i < combo.length; i++) {
           const candidate = combo[i];
-          if (!candidate) continue;
+          if (!candidate) break;
 
           const preferredSpan = preferredSpans[i];
-          if (preferredSpan === undefined) continue;
+          if (preferredSpan === undefined) break;
 
           let span = preferredSpan;
           const isLast = i === combo.length - 1;
@@ -744,7 +847,7 @@ export class MasonryTransformService {
     currentSpan: number,
     placementCol: number,
     totalColumns: number,
-    arrangedSections: Array<{ section: CardSection; element: HTMLElement; index: number }>,
+    arrangedSections: { section: CardSection; element: HTMLElement; index: number }[],
     currentIndex: number,
     placedIndices: Set<number>,
     getColSpan: (section: CardSection, columns: number) => number
@@ -752,10 +855,10 @@ export class MasonryTransformService {
     action: 'extend' | 'place_next' | 'place_multiple' | 'reduce_and_place' | 'none';
     adjustedSpan?: number;
     nextItem?: { section: CardSection; element: HTMLElement; index: number };
-    nextItems?: Array<{
+    nextItems?: {
       item: { section: CardSection; element: HTMLElement; index: number };
       span: number;
-    }>;
+    }[];
   } {
     const remainingCols = this.calculateRemainingColumns(placementCol, currentSpan, totalColumns);
 
@@ -782,8 +885,7 @@ export class MasonryTransformService {
       const multiFill = this.evaluateFillCombinations(
         candidates,
         remainingCols,
-        currentPriorityGroup,
-        totalColumns
+        currentPriorityGroup
       );
 
       // Only prefer multi-item if it uses 2+ items AND has good score

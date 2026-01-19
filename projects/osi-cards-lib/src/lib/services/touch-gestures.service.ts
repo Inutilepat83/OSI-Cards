@@ -1,3 +1,22 @@
+/**
+ * Touch Gestures Service
+ *
+ * Provides touch gesture recognition and handling for mobile devices.
+ * Supports tap, swipe, pinch, pan, and press gestures.
+ *
+ * @dependencies
+ * - NgZone: For running gesture handlers in Angular zone
+ *
+ * @example
+ * ```typescript
+ * const gestures = inject(TouchGesturesService);
+ *
+ * gestures.onGesture(element, 'swipe', (event) => {
+ *   console.log('Swiped:', event.direction);
+ * });
+ * ```
+ */
+
 import { Injectable, inject, NgZone, OnDestroy } from '@angular/core';
 import { Subject, Observable, fromEvent, merge } from 'rxjs';
 import { map, filter, takeUntil, switchMap, take } from 'rxjs/operators';

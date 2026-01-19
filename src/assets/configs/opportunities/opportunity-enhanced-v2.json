@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Overview",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Type", "value": "Cloud Migration" },
         { "label": "Value", "value": "$8M - $12M" },

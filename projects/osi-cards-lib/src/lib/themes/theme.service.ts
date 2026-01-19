@@ -3,14 +3,16 @@ import {
   Inject,
   Injectable,
   InjectionToken,
+  isDevMode,
   OnDestroy,
   Optional,
   PLATFORM_ID,
   inject,
 } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, fromEvent, map, takeUntil } from 'rxjs';
-import { EventBusService } from '../services/event-bus.service';
+import { EventBusService, LoggerService } from '@osi-cards/services';
 import { DEFAULT_THEME_PRESET } from './presets';
+import { sendDebugLog } from '@osi-cards/utils';
 
 // ============================================
 // Types & Interfaces
@@ -142,6 +144,7 @@ export class ThemeService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
   private readonly eventBus = inject(EventBusService);
+  private readonly logger = inject(LoggerService, { optional: true });
   private readonly config: ThemeServiceConfig;
 
   private readonly destroy$ = new Subject<void>();
@@ -176,16 +179,24 @@ export class ThemeService implements OnDestroy {
     } else {
       this.rootElement = isPlatformBrowser(this.platformId) ? this.document.documentElement : null;
 
-      // Warn in development if using global theming (library mode should use container-scoped)
+      // Note: Global theming is acceptable for demo app usage
+      // For library integration, prefer container-scoped theming via <osi-cards-container [theme]="..."> or OsiThemeDirective
+      // Only log in verbose debug mode (not in normal development)
       if (
         isPlatformBrowser(this.platformId) &&
-        typeof console !== 'undefined' &&
-        !this.isProduction()
+        !this.isProduction() &&
+        typeof window !== 'undefined' &&
+        (window as any).__OSI_CARDS_VERBOSE_DEBUG === true
       ) {
-        console.warn(
-          '[ThemeService] Using global document.documentElement for theming. ' +
-            'For library integration, prefer container-scoped theming via <osi-cards-container [theme]="..."> or OsiThemeDirective.'
-        );
+        const message =
+          'Using global document.documentElement for theming. ' +
+          'For library integration, prefer container-scoped theming via <osi-cards-container [theme]="..."> or OsiThemeDirective.';
+        if (this.logger) {
+          this.logger.debug(message, { source: 'ThemeService' });
+        } else {
+          // Fallback to console if logger not available
+          console.debug('[ThemeService]', message);
+        }
       }
     }
 
@@ -346,7 +357,10 @@ export class ThemeService implements OnDestroy {
 
     const validation = this.validateTheme(config);
     if (!validation.valid) {
-      console.warn('Invalid theme configuration:', validation.errors);
+      // Only warn in development mode
+      if (isDevMode()) {
+        console.warn('Invalid theme configuration:', validation.errors);
+      }
       return;
     }
 
@@ -481,24 +495,20 @@ export class ThemeService implements OnDestroy {
     const variables = isDark ? DEFAULT_THEME_PRESET.dark : DEFAULT_THEME_PRESET.light;
 
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'theme.service.ts:481',
-        message: 'applyThemeStylePreset: BEFORE applying variables',
-        data: {
-          isDark,
-          variableCount: Object.keys(variables).length,
-          hasBackground: !!variables['--background'],
-          hasForeground: !!variables['--foreground'],
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'theme.service.ts:481',
+      message: 'applyThemeStylePreset: BEFORE applying variables',
+      data: {
+        isDark,
+        variableCount: Object.keys(variables).length,
+        hasBackground: !!variables['--background'],
+        hasForeground: !!variables['--foreground'],
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'C',
+    });
     // #endregion
 
     Object.entries(variables).forEach(([key, value]) => {
@@ -511,19 +521,15 @@ export class ThemeService implements OnDestroy {
     // #region agent log
     const appliedBg = this.rootElement.style.getPropertyValue('--background');
     const appliedFg = this.rootElement.style.getPropertyValue('--foreground');
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'theme.service.ts:487',
-        message: 'applyThemeStylePreset: AFTER applying variables',
-        data: { isDark, appliedBg, appliedFg, allVariables: Object.keys(variables).slice(0, 5) },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'theme.service.ts:487',
+      message: 'applyThemeStylePreset: AFTER applying variables',
+      data: { isDark, appliedBg, appliedFg, allVariables: Object.keys(variables).slice(0, 5) },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'C',
+    });
     // #endregion
   }
 
@@ -559,7 +565,10 @@ export class ThemeService implements OnDestroy {
     try {
       localStorage.setItem(storageKey, theme);
     } catch (e) {
-      console.warn('Failed to save theme preference:', e);
+      // Only warn in development mode - localStorage failures are non-critical
+      if (isDevMode()) {
+        console.warn('Failed to save theme preference:', e);
+      }
     }
   }
 
@@ -578,7 +587,10 @@ export class ThemeService implements OnDestroy {
     try {
       return localStorage.getItem(storageKey);
     } catch (e) {
-      console.warn('Failed to load theme preference:', e);
+      // Only warn in development mode - localStorage failures are non-critical
+      if (isDevMode()) {
+        console.warn('Failed to load theme preference:', e);
+      }
       return null;
     }
   }
@@ -597,7 +609,10 @@ export class ThemeService implements OnDestroy {
     try {
       localStorage.removeItem(storageKey);
     } catch (e) {
-      console.warn('Failed to clear theme preference:', e);
+      // Only warn in development mode - localStorage failures are non-critical
+      if (isDevMode()) {
+        console.warn('Failed to clear theme preference:', e);
+      }
     }
   }
 
@@ -783,42 +798,34 @@ export class ThemeService implements OnDestroy {
   private applyTheme(theme: string): void {
     if (!this.rootElement) {
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'theme.service.ts:744',
-          message: 'applyTheme: rootElement is null',
-          data: { theme },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'theme.service.ts:744',
+        message: 'applyTheme: rootElement is null',
+        data: { theme },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
       // #endregion
       return;
     }
 
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'theme.service.ts:749',
-        message: 'applyTheme: BEFORE setting data-theme',
-        data: {
-          theme,
-          rootElementTag: this.rootElement.tagName,
-          rootElementId: this.rootElement.id,
-          currentDataTheme: this.rootElement.getAttribute('data-theme'),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'theme.service.ts:749',
+      message: 'applyTheme: BEFORE setting data-theme',
+      data: {
+        theme,
+        rootElementTag: this.rootElement.tagName,
+        rootElementId: this.rootElement.id,
+        currentDataTheme: this.rootElement.getAttribute('data-theme'),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'A',
+    });
     // #endregion
 
     // Set data-theme attribute
@@ -834,27 +841,23 @@ export class ThemeService implements OnDestroy {
     const bodyBgVar = this.document.body
       ? getComputedStyle(this.document.body).getPropertyValue('--background')
       : 'N/A';
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'theme.service.ts:752',
-        message: 'applyTheme: AFTER setting data-theme',
-        data: {
-          theme,
-          htmlDataTheme: this.rootElement.getAttribute('data-theme'),
-          bodyDataTheme: bodyTheme,
-          htmlBg,
-          htmlBgVar,
-          bodyBg,
-          bodyBgVar,
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'B',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'theme.service.ts:752',
+      message: 'applyTheme: AFTER setting data-theme',
+      data: {
+        theme,
+        htmlDataTheme: this.rootElement.getAttribute('data-theme'),
+        bodyDataTheme: bodyTheme,
+        htmlBg,
+        htmlBgVar,
+        bodyBg,
+        bodyBgVar,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'B',
+    });
     // #endregion
 
     // Update resolved theme subject
@@ -869,19 +872,15 @@ export class ThemeService implements OnDestroy {
       // #region agent log
       const afterPresetBg = getComputedStyle(this.rootElement).getPropertyValue('--background');
       const afterPresetFg = getComputedStyle(this.rootElement).getPropertyValue('--foreground');
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'theme.service.ts:759',
-          message: 'applyTheme: AFTER applyThemeStylePreset',
-          data: { theme, isDark, afterPresetBg, afterPresetFg },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'theme.service.ts:759',
+        message: 'applyTheme: AFTER applyThemeStylePreset',
+        data: { theme, isDark, afterPresetBg, afterPresetFg },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      });
       // #endregion
     }
 
@@ -911,29 +910,25 @@ export class ThemeService implements OnDestroy {
     const appRoot = this.document.querySelector('app-root');
     const appRootBg = appRoot ? getComputedStyle(appRoot).getPropertyValue('--background') : 'N/A';
     const appRootComputedBg = appRoot ? getComputedStyle(appRoot).backgroundColor : 'N/A';
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'theme.service.ts:773',
-        message: 'applyTheme: FINAL state',
-        data: {
-          theme,
-          colorScheme,
-          finalHtmlBg,
-          finalBodyBg,
-          finalBodyComputedBg,
-          appRootBg,
-          appRootComputedBg,
-          appRootExists: !!appRoot,
-          bodyDataTheme: this.document.body?.getAttribute('data-theme'),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run2',
-        hypothesisId: 'D',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'theme.service.ts:773',
+      message: 'applyTheme: FINAL state',
+      data: {
+        theme,
+        colorScheme,
+        finalHtmlBg,
+        finalBodyBg,
+        finalBodyComputedBg,
+        appRootBg,
+        appRootComputedBg,
+        appRootExists: !!appRoot,
+        bodyDataTheme: this.document.body?.getAttribute('data-theme'),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run2',
+      hypothesisId: 'D',
+    });
     // #endregion
   }
 

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
 import { removeAllIds } from '../utils/card-utils';
 import { LoggingService } from '../../core/services/logging.service';
+import { CardPdfExportOptions, CardPdfService } from '@osi-cards/services';
 
 /**
  * Export format types
@@ -72,6 +73,7 @@ export interface ImageExportOptions {
 })
 export class ExportService {
   private readonly logger = inject(LoggingService);
+  private readonly cardPdfService = inject(CardPdfService);
 
   // ============================================================================
   // UNIFIED API
@@ -94,11 +96,11 @@ export class ExportService {
       case 'csv':
         return this.exportAsCsv(card, options.filename);
       case 'pdf':
-        this.logger.warn(
-          'PDF export requires element reference. Use exportAsPdf() directly.',
-          'ExportService'
-        );
-        throw new Error('PDF export requires element reference. Use exportAsPdf() directly.');
+        // Use CardPdfService for HTML-based PDF export (doesn't require element)
+        return this.exportAsPdfFromConfig(card, {
+          filename: options.filename,
+          includeMetadata: options.includeMetadata,
+        });
       case 'png':
       case 'svg':
       case 'jpeg':
@@ -233,8 +235,96 @@ export class ExportService {
   // ============================================================================
 
   /**
-   * Export card as PDF
+   * Export card as PDF from card configuration (HTML-based)
+   * Uses CardPdfService to generate PDF from card data without requiring DOM element
+   * @param card - Card configuration to export
+   * @param options - PDF export options
+   */
+  async exportAsPdfFromConfig(
+    card: AICardConfig,
+    options: CardPdfExportOptions = {}
+  ): Promise<void> {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'export.service.ts:exportAsPdfFromConfig:ENTRY',
+        message: 'PDF export entry point called',
+        data: {
+          hasCard: !!card,
+          hasOptions: !!options,
+          cardTitle: card?.cardTitle,
+          hasCardElement: !!options.cardElement,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'pdf-export-debug',
+        hypothesisId: 'A',
+      }),
+    }).catch(() => {});
+    // #endregion
+    try {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'export.service.ts:exportAsPdfFromConfig:BEFORE_CALL',
+          message: 'Calling cardPdfService.generatePdf',
+          data: {},
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'pdf-export-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
+      await this.cardPdfService.generatePdf(card, options);
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'export.service.ts:exportAsPdfFromConfig:SUCCESS',
+          message: 'PDF export completed successfully',
+          data: {},
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'pdf-export-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
+      this.logger.info('Card exported as PDF from config', 'ExportService');
+    } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'export.service.ts:exportAsPdfFromConfig:ERROR',
+          message: 'PDF export failed',
+          data: {
+            errorMessage: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'pdf-export-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+      // #endregion
+      this.logger.error('Failed to export card as PDF from config', 'ExportService', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Export card as PDF (image-based, requires DOM element)
    * Requires jsPDF library (optional dependency)
+   * For HTML-based export without DOM element, use exportAsPdfFromConfig()
    */
   async exportAsPdf(
     card: AICardConfig,

@@ -20,7 +20,7 @@
       class="tilt-container w-full flex-1 min-h-0"
       [ngClass]="{
         'max-w-none': isFullscreen,
-        'tilt-disabled': !tiltEnabled || isFullscreen,
+        'tilt-disabled': !tiltEnabled,
       }"
       [style.display]="'flex'"
       [style.flex-direction]="'column'"
@@ -33,17 +33,19 @@
         [style.flex-direction]="'column'"
         [ngClass]="{
           'ai-card-surface--fullscreen': isFullscreen,
-          'ai-card-surface--empty-state': !processedSections.length,
+          'ai-card-surface--empty-state': !processedSectionsForTemplate.length,
           'streaming-active': isStreamingActive,
         }"
         [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
         [attr.aria-live]="effectiveStreamingStage === 'streaming' ? 'polite' : 'off'"
+        [attr.aria-atomic]="effectiveStreamingStage === 'streaming' ? 'false' : null"
+        [attr.aria-relevant]="effectiveStreamingStage === 'streaming' ? 'additions text' : null"
         [attr.aria-busy]="effectiveStreamingStage === 'streaming' || effectiveStreamingStage === 'thinking'"
         role="article"
       >
         <!-- Card Header -->
         <app-card-header
-          *ngIf="processedSections.length"
+          *ngIf="processedSectionsForTemplate.length"
           [cardTitle]="cardConfig.cardTitle"
           [showExport]="true"
           (export)="onExport()"
@@ -52,8 +54,8 @@
 
         <!-- Card Section List -->
         <app-card-section-list
-          *ngIf="processedSections.length; else emptyState"
-          [sections]="processedSections"
+          *ngIf="processedSectionsForTemplate.length; else emptyState"
+          [sections]="processedSectionsForTemplate"
           [containerWidth]="effectiveContainerWidth"
           [isStreaming]="isStreamingActive"
           (sectionEvent)="onSectionEvent($event)"
@@ -95,7 +97,7 @@
 
         <!-- Card Actions -->
         <app-card-actions
-          *ngIf="processedSections.length && cardConfig.actions?.length"
+          *ngIf="processedSectionsForTemplate.length && cardConfig.actions?.length"
           [actions]="cardConfig.actions || []"
           (actionClick)="onActionClick($event)"
         >
@@ -103,7 +105,7 @@
 
         <!-- Signature at bottom of card -->
         <div
-          *ngIf="processedSections.length"
+          *ngIf="processedSectionsForTemplate.length"
           class="card-signature"
           [title]="versionString"
           (click)="onSignatureClick()"

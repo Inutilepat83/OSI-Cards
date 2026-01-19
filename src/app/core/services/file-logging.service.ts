@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, isDevMode, PLATFORM_ID } from '@angular/core';
 import { AppConfigService } from './app-config.service';
 
 /**
@@ -15,7 +15,7 @@ export class FileLoggingService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly config = inject(AppConfigService);
   private logs: { timestamp: number; level: string; message: string; data?: any }[] = [];
-  private readonly maxLogs = 10000;
+  private readonly maxLogs = 1000; // Reduced from 10000 to reduce memory usage
   private logServerCheckInterval: number | null = null;
   private logServerHealthCache: { isAvailable: boolean; lastChecked: number } | null = null;
   private readonly HEALTH_CHECK_CACHE_DURATION = 60000; // Cache for 60 seconds
@@ -192,9 +192,19 @@ export class FileLoggingService {
           // Prevent CORS errors from appearing in console
           mode: 'cors',
           credentials: 'omit',
+          // Suppress network errors in console
+          keepalive: false,
+        }).catch(() => {
+          // Silently catch and return null for any fetch errors
+          return null;
         });
 
         clearTimeout(timeoutId);
+
+        // If fetch failed, response will be null
+        if (!response) {
+          throw new Error('Fetch failed silently');
+        }
 
         const isAvailable = response.ok;
 
@@ -207,8 +217,9 @@ export class FileLoggingService {
         return isAvailable;
       } catch (fetchError) {
         clearTimeout(timeoutId);
-        // Re-throw to be caught by outer catch
-        throw fetchError;
+        // Silently handle - don't re-throw, just return false
+        // This prevents any error from propagating
+        return false;
       }
     } catch (error) {
       // Completely silent - log server is optional and may not be running
@@ -272,10 +283,14 @@ export class FileLoggingService {
         // Clear logs after successful send
         this.clearLogs();
       } else {
-        console.warn('Failed to send logs to server:', response.statusText);
+        if (isDevMode()) {
+          console.warn('Failed to send logs to server:', response.statusText);
+        }
       }
     } catch (error) {
-      console.warn('Error sending logs to server:', error);
+      if (isDevMode()) {
+        console.warn('Error sending logs to server:', error);
+      }
       // Don't export as file automatically - let user decide
     }
   }

@@ -19,7 +19,7 @@
  * ```
  */
 
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 // Stub function - smart-grid.util was removed
 function estimateSectionHeight(section: any): number {
   return 200; // Default height estimate

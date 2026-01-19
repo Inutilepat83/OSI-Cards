@@ -16,10 +16,13 @@ export const environment = {
   enableLogServer: true,
 
   // Debugging and Logging
-  enableDebug: true,
-  logLevel: 'debug' as 'error' | 'warn' | 'info' | 'debug',
-  enablePerformanceLogging: true,
-  enableStateLogging: true,
+  enableDebug: false, // Disabled by default to reduce console noise and prevent browser resource exhaustion
+  logLevel: 'warn' as 'error' | 'warn' | 'info' | 'debug', // Only show warnings and errors
+  enablePerformanceLogging: false, // Disabled by default to reduce console noise
+  enableStateLogging: false, // Disabled by default to reduce console noise
+  // NOTE: To disable ALL debug logging (including inline fetch calls), use:
+  // localStorage.setItem('__DISABLE_DEBUG_LOGGING', 'true')
+  // Or: window.__DISABLE_DEBUG_LOGGING = true
 
   // Feature Flags
   features: {

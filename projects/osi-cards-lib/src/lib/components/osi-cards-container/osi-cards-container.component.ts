@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
-import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
+import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '@osi-cards/providers';
 
 /**
  * OsiCardsContainerComponent

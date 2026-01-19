@@ -1,5 +1,5 @@
 /**
- * Layout Analytics Service (Point 100)
+ * Layout Analytics Service
  *
  * Tracks layout quality metrics in production:
  * - Utilization percentage
@@ -7,6 +7,9 @@
  * - Reflow frequency
  * - Algorithm performance
  * - Error rates
+ *
+ * @dependencies
+ * - None (uses internal data structures for metrics tracking)
  *
  * @example
  * ```typescript
@@ -22,7 +25,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { LayoutMetrics } from '../core/packing-algorithm.interface';
+import { LayoutMetrics } from '@osi-cards/core';
 
 // ============================================================================
 // TYPES

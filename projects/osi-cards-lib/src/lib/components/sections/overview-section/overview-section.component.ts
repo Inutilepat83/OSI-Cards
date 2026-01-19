@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { ClipboardService } from '../../../services/clipboard.service';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { LucideIconsModule } from '../../../icons';
+import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { ClipboardService, ToastService } from '@osi-cards/services';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { LucideIconsModule } from '@osi-cards/icons';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -19,12 +19,47 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, LucideIconsModule],
   templateUrl: './overview-section.component.html',
   styleUrl: './overview-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OverviewSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
   private readonly clipboardService = inject(ClipboardService);
+  private readonly toastService = inject(ToastService);
+
+  // Signal to track copy state for visual feedback
+  readonly isCopied = signal(false);
 
   ngOnInit(): void {
+    // #region agent log
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'overview-section.component.ts:28',
+          message: 'OverviewSectionComponent: ngOnInit',
+          data: {
+            sectionType: this.section?.type,
+            sectionTitle: this.section?.title,
+            fieldsCount: this.section?.fields?.length || 0,
+            itemsCount: this.section?.items?.length || 0,
+            fields: this.section?.fields,
+            hasFields: this.hasFields,
+            getFieldsResult: this.getFields(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'H1',
+        }),
+      }).catch(() => {});
+    }
+    // #endregion
+
     // Register layout preference function for this section type
     this.layoutService.register('overview', (section: CardSection, availableColumns: number) => {
       return this.calculateOverviewLayoutPreferences(section, availableColumns);
@@ -124,7 +159,8 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
    * Copy section content to clipboard
    */
   async onCopySection(): Promise<void> {
-    if (!this.section.fields?.length) {
+    const fields = this.getFields();
+    if (!fields || fields.length === 0) {
       return;
     }
 
@@ -142,7 +178,7 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
     }
 
     // Add field content
-    this.section.fields.forEach((field) => {
+    fields.forEach((field) => {
       const value = this.getFieldValue(field);
       if (value !== null && value !== undefined) {
         const stringValue = String(value);
@@ -158,8 +194,21 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
 
     try {
       await this.clipboardService.copy(textToCopy);
-    } catch (error) {
-      console.error('Failed to copy section content to clipboard', error);
+
+      // Show success toast notification
+      this.toastService.success('Copied!', { duration: 2000 });
+
+      // Visual feedback: change icon to checkmark temporarily
+      this.isCopied.set(true);
+
+      // Reset icon after 2 seconds
+      setTimeout(() => {
+        this.isCopied.set(false);
+      }, 2000);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Failed to copy section content to clipboard', errorMessage);
+      this.toastService.error('Failed to copy', { duration: 3000 });
     }
   }
 }

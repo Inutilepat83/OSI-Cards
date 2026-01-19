@@ -53,6 +53,7 @@
   justify-content: center;
   gap: 0.5rem;
   vertical-align: middle;
+  margin-top: 1rem;
 }
 
 .icon {
@@ -158,13 +159,17 @@
   font-size: 3.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
   line-height: 1.1;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   @media (min-width: 640px) {
     font-size: 3.875rem;
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
   }
 
   @media (min-width: 1024px) {
@@ -215,24 +220,6 @@
   }
 }
 
-// Specific adjustments for hero title
-.hero-title.selectable-component {
-  padding: 0.75rem;
-  margin: -0.75rem;
-  display: inline-block;
-  width: calc(100% + 1.5rem);
-  box-sizing: border-box;
-}
-
-// Specific adjustments for hero description
-.hero-description.selectable-component {
-  padding: 0.75rem;
-  margin: 0.75rem auto;
-  display: block;
-  max-width: calc(52rem + 1.5rem);
-  box-sizing: border-box;
-}
-
 .hero-title-primary {
   color: var(--foreground);
   display: inline-block;
@@ -260,41 +247,132 @@
 }
 
 .hero-description {
-  font-size: var(--text-md);
-  color: var(--muted-foreground);
+  font-size: 1.0625rem; // 17px - improved base size
+  color: var(--foreground);
+  opacity: 0.85;
   max-width: 52rem;
-  margin: 0 auto;
-  line-height: var(--leading-relaxed);
+  margin: 1.25rem auto 0; // Responsive top margin, centered
+  line-height: 1.75; // Better line height for readability
   padding: 0 var(--spacing-base);
   font-weight: var(--font-normal);
+  letter-spacing: -0.01em; // Slightly tighter for better appearance
   animation: fadeInUp 0.5s ease-out 0.1s both;
+  text-align: center; // Center text content
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   @media (min-width: 640px) {
-    font-size: var(--text-lg);
-    line-height: var(--leading-relaxed);
+    font-size: 1.1875rem; // 19px - improved large size
+    line-height: 1.8; // Even better line height on larger screens
+    margin-top: 1.5rem; // Increased top margin on larger screens
+    padding: 0 var(--spacing-lg); // More padding on larger screens
   }
 
-  &.selectable-component {
-    padding: calc(0.5rem + var(--spacing-base));
-    margin: calc(-0.5rem - var(--spacing-base));
+  @media (min-width: 1024px) {
+    font-size: 1.25rem; // 20px - extra size for desktop
+    line-height: 1.8;
+    margin-top: 1.75rem; // Even more top margin on desktop
+    padding: 0 var(--spacing-xl); // Maximum padding on desktop
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: 2rem;
+  padding: 0 var(--spacing-base);
+  animation: fadeInUp 0.5s ease-out 0.2s both;
+
+  @media (min-width: 640px) {
+    gap: var(--spacing-lg);
+    margin-top: 2.5rem;
+    padding: 0 var(--spacing-lg);
+  }
+
+  @media (min-width: 1024px) {
+    margin-top: 3rem;
+    padding: 0 var(--spacing-xl);
+  }
+}
+
+.hero-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem; // 15px
+  font-weight: 500;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  &:hover {
+    background: var(--accent, rgba(255, 121, 0, 0.1));
+    border-color: var(--color-brand, #ff7900);
+    color: var(--color-brand, #ff7900);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.25);
+  }
+
+  lucide-icon {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover lucide-icon {
+    transform: scale(1.1);
+  }
+
+  @media (min-width: 640px) {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem; // 16px
+  }
+
+  @media (min-width: 1024px) {
+    padding: 1rem 2rem;
+    font-size: 1.0625rem; // 17px
   }
 }
 
 .hero-features {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   max-width: 72rem;
   margin: 0 auto;
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
   }
 
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
   }
 }
 
@@ -303,23 +381,36 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   text-align: center;
   box-shadow: var(--shadow-sm);
   transition: all 0.3s var(--ease-out);
   position: relative;
-  overflow: visible; /* Changed from hidden to visible for selection indicator */
+  overflow: visible;
   animation: fadeInUp 0.5s ease-out backwards;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   /* Stagger animation for cards */
   &:nth-child(1) {
     animation-delay: 0.08s;
   }
   &:nth-child(2) {
-    animation-delay: 0.14s;
+    animation-delay: 0.12s;
   }
   &:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+  &:nth-child(4) {
     animation-delay: 0.2s;
+  }
+  &:nth-child(5) {
+    animation-delay: 0.24s;
+  }
+  &:nth-child(6) {
+    animation-delay: 0.28s;
   }
 
   /* Minimalist hover - no decorative borders */
@@ -330,7 +421,7 @@
   }
 
   @media (min-width: 640px) {
-    padding: 2.5rem;
+    padding: var(--spacing-lg);
   }
 
   &:hover:not(.selected) {
@@ -362,33 +453,27 @@
     transform: translateY(-2px) !important;
     background: color-mix(in srgb, var(--accent) 8%, var(--card)) !important;
   }
-
-  &:nth-child(3) {
-    @media (min-width: 768px) and (max-width: 1023px) {
-      grid-column: span 2;
-    }
-  }
 }
 
 .hero-feature-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  margin: 0 auto 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 1rem;
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, transparent);
   border: none !important;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
 
   @media (min-width: 640px) {
-    width: 5rem;
-    height: 5rem;
-    margin-bottom: 2rem;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.25rem;
   }
 
   lucide-icon {
@@ -398,17 +483,17 @@
 }
 
 .hero-feature-title {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--foreground);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   letter-spacing: -0.02em;
   line-height: 1.3;
   transition: color 0.2s ease;
 
   @media (min-width: 640px) {
-    font-size: 1.375rem;
-    margin-bottom: 1.25rem;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
   }
 
   .hero-feature-card:hover & {
@@ -417,14 +502,14 @@
 }
 
 .hero-feature-description {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--muted-foreground);
-  line-height: 1.65;
+  line-height: 1.6;
   font-weight: 400;
   transition: color 0.2s ease;
 
   @media (min-width: 640px) {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .hero-feature-card:hover & {
@@ -536,7 +621,7 @@
 .variant-selector {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
   align-items: center;
 
@@ -772,6 +857,27 @@
   position: relative; /* container for the overlay */
 }
 
+.json-editor-wrapper {
+  align-self: stretch;
+  margin-top: 12px;
+  padding: 1rem;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: color-mix(in srgb, var(--card-background, var(--background)) 60%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border, var(--foreground)) 8%, transparent);
+  box-shadow: 0 4px 24px -1px color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-radius: 12px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
 .badge-destructive {
   background-color: color-mix(in srgb, var(--destructive) 20%, transparent);
   color: var(--destructive);
@@ -905,6 +1011,11 @@
   border-radius: 3px;
   cursor: pointer;
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -918,6 +1029,14 @@
     &:hover {
       transform: scale(1.1);
     }
+  }
+
+  &:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+  }
+
+  &:disabled::-moz-range-thumb {
+    cursor: not-allowed;
   }
 
   &::-moz-range-thumb {
@@ -1259,7 +1378,7 @@
 /* Footer Premium Styles */
 .site-footer {
   background: #000;
-  padding: 4rem 1.5rem 2rem;
+  padding: 0.75rem 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   margin-top: 0;
 }
@@ -1328,13 +1447,14 @@
 
 .footer-bottom {
   max-width: 1280px;
-  margin: 3rem auto 0;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 0 auto;
+  padding-top: 0;
+  border-top: none;
   text-align: center;
 
   p {
     color: var(--muted-foreground);
     font-size: 0.75rem;
+    margin: 0;
   }
 }

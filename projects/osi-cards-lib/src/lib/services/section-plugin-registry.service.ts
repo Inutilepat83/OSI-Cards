@@ -1,18 +1,22 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { CardSection } from '../models';
-import { BaseSectionComponent } from '../components/sections/base-section.component';
+import { CardSection } from '@osi-cards/models';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
 import {
   SectionPlugin,
   RegisteredSectionPlugin,
   SectionPluginConfig,
   SectionPluginMetadata,
-} from '../interfaces/section-plugin.interface';
+} from '@osi-cards/lib/interfaces/section-plugin.interface';
 
 /**
- * Registry service for managing custom section type plugins
+ * Section Plugin Registry Service
  *
+ * Registry service for managing custom section type plugins.
  * Allows external developers to register custom section components that extend
  * the library's built-in section types.
+ *
+ * @dependencies
+ * - None (uses internal Map for plugin registry)
  *
  * @example
  * ```typescript

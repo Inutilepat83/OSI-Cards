@@ -10,7 +10,7 @@
       [class.has-image]="getImageUrl(a)"
       [class.has-excerpt]="a.description"
     >
-      <img [src]="getImageUrl(a)" [alt]="a.title" class="img" *ngIf="getImageUrl(a)" loading="lazy" />
+      <img [src]="getImageUrl(a)" [alt]="a.title" class="img" *ngIf="getImageUrl(a)" />
       <div class="content">
         <div class="meta">
           <span *ngIf="a.meta?.date">{{ a.meta?.date }}</span>

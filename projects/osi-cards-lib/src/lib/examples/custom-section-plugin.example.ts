@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BaseSectionComponent } from '../components/sections/base-section.component';
-import { LucideIconsModule } from '../icons';
-import { SectionPlugin } from '../interfaces/section-plugin.interface';
-import { CardSection } from '../models';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { LucideIconsModule } from '@osi-cards/icons';
+import { SectionPlugin } from '@osi-cards/lib/interfaces/section-plugin.interface';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * Example custom section plugin component

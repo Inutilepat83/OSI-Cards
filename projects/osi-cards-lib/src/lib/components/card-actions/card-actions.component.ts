@@ -8,9 +8,9 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideIconsModule } from '../../icons';
-import { CardAction } from '../../models/card.model';
-import { IconService } from '../../services/icon.service';
+import { LucideIconsModule } from '@osi-cards/icons';
+import { CardAction } from '@osi-cards/models';
+import { IconService } from '@osi-cards/services';
 
 /**
  * Card Actions Component

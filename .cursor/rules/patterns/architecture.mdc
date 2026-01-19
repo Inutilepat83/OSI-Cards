@@ -1,111 +1,225 @@
 ---
-description: "Clean Architecture, CQRS, DDD, SOLID principles"
+description: "Angular component architecture, SOLID principles, component patterns"
 alwaysApply: true
 ---
 
 # Architecture Patterns
 
-## Clean Architecture
+## Angular Component Architecture
 
-### Core Principles
+### Component-Based Architecture
 
-1. **Dependency Rule**: Dependencies point inward. Outer layers depend on inner layers, never the reverse.
-2. **Separation of Concerns**: Each layer has a single, well-defined responsibility.
-3. **Independence**: Business logic is independent of frameworks, UI, databases, and external services.
+Angular applications are built with **components** as the primary architectural unit.
 
-### Layer Structure
+### Component Hierarchy
 
 ```
 ┌─────────────────────────────────────┐
-│         Presentation Layer          │  (Controllers, UI Components)
+│      Root Component (App)           │
 ├─────────────────────────────────────┤
-│        Application Layer            │  (Use Cases, Application Services)
+│      Feature Components             │
+│      (Cards, Sections, etc.)        │
 ├─────────────────────────────────────┤
-│          Domain Layer               │  (Entities, Value Objects, Domain Logic)
-├─────────────────────────────────────┤
-│       Infrastructure Layer          │  (Data Access, External Services)
+│      Presentational Components      │
+│      (Actions, Headers, etc.)       │
 └─────────────────────────────────────┘
 ```
 
+### Architecture Layers
+
+**For Angular library:**
+
+1. **Presentation Layer** - Components (standalone, OnPush)
+2. **Service Layer** - Business logic, state management
+3. **Model Layer** - Types, interfaces, data structures
+4. **Utility Layer** - Helper functions, utilities
+
 ### Implementation Guidelines
 
-- **Domain Layer**: Pure business logic, no dependencies on external frameworks
-- **Application Layer**: Orchestrates domain objects, implements use cases
-- **Infrastructure Layer**: Implements interfaces defined in domain/application layers
-- **Presentation Layer**: Thin layer that delegates to application layer
+- **Components**: Standalone, OnPush, focused on presentation
+- **Services**: Injectable, business logic, state management
+- **Models**: Type definitions, interfaces, data structures
+- **Utilities**: Pure functions, helpers, validators
 
-## Vertical Slice Architecture
+---
 
-Organize code by **feature**, not by **layer**.
+## Component Patterns
 
-### Structure
+### Container/Presentational Pattern
 
+**Container Components** (smart):
+- Fetch data
+- Manage state
+- Handle business logic
+- Pass data to presentational components
+
+**Presentational Components** (dumb):
+- Receive data via `@Input()`
+- Emit events via `@Output()`
+- No direct service dependencies
+- Reusable and testable
+
+### Example
+
+**See actual codebase examples:**
+- Container: `OsiCardsComponent` (wraps `AICardRendererComponent`)
+- Presentational: `CardActionsComponent`, `CardHeaderComponent` (receive data via @Input, emit via @Output)
+
+```typescript
+// Container Component (Smart) - Similar to OsiCardsComponent
+@Component({
+  selector: 'app-card-container',
+  template: `
+    <app-card
+      [card]="card()"
+      (actionClick)="onActionClick($event)">
+    </app-card>
+  `,
+})
+export class CardContainerComponent {
+  private readonly cardService = inject(CardFacadeService); // See CardFacadeService
+  readonly card = toSignal(this.cardService.card$);
+  
+  onActionClick(action: CardAction): void {
+    this.cardService.handleAction(action);
+  }
+}
+
+// Presentational Component (Dumb) - Similar to CardActionsComponent
+@Component({
+  selector: 'app-card',
+  template: `<!-- Card presentation -->`,
+})
+export class CardComponent {
+  @Input() card?: AICardConfig;
+  @Output() actionClick = new EventEmitter<CardAction>();
+}
 ```
-features/
-  ├── user-registration/
-  │   ├── domain/
-  │   ├── application/
-  │   ├── infrastructure/
-  │   └── presentation/
-  ├── order-processing/
-  │   ├── domain/
-  │   ├── application/
-  │   ├── infrastructure/
-  │   └── presentation/
+
+---
+
+## Service Layer Patterns
+
+### Facade Pattern
+
+**Provide a unified interface** to a complex subsystem.
+
+**Real example:** `CardFacadeService` (`projects/osi-cards-lib/src/lib/services/card-facade.service.ts`)
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class CardFacadeService {
+  private readonly streamingService = inject(OSICardsStreamingService);
+  private readonly themeService = inject(ThemeService);
+  
+  // Unified API
+  readonly card = toSignal(this.cardService.card$);
+  readonly theme = toSignal(this.themeService.theme$);
+  
+  createCard(config: AICardConfig): void {
+    this.cardService.create(config);
+  }
+  
+  streamCard(json: string): Observable<CardUpdate> {
+    return this.streamingService.stream(json);
+  }
+}
 ```
 
-### Benefits
+### Guidelines
 
-- Features are self-contained
-- Easier to understand and maintain
-- Reduces coupling between features
-- Enables independent deployment
+- Use facade pattern for complex subsystems (see `CardFacadeService` for example)
+- Provide simple, unified API
+- Hide implementation details
+- Make services injectable with `providedIn: 'root'`
 
-## CQRS (Command Query Responsibility Segregation)
+---
 
-### Commands (Write Operations)
+## State Management Patterns
 
-- Mutate state
-- Return success/failure, not data
-- Should be idempotent when possible
-- Use command handlers
+### Service-Based State (Simple)
 
-### Queries (Read Operations)
+**Use services for simple state management:**
 
-- Never mutate state
-- Return data
-- Can be optimized independently
-- Use query handlers
+```typescript
+@Injectable({ providedIn: 'root' })
+export class ThemeService {
+  private readonly themeSubject = new BehaviorSubject<'day' | 'night'>('day');
+  readonly theme$ = this.themeSubject.asObservable();
+  
+  setTheme(theme: 'day' | 'night'): void {
+    this.themeSubject.next(theme);
+  }
+}
+```
 
-### When to Use CQRS
+### Signal-Based State (Modern)
 
-- High read/write ratio
-- Complex read models
-- Need for independent scaling
-- Different consistency requirements
+**Use signals for reactive state (Angular 16+):**
 
-## Domain-Driven Design (DDD)
+```typescript
+@Injectable({ providedIn: 'root' })
+export class ThemeService {
+  private readonly themeState = signal<'day' | 'night'>('day');
+  readonly theme = this.themeState.asReadonly();
+  
+  setTheme(theme: 'day' | 'night'): void {
+    this.themeState.set(theme);
+  }
+}
+```
 
-### Aggregates
+### NgRx (Complex State)
 
-- Cluster of domain objects treated as a single unit
-- One aggregate root per aggregate
-- Enforce invariants within aggregate boundaries
-- Reference other aggregates by ID, not by object
+**Use NgRx for complex state management** (when needed):
+- Multiple features
+- Complex state relationships
+- Time-travel debugging
+- State persistence
 
-### Value Objects
+### Guidelines
 
-- Immutable
-- Defined by their attributes
-- No identity
-- Examples: Money, Address, Email
+- Use services for simple state
+- Use signals for reactive state (Angular 16+)
+- Use NgRx only when complexity justifies it
+- Keep state management simple
 
-### Domain Events
+---
 
-- Represent something that happened in the domain
-- Published by aggregates
-- Handled by event handlers
-- Enable eventual consistency
+## Dependency Injection Patterns
+
+### inject() Function (Modern)
+
+**Prefer `inject()` function for dependency injection:**
+
+```typescript
+export class MyComponent {
+  private readonly myService = inject(MyService);
+  private readonly config = inject(CONFIG_TOKEN, { optional: true });
+}
+```
+
+### Constructor Injection (Alternative)
+
+**Can use constructor injection:**
+
+```typescript
+export class MyComponent {
+  constructor(
+    private readonly myService: MyService,
+    @Optional() @Inject(CONFIG_TOKEN) private readonly config?: Config
+  ) {}
+}
+```
+
+### Guidelines
+
+- Prefer `inject()` function (modern, cleaner)
+- Use constructor injection if preferred
+- Use `{ optional: true }` for optional dependencies
+- Never manually instantiate services
+
+---
 
 ## SOLID Principles
 
@@ -113,20 +227,99 @@ features/
 
 A class should have only one reason to change.
 
+**Examples:**
+- Component: Renders UI
+- Service: Handles business logic
+- Utility: Performs specific calculation
+
 ### Open/Closed Principle (OCP)
 
 Open for extension, closed for modification.
+
+**Examples:**
+- Base component classes
+- Abstract services
+- Plugin architecture
 
 ### Liskov Substitution Principle (LSP)
 
 Subtypes must be substitutable for their base types.
 
+**Examples:**
+- Component inheritance
+- Interface implementations
+- Service implementations
+
 ### Interface Segregation Principle (ISP)
 
 Clients should not depend on interfaces they don't use.
+
+**Examples:**
+- Small, focused interfaces
+- Component interfaces
+- Service interfaces
 
 ### Dependency Inversion Principle (DIP)
 
 Depend on abstractions, not concretions.
 
-**See also:** `error-handling.mdc`, `cqrs.mdc`, `testing.mdc`
+**Examples:**
+- Service interfaces
+- Injection tokens
+- Abstract base classes
+
+---
+
+## Code Organization
+
+### Feature-Based Organization
+
+**Organize code by feature:**
+
+```
+lib/
+├── components/
+│   ├── cards/
+│   │   ├── ai-card-renderer/
+│   │   └── osi-cards/
+│   └── sections/
+│       ├── info-section/
+│       └── analytics-section/
+├── services/
+│   ├── card.service.ts
+│   └── theme.service.ts
+└── models/
+    ├── card.model.ts
+    └── section.model.ts
+```
+
+### Guidelines
+
+- Organize by feature, not by type
+- Keep related code together
+- Use barrel exports (`index.ts`)
+- Keep components close to their styles
+- Keep tests next to source files
+
+---
+
+## Architecture Checklist
+
+Before creating new features:
+
+- [ ] Component structure planned
+- [ ] Services identified
+- [ ] State management approach chosen
+- [ ] Dependency injection designed
+- [ ] SOLID principles followed
+- [ ] Code organization planned
+- [ ] Interfaces/types defined
+- [ ] Error handling considered
+- [ ] Testing strategy defined
+
+**Examples:**
+- See `CardFacadeService` (`projects/osi-cards-lib/src/lib/services/card-facade.service.ts`) for facade pattern
+- See `ThemeService` (`projects/osi-cards-lib/src/lib/themes/theme.service.ts`) for service patterns
+- See `AICardRendererComponent` for container/presentational pattern
+
+**See also:** `angular-components.mdc`, `error-handling.mdc`, `testing.mdc`

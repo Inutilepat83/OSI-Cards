@@ -1,117 +1,110 @@
-# Cursor Rules - Enterprise Backend Engineering Suite
+# Cursor Rules - Angular Library Development
 
-A production-ready, extensible rule system for Cursor AI that transforms your coding assistant into a Senior Principal Backend Engineer with 20+ years of enterprise experience.
+A comprehensive rule system for Angular library development with OSI Cards, focusing on component architecture, testing, and best practices.
 
-## 🎯 What is This?
+## What is This?
 
-This repository contains a comprehensive, language-agnostic rule system for Cursor AI that enforces:
+This repository contains a comprehensive rule system for Cursor AI that enforces:
 
 ✅ Test-Driven Development (TDD) workflows
-✅ Clean Architecture and SOLID principles
-✅ Enterprise security best practices
+✅ Angular component architecture (standalone, OnPush, signals)
+✅ Component library patterns
+✅ Frontend security best practices
 ✅ Production-grade error handling and logging
-✅ CQRS and Domain-Driven Design patterns
-✅ Multi-language support (TypeScript/Angular, and extensible to more)
+✅ Jasmine/Karma testing patterns
+✅ Playwright E2E testing
 
-## 📁 Structure
+## Structure
 
 ```
 .cursor/rules/
-├── patterns/                  # Language-agnostic patterns & concepts
-│   ├── architecture.mdc       # Clean Architecture, CQRS, DDD, SOLID
-│   ├── error-handling.mdc     # Result pattern, RFC 7807
-│   ├── testing.mdc            # TDD workflow, AAA pattern
-│   ├── security.mdc           # Security principles
-│   ├── api-design.mdc         # REST conventions
-│   ├── input-sanitization.mdc # Validation concepts
-│   └── cqrs.mdc               # Command/Query separation
+├── patterns/                  # Angular-specific patterns
+│   ├── angular-components.mdc    # Standalone components, OnPush, signals
+│   ├── angular-library.mdc       # Library patterns, public API, providers
+│   ├── shadow-dom.mdc            # Shadow DOM encapsulation
+│   ├── scss-styling.mdc          # SCSS patterns, design tokens
+│   ├── architecture.mdc          # Component architecture, SOLID
+│   ├── testing.mdc               # Jasmine/Karma + Playwright
+│   ├── security.mdc              # Frontend security (XSS, CSP)
+│   └── error-handling.mdc        # Angular error handling
 │
 ├── development/               # Development workflow
-│   ├── tdd-planning.mdc       # Test planning requirements
-│   └── code-implementation.mdc # Implementation workflow
+│   ├── tdd-planning.mdc          # Test planning requirements
+│   ├── code-implementation.mdc   # Implementation workflow
+│   ├── browser-testing-workflow.mdc # Browser testing
+│   ├── log-analysis.mdc          # Log analysis
+│   ├── consistency-enforcement.mdc # Consistency rules
+│   └── comprehensive-qa-checklist.mdc # QA checklist
 │
 └── languages/                 # Language-specific implementations
-    └── typescript/            # TypeScript / Angular (10 files)
+    └── typescript/            # TypeScript / Angular
         ├── code-quality.mdc
-        ├── testing.mdc
+        ├── testing.mdc          # Jasmine/Karma + Playwright
         ├── error-handling.mdc
-        ├── controllers.mdc
-        ├── validation.mdc
+        ├── validation.mdc       # Angular forms validation
         ├── dependencies.mdc
-        ├── security.mdc
-        ├── input-sanitization.mdc
+        ├── security.mdc         # Frontend security
         └── logging.mdc
 ```
 
-## 🌟 Key Features
+## Key Features
 
-### 🤖 AI Persona
+### Angular Library Focus
 
-The AI agent operates as a Senior Principal Backend Engineer with:
+The AI agent operates as an Angular library developer with:
 
-- 20+ years of enterprise experience
-- Deep knowledge of distributed systems
-- High-availability production environment expertise
-- Strong emphasis on asking clarifying questions (never assumes!)
+- Deep knowledge of Angular component architecture
+- Standalone components, OnPush change detection, signals
+- Shadow DOM encapsulation patterns
+- Component library best practices
+- SCSS and design token patterns
 
-### 🧪 Test-Driven Development (TDD)
+### Testing
 
-Enforces a strict TDD workflow:
+Enforces comprehensive testing:
 
-- **RED** - Write a failing test
-- **GREEN** - Minimal code to pass
-- **REFACTOR** - Clean up while keeping tests green
+- **Jasmine + Karma** for unit tests
+- **Playwright** for E2E tests
+- TDD workflow (Red-Green-Refactor)
+- Component testing with TestBed
+- Service testing patterns
 
-### 🏗️ Architecture Patterns
+### Architecture Patterns
 
 Built-in support for:
 
-- **Vertical Slice Architecture** - Organize by feature, not layer
-- **Clean Architecture** - Domain, Application, Infrastructure, API
-- **CQRS** - Command/Query separation
-- **Domain-Driven Design** - Aggregates, Value Objects, Domain Events
+- **Component Architecture** - Standalone components, OnPush
+- **Service Layer** - Injectable services, dependency injection
+- **Library Patterns** - Public API, providers, exports
+- **Shadow DOM** - Style isolation, encapsulation
+- **SOLID Principles** - Applied to Angular components
 
-### 🛡️ Security First
+### Security
 
-Comprehensive security guidance:
+Frontend security guidance:
 
-- Input validation and sanitization
-- SQL injection, XSS, and path traversal prevention
-- Secrets management (no hardcoded credentials)
-- HTTPS, CORS, and security headers
-- JWT and OAuth2 patterns
+- XSS prevention (Angular's built-in protection)
+- Content Security Policy (CSP)
+- Input validation (Angular forms)
+- URL validation
+- Dependency security
+- Secure error messages
 
-### 📊 Code Quality
+## Supported Technologies
 
-Enforces modern language features and best practices:
+### Angular Library
 
-- TypeScript strict mode
-- Modern TypeScript features (5.0+)
-- Nullable reference types
-- Async/await patterns
-- Structured logging
+Technologies covered:
 
-## 🌍 Supported Languages
+- Angular 17-20 (standalone components, signals)
+- TypeScript 5.8 (strict mode)
+- Jasmine + Karma (unit testing)
+- Playwright (E2E testing)
+- SCSS (component styles, design tokens)
+- Shadow DOM (style encapsulation)
+- RxJS (reactive programming)
 
-### TypeScript / Angular
-
-10 comprehensive rule files covering:
-
-| Category | Files |
-|----------|-------|
-| Core | code-quality, testing, error-handling, dependencies |
-| Web | controllers, validation, input-sanitization |
-| Infrastructure | logging |
-| Security | security, input-sanitization |
-
-**Technologies:**
-- TypeScript 5.0+, Angular
-- Jest/Vitest
-- class-validator, Zod
-- RxJS
-- Angular Testing Utilities
-
-## 🔧 How It Works
+## How It Works
 
 ### Always Applied Rules
 
@@ -119,35 +112,28 @@ Core behavioral rules are always active:
 
 - Agent persona and behavior
 - TDD workflow requirements
-- Rule flagging and retrospectives
+- Browser testing requirements
+- Log analysis requirements
 
 ### Pattern Rules
 
-Language-agnostic concepts in `patterns/` define:
+Angular-specific patterns in `patterns/` define:
 
-- What patterns to use
-- When to apply them
-- Universal best practices
+- Component architecture patterns
+- Library development patterns
+- Testing patterns
+- Security patterns
+- Error handling patterns
 
 ### Language-Specific Rules
 
-Files in `languages/*/` activate based on file extensions:
+Files in `languages/typescript/` activate based on file extensions:
 
 - `**/*.ts` → TypeScript rules
 - `**/*.tsx` → TypeScript rules
-- Implementation details for each pattern
+- Angular-specific implementations
 
-## 🎨 Adding a New Language
-
-The system is designed to be easily extensible. To add support for a new language:
-
-1. Create `languages/your-language/` folder
-2. Create `.mdc` files for your language's patterns
-3. Set appropriate globs for file matching
-4. Reference universal patterns from `../../patterns/`
-5. Focus on language-specific implementations
-
-## 📝 Rule File Format
+## Rule File Format
 
 Each `.mdc` file uses frontmatter and Markdown:
 
@@ -167,14 +153,17 @@ Rule content in Markdown...
 **See also:** Links to related rules
 ```
 
-## 🎓 What You Get
+## What You Get
 
 ### Definition of Done
 
 Every task ensures:
 
 ✅ Project builds without errors/warnings
-✅ All tests pass
+✅ All tests pass (Jasmine/Karma + Playwright)
+✅ No console errors
+✅ Browser tested (for UI changes)
+✅ Logs analyzed
 ✅ No secrets exposed
 ✅ Changes documented with clear reasoning
 
@@ -187,72 +176,23 @@ Built-in iterative code review:
 3. Implement optimizations
 4. Repeat until satisfied
 
-### Retrospective Protocol
-
-After each task, the AI evaluates:
-
-- Rule effectiveness
-- Gaps encountered
-- Contradictions
-- Improvement proposals
-
-## 💡 Benefits
-
-| Benefit | Description |
-|---------|-------------|
-| Single Source of Truth | One place for all rule definitions |
-| Easy Discovery | Clear, hierarchical folder structure |
-| Language Agnostic | Patterns work for any language |
-| Maintainable | Changes to patterns cascade to all languages |
-| Scalable | Simple to add new languages and patterns |
-| Consistent | Same methodologies across all languages |
-
-## 🚀 Usage
+## Usage
 
 Once installed, simply open your project in Cursor. The AI will automatically:
 
-- Act as a Senior Principal Backend Engineer
+- Act as an Angular library developer
 - Follow TDD workflows
-- Apply language-specific best practices
+- Apply Angular-specific best practices
 - Enforce security and quality standards
 
 No additional configuration needed!
 
-## 📚 Documentation
+## Documentation
 
-- **Patterns**: See `patterns/` for universal patterns
+- **Patterns**: See `patterns/` for Angular patterns
 - **Development**: See `development/` for workflow guidance
 - **Language-Specific**: See `languages/typescript/` for TypeScript/Angular rules
 
-## 🤝 Contributing
-
-Contributions are welcome! Whether you want to:
-
-- 🌐 Add a new language
-- 📚 Improve existing rules
-- 🐛 Fix issues or gaps
-- 💡 Suggest new patterns
-
-When Adding Rules:
-
-- Universal concepts → `patterns/`
-- Language-specific → `languages/{lang}/`
-- Always-active rules → root level with `alwaysApply: true` (rare)
-- Development workflow → `development/` (rare)
-
 ---
 
-**Maintained with ❤️ for enterprise-grade development**
-
-
-
-
-
-
-
-
-
-
-
-
-
+**Maintained with ❤️ for Angular library development**

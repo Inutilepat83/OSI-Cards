@@ -34,6 +34,12 @@ import { CardType } from '../../../models';
   `,
   styles: [
     `
+      .card-type-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
       .card-type-btn {
         padding: 0.5rem 1rem;
         background: var(--card-background);

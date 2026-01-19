@@ -43,6 +43,7 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "html2canvas",
+              "html2pdf.js",
               "dompurify",
               "dom-to-image-more",
               "jspdf",
@@ -136,7 +137,7 @@
               },
               "outputHashing": "all",
               "sourceMap": false,
-              "namedChunks": false,
+              "namedChunks": true,
               "extractLicenses": true,
               "crossOrigin": "anonymous",
               "subresourceIntegrity": true
@@ -215,6 +216,7 @@
             },
             "allowedCommonJsDependencies": [
               "html2canvas",
+              "html2pdf.js",
               "dompurify",
               "dom-to-image-more",
               "jspdf",

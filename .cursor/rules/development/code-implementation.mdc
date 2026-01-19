@@ -22,7 +22,9 @@ alwaysApply: true
 - Ask clarifying questions if needed
 - Never assume - always verify
 - Identify acceptance criteria
-- Check browser logs if issue reported
+- **Check stored logs from localStorage if issue reported** (MANDATORY)
+  - Library logs: `LoggerService.getLogsFromLocalStorage()`
+  - App logs: `LoggingService.getLogsFromLocalStorage()`
 - Test in browser if UI change
 
 ### 2. Plan the Solution
@@ -31,6 +33,11 @@ alwaysApply: true
 - Identify dependencies
 - Consider edge cases
 - Plan test cases (TDD)
+
+**If creating/modifying sections:**
+- Plan 5-file structure (component.ts, component.html, definition.json, component.scss, README.md)
+- Plan to run `npm run sections:build` after changes
+- **If creating/modifying sections**: Plan for `npm run sections:build` after changes
 
 ### 3. Write Tests First (TDD)
 
@@ -61,23 +68,62 @@ alwaysApply: true
 - Add code comments for complex logic
 - Update API documentation if needed
 
+**If creating/modifying sections:**
+- Update `section.definition.json` (single source of truth)
+- Update section README.md
+- Run `npm run sections:build` to regenerate artifacts
+
 ### 7. Browser Testing (MANDATORY for UI changes)
 
-- Start application: `npm start`
-- Navigate to feature in browser
+**Start application:**
+```bash
+npm start  # Starts dev server (includes sections:build)
+```
+
+**After creating/modifying sections:**
+```bash
+npm run sections:build  # Regenerate section artifacts
+npm start               # Restart dev server
+```
+
+**Navigate to feature in browser:**
+- Open `http://localhost:4200`
 - Test functionality
 - Check console logs
 - Verify visual appearance
-- See: `browser-testing-workflow.mdc`
+
+**See:** `browser-testing-workflow.mdc`
 
 ### 8. Log Analysis (MANDATORY)
 
-- Read all console messages
-- Categorize errors/warnings
-- Fix all errors
-- Address important warnings
-- Verify network requests
-- See: `browser-testing-workflow.mdc`
+**ALWAYS check stored logs from localStorage BEFORE debugging:**
+
+1. **Check Stored Logs FIRST:**
+   - Library logs: `LoggerService.getLogsFromLocalStorage()`
+   - App logs: `LoggingService.getLogsFromLocalStorage()`
+   - Direct access: `localStorage.getItem('osi-cards-logs')` or `localStorage.getItem('osi-cards-app-logs')`
+
+2. **Read Console Messages:**
+   - Console output is minimal - full logs are in localStorage
+   - Check for errors, warnings, info messages
+
+3. **Categorize Issues:**
+   - 🔴 Errors (must fix)
+   - 🟡 Warnings (should fix)
+   - 🔵 Info (verify)
+   - ⚪ Debug (optional)
+
+4. **Fix Issues:**
+   - Address all errors from stored logs
+   - Fix important warnings
+   - Document decisions
+
+5. **Verify Fixes:**
+   - Clear logs or refresh page
+   - Reproduce scenario
+   - Check new logs to confirm fix
+
+**See:** `.cursor/rules/development/log-analysis.mdc` (comprehensive logging workflow)
 
 ### 9. Quality Assurance
 
@@ -226,4 +272,9 @@ After each task, evaluate:
 - Understand before implementing
 - Keep it simple
 
-**See also:** `tdd-planning.mdc`, `patterns/testing.mdc`, `patterns/architecture.mdc`
+**See also:** 
+- `tdd-planning.mdc` - Test planning requirements
+- `log-analysis.mdc` - Log analysis workflow (MANDATORY)
+- `browser-testing-workflow.mdc` - Browser testing workflow
+- `patterns/testing.mdc` - Testing patterns
+- `patterns/architecture.mdc` - Architecture patterns

@@ -76,7 +76,7 @@ Use optional chaining and provide defaults:
 \`\`\`typescript
 const section = {
   title: data.title || 'Untitled',
-  type: data.type || 'info',
+  type: data.type || 'overview',
   fields: data.fields ?? []
 };
 \`\`\`

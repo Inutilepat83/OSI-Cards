@@ -4,6 +4,10 @@
  * Handles email action construction and execution for card actions.
  * Extracted from AICardRendererComponent for better separation of concerns.
  *
+ * @dependencies
+ * - PLATFORM_ID: For platform detection (browser vs server)
+ * - Utility functions: validateEmail, validateEmailConfig
+ *
  * @example
  * ```typescript
  * import { EmailHandlerService } from 'osi-cards-lib';
@@ -20,8 +24,8 @@
 
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { MailCardAction, CardAction, CardTypeGuards } from '../models';
-import { validateEmail, validateEmailConfig } from '../utils/input-validation.util';
+import { MailCardAction, CardAction, CardTypeGuards } from '@osi-cards/models';
+import { validateEmail, validateEmailConfig } from '@osi-cards/utils';
 
 // ============================================================================
 // TYPES

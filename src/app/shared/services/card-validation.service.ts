@@ -119,7 +119,13 @@ export class CardValidationService {
     try {
       // Validate input
       if (typeof jsonString !== 'string' || jsonString.trim().length === 0) {
-        console.warn('CardValidationService: Empty JSON string provided');
+        // Only warn in development mode
+        if (
+          typeof window !== 'undefined' &&
+          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ) {
+          console.warn('CardValidationService: Empty JSON string provided');
+        }
         return null;
       }
 
@@ -176,7 +182,13 @@ export class CardValidationService {
 
         // Re-validate after fixes
         if (this.isValidCardConfig(config)) {
-          console.warn('CardValidationService: Fixed common issues in JSON structure');
+          // Only warn in development mode
+          if (
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ) {
+            console.warn('CardValidationService: Fixed common issues in JSON structure');
+          }
           return config as Partial<AICardConfig>;
         }
 
@@ -211,9 +223,15 @@ export class CardValidationService {
       // Validate section count
       const maxSections = this.appConfig.CARD_LIMITS.MAX_SECTIONS;
       if (config.sections.length > maxSections) {
-        console.warn(
-          `CardValidationService: Card has ${config.sections.length} sections, exceeding limit of ${maxSections}`
-        );
+        // Only warn in development mode
+        if (
+          typeof window !== 'undefined' &&
+          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ) {
+          console.warn(
+            `CardValidationService: Card has ${config.sections.length} sections, exceeding limit of ${maxSections}`
+          );
+        }
         return false;
       }
 
@@ -226,9 +244,15 @@ export class CardValidationService {
         if (Array.isArray(section.fields)) {
           const maxFields = this.appConfig.CARD_LIMITS.MAX_FIELDS_PER_SECTION;
           if (section.fields.length > maxFields) {
-            console.warn(
-              `CardValidationService: Section has ${section.fields.length} fields, exceeding limit of ${maxFields}`
-            );
+            // Only warn in development mode
+            if (
+              typeof window !== 'undefined' &&
+              (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ) {
+              console.warn(
+                `CardValidationService: Section has ${section.fields.length} fields, exceeding limit of ${maxFields}`
+              );
+            }
             return false;
           }
 

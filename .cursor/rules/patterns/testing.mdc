@@ -1,9 +1,32 @@
 ---
-description: "TDD workflow, AAA pattern, test organization"
+description: "Jasmine/Karma unit tests, Playwright E2E tests, TDD workflow, AAA pattern"
 alwaysApply: true
 ---
 
 # Testing Patterns
+
+## Testing Stack
+
+### Unit Testing: Jasmine + Karma
+
+**Jasmine** - Testing framework
+**Karma** - Test runner
+
+- Use for component tests
+- Use for service tests
+- Fast execution
+- Run with `ng test` or `npm run test:unit`
+
+### End-to-End Testing: Playwright
+
+**Playwright** - E2E testing framework
+
+- Use for integration tests
+- Use for user workflows
+- Browser automation
+- Run with `npm run test:e2e`
+
+---
 
 ## Test-Driven Development (TDD)
 
@@ -31,6 +54,8 @@ alwaysApply: true
 - Confidence in refactoring
 - Faster feedback loop
 
+---
+
 ## AAA Pattern (Arrange-Act-Assert)
 
 ### Structure
@@ -40,10 +65,10 @@ describe('FeatureName', () => {
   it('should do something specific', () => {
     // Arrange: Set up test data and dependencies
     const input = createTestInput();
-    const mockDependency = createMock();
+    const mockService = jasmine.createSpyObj('MyService', ['method']);
 
     // Act: Execute the code under test
-    const result = systemUnderTest.execute(input);
+    const result = component.doSomething(input);
 
     // Assert: Verify the outcome
     expect(result).toEqual(expectedOutput);
@@ -58,36 +83,199 @@ describe('FeatureName', () => {
 - **Assert**: Verify the outcome and side effects
 - Keep each section focused and clear
 
+---
+
+## Component Testing (Jasmine + Karma)
+
+### Component Test Structure
+
+```typescript
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MyComponent } from './my-component.component';
+
+describe('MyComponent', () => {
+  let component: MyComponent;
+  let fixture: ComponentFixture<MyComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MyComponent], // Standalone component
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MyComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should render title', () => {
+    component.title = 'Test Title';
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Test Title');
+  });
+});
+```
+
+### Guidelines
+
+- Use `TestBed.configureTestingModule()` for setup
+- Import standalone components directly
+- Use `ComponentFixture` for DOM access
+- Call `fixture.detectChanges()` to trigger change detection
+- Use `fixture.nativeElement` for DOM queries
+
+---
+
+## Service Testing (Jasmine + Karma)
+
+### Service Test Structure
+
+```typescript
+import { TestBed } from '@angular/core/testing';
+import { MyService } from './my.service';
+
+describe('MyService', () => {
+  let service: MyService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(MyService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  it('should return data', () => {
+    const result = service.getData();
+    expect(result).toEqual(expectedData);
+  });
+});
+```
+
+### Guidelines
+
+- Use `TestBed.inject()` to get services
+- Mock dependencies with `jasmine.createSpyObj()`
+- Test service methods in isolation
+- Verify return values and side effects
+
+---
+
+## Mocking Dependencies
+
+### Mocking Services
+
+```typescript
+const mockService = jasmine.createSpyObj('MyService', ['method1', 'method2']);
+mockService.method1.and.returnValue(mockValue);
+
+TestBed.configureTestingModule({
+  providers: [
+    { provide: MyService, useValue: mockService }
+  ]
+});
+```
+
+### Mocking HTTP
+
+```typescript
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
+TestBed.configureTestingModule({
+  imports: [HttpClientTestingModule]
+});
+
+const httpMock = TestBed.inject(HttpTestingController);
+const req = httpMock.expectOne('/api/data');
+req.flush(mockData);
+```
+
+### Guidelines
+
+- Use `jasmine.createSpyObj()` for service mocks
+- Use `HttpClientTestingModule` for HTTP mocking
+- Use `HttpTestingController` to verify requests
+- Mock only external dependencies
+
+---
+
+## End-to-End Testing (Playwright)
+
+### Playwright Test Structure
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Card Rendering', () => {
+  test('should render card with sections', async ({ page }) => {
+    await page.goto('http://localhost:4200');
+    
+    // Arrange
+    const cardSelector = 'app-ai-card-renderer';
+    
+    // Act
+    await page.waitForSelector(cardSelector);
+    
+    // Assert
+    const card = await page.locator(cardSelector);
+    await expect(card).toBeVisible();
+    await expect(card.locator('.section')).toHaveCount(3);
+  });
+});
+```
+
+### Guidelines
+
+- Use `test.describe()` for test organization
+- Use `page.goto()` to navigate
+- Use `page.locator()` for element queries
+- Use `expect()` for assertions
+- Use `page.waitForSelector()` for async operations
+
+---
+
 ## Test Organization
 
-### Test Structure
+### Test File Structure
 
 ```
-src/
-  ├── feature/
-  │   ├── feature.component.ts
-  │   ├── feature.component.spec.ts
-  │   └── feature.service.ts
-  └── feature.service.spec.ts
+lib/
+├── components/
+│   ├── my-component/
+│   │   ├── my-component.component.ts
+│   │   ├── my-component.component.spec.ts  # Unit test
+│   │   └── my-component.component.html
+│   └── services/
+│       ├── my.service.ts
+│       └── my.service.spec.ts  # Unit test
+└── e2e/
+    └── card-rendering.spec.ts  # E2E test
 ```
 
 ### Test Categories
 
-1. **Unit Tests**
-   - Test individual components in isolation
+1. **Unit Tests** (Jasmine + Karma)
+   - Component tests (`.component.spec.ts`)
+   - Service tests (`.service.spec.ts`)
    - Fast execution
    - Mock external dependencies
-   - Test business logic
 
-2. **Integration Tests**
-   - Test component interactions
+2. **Integration Tests** (Jasmine + Karma)
+   - Component interaction tests
    - Use real dependencies where appropriate
-   - Test data flow between layers
+   - Test data flow
 
-3. **End-to-End Tests**
-   - Test complete user workflows
-   - Use real infrastructure (or close to it)
-   - Verify system behavior from user perspective
+3. **End-to-End Tests** (Playwright)
+   - User workflow tests
+   - Browser automation
+   - Real application environment
+
+---
 
 ## Test Naming
 
@@ -95,14 +283,14 @@ src/
 
 ```typescript
 // Good
-it('should return error when email is invalid', () => {});
-it('should create user when all fields are valid', () => {});
-it('should throw NotFoundError when user does not exist', () => {});
+it('should render card when config is provided', () => {});
+it('should emit actionClick when button is clicked', () => {});
+it('should return error when service fails', () => {});
 
 // Bad
 it('test1', () => {});
 it('works', () => {});
-it('user test', () => {});
+it('component test', () => {});
 ```
 
 ### Test Name Format
@@ -111,27 +299,37 @@ it('user test', () => {});
 - Describe the expected behavior
 - Include relevant context (when, given, etc.)
 
+---
+
 ## Test Data
 
 ### Test Fixtures
+
+```typescript
+function createTestCard(): AICardConfig {
+  return {
+    cardTitle: 'Test Card',
+    sections: [
+      { title: 'Section 1', type: 'info', fields: [] }
+    ]
+  };
+}
+```
+
+### Guidelines
 
 - Create reusable test data builders
 - Use factories for complex objects
 - Keep test data close to tests
 - Make test data explicit and readable
 
-### Mocking Guidelines
-
-- Mock external dependencies (databases, APIs, file system)
-- Don't mock the code under test
-- Use mocks to verify interactions
-- Prefer spies over mocks when possible
+---
 
 ## Test Coverage
 
 ### Coverage Goals
 
-- Aim for high coverage of business logic
+- Aim for >80% coverage of business logic
 - Don't chase 100% coverage blindly
 - Focus on critical paths and edge cases
 - Cover error scenarios
@@ -139,16 +337,21 @@ it('user test', () => {});
 ### What to Test
 
 ✅ **DO Test:**
+- Component rendering
+- Service methods
 - Business logic and rules
 - Edge cases and boundaries
 - Error handling
-- Integration points
+- User interactions (E2E)
 
 ❌ **DON'T Test:**
-- Framework code
+- Angular framework code
 - Trivial getters/setters
 - Third-party library code
 - Generated code
+- Private methods (test via public API)
+
+---
 
 ## Test Maintenance
 
@@ -165,5 +368,28 @@ it('user test', () => {});
 - Use deterministic test data
 - Avoid time-dependent tests
 - Isolate tests from each other
+- Use `fakeAsync()` and `tick()` for async operations
 
-**See also:** `development/tdd-planning.mdc`, `development/code-implementation.mdc`
+---
+
+## Testing Checklist
+
+Before writing tests:
+
+- [ ] Test structure planned
+- [ ] Test data prepared
+- [ ] Dependencies mocked
+- [ ] Test cases identified
+- [ ] Edge cases considered
+- [ ] Error scenarios planned
+
+After writing tests:
+
+- [ ] All tests passing
+- [ ] Tests are readable
+- [ ] Tests are maintainable
+- [ ] Coverage adequate
+- [ ] No flaky tests
+- [ ] Tests run fast
+
+**See also:** `development/tdd-planning.mdc`, `development/code-implementation.mdc`, `angular-components.mdc`

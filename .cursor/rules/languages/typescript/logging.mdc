@@ -39,51 +39,77 @@ interface Logger {
 
 ## Implementation
 
-### Simple Logger
+### LoggerService (Library)
+
+Library-level logging service with localStorage support:
 
 ```typescript
-@Injectable({ providedIn: 'root' })
-export class LoggerService implements Logger {
-  private log(level: LogLevel, message: string, context?: Record<string, unknown>, error?: Error): void {
-    const entry: LogEntry = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      context,
-      error: error ? {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      } : undefined
-    };
+import { Injectable, inject } from '@angular/core';
+import { LoggerService } from '@osi-cards/services';
 
-    // In production, send to logging service
-    if (environment.production) {
-      this.sendToLoggingService(entry);
-    } else {
-      console.log(entry);
-    }
-  }
+// Configure logger
+const logger = inject(LoggerService);
+logger.configure({
+  minLevel: 'info',
+  enableConsole: true,
+  enableStorage: true,  // Enable localStorage persistence
+  maxStoredLogs: 1000
+});
 
-  debug(message: string, context?: Record<string, unknown>): void {
-    this.log(LogLevel.DEBUG, message, context);
-  }
+// Use logger
+logger.info('User logged in', { userId: '123' });
+logger.error('API call failed', { error, url }, error);
 
-  info(message: string, context?: Record<string, unknown>): void {
-    this.log(LogLevel.INFO, message, context);
-  }
+// Access logs from localStorage
+const logs = LoggerService.getLogsFromLocalStorage();
+logger.clearLocalStorageLogs();
+const exported = logger.exportLocalStorageLogs();
+```
 
-  warn(message: string, context?: Record<string, unknown>): void {
-    this.log(LogLevel.WARN, message, context);
-  }
+### LoggingService (App)
 
-  error(message: string, error?: Error, context?: Record<string, unknown>): void {
-    this.log(LogLevel.ERROR, message, context, error);
-  }
+Application-level logging service with localStorage support:
 
-  private sendToLoggingService(entry: LogEntry): void {
-    // Send to external logging service (e.g., Sentry, LogRocket)
-  }
+```typescript
+import { inject } from '@angular/core';
+import { LoggingService } from '@app/core/services/logging.service';
+
+const logger = inject(LoggingService);
+
+// Use logger
+logger.info('User logged in', 'AuthService', { userId: '123' });
+logger.error('API call failed', 'ApiService', { error, url });
+
+// Access logs from localStorage
+const logs = LoggingService.getLogsFromLocalStorage();
+logger.clearLocalStorageLogs();
+const exported = logger.exportLocalStorageLogs();
+```
+
+### LogEntry Structure
+
+**LoggerService (Library):**
+```typescript
+interface LogEntry {
+  timestamp: Date;
+  level: 'debug' | 'info' | 'warn' | 'error';
+  message: string;
+  context?: Record<string, any>;
+  stack?: string;
+}
+```
+
+**LoggingService (App):**
+```typescript
+interface LogEntry {
+  timestamp: Date;
+  level: 'debug' | 'info' | 'warn' | 'error';
+  message: string;
+  context?: string;
+  data?: unknown;
+  correlationId?: string;
+  userId?: string;
+  sessionId?: string;
 }
 ```
 
@@ -289,4 +315,101 @@ intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> 
 - Ignore log levels
 - Log without context
 
-**See also:** `error-handling.mdc`, `code-quality.mdc`
+## localStorage Integration
+
+### LoggerService (Library)
+
+- **localStorage Key:** `osi-cards-logs`
+- **Storage:** Opt-in (configure with `enableStorage: true`)
+- **Methods:**
+  - `LoggerService.getLogsFromLocalStorage()` - Static method to read logs
+  - `logger.clearLocalStorageLogs()` - Clear localStorage logs
+  - `logger.exportLocalStorageLogs()` - Export as JSON string
+
+```typescript
+// Configure with localStorage enabled
+const logger = inject(LoggerService);
+logger.configure({ enableStorage: true });
+
+// Access logs
+const logs = LoggerService.getLogsFromLocalStorage();
+console.table(logs);
+
+// Clear logs
+logger.clearLocalStorageLogs();
+
+// Export logs
+const json = logger.exportLocalStorageLogs();
+```
+
+### LoggingService (App)
+
+- **localStorage Key:** `osi-cards-app-logs`
+- **Storage:** Always enabled
+- **Methods:**
+  - `LoggingService.getLogsFromLocalStorage()` - Static method to read logs
+  - `logger.clearLocalStorageLogs()` - Clear localStorage logs
+  - `logger.exportLocalStorageLogs()` - Export as JSON string
+
+```typescript
+const logger = inject(LoggingService);
+
+// Access logs
+const logs = LoggingService.getLogsFromLocalStorage();
+console.table(logs);
+
+// Clear logs
+logger.clearLocalStorageLogs();
+
+// Export logs
+const json = logger.exportLocalStorageLogs();
+```
+
+## Cursor Debug Mode Integration
+
+### Server-Based Logging
+
+The debug-log server writes logs to `.cursor/debug.log`:
+
+1. **Start debug server:**
+   ```bash
+   npm run debug:log:server
+   ```
+
+2. **Server endpoints:**
+   - `POST /ingest/{session-id}` - Receives logs from browser
+   - `GET /health` - Health check
+
+3. **Cursor can read from:**
+   - `.cursor/debug.log` - Debug server logs (NDJSON format)
+   - localStorage keys: `osi-cards-logs`, `osi-cards-app-logs`
+
+### Debug-Log Utilities
+
+For specialized debug logging (performance monitoring, hypothesis tracking):
+
+```typescript
+import { sendDebugLog } from '@osi-cards/utils/debug-log.util';
+import { sendDebugLogToFile } from '@osi-cards/utils/debug-log-file.util';
+
+// Send to debug server (writes to .cursor/debug.log)
+sendDebugLog({
+  location: 'component.ts:methodName',
+  message: 'Operation completed',
+  data: { duration: 123 },
+  timestamp: Date.now(),
+  sessionId: 'session-123',
+  runId: 'run-456',
+  hypothesisId: 'H1'
+});
+
+// Store in localStorage (key: osi-cards-debug-logs)
+sendDebugLogToFile({
+  location: 'component.ts:methodName',
+  message: 'Operation completed',
+  data: { duration: 123 },
+  timestamp: Date.now()
+});
+```
+
+**See also:** `error-handling.mdc`, `code-quality.mdc`, `development/log-analysis.mdc`

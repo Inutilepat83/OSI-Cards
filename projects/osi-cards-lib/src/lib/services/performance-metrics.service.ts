@@ -49,8 +49,12 @@ export interface PerformanceSummary {
 /**
  * Performance Metrics Service
  *
- * Tracks and reports performance metrics for OSI Cards.
+ * Tracks and analyzes performance metrics for the application.
  * Provides insights into render times, load times, and user interactions.
+ *
+ * @dependencies
+ * - DOCUMENT: For accessing Performance API
+ * - NgZone: For running operations in Angular zone
  *
  * @example
  * ```typescript

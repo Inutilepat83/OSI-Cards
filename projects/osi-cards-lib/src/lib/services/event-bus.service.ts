@@ -1,3 +1,26 @@
+/**
+ * Event Bus Service
+ *
+ * Centralized event bus for card-related events.
+ * Provides pub/sub pattern for decoupled communication.
+ *
+ * @dependencies
+ * - NgZone: For running event handlers in Angular zone
+ *
+ * @example
+ * ```typescript
+ * const eventBus = inject(EventBusService);
+ *
+ * // Subscribe to events
+ * eventBus.on('card:created', (event) => {
+ *   console.log('Card created:', event.payload);
+ * });
+ *
+ * // Emit events
+ * eventBus.emit('card:created', { cardId: '123' });
+ * ```
+ */
+
 import { Injectable, inject, NgZone } from '@angular/core';
 import { Subject, Observable, Subscription, filter, map } from 'rxjs';
 

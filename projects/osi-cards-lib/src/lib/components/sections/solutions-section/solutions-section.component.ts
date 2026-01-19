@@ -7,12 +7,13 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { TooltipDirective } from '../../../directives/tooltip.directive';
+import { TooltipDirective } from '@osi-cards/lib/directives/tooltip.directive';
 
 /**
  * Solutions Section Component
@@ -26,6 +27,7 @@ import { TooltipDirective } from '../../../directives/tooltip.directive';
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, TooltipDirective],
   templateUrl: './solutions-section.component.html',
   styleUrl: './solutions-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolutionsSectionComponent
   extends BaseSectionComponent

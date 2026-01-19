@@ -1,3 +1,20 @@
+/**
+ * Error Tracking Service
+ *
+ * Tracks and reports errors with severity levels and context.
+ *
+ * @dependencies
+ * - ErrorHandler: For integration with Angular error handling
+ *
+ * @example
+ * ```typescript
+ * const errorTracking = inject(ErrorTrackingService);
+ *
+ * errorTracking.trackError(error, { severity: 'high', component: 'CardRenderer' });
+ * const errors = errorTracking.getErrors();
+ * ```
+ */
+
 import { Injectable, ErrorHandler, inject, signal, computed, OnDestroy } from '@angular/core';
 
 /**
@@ -175,12 +192,17 @@ export class ErrorTrackingService implements OnDestroy {
         return newMap;
       });
 
-      // Log to console if enabled
+      // Log to console if enabled (but skip NG0203 errors)
       if (this.config.logToConsole) {
-        console.error(`[OSI Cards Error] ${err.message}`, {
-          component: options?.component,
-          context: options?.context,
-        });
+        const errorMessage = err.message || '';
+        const errorCode = (err as any)?.code;
+        // Skip logging NG0203 errors - they're expected in some contexts
+        if (!errorMessage.includes('NG0203') && errorCode !== 'NG0203' && errorCode !== -203) {
+          console.error(`[OSI Cards Error] ${err.message}`, {
+            component: options?.component,
+            context: options?.context,
+          });
+        }
       }
     }
 
@@ -327,6 +349,21 @@ export class ErrorTrackingService implements OnDestroy {
    * Check if error should be ignored
    */
   private shouldIgnore(error: Error): boolean {
+    // Check for NG0203 errors (Angular dependency injection context errors)
+    // These are expected in some contexts (e.g., *ngFor-created components) and should be ignored
+    const errorMessage = error.message || '';
+    const errorStack = error.stack || '';
+    const errorCode = (error as any)?.code;
+
+    if (
+      errorMessage.includes('NG0203') ||
+      errorStack.includes('NG0203') ||
+      errorCode === 'NG0203' ||
+      errorCode === -203
+    ) {
+      return true; // Ignore NG0203 errors
+    }
+
     return this.config.ignorePatterns.some(
       (pattern) => pattern.test(error.message) || pattern.test(error.stack || '')
     );

@@ -9,11 +9,30 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { CardField, CardItem, CardSection } from '../../models';
-import {
-  SectionDesignParams,
-  getSectionDesignParams,
-} from '../../models/section-design-params.model';
+import { CardField, CardItem, CardSection } from '@osi-cards/models';
+import { SectionDesignParams, getSectionDesignParams } from '@osi-cards/models';
+import { sendDebugLog } from '@osi-cards/utils';
+// #region agent log - Track module evaluation start
+if (
+  typeof window !== 'undefined' &&
+  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+  !(window as any).__DISABLE_DEBUG_LOGGING
+) {
+  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      location: 'base-section.component.ts:1',
+      message: 'Module evaluation START - base-section.component.ts',
+      data: { timestamp: Date.now(), moduleId: 'base-section' },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'A',
+    }),
+  }).catch(() => {});
+}
+// #endregion
 
 /**
  * Layout configuration for a section type.
@@ -115,13 +134,42 @@ export interface SectionInteraction<T = CardField | CardItem> {
  * Base component class for all section components
  * Provides common functionality and ensures consistency
  */
+// #region agent log
+if (
+  typeof window !== 'undefined' &&
+  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+  !(window as any).__DISABLE_DEBUG_LOGGING
+) {
+  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      location: 'base-section.component.ts:118',
+      message: 'BaseSectionComponent class definition starting',
+      data: { timestamp: Date.now(), module: 'base-section.component' },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run2',
+      hypothesisId: 'A',
+    }),
+  }).catch(() => {});
+}
+// #endregion
 @Component({
   template: '',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+// CRITICAL: Export as a named export AND ensure it's not tree-shaken
+// The 'export abstract class' ensures it's available for extension
 export abstract class BaseSectionComponent<
   T extends CardField | CardItem = CardField,
 > implements OnChanges {
+  // #region agent log
+  static readonly __DEBUG_BASE_CLASS_DEFINED = true;
+  // Force the class to be included by adding a static property that's always present
+  static readonly __FORCE_INCLUDE = true;
+  // #endregion
   @Input({ required: true }) section!: CardSection;
   @Output() fieldInteraction = new EventEmitter<SectionInteraction<T>>();
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
@@ -151,7 +199,31 @@ export abstract class BaseSectionComponent<
    * Get fields from section (standardized access pattern)
    */
   protected getFields(): CardField[] {
-    return (this.section.fields as CardField[]) ?? [];
+    const fields = (this.section.fields as CardField[]) ?? [];
+    // #region agent log
+    if (this.section?.type === 'overview' && this.section?.title?.includes('Executive Summary')) {
+      sendDebugLog(
+        {
+          location: 'base-section.component.ts:167',
+          message: 'getFields: Executive Summary fields',
+          data: {
+            sectionType: this.section?.type,
+            sectionTitle: this.section?.title,
+            fieldsCount: fields.length,
+            fields: fields,
+            sectionFields: this.section?.fields,
+            hasFields: !!this.section?.fields,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'H3',
+        },
+        'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+      );
+    }
+    // #endregion
+    return fields;
   }
 
   /**
@@ -184,6 +256,31 @@ export abstract class BaseSectionComponent<
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['section']) {
+      // #region agent log
+      if (this.section?.type === 'overview' && this.section?.title?.includes('Executive Summary')) {
+        sendDebugLog(
+          {
+            location: 'base-section.component.ts:205',
+            message: 'BaseSectionComponent: ngOnChanges - Executive Summary',
+            data: {
+              sectionType: this.section?.type,
+              sectionTitle: this.section?.title,
+              fieldsCount: this.section?.fields?.length || 0,
+              itemsCount: this.section?.items?.length || 0,
+              fields: this.section?.fields,
+              hasFields: this.hasFields,
+              getFieldsResult: this.getFields(),
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'H4',
+          },
+          'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+        );
+      }
+      // #endregion
+
       // Cancel pending RAFs
       if (this.fieldAnimationUpdateRafId !== null) {
         cancelAnimationFrame(this.fieldAnimationUpdateRafId);
@@ -387,7 +484,32 @@ export abstract class BaseSectionComponent<
    * Public getter for template access
    */
   get hasFields(): boolean {
-    return this.getFields().length > 0;
+    const fields = this.getFields();
+    const result = fields.length > 0;
+    // #region agent log
+    if (this.section?.type === 'overview' && this.section?.title?.includes('Executive Summary')) {
+      sendDebugLog(
+        {
+          location: 'base-section.component.ts:415',
+          message: 'hasFields getter: Executive Summary',
+          data: {
+            sectionType: this.section?.type,
+            sectionTitle: this.section?.title,
+            fieldsLength: fields.length,
+            result: result,
+            fields: fields,
+            sectionFieldsLength: this.section?.fields?.length || 0,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run2',
+          hypothesisId: 'H3',
+        },
+        'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+      );
+    }
+    // #endregion
+    return result;
   }
 
   /**
@@ -592,3 +714,48 @@ export abstract class BaseSectionComponent<
     return Math.min(optimal, availableColumns) as 1 | 2 | 3 | 4;
   }
 }
+// #region agent log
+if (
+  typeof window !== 'undefined' &&
+  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+  !(window as any).__DISABLE_DEBUG_LOGGING
+) {
+  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      location: 'base-section.component.ts:594',
+      message: 'BaseSectionComponent class definition complete',
+      data: {
+        classDefined: typeof BaseSectionComponent !== 'undefined',
+        isConstructor: typeof BaseSectionComponent === 'function',
+        name: BaseSectionComponent?.name || 'undefined',
+        hasStaticProp: !!BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run3',
+      hypothesisId: 'A',
+    }),
+  }).catch(() => {});
+}
+// Ensure BaseSectionComponent is available globally to prevent chunk loading issues
+if (typeof window !== 'undefined') {
+  (window as any).__BaseSectionComponent = BaseSectionComponent;
+  console.log(
+    '[DEBUG] BaseSectionComponent registered globally:',
+    typeof BaseSectionComponent,
+    BaseSectionComponent.name
+  );
+  // Also ensure it's the same reference as the one in main.ts
+  if ((window as any).__BaseSectionComponentForced) {
+    const same = (window as any).__BaseSectionComponentForced === BaseSectionComponent;
+    console.log('[DEBUG] BaseSectionComponent reference match:', same);
+    if (!same) {
+      console.error(
+        '[FATAL] BaseSectionComponent references differ! This indicates chunk isolation issue.'
+      );
+    }
+  }
+}
+// #endregion

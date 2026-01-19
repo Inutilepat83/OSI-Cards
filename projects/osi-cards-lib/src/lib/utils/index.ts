@@ -15,10 +15,12 @@ export * from './grid-accessibility.util';
 
 // Card utilities
 export { CardUtil } from './card.util';
+export { generateCardSummary, generateBriefSummary } from './card-summary.util';
 
 // Performance & Memoization
 export { Memoize, MemoizeLRU, MemoizeTTL } from './advanced-memoization.util';
 export { ObjectPool } from './object-pool.util';
+export { LRUCache } from './lru-cache.util';
 
 // Layout & Grid - Core algorithms
 export * from './grid-config.util';
@@ -37,22 +39,40 @@ export * from './virtual-scroll.util';
 export * from './flip-animation.util';
 export * from './web-animations.util';
 
-// Validation & Coercion
-export * from './input-coercion.util';
-export * from './input-validation.util';
+// Validation & Coercion (organized by domain)
+export * from './validation';
 
-// Error handling
-export * from './error-boundary.util';
+// Error handling (organized by domain)
+export * from './error';
+
+// Format utilities (organized by domain)
+export * from './format';
+
+// Transform utilities (organized by domain)
+export * from './transform';
+
+// DOM utilities (organized by domain)
+export * from './dom';
+
+// Type utilities (organized by domain)
+export * from './type';
 
 // Subscription management
 export { AutoUnsubscribe, SubscriptionTracker } from './subscription-tracker.util';
 
-// Retry logic
-export * from './retry.util';
-
 // Performance utilities
 export * from './debounce-throttle.util';
 export * from './performance.util';
+
+// Debug logging utilities
+export { sendDebugLog } from './debug-log.util';
+export { sendDebugLogToFile } from './debug-log-file.util';
+export { LOG_TAGS, createTags, combineTags, type LogTag } from './log-tags';
+export {
+  shouldLogMessage,
+  getDeduplicationStats,
+  clearDeduplicationCache,
+} from './log-deduplication.util';
 
 // Masonry detection
 export * from './masonry-detection.util';
@@ -62,5 +82,18 @@ export * from './masonry-detection.util';
 // Section design utilities
 export * from './section-design.utils';
 
+// Version utilities
+export { checkVersionRequirement } from './version.util';
+
+// Height estimation
+export { HeightEstimator, estimateSectionHeight } from './height-estimation.util';
+
+// Column packer
+export {
+  packSectionsIntoColumns,
+  type ColumnPackerConfig,
+  type ColumnPackingResult,
+} from './column-packer.util';
+
 // Re-export type for convenience
-export type { CardChangeType } from '../types';
+export type { CardChangeType } from '@osi-cards/types';

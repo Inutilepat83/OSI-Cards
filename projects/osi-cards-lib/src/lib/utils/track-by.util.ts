@@ -6,7 +6,7 @@
  */
 
 import { TrackByFunction } from '@angular/core';
-import { CardSection, CardField, CardItem } from '../models/card.model';
+import { CardSection, CardField, CardItem } from '@osi-cards/models';
 
 /**
  * Generic trackBy by ID

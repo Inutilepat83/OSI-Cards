@@ -1,5 +1,5 @@
-import { OSICardsThemeConfig } from '../theme.service';
-import { OSI_COLORS } from '../tokens.constants';
+import { OSICardsThemeConfig } from '@osi-cards/themes';
+import { OSI_COLORS } from '@osi-cards/themes';
 
 /**
  * OSI Deployment Day Theme (Light Mode)

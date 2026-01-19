@@ -1,0 +1,339 @@
+---
+description: "Shadow DOM encapsulation patterns for Angular library components"
+alwaysApply: true
+---
+
+# Shadow DOM Encapsulation Patterns
+
+## Shadow DOM Overview
+
+### What is Shadow DOM?
+
+**Shadow DOM provides complete style isolation** - styles inside Shadow DOM don't leak out, and external styles don't leak in.
+
+**Use Shadow DOM for:**
+- Main renderer components (root component)
+- Complete style isolation requirements
+- Preventing CSS conflicts with host applications
+
+**Don't use Shadow DOM for:**
+- Child components that need to share styles with Shadow DOM parent
+- Components that need external style access
+- Simple encapsulated components (use default encapsulation)
+
+---
+
+## Shadow DOM Pattern
+
+### Root Component with Shadow DOM
+
+**Use Shadow DOM for the main renderer component:**
+
+```typescript
+@Component({
+  selector: 'app-ai-card-renderer',
+  standalone: true,
+  imports: [/* ... */],
+  templateUrl: './ai-card-renderer.component.html',
+  styleUrls: ['../../styles/bundles/_ai-card.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.ShadowDom, // Creates Shadow DOM
+})
+export class AICardRendererComponent {
+  // Component implementation
+}
+```
+
+### Guidelines
+
+- Use `ViewEncapsulation.ShadowDom` for root renderer
+- All styles must be bundled in `styleUrls`
+- External stylesheets won't apply inside Shadow DOM
+- Host application styles won't affect Shadow DOM content
+- Shadow DOM styles won't affect host application
+
+---
+
+## Child Components with ViewEncapsulation.None
+
+### Integrating with Shadow DOM Parent
+
+**Child components use `ViewEncapsulation.None` to integrate with Shadow DOM parent:**
+
+```typescript
+@Component({
+  selector: 'app-card-actions',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './card-actions.component.html',
+  styleUrls: ['./card-actions.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None, // Integrates with Shadow DOM parent
+})
+export class CardActionsComponent {
+  // Component implementation
+}
+```
+
+### Guidelines
+
+- Use `ViewEncapsulation.None` for child components within Shadow DOM
+- Styles from Shadow DOM parent apply to children
+- Children can use CSS variables from Shadow DOM parent
+- Children can use classes defined in Shadow DOM parent styles
+- Children won't create their own Shadow DOM boundary
+
+---
+
+## Shadow DOM Style Bundling
+
+### Bundle All Styles
+
+**All styles must be included in Shadow DOM component's `styleUrls`:**
+
+```typescript
+@Component({
+  selector: 'app-ai-card-renderer',
+  styleUrls: [
+    '../../styles/bundles/_ai-card.scss', // Main styles bundle
+  ],
+  encapsulation: ViewEncapsulation.ShadowDom,
+})
+export class AICardRendererComponent {
+  // Component implementation
+}
+```
+
+### Style Bundle Structure
+
+```scss
+// styles/bundles/_ai-card.scss
+@import '../tokens/master';
+@import '../components/sections/design-system';
+@import '../components/card/card';
+@import '../components/masonry-grid/masonry-grid';
+// ... all necessary styles
+```
+
+### Guidelines
+
+- Bundle all styles in Shadow DOM component's styleUrls
+- Import all necessary SCSS files
+- Include design tokens, mixins, utilities
+- Include component styles (even if using ViewEncapsulation.None)
+- Test that all styles work inside Shadow DOM
+
+---
+
+## CSS Custom Properties (CSS Variables)
+
+### Using CSS Variables
+
+**CSS variables cross Shadow DOM boundaries** - use them for theming:
+
+```scss
+// Inside Shadow DOM styles
+:host {
+  --text-color: #ffffff;
+  --background: #1a1a1a;
+  --border-color: #333333;
+}
+
+.card {
+  color: var(--text-color);
+  background: var(--background);
+  border-color: var(--border-color);
+}
+```
+
+### Setting Variables from Outside
+
+**Host applications can set CSS variables** that Shadow DOM components use:
+
+```typescript
+// Host application
+@Component({
+  template: `
+    <div class="card-container" [style.--text-color]="'#000000'">
+      <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+    </div>
+  `,
+})
+```
+
+### Guidelines
+
+- Use CSS variables for theming (cross Shadow DOM boundary)
+- Document CSS variables for host applications
+- Provide default values for CSS variables
+- Use CSS variables for dynamic values
+- Test CSS variable propagation through Shadow DOM
+
+---
+
+## Theme Integration
+
+### Theme Data Attribute
+
+**Use `data-theme` attribute for theme context:**
+
+```typescript
+@Component({
+  selector: 'app-ai-card-renderer',
+  template: `
+    <div [attr.data-theme]="theme">
+      <!-- Content -->
+    </div>
+  `,
+  encapsulation: ViewEncapsulation.ShadowDom,
+})
+export class AICardRendererComponent {
+  @Input() theme?: 'day' | 'night';
+}
+```
+
+### Theme Styling
+
+```scss
+// Inside Shadow DOM styles
+:host[data-theme="day"] {
+  --text-color: #000000;
+  --background: #ffffff;
+}
+
+:host[data-theme="night"] {
+  --text-color: #ffffff;
+  --background: #1a1a1a;
+}
+```
+
+### Guidelines
+
+- Use `data-theme` attribute for theme switching
+- Style theme variants with `:host[data-theme="..."]`
+- Support theme inheritance from host application
+- Document theme attribute for host applications
+- Test theme switching in Shadow DOM
+
+---
+
+## Shadow DOM Host Styling
+
+### Preventing Style Inheritance
+
+**Explicitly set inherited properties on `:host`:**
+
+```scss
+:host {
+  /* Prevent CSS inheritance from host environments */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color, #ffffff);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+/* Ensure all descendants inherit from :host */
+:host * {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+```
+
+### Guidelines
+
+- Set inherited properties explicitly on `:host`
+- Prevent style leakage from host applications
+- Ensure consistent appearance regardless of host CSS
+- Use CSS variables for theming
+- Test with aggressive CSS resets
+
+---
+
+## Shadow DOM Event Handling
+
+### Events Bubble Through Shadow DOM
+
+**Events automatically bubble through Shadow DOM boundaries:**
+
+```typescript
+@Component({
+  selector: 'app-card-actions',
+  template: `
+    <button (click)="onClick()">Click</button>
+  `,
+  encapsulation: ViewEncapsulation.None, // Inside Shadow DOM parent
+})
+export class CardActionsComponent {
+  @Output() actionClick = new EventEmitter();
+  
+  onClick(): void {
+    this.actionClick.emit(); // Bubbles through Shadow DOM
+  }
+}
+```
+
+### Guidelines
+
+- Events bubble normally through Shadow DOM
+- No special handling needed for events
+- Use Angular EventEmitter as normal
+- Test event propagation through Shadow DOM
+- Document event behavior for host applications
+
+---
+
+## Multiple Shadow DOM Components
+
+### Isolated Shadow DOM Components
+
+**Each Shadow DOM component creates its own boundary:**
+
+```typescript
+// Component 1
+@Component({
+  selector: 'app-card-skeleton',
+  encapsulation: ViewEncapsulation.ShadowDom, // Isolated
+})
+export class CardSkeletonComponent {
+  // Component implementation
+}
+
+// Component 2
+@Component({
+  selector: 'app-ai-card-renderer',
+  encapsulation: ViewEncapsulation.ShadowDom, // Separate boundary
+})
+export class AICardRendererComponent {
+  // Component implementation
+}
+```
+
+### Guidelines
+
+- Each Shadow DOM component is isolated
+- Styles don't leak between Shadow DOM components
+- Use CSS variables for shared theming
+- Avoid nested Shadow DOM (creates complexity)
+- Test isolation between Shadow DOM components
+
+---
+
+## Shadow DOM Checklist
+
+Before using Shadow DOM:
+
+- [ ] Shadow DOM is necessary (complete isolation)
+- [ ] All styles bundled in styleUrls
+- [ ] CSS variables used for theming
+- [ ] Host properties set explicitly on `:host`
+- [ ] Child components use ViewEncapsulation.None
+- [ ] Theme attribute supported
+- [ ] Events tested through Shadow DOM
+- [ ] Styles work inside Shadow DOM
+- [ ] Host application integration tested
+- [ ] Documentation includes Shadow DOM usage
+
+**See also:** `angular-components.mdc`, `angular-library.mdc`, `scss-styling.mdc`

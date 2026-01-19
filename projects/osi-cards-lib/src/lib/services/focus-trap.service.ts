@@ -43,6 +43,9 @@ const FOCUSABLE_SELECTORS = [
  * Traps focus within a specified element for accessibility.
  * Used for modals, dialogs, and other overlay components.
  *
+ * @dependencies
+ * - DOCUMENT: For DOM manipulation and focus management
+ *
  * @example
  * ```typescript
  * const focusTrap = inject(FocusTrapService);

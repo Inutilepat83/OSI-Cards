@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, computed, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  computed,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -18,6 +25,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, FormsModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './table-section.component.html',
   styleUrl: './table-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

@@ -12,6 +12,10 @@
  * - Observable results
  * - Animations
  *
+ * @dependencies
+ * - ViewContainerRef: For dynamically creating modal components
+ * - Injector: For dependency injection into modal components
+ *
  * @example
  * ```typescript
  * import { ModalService } from '@osi-cards/lib';

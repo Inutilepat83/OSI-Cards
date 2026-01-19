@@ -231,9 +231,28 @@ function hashString(str: string): number {
  * Generate fast hash for card comparison
  * Only uses key properties to avoid expensive serialization
  */
+/**
+ * Fast hash function for card comparison (replaces expensive JSON.stringify)
+ * Uses lightweight hash based on key properties to avoid serialization overhead
+ * Optimized to include more fields to reduce false positives
+ */
 function getCardHash(card: AICardConfig): string {
-  const key = `${card.id || ''}|${card.cardTitle || ''}|${card.sections?.length || 0}`;
-  return String(hashString(key));
+  // Include more fields to reduce false positives: id, title, section count, and section types
+  const sectionTypes = card.sections?.map((s) => s.type || '').join(',') || '';
+  const sectionIds =
+    card.sections
+      ?.map((s) => s.id || '')
+      .slice(0, 5)
+      .join(',') || ''; // First 5 IDs
+  const key = `${card.id || ''}|${card.cardTitle || ''}|${card.sections?.length || 0}|${sectionTypes}|${sectionIds}`;
+
+  // Use djb2 hash algorithm for better distribution
+  let hash = 5381;
+  for (let i = 0; i < key.length; i++) {
+    hash = (hash << 5) + hash + key.charCodeAt(i);
+    hash = hash & 0xffffffff; // Convert to 32-bit integer
+  }
+  return String(hash);
 }
 
 /**

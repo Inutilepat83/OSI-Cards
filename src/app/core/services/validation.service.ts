@@ -1,6 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { z } from 'zod';
 import { LoggingService } from './logging.service';
+import { AppConfigService } from './app-config.service';
 import {
   AICardConfigInput,
   aiCardConfigSchema,
@@ -44,6 +45,7 @@ export interface ValidationResult<T> {
 })
 export class ValidationService {
   private readonly logger = inject(LoggingService);
+  private readonly config = inject(AppConfigService);
 
   /**
    * Validate a complete card configuration
@@ -59,10 +61,24 @@ export class ValidationService {
         };
       } else {
         const errorMessages = this.formatZodErrors(result.error);
-        this.logger.warn('Card validation failed', 'ValidationService', {
-          errors: errorMessages,
-          card: card,
-        });
+        // Extract only relevant card info for logging (avoid logging entire card object)
+        const cardInfo =
+          card && typeof card === 'object' && 'cardTitle' in card
+            ? {
+                cardTitle: (card as { cardTitle?: unknown }).cardTitle,
+                sectionsCount: Array.isArray((card as { sections?: unknown }).sections)
+                  ? ((card as { sections?: unknown[] }).sections?.length ?? 0)
+                  : 0,
+              }
+            : { type: typeof card };
+        // Validation failures are non-blocking and expected during schema evolution
+        // Only log in debug mode to avoid console noise
+        if (isDevMode() && this.config.LOGGING.ENABLE_DEBUG) {
+          this.logger.debug('Card validation failed', 'ValidationService', {
+            errors: errorMessages,
+            cardInfo,
+          });
+        }
 
         return {
           success: false,

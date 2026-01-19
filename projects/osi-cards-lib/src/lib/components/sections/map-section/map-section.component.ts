@@ -7,9 +7,10 @@ import {
   OnInit,
   ViewChild,
   inject,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -27,6 +28,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './map-section.component.html',
   styleUrl: './map-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapSectionComponent
   extends BaseSectionComponent
@@ -251,6 +253,23 @@ export class MapSectionComponent
 
     // Handle tile errors with retry logic
     this.tileLayer.on('tileerror', (error: any, tile: any) => {
+      // Validate tile and coords exist before accessing
+      if (
+        !tile ||
+        !tile.coords ||
+        typeof tile.coords.z !== 'number' ||
+        typeof tile.coords.x !== 'number' ||
+        typeof tile.coords.y !== 'number'
+      ) {
+        console.warn('[MapSection] Tile error with invalid tile structure:', { tile, error });
+        this.failedTiles++;
+        // Switch to fallback if too many tiles fail
+        if (this.failedTiles > 10 && !this.usingFallback) {
+          this.switchToFallbackTiles(L);
+        }
+        return;
+      }
+
       const tileKey = `${tile.coords.z}/${tile.coords.x}/${tile.coords.y}`;
       const errorCount = (this.tileErrors.get(tileKey) || 0) + 1;
       this.tileErrors.set(tileKey, errorCount);

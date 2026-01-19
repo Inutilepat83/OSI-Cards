@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -17,6 +17,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './timeline-section.component.html',
   styleUrl: './timeline-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

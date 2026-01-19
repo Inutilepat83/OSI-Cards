@@ -1,137 +1,419 @@
 ---
-description: "Result pattern, RFC 7807 error responses, structured error handling"
+description: "Angular error handling: ErrorHandler, ErrorBoundary, structured error handling"
 alwaysApply: true
 ---
 
 # Error Handling Patterns
 
-## Result Pattern
+## Angular Error Handling
 
-Use a Result type to represent success or failure without throwing exceptions for expected failures.
+### ErrorHandler (Global Error Handler)
 
-### Structure
+**Use Angular's `ErrorHandler` for global error handling:**
 
 ```typescript
-type Result<T, E = Error> =
-  | { success: true; value: T }
-  | { success: false; error: E };
-```
+import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorTrackingService } from './error-tracking.service';
 
-### Benefits
-
-- Explicit error handling
-- No hidden exceptions
-- Compiler-enforced error checking
-- Better for async operations
-
-### Usage Guidelines
-
-- Use for **expected** failures (validation, business rules)
-- Use exceptions for **unexpected** failures (programming errors, system failures)
-- Always check `result.success` before accessing `value`
-- Chain operations using `flatMap` or `map`
-
-## RFC 7807 Problem Details
-
-For HTTP APIs, use RFC 7807 format for error responses.
-
-### Structure
-
-```json
-{
-  "type": "https://example.com/problems/validation-error",
-  "title": "Validation Error",
-  "status": 400,
-  "detail": "The request contains invalid data",
-  "instance": "/api/users/123",
-  "errors": {
-    "email": ["Email is required", "Email format is invalid"]
+@Injectable()
+export class GlobalErrorHandler implements ErrorHandler {
+  private readonly errorTracker = inject(ErrorTrackingService);
+  
+  handleError(error: Error): void {
+    // Log error
+    console.error('Global error:', error);
+    
+    // Track error
+    this.errorTracker.logError({
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // Optionally notify user
+    // this.notificationService.showError('An error occurred');
   }
 }
 ```
 
-### Implementation
+### Provider Configuration
 
-- Use consistent error types
-- Include machine-readable `type` field
-- Provide human-readable `title` and `detail`
-- Include `instance` for traceability
-- Add `errors` object for validation errors
+```typescript
+// app.config.ts
+import { ApplicationConfig, ErrorHandler } from '@angular/core';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    // ... other providers
+  ],
+};
+```
+
+### Guidelines
+
+- Implement `ErrorHandler` for global error handling
+- Log errors to error tracking service
+- Don't expose internal details to users
+- Provide user-friendly error messages
+- Track errors for debugging
+
+---
+
+## Error Boundary Components
+
+### ErrorBoundaryComponent Pattern
+
+**Use error boundary components to catch component errors:**
+
+```typescript
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+
+@Component({
+  selector: 'app-error-boundary',
+  template: `
+    @if (hasError()) {
+      <div class="error-boundary" role="alert">
+        <div class="error-boundary__default">
+          <h3>Something went wrong</h3>
+          <p>{{ errorDetails()?.error?.message }}</p>
+          @if (recoveryStrategy() === 'retry') {
+            <button (click)="retry()">Try Again</button>
+          }
+          <button (click)="reset()">Dismiss</button>
+        </div>
+      </div>
+    } @else {
+      <ng-content></ng-content>
+    }
+  `,
+  standalone: true,
+  imports: [CommonModule],
+})
+export class ErrorBoundaryComponent implements OnInit, OnDestroy {
+  @Input() fallbackUI?: TemplateRef<any>;
+  @Input() recoveryStrategy = signal<RecoveryStrategy>('retry');
+  @Input() showDetails = signal(false);
+  @Input() reportErrors = true;
+  
+  @Output() errorCaught = new EventEmitter<ErrorBoundaryError>();
+  @Output() errorRecovered = new EventEmitter<void>();
+  
+  hasError = signal(false);
+  errorDetails = signal<ErrorBoundaryError | null>(null);
+  
+  private destroy$ = new Subject<void>();
+  
+  ngOnInit(): void {
+    this.setupErrorHandler();
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
+  handleError(error: Error, errorInfo?: any): void {
+    const errorDetails: ErrorBoundaryError = {
+      error,
+      errorInfo,
+      timestamp: Date.now(),
+      recovered: false,
+    };
+    
+    this.hasError.set(true);
+    this.errorDetails.set(errorDetails);
+    this.errorCaught.emit(errorDetails);
+    
+    if (this.reportErrors) {
+      this.reportError(errorDetails);
+    }
+  }
+  
+  retry(): void {
+    this.reset();
+    this.errorRecovered.emit();
+  }
+  
+  reset(): void {
+    this.hasError.set(false);
+    this.errorDetails.set(null);
+  }
+  
+  private setupErrorHandler(): void {
+    // Set up global error handler for this boundary
+  }
+  
+  private reportError(error: ErrorBoundaryError): void {
+    // Report to error tracking service
+  }
+}
+```
+
+### Usage
+
+```html
+<app-error-boundary
+  [recoveryStrategy]="'retry'"
+  (errorCaught)="onError($event)">
+  <my-component></my-component>
+</app-error-boundary>
+```
+
+### Guidelines
+
+- Use error boundaries for component error handling
+- Provide fallback UI for errors
+- Support error recovery strategies
+- Emit errors for parent handling
+- Don't expose internal error details to users
+
+---
+
+## HTTP Error Handling
+
+### HTTP Interceptor Pattern
+
+**Use HTTP interceptors for HTTP error handling:**
+
+```typescript
+import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
+
+@Injectable()
+export class HttpErrorInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler) {
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Handle specific error types
+        if (error.status === 401) {
+          // Handle unauthorized
+          this.handleUnauthorized();
+        } else if (error.status === 404) {
+          // Handle not found
+          this.handleNotFound();
+        } else if (error.status >= 500) {
+          // Handle server errors
+          this.handleServerError(error);
+        }
+        
+        // Log error
+        console.error('HTTP error:', error);
+        
+        // Return user-friendly error
+        return throwError(() => new Error('An error occurred. Please try again.'));
+      })
+    );
+  }
+  
+  private handleUnauthorized(): void {
+    // Redirect to login, etc.
+  }
+  
+  private handleNotFound(): void {
+    // Show not found message
+  }
+  
+  private handleServerError(error: HttpErrorResponse): void {
+    // Log to error tracking service
+  }
+}
+```
+
+### Provider Configuration
+
+```typescript
+// app.config.ts
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(
+      withInterceptors([HttpErrorInterceptor])
+    ),
+    // ... other providers
+  ],
+};
+```
+
+### Guidelines
+
+- Use HTTP interceptors for HTTP error handling
+- Handle specific HTTP status codes
+- Provide user-friendly error messages
+- Log errors to error tracking service
+- Don't expose server error details to users
+
+---
 
 ## Error Categories
 
-### 1. Domain Errors
+### 1. Component Errors
 
-Errors that represent business rule violations.
+Errors that occur in component rendering or lifecycle.
 
-- Return Result types
-- Include domain context
-- Use domain-specific error types
+**Handling:**
+- Use error boundary components
+- Provide fallback UI
+- Support error recovery
+- Don't expose stack traces to users
 
-### 2. Validation Errors
+### 2. HTTP Errors
+
+Errors from HTTP requests.
+
+**Handling:**
+- Use HTTP interceptors
+- Handle specific status codes
+- Provide user-friendly messages
+- Log errors for debugging
+
+### 3. Validation Errors
 
 Input validation failures.
 
-- Return 400 Bad Request
-- Use RFC 7807 format
-- Include field-level errors
+**Handling:**
+- Show field-level errors
+- Use Angular forms validation
+- Provide clear error messages
+- Don't block user input unnecessarily
 
-### 3. Authentication/Authorization Errors
+### 4. Runtime Errors
 
-- 401 Unauthorized: Missing or invalid credentials
-- 403 Forbidden: Valid credentials but insufficient permissions
+Unexpected errors during execution.
 
-### 4. Not Found Errors
+**Handling:**
+- Use global error handler
+- Log errors to tracking service
+- Show user-friendly messages
+- Support error recovery when possible
 
-- 404 Not Found: Resource doesn't exist
-- Include resource type and identifier
+---
 
-### 5. System Errors
-
-Unexpected failures.
-
-- Log with full context
-- Return 500 Internal Server Error
-- Don't expose internal details to clients
-- Use correlation IDs for tracking
-
-## Logging Errors
+## Error Logging
 
 ### Structured Logging
 
 ```typescript
-logger.error({
-  message: "Failed to process order",
-  error: error.message,
-  stack: error.stack,
-  correlationId: context.correlationId,
-  userId: context.userId,
-  orderId: orderId,
-  timestamp: new Date().toISOString()
-});
+interface ErrorLog {
+  message: string;
+  stack?: string;
+  component?: string;
+  user?: string;
+  timestamp: string;
+  context?: Record<string, unknown>;
+}
+
+class ErrorTrackingService {
+  logError(error: ErrorLog): void {
+    // Log to console in development
+    if (isDevMode()) {
+      console.error('Error:', error);
+    }
+    
+    // Send to error tracking service (production)
+    if (!isDevMode()) {
+      this.sendToTrackingService(error);
+    }
+  }
+  
+  private sendToTrackingService(error: ErrorLog): void {
+    // Send to error tracking service (e.g., Sentry, LogRocket)
+  }
+}
 ```
 
-### Log Levels
+### Guidelines
 
-- **Error**: System failures, unexpected exceptions
-- **Warn**: Recoverable issues, degraded functionality
-- **Info**: Important business events
-- **Debug**: Detailed diagnostic information
+- Log errors with context
+- Include timestamps
+- Include user information (if available)
+- Log to console in development
+- Send to tracking service in production
+- Don't log sensitive information
+
+---
 
 ## Error Recovery
 
 ### Retry Strategy
 
-- Use exponential backoff
+**Implement retry for recoverable errors:**
+
+```typescript
+import { retry, catchError } from 'rxjs/operators';
+
+this.http.get('/api/data').pipe(
+  retry({
+    count: 3,
+    delay: 1000, // 1 second delay
+  }),
+  catchError((error) => {
+    // Handle error after retries exhausted
+    return throwError(() => error);
+  })
+).subscribe();
+```
+
+### Guidelines
+
+- Use retry for transient errors (network, timeouts)
 - Set maximum retry attempts
-- Distinguish between retryable and non-retryable errors
-- Use circuit breaker pattern for external services
+- Use exponential backoff for retries
+- Don't retry for permanent errors (400, 404)
+- Provide feedback during retries
 
-### Graceful Degradation
+---
 
-- Return partial results when possible
-- Use cached data as fallback
-- Provide meaningful error messages
-- Maintain service availability
+## User-Friendly Error Messages
 
-**See also:** `architecture.mdc`, `security.mdc`, `testing.mdc`
+### Error Message Patterns
+
+**Provide user-friendly error messages:**
+
+```typescript
+const ERROR_MESSAGES: Record<string, string> = {
+  'network': 'Network error. Please check your connection.',
+  'timeout': 'Request timed out. Please try again.',
+  'not-found': 'The requested resource was not found.',
+  'server-error': 'Server error. Please try again later.',
+  'validation': 'Please check your input and try again.',
+  'unknown': 'An unexpected error occurred. Please try again.',
+};
+
+function getUserFriendlyMessage(error: Error): string {
+  // Map technical errors to user-friendly messages
+  if (error.message.includes('network')) {
+    return ERROR_MESSAGES['network'];
+  }
+  // ... etc
+  
+  return ERROR_MESSAGES['unknown'];
+}
+```
+
+### Guidelines
+
+- Provide user-friendly error messages
+- Don't expose technical details to users
+- Use clear, actionable language
+- Provide recovery suggestions
+- Log technical details server-side
+
+---
+
+## Error Handling Checklist
+
+Before implementing error handling:
+
+- [ ] Global error handler implemented
+- [ ] Error boundary components used where needed
+- [ ] HTTP error interceptor configured
+- [ ] Error logging service implemented
+- [ ] User-friendly error messages defined
+- [ ] Error recovery strategies planned
+- [ ] Error tracking service configured
+- [ ] Error handling tested
+
+**See also:** `architecture.mdc`, `security.mdc`, `testing.mdc`, `angular-components.mdc`

@@ -20,7 +20,7 @@
  * ```
  */
 
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 // Removed - smart-grid.util deleted
 // Stub implementations
 function estimateSectionHeight(section: any): number {

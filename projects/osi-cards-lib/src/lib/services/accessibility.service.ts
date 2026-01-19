@@ -9,6 +9,11 @@
  *
  * This consolidated service provides all accessibility features in one place.
  *
+ * @dependencies
+ * - PLATFORM_ID: For platform detection (browser vs server)
+ * - DOCUMENT: For DOM manipulation and focus management
+ * - NgZone: For running operations in Angular zone
+ *
  * @example
  * ```typescript
  * import { AccessibilityService } from 'osi-cards-lib';
@@ -35,7 +40,7 @@ import { Injectable, OnDestroy, inject, PLATFORM_ID, NgZone } from '@angular/cor
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { ANIMATION_TIMING, EASING } from '../constants/animation.constants';
+import { ANIMATION_TIMING, EASING } from '@osi-cards/constants';
 
 // ============================================================================
 // TYPES

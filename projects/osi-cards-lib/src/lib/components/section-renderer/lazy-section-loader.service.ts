@@ -13,7 +13,7 @@
  */
 
 import { inject, Injectable, NgZone, Type } from '@angular/core';
-import { BaseSectionComponent } from '../sections/base-section.component';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
 
 /** Sections that should be lazy loaded due to external dependencies */
 export const LAZY_SECTION_TYPES = ['chart', 'map'] as const;

@@ -22,23 +22,63 @@ priority: 0
 ### Naming Conventions
 
 **Services:**
-- Class: `UserService` (PascalCase)
-- File: `user.service.ts` (kebab-case)
-- Variable: `userService` (camelCase)
+- Class: `LoggerService`, `CardFacadeService` (PascalCase, *Service pattern)
+- File: `logger.service.ts`, `card-facade.service.ts` (kebab-case)
+- Variable: `loggerService`, `cardFacade` (camelCase)
+- Always `providedIn: 'root'`
 
 **Components:**
-- Class: `UserComponent` (PascalCase)
-- File: `user.component.ts` (kebab-case)
-- Selector: `app-user` (kebab-case)
+- Class: `InfoSectionComponent` (PascalCase, *SectionComponent pattern)
+- File: `info-section.component.ts` (kebab-case)
+- Selector: `app-*-section` for library sections, `osi-*` for main components
+  - Library sections: `app-info-section`, `app-analytics-section`
+  - Main components: `osi-cards`, `osi-cards-container`
+  - Library components: `app-card-actions`, `app-section-renderer`
 
-**Interfaces:**
-- Name: `IUserService` or `UserService` (PascalCase)
-- File: `user-service.interface.ts` (kebab-case)
+**Interfaces/Types:**
+- Name: `CardSection`, `LogEntry` (PascalCase, no I prefix)
+- File: `card.model.ts`, `log-entry.interface.ts` (kebab-case)
+- Use `*.model.ts` for model files, `*.interface.ts` for interfaces
+- See: `card.model.ts`, `section-design-params.model.ts` for examples
+
+### Import Patterns
+
+**Import order (consistent across codebase):**
+1. Angular core imports (`@angular/core`, `@angular/common`)
+2. Library imports (`@osi-cards/*` path aliases)
+3. Relative imports (same directory or parent directories)
+4. Third-party imports (rxjs, lucide-angular, etc.)
+
+**Path aliases (use for library imports):**
+- `@osi-cards/lib/*` - Library code
+- `@osi-cards/sections` - Section components
+- `@osi-cards/services` - Services
+- `@osi-cards/utils` - Utilities
+- `@osi-cards/models` - Models/types
+- `@osi-cards/types` - Type definitions
+- `@osi-cards/icons` - Icons
+- `@osi-cards/themes` - Themes
+
+**Example:**
+```typescript
+// Angular core
+import { Component, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+// Library (path aliases)
+import { CardSection, CardField } from '@osi-cards/models';
+import { BaseSectionComponent } from '../base-section.component';
+
+// Relative imports
+import './analytics-section.scss';
+```
+
+**See:** `tsconfig.json` paths for all available aliases
 
 ### Code Structure
 
 **Always follow existing patterns:**
-- Same import order
+- Same import order (Angular → Library → Relative)
 - Same class structure
 - Same method organization
 - Same comment style
@@ -59,9 +99,9 @@ priority: 0
 
 **Always use established patterns:**
 - Service Layer Pattern for services
-- Component Pattern for components
-- Repository Pattern for data access
-- Observer Pattern for reactive code
+- Component Pattern for components (standalone, OnPush)
+- Facade Pattern for complex subsystems
+- Observer Pattern for reactive code (RxJS)
 
 ### Dependency Injection
 
@@ -73,10 +113,10 @@ priority: 0
 ### Error Handling
 
 **Always use same approach:**
-- Centralized error handling
+- ErrorHandler for global errors
+- ErrorBoundaryComponent for component errors
 - ErrorTrackingService for logging
-- Proper error propagation
-- User-friendly messages
+- User-friendly error messages
 
 ### Consistency Checklist
 

@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Company Overview",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Industry", "value": "Technology Services" },
         { "label": "Employees", "value": "500+" },

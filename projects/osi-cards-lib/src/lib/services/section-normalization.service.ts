@@ -13,6 +13,10 @@
  * - Apply condensation rules
  * - Cache normalization results
  *
+ * @dependencies
+ * - LRUCache: For caching normalization results
+ * - Utility functions: getPreferredColumns, resolveSectionType, isValidSectionType
+ *
  * @example
  * ```typescript
  * import { SectionNormalizationService } from '@osi-cards/services';
@@ -42,19 +46,19 @@
  * @public
  */
 import { Injectable } from '@angular/core';
-import { CardSection, LayoutPriority } from '../models/card.model';
+import { CardSection, LayoutPriority } from '@osi-cards/models';
 import {
   SectionType,
   SectionTypeInput,
   resolveSectionType as resolveType,
   isValidSectionType,
-} from '../models/generated-section-types';
+} from '@osi-cards/models';
 import {
   getPreferredColumns,
   DEFAULT_SECTION_COLUMN_PREFERENCES,
   PreferredColumns,
-} from '../utils/grid-config.util';
-import { LRUCache } from '../utils/lru-cache.util';
+} from '@osi-cards/utils';
+import { LRUCache } from '@osi-cards/utils';
 
 interface ColSpanThresholds {
   two: number;

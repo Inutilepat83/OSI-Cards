@@ -5,6 +5,10 @@
  * This service monitors the prefers-reduced-motion media query and
  * provides utilities for adjusting animations accordingly.
  *
+ * @dependencies
+ * - PLATFORM_ID: For platform detection (browser vs server)
+ * - NgZone: For running media query listeners in Angular zone
+ *
  * @example
  * ```typescript
  * import { ReducedMotionService } from 'osi-cards-lib';
@@ -27,7 +31,7 @@ import { Injectable, inject, PLATFORM_ID, NgZone, OnDestroy } from '@angular/cor
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, fromEvent, Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, map, startWith } from 'rxjs/operators';
-import { ANIMATION_TIMING, EASING } from '../constants/animation.constants';
+import { ANIMATION_TIMING, EASING } from '@osi-cards/constants';
 
 /** Animation configuration for reduced motion mode */
 export interface ReducedMotionAnimationConfig {

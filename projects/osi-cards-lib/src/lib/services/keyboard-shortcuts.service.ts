@@ -39,6 +39,9 @@ interface ParsedKeys {
  * Provides a centralized way to manage keyboard shortcuts
  * across the OSI Cards library.
  *
+ * @dependencies
+ * - DOCUMENT: For DOM event handling
+ *
  * @example
  * ```typescript
  * const shortcuts = inject(KeyboardShortcutsService);

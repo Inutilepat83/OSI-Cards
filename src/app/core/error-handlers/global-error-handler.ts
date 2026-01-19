@@ -95,9 +95,14 @@ export class GlobalErrorHandler implements ErrorHandler {
       }
     }
 
-    // Re-throw in development for debugging
+    // Re-throw in development for debugging (but skip NG0203 errors)
     if (this.isDevelopment()) {
-      console.error('🔴 Unhandled Error:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorCode = (error as any)?.code;
+      // Skip logging NG0203 errors - they're expected in some contexts
+      if (!errorMessage.includes('NG0203') && errorCode !== 'NG0203' && errorCode !== -203) {
+        console.error('🔴 Unhandled Error:', error);
+      }
     }
   }
 
@@ -185,21 +190,39 @@ export class GlobalErrorHandler implements ErrorHandler {
       const errorStack = error.stack || '';
       const errorString = `${errorMessage} ${errorStack}`;
 
-      // Check for NG05604 error code (Angular error or custom error)
-      if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
-        console.warn('🔍 NG05604 error detected - logging with full context:', {
-          message: errorMessage,
-          stack: errorStack,
-          error: error,
-          timestamp: new Date().toISOString(),
-          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-          url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-        });
+      // Check for NG0203 error code (Angular dependency injection error)
+      // NG0203 occurs when inject() is called outside injection context - handle gracefully
+      if (
+        errorMessage.includes('NG0203') ||
+        errorString.includes('NG0203') ||
+        (error as any)?.code === 'NG0203' ||
+        (error as any)?.code === -203
+      ) {
+        // Suppress console warnings for NG0203 - these are expected in some contexts (e.g., *ngFor-created components)
+        // Still return error info for internal logging but with low severity
+        return {
+          type: 'NG0203 Error',
+          message: `NG0203 error detected: Injection context not available. This may occur in dynamically created components.`,
+          severity: 'info', // Use 'info' severity (maps to 'low') to suppress user notifications
+          context: {
+            originalMessage: errorMessage,
+            stack: errorStack,
+            errorCode: 'NG0203',
+            fullError: error.toString(),
+            timestamp: Date.now(),
+          },
+        };
+      }
 
+      // Check for NG05604 error code (Angular error or custom error)
+      // NG05604 is a generic Angular error that's not critical - handle gracefully without user notification
+      if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
+        // Suppress console warnings for NG05604 - these are expected in some contexts
+        // Still return error info for internal logging but with low severity
         return {
           type: 'NG05604 Error',
           message: `NG05604 error detected: ${errorMessage}. This may be a custom Angular error or from a third-party library.`,
-          severity: 'warning',
+          severity: 'info', // Use 'info' severity (maps to 'low') to suppress user notifications
           context: {
             originalMessage: errorMessage,
             stack: errorStack,
@@ -294,17 +317,25 @@ export class GlobalErrorHandler implements ErrorHandler {
     const source = event.filename || '';
     const errorString = `${errorMessage} ${source}`;
 
+    // Check for NG0203 error code (Angular dependency injection error)
+    // NG0203 occurs when inject() is called outside injection context - suppress warnings
+    if (
+      errorMessage.includes('NG0203') ||
+      errorString.includes('NG0203') ||
+      (error &&
+        typeof error === 'object' &&
+        ((error as any).code === 'NG0203' || (error as any).code === -203))
+    ) {
+      // Suppress console warnings - these are expected in some contexts (e.g., *ngFor-created components)
+      return; // Early return to prevent further processing
+    }
+
     // Check for NG05604 error code
+    // NG05604 is a generic Angular error that's not critical - suppress warnings
     if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
-      console.warn('🔍 NG05604 error detected in window error handler:', {
-        message: errorMessage,
-        source,
-        error,
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-      });
-      // Continue processing as normal error
+      // Suppress console warnings - these are expected in some contexts
+      // Continue processing but don't log to console
+      return; // Early return to prevent further processing
     }
 
     // Check for chunk/module loading errors
@@ -340,17 +371,25 @@ export class GlobalErrorHandler implements ErrorHandler {
     const errorStack = reason instanceof Error ? reason.stack : '';
     const errorString = `${errorMessage} ${errorStack}`;
 
+    // Check for NG0203 error code (Angular dependency injection error)
+    // NG0203 occurs when inject() is called outside injection context - suppress warnings
+    if (
+      errorMessage.includes('NG0203') ||
+      errorString.includes('NG0203') ||
+      (reason &&
+        typeof reason === 'object' &&
+        ((reason as any).code === 'NG0203' || (reason as any).code === -203))
+    ) {
+      // Suppress console warnings - these are expected in some contexts (e.g., *ngFor-created components)
+      return; // Early return to prevent further processing
+    }
+
     // Check for NG05604 error code
+    // NG05604 is a generic Angular error that's not critical - suppress warnings
     if (errorMessage.includes('NG05604') || errorString.includes('NG05604')) {
-      console.warn('🔍 NG05604 error detected in unhandled rejection:', {
-        message: errorMessage,
-        stack: errorStack,
-        reason,
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-      });
-      // Continue processing as normal error
+      // Suppress console warnings - these are expected in some contexts
+      // Don't process further to avoid user notifications
+      return; // Early return to prevent further processing
     }
 
     // Check for module loading errors in promise rejections

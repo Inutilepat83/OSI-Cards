@@ -964,7 +964,8 @@ export function getPreferredColumns(
       const layoutPrefs = sectionComponent.getLayoutPreferences(availableColumns);
       return layoutPrefs.preferredColumns;
     } catch (error) {
-      // Only warn in development mode
+      // Only warn in development mode if method exists but fails
+      // Don't warn if method doesn't exist (expected fallback)
       const isDevelopment =
         typeof window !== 'undefined' &&
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
@@ -976,22 +977,23 @@ export function getPreferredColumns(
       }
       // Fall through to static preferences
     }
+  } else if (sectionComponent && typeof sectionComponent.getLayoutPreferences !== 'function') {
+    // Only warn if component instance is provided but method doesn't exist
+    // This indicates the section should implement getLayoutPreferences() but hasn't
+    const isDevelopment =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    if (isDevelopment) {
+      console.warn(
+        `[GridConfig] Using deprecated static preferences for section type "${sectionType}". Consider implementing getLayoutPreferences() in the section component.`
+      );
+    }
   }
+  // If sectionComponent is not provided, silently use static preferences (expected behavior)
 
   // Fallback to static preferences (deprecated but kept for backward compatibility)
   const type = sectionType?.toLowerCase() || 'default';
   const staticPref = preferences[type] ?? preferences['default'] ?? 1;
-
-  // Warn if using deprecated static preferences (only in development)
-  const isDevelopment =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  if (isDevelopment && !sectionComponent) {
-    console.warn(
-      `[GridConfig] Using deprecated static preferences for section type "${type}". ` +
-        `Consider implementing getLayoutPreferences() in the section component.`
-    );
-  }
 
   return staticPref;
 }

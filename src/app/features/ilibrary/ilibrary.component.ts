@@ -231,7 +231,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
 
   // Streaming configuration
   useStreaming = true;
-  streamingSpeed = 200; // tokens per second (default: 200, can climb to 300 max)
+  streamingSpeed = 2000; // tokens per second (default: 2000)
   thinkingDelay = 500; // 0.5s thinking time
 
   // Card state

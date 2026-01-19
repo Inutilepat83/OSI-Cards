@@ -30,15 +30,15 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CardSection } from '../../models/card.model';
+import { CardSection } from '@osi-cards/models';
 import {
   LayoutCalculationService,
   LayoutConfig,
   LayoutResult,
   PositionedSection as ServicePositionedSection,
-} from '../../services/layout-calculation.service';
-import { LayoutState, LayoutStateManager } from '../../services/layout-state-manager.service';
-import { SectionRendererComponent } from '../section-renderer/section-renderer.component';
+} from '@osi-cards/services';
+import { LayoutState, LayoutStateManager } from '@osi-cards/services';
+import { SectionRendererComponent } from '@osi-cards/components';
 
 /**
  * Layout information emitted on changes

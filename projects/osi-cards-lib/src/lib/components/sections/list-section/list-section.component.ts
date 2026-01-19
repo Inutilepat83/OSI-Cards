@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -17,18 +17,79 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './list-section.component.html',
   styleUrl: './list-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
   expandedIndex: number | null = null;
 
+  // #region agent log
   ngOnInit(): void {
+    const items = this.section?.items;
+    const itemsLength = items?.length ?? 0;
+    const shouldShowEmpty = !itemsLength;
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'list-section.component.ts:ngOnInit',
+          message: 'ListSectionComponent ngOnInit - checking empty state condition',
+          data: {
+            hasSection: !!this.section,
+            itemsValue: items,
+            itemsLength,
+            shouldShowEmpty,
+            sectionType: this.section?.type,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
+    }
+    // #endregion
     // Register layout preference function for this section type
     this.layoutService.register('list', (section: CardSection, availableColumns: number) => {
       return this.calculateListLayoutPreferences(section, availableColumns);
     });
   }
+
+  /**
+   * Getter to check if empty state should be shown (with logging)
+   */
+  get shouldShowEmptyState(): boolean {
+    const items = this.section?.items;
+    const itemsLength = items?.length ?? 0;
+    const result = !itemsLength;
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'list-section.component.ts:shouldShowEmptyState',
+          message: 'shouldShowEmptyState getter called',
+          data: { itemsValue: items, itemsLength, result, sectionId: this.section?.id },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'C',
+        }),
+      }).catch(() => {});
+    }
+    return result;
+  }
+  // #endregion
 
   /**
    * Calculate layout preferences for list section based on content.

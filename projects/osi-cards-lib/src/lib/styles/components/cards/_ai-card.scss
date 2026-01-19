@@ -114,8 +114,7 @@
     box-shadow: var(--osi-card-shadow-fullscreen) !important;
   }
 
-  /* Disable all tilt effects in fullscreen - handled by _tilt.scss */
-  /* Tilt effects are disabled via .ai-card-surface--fullscreen selector in _tilt.scss */
+  /* Tilt effects are enabled in fullscreen mode */
 
   /* Remove box-shadow glow from masonry items (sections) in fullscreen */
   .masonry-item {

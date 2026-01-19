@@ -1,4 +1,15 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -25,7 +36,31 @@ import { CommonModule } from '@angular/common';
   styleUrl: './empty-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EmptyStateComponent {
+export class EmptyStateComponent implements OnInit, OnChanges, AfterViewInit {
+  // #region agent log
+  constructor(private cdr: ChangeDetectorRef) {
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'empty-state.component.ts:constructor',
+          message: 'EmptyStateComponent constructor called',
+          data: { timestamp: Date.now() },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+    }
+  }
+  // #endregion
+
   /**
    * Empty state message
    * @default 'No data available'
@@ -64,6 +99,102 @@ export class EmptyStateComponent {
    */
   @Output() action = new EventEmitter<void>();
 
+  // #region agent log
+  ngOnInit(): void {
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'empty-state.component.ts:ngOnInit',
+          message: 'EmptyStateComponent ngOnInit',
+          data: {
+            message: this.message,
+            icon: this.icon,
+            variant: this.variant,
+            size: this.size,
+            hasActionLabel: !!this.actionLabel,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+    }
+  }
+  // #endregion
+
+  // #region agent log
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'empty-state.component.ts:ngOnChanges',
+          message: 'EmptyStateComponent input changes detected',
+          data: {
+            changes: Object.keys(changes),
+            currentValues: {
+              message: this.message,
+              icon: this.icon,
+              variant: this.variant,
+              size: this.size,
+            },
+            previousValues: Object.keys(changes).reduce((acc: Record<string, any>, key) => {
+              acc[key] = changes[key]?.previousValue;
+              return acc;
+            }, {} as Record<string, any>),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'B',
+        }),
+      }).catch(() => {});
+    }
+    this.cdr.markForCheck();
+  }
+  // #endregion
+
+  // #region agent log
+  ngAfterViewInit(): void {
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'empty-state.component.ts:ngAfterViewInit',
+          message: 'EmptyStateComponent view initialized',
+          data: {
+            message: this.message,
+            icon: this.icon,
+            variant: this.variant,
+            classes: this.getClassArray(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'D',
+        }),
+      }).catch(() => {});
+    }
+  }
+  // #endregion
+
   /**
    * Handle action button click
    */
@@ -75,9 +206,36 @@ export class EmptyStateComponent {
    * Get array of CSS classes, filtering out undefined values
    * NgClass requires all values to be strings, not undefined
    */
+  // #region agent log
   getClassArray(): string[] {
-    return [this.variant, this.size, this.containerClass].filter(
+    const classes = [this.variant, this.size, this.containerClass].filter(
       (cls): cls is string => cls !== undefined && cls !== null
     );
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'empty-state.component.ts:getClassArray',
+          message: 'getClassArray called',
+          data: {
+            variant: this.variant,
+            size: this.size,
+            containerClass: this.containerClass,
+            resultClasses: classes,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'D',
+        }),
+      }).catch(() => {});
+    }
+    return classes;
   }
+  // #endregion
 }

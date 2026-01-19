@@ -10,7 +10,7 @@ import {
   CardItem,
   CardAction,
   SectionTypeInput,
-} from '../models/card.model';
+} from '@osi-cards/models';
 
 /**
  * Builder for creating test card configurations

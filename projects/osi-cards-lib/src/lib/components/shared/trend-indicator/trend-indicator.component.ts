@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TrendDirection } from '../../../types';
+import { TrendDirection } from '@osi-cards/types';
 
 /**
  * Shared Trend Indicator Component

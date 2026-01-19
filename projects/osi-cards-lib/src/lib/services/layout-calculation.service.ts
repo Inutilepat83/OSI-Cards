@@ -11,6 +11,10 @@
  * - Handle responsive breakpoints
  * - Manage layout caching
  *
+ * @dependencies
+ * - HeightEstimator: For estimating section heights
+ * - Utility functions: calculateColumnWidth, getPreferredColumns, resolveColumnSpan, calculateColumns
+ *
  * @example
  * ```typescript
  * @Component({...})
@@ -28,8 +32,8 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { CardSection } from '../models/card.model';
-import { Memoize } from '../utils/advanced-memoization.util';
+import { CardSection } from '@osi-cards/models';
+import { Memoize } from '@osi-cards/utils';
 import {
   calculateColumnWidth,
   getPreferredColumns,
@@ -39,9 +43,9 @@ import {
   PreferredColumns,
   resolveColumnSpan,
   calculateColumns as utilCalculateColumns,
-} from '../utils/grid-config.util';
-import { HeightEstimator } from '../utils/height-estimation.util';
-import { estimateSectionHeight } from '../utils/smart-grid.util';
+} from '@osi-cards/utils';
+import { HeightEstimator } from '@osi-cards/utils';
+import { estimateSectionHeight } from '@osi-cards/utils';
 
 // ============================================================================
 // TYPES

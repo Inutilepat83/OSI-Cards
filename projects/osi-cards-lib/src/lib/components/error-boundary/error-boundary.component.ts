@@ -34,9 +34,11 @@ import {
   TemplateRef,
   signal,
   computed,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
+import { LoggerService } from '../../services/logger.service';
 
 /**
  * Error boundary error details
@@ -220,6 +222,7 @@ export class ErrorBoundaryComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
   private maxRetries = 3;
+  private readonly logger = inject(LoggerService);
 
   ngOnInit(): void {
     // Set up global error handler
@@ -261,7 +264,10 @@ export class ErrorBoundaryComponent implements OnInit, OnDestroy {
    */
   retry(): void {
     if (this.retryCount() >= this.maxRetries) {
-      console.warn('Max retries reached');
+      this.logger.warn('Max retries reached', {
+        retryCount: this.retryCount(),
+        maxRetries: this.maxRetries,
+      });
       return;
     }
 
@@ -308,7 +314,12 @@ export class ErrorBoundaryComponent implements OnInit, OnDestroy {
    */
   private reportError(error: ErrorBoundaryError): void {
     // In production, send to error tracking service (Sentry, etc.)
-    console.error('[ErrorBoundary]', error);
+    this.logger.error(
+      'ErrorBoundary error caught',
+      { error, errorInfo: error.errorInfo, componentStack: error.componentStack },
+      error.error,
+      ['error-boundary']
+    );
   }
 
   /**

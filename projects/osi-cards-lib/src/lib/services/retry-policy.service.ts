@@ -4,6 +4,9 @@
  * Provides configurable retry logic for HTTP requests and other async operations.
  * Supports exponential backoff, circuit breaker patterns, and custom retry strategies.
  *
+ * @dependencies
+ * - None (uses RxJS operators for retry logic)
+ *
  * @example
  * ```typescript
  * import { RetryPolicyService, RetryConfig } from 'osi-cards-lib';

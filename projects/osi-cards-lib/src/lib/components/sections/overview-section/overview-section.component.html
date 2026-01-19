@@ -2,19 +2,24 @@
   <button
     type="button"
     class="overview-section-copy-btn"
-    [attr.aria-label]="'Copy section: ' + (section.title || 'Overview')"
-    title="Copy section content"
+    [class.overview-section-copy-btn--copied]="isCopied()"
+    [attr.aria-label]="isCopied() ? 'Copied!' : 'Copy section: ' + (section.title || 'Overview')"
+    [title]="isCopied() ? 'Copied!' : 'Copy section content'"
     (click)="onCopySection()"
     (keydown.enter)="onCopySection()"
     (keydown.space)="$event.preventDefault(); onCopySection()"
   >
-    <lucide-icon name="copy" [size]="12" aria-hidden="true"></lucide-icon>
+    <lucide-icon [name]="isCopied() ? 'check' : 'copy'" [size]="12" aria-hidden="true"></lucide-icon>
   </button>
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
-  <div class="overview-grid" *ngIf="section.fields?.length">
-    <div class="overview-item" *ngFor="let field of section.fields" [class.overview-item--single-text]="!field.label">
+  <div class="overview-grid" *ngIf="hasFields">
+    <div
+      class="overview-item"
+      *ngFor="let field of getFields(); trackBy: trackField"
+      [class.overview-item--single-text]="!field.label"
+    >
       <div class="overview-item__label" *ngIf="field.label">{{ field.label }}</div>
       <div
         class="overview-item__value"
@@ -24,6 +29,5 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No overview data" icon="📋" variant="minimal">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!hasFields" message="No overview data" icon="📋" variant="minimal"> </lib-empty-state>
 </div>

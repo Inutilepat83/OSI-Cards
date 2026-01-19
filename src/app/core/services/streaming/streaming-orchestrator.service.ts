@@ -16,6 +16,7 @@ import { BehaviorSubject, EMPTY, Observable, of, Subject, throwError } from 'rxj
 import { catchError, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 
 import { AICardConfig } from '../../../models';
+import { sendDebugLog } from '../../utils/debug-log.util';
 import {
   StreamingChunk,
   StreamingConnectionState,
@@ -429,6 +430,20 @@ export class StreamingOrchestratorService implements OnDestroy {
 
   private handleChunk(chunk: StreamingChunk): void {
     if (!this.jsonParser || !this.stateMachine) {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming-orchestrator.service.ts:handleChunk',
+        message: 'Skipping chunk - parser or state machine not available',
+        data: {
+          hasParser: !!this.jsonParser,
+          hasStateMachine: !!this.stateMachine,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_CHUNK',
+      });
+      // #endregion
       return;
     }
 
@@ -437,6 +452,24 @@ export class StreamingOrchestratorService implements OnDestroy {
       this.currentSession.totalChunks++;
       this.currentSession.totalBytes += chunk.byteSize;
     }
+
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming-orchestrator.service.ts:handleChunk',
+      message: 'Chunk received',
+      data: {
+        chunkSize: chunk.byteSize,
+        sequence: chunk.sequence,
+        totalChunks: this.currentSession?.totalChunks || 0,
+        totalBytes: this.currentSession?.totalBytes || 0,
+        chunkPreview: chunk.data.substring(0, 100),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_CHUNK',
+    });
+    // #endregion
 
     // Update state machine
     this.stateMachine.send('CHUNK_RECEIVED', {
@@ -455,6 +488,25 @@ export class StreamingOrchestratorService implements OnDestroy {
     // Parse if auto-parse enabled
     if (this.config.autoParse) {
       const result = this.jsonParser.feed(chunk.data);
+
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming-orchestrator.service.ts:handleChunk',
+        message: 'Chunk parsed',
+        data: {
+          completeSections: result.completeSections,
+          newlyCompletedCount: result.newlyCompletedSections.length,
+          newlyCompletedIndices: result.newlyCompletedSections,
+          state: result.state,
+          cardSectionsCount: result.card?.sections?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_CHUNK',
+      });
+      // #endregion
+
       this.handleParseResult(result, false);
     } else {
       this.buffer += chunk.data;
@@ -466,6 +518,26 @@ export class StreamingOrchestratorService implements OnDestroy {
     const newlyCompleted = result.newlyCompletedSections.filter(
       (idx) => !this.lastCompletedSections.includes(idx)
     );
+
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming-orchestrator.service.ts:handleParseResult',
+      message: 'Parse result handled',
+      data: {
+        isFinal,
+        completeSections: result.completeSections,
+        newlyCompletedCount: newlyCompleted.length,
+        newlyCompletedIndices: newlyCompleted,
+        lastCompletedSections: this.lastCompletedSections,
+        cardSectionsCount: result.card?.sections?.length || 0,
+        state: result.state,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_SECTION',
+    });
+    // #endregion
 
     if (newlyCompleted.length > 0) {
       this.lastCompletedSections.push(...newlyCompleted);
@@ -510,6 +582,24 @@ export class StreamingOrchestratorService implements OnDestroy {
     if (isFinal) {
       changeType = 'complete';
     }
+
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming-orchestrator.service.ts:handleParseResult',
+      message: 'Emitting card update',
+      data: {
+        changeType,
+        isComplete: isFinal || result.state === 'complete',
+        completedSectionsCount: newlyCompleted.length,
+        completedSectionIndices: newlyCompleted,
+        cardSectionsCount: result.card?.sections?.length || 0,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_SECTION',
+    });
+    // #endregion
 
     // Emit card update
     this.cardUpdateSubject.next({

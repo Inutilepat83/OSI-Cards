@@ -28,8 +28,13 @@ export type PriorityValue = 'high' | 'medium' | 'low' | string;
 export type TrendValue = 'up' | 'down' | 'stable' | 'neutral';
 
 /**
- * Utility service for section components
- * Provides consistent status, trend, and icon handling across all sections
+ * Section Utils Service
+ *
+ * Utility service for section components.
+ * Provides consistent status, trend, and icon handling across all sections.
+ *
+ * @dependencies
+ * - None (pure utility service with no external dependencies)
  */
 @Injectable({
   providedIn: 'root',

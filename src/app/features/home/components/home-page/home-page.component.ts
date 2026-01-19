@@ -58,6 +58,7 @@ import { ensureCardIds, removeAllIds } from '../../../../shared';
 // BackToTopComponent removed - not found
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
 import { measureAllSectionItems } from '../../../../core/utils/spacing-debug.util';
+import { sendDebugLog } from '../../../../core/utils/debug-log.util';
 import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
 import { PreviewControlsComponent } from '../../../../shared/components/preview-controls/preview-controls.component';
 // ScrollRevealDirective removed - not found
@@ -92,6 +93,9 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly cardDataService = inject(CardDataService);
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
+
+  // Debounce measurement triggers to prevent multiple simultaneous runs
+  private measurementTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly validationService: ValidationService = inject(ValidationService);
   private readonly document = inject(DOCUMENT);
   private readonly themeService = inject(ThemeService);
@@ -154,7 +158,6 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   jsonErrorSuggestion = '';
   isJsonValid = true;
   switchingType = false;
-  systemStats = { totalFiles: 18 };
   livePreviewCard: AICardConfig | null = null;
   livePreviewChangeType: CardChangeType = 'structural';
 
@@ -164,7 +167,7 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   // Library Streaming State (replaces old LLMStreamingService)
   streamingState: StreamingState | null = null;
   useStreaming = true;
-  streamingSpeed = 200; // tokens per second (default: 200, can climb to 300 max)
+  streamingSpeed = 2000; // tokens per second (default: 2000)
   thinkingDelay = 500; // 0.5s thinking time
   private initialCardType: CardType = 'all';
 
@@ -200,10 +203,36 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get cardConfigForRenderer(): LibraryCardConfig {
     // Use previewCard getter which handles live preview + streaming properly
-    return (this.previewCard ?? {
+    const card = (this.previewCard ?? {
       cardTitle: 'Generating...',
       sections: [],
     }) as LibraryCardConfig;
+    // #region agent log - cardConfigForRenderer getter
+    sendDebugLog({
+      location: 'home-page.component.ts:cardConfigForRenderer',
+      message: 'cardConfigForRenderer getter',
+      data: {
+        hasPreviewCard: !!this.previewCard,
+        cardTitle: card.cardTitle,
+        sectionsCount: card.sections?.length || 0,
+        sections:
+          card.sections?.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            hasFields: !!s.fields?.length,
+            hasItems: !!s.items?.length,
+          })) || [],
+        hasLivePreview: !!this.livePreviewCard,
+        hasGeneratedCard: !!this.generatedCard,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'section-render-debug',
+      hypothesisId: 'H1',
+    });
+    // #endregion
+    return card;
   }
 
   get progressPercent(): number {
@@ -274,6 +303,24 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Subscribe to streaming service state (following iLibrary pattern)
     this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      // #region agent log
+      sendDebugLog({
+        location: 'home-page.component.ts:state$',
+        message: 'Streaming state changed',
+        data: {
+          isActive: state.isActive,
+          stage: state.stage,
+          progress: state.progress,
+          bufferLength: state.bufferLength,
+          targetLength: state.targetLength,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_STATE',
+      });
+      // #endregion
+
       this.streamingState = state;
       this.isGenerating = state.isActive;
       this.cd.markForCheck();
@@ -283,6 +330,25 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.streamingService.cardUpdates$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((update: CardUpdate) => {
+        // #region agent log - card update received
+        sendDebugLog({
+          location: 'home-page.component.ts:cardUpdates$',
+          message: 'Card update received from streaming',
+          data: {
+            changeType: update.changeType,
+            sectionsCount: update.card?.sections?.length || 0,
+            cardTitle: update.card?.cardTitle,
+            hasCard: !!update.card,
+            sections:
+              update.card?.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'empty-card-debug',
+          hypothesisId: 'A',
+        });
+        // #endregion
+
         this.generatedCard = update.card;
         this.livePreviewCard = update.card;
         this.livePreviewChangeType = update.changeType;
@@ -314,8 +380,14 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
         // #region agent log
         // Measure spacing when card is updated and has sections
         if (update.card?.sections?.length) {
-          setTimeout(() => {
+          // Clear existing timeout to debounce measurements
+          if (this.measurementTimeout) {
+            clearTimeout(this.measurementTimeout);
+          }
+          // Debounce measurement
+          this.measurementTimeout = setTimeout(() => {
             measureAllSectionItems(5000);
+            this.measurementTimeout = null;
           }, 1000); // Wait 1 second for sections to render
         }
         // #endregion
@@ -432,25 +504,20 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cd.markForCheck();
       });
 
-    // Subscribe to loadTemplateSuccess to trigger streaming when template loads
+    // Subscribe to loadTemplateSuccess to load template JSON and display instantly
     this.actions$
       .pipe(ofType(CardActions.loadTemplateSuccess), takeUntilDestroyed(this.destroyRef))
       .subscribe(({ template }) => {
-        if (this.useStreaming && !this.isStreamingActive) {
-          // Configure streaming service with current settings
-          this.streamingService.configure({
-            thinkingDelayMs: this.thinkingDelay,
-            tokensPerSecond: this.streamingSpeed,
-          });
+        // Prepare template JSON (remove IDs for clean JSON)
+        const templateWithoutIds = removeAllIds(template);
+        delete templateWithoutIds.cardType;
+        const templateJson = JSON.stringify(templateWithoutIds, null, 2);
 
-          // Prepare template JSON for streaming (remove IDs for clean JSON)
-          const templateWithoutIds = removeAllIds(template);
-          delete templateWithoutIds.cardType;
-          const templateJson = JSON.stringify(templateWithoutIds, null, 2);
-
-          // Start streaming with template (use streaming mode, not instant)
-          this.streamingService.start(templateJson, { instant: false });
-        }
+        // Load JSON into editor and process instantly
+        this.jsonInput = templateJson;
+        this.lastProcessedJson = templateJson;
+        this.processJsonInput(templateJson);
+        this.cd.markForCheck();
       });
 
     // Initialize system and load initial company card
@@ -514,7 +581,7 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializeSystem(): void {
-    // Pre-load initial card via streaming (instant mode for immediate display)
+    // Load initial card JSON and display instantly
     this.isInitialized = true;
     this.announceStatus('Loading the All Sections example.');
 
@@ -525,13 +592,16 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((cards) => {
         const card = cards?.[0];
         if (card) {
-          // Prepare card JSON for streaming (remove IDs for clean JSON)
+          // Prepare card JSON (remove IDs for clean JSON)
           const cardWithoutIds = removeAllIds(card);
           delete cardWithoutIds.cardType;
           const cardJson = JSON.stringify(cardWithoutIds, null, 2);
 
-          // Start streaming with instant mode - processes all chunks immediately
-          this.streamingService.start(cardJson, { instant: true });
+          // Load JSON into editor and process instantly
+          this.jsonInput = cardJson;
+          this.lastProcessedJson = cardJson;
+          this.processJsonInput(cardJson);
+          this.cd.markForCheck();
         } else {
           // Fallback: if no "all" card found, try first card
           this.cardDataService
@@ -542,7 +612,11 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 const cardWithoutIds = removeAllIds(fallbackCard);
                 delete cardWithoutIds.cardType;
                 const cardJson = JSON.stringify(cardWithoutIds, null, 2);
-                this.streamingService.start(cardJson, { instant: true });
+                // Load JSON into editor and process instantly
+                this.jsonInput = cardJson;
+                this.lastProcessedJson = cardJson;
+                this.processJsonInput(cardJson);
+                this.cd.markForCheck();
               } else {
                 this.announceStatus('No cards available. Please check your configuration.', true);
               }
@@ -2259,13 +2333,13 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Generate card (start streaming or instant load)
-   * Following iLibrary pattern
+   * Generate card (start streaming chunks of JSON)
    */
   generateCard(): void {
     const payload = this.jsonInput?.trim();
     if (!payload || payload === '{}') {
       this.announceStatus('Provide JSON configuration before generating a card.', true);
+      this.cd.markForCheck();
       return;
     }
 
@@ -2273,19 +2347,22 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.generatedCard = null;
     this.livePreviewCard = null;
 
-    // Configure streaming with user-controlled thinking delay
+    // Clear error state
+    this.store.dispatch(CardActions.clearError());
+
+    // Configure streaming with user-controlled speed and thinking delay
     this.streamingService.configure({
       tokensPerSecond: this.streamingSpeed,
-      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0,
+      thinkingDelayMs: this.thinkingDelay,
     });
 
-    // Start streaming
+    // Start streaming (instant: false means streaming mode with chunks)
     this.streamingService.start(payload, {
-      instant: !this.useStreaming,
+      instant: false,
     });
 
-    this.store.dispatch(CardActions.clearError());
-    this.announceStatus(this.useStreaming ? 'Starting card generation...' : 'Generating card...');
+    this.announceStatus('Starting card generation...');
+    this.cd.markForCheck();
   }
 
   /**
@@ -2395,7 +2472,7 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
     sanitized.sections = (sanitized.sections ?? []).map((s, index) => {
       const sec = { ...s };
       // Default type
-      sec.type = sec.type ?? 'info';
+      sec.type = sec.type ?? 'overview';
       // The ensureCardIds() call has already set item/field IDs, but ensure non-empty arrays are present
       sec.fields = sec.fields ?? [];
       sec.items = sec.items ?? [];
@@ -2903,40 +2980,29 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Wait a tick to ensure the view is updated
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Get the card element directly from the renderer component
-    // This works around Shadow DOM encapsulation by using the component's public method
-    const cardElement = this.cardRenderer?.getExportElement();
-
-    if (!cardElement) {
-      this.announceStatus('Card element not found', true);
-      this.logger.warn(
-        'Card element not found - cardRenderer may not be initialized',
-        'HomePageComponent'
-      );
-      return;
-    }
-
     try {
-      const filename = `${this.generatedCard.cardTitle || 'card'}.png`.replace(
-        /[^a-z0-9.-]/gi,
-        '_'
-      );
-      this.logger.info('Exporting card as PNG', 'HomePageComponent', {
-        element: cardElement.tagName,
-        className: cardElement.className,
+      const filename = `${this.generatedCard.cardTitle || 'card'}.pdf`;
+      this.logger.info('Exporting card as PDF', 'HomePageComponent', {
+        cardTitle: this.generatedCard.cardTitle,
         filename,
-        dimensions: { width: cardElement.offsetWidth, height: cardElement.offsetHeight },
       });
-      await this.exportService.exportAsPngNative(cardElement, filename, 2);
-      this.logger.info('PNG export completed successfully', 'HomePageComponent');
-      this.announceStatus('Card exported as PNG');
+
+      // Use PDF export from config (HTML-based)
+      // Pass card element if available to use actual styles (no duplication)
+      const theme = (this.cardTheme === 'night' ? 'night' : 'day') as 'day' | 'night';
+      const cardElement = this.cardRenderer?.getExportElement() || undefined;
+      await this.exportService.exportAsPdfFromConfig(this.generatedCard, {
+        filename,
+        theme,
+        cardElement,
+      });
+
+      this.logger.info('PDF export completed successfully', 'HomePageComponent');
+      this.announceStatus('Card exported as PDF');
     } catch (error) {
-      this.logger.error('Failed to export card as PNG', 'HomePageComponent', error);
+      this.logger.error('Failed to export card as PDF', 'HomePageComponent', error);
       this.announceStatus(
-        'Failed to export PNG: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        'Failed to export PDF: ' + (error instanceof Error ? error.message : 'Unknown error'),
         true
       );
     }
@@ -3038,13 +3104,25 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
     // #region agent log
     // Measure spacing after view is initialized and all sections are rendered
     // The measurement function will wait for sections to appear
-    setTimeout(() => {
+    // Clear any existing timeout to prevent multiple measurements
+    if (this.measurementTimeout) {
+      clearTimeout(this.measurementTimeout);
+    }
+    // Debounce measurement
+    this.measurementTimeout = setTimeout(() => {
       measureAllSectionItems(15000); // Wait up to 15 seconds for sections to appear
+      this.measurementTimeout = null;
     }, 1000); // Initial delay
     // #endregion
   }
 
   ngOnDestroy(): void {
+    // Clear measurement timeout if pending
+    if (this.measurementTimeout) {
+      clearTimeout(this.measurementTimeout);
+      this.measurementTimeout = null;
+    }
+
     // Stop streaming if active
     this.streamingService.stop();
 

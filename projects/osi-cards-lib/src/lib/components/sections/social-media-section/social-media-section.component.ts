@@ -1,9 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * Social Media Section Component
@@ -17,6 +17,7 @@ import { CardSection } from '../../../models';
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './social-media-section.component.html',
   styleUrl: './social-media-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocialMediaSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

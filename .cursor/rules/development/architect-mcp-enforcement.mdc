@@ -1,23 +1,30 @@
 ---
-description: "Enforce Architect MCP pattern validation for all code generation"
+description: "Use Architect MCP pattern validation for complex/novel code (optional for well-known patterns)"
 priority: 1
 ---
 
 # Architect MCP Enforcement
 
-## CRITICAL: Always Use Architect MCP
+## When to Use Architect MCP
 
-**Before generating ANY code, you MUST:**
+**Use Architect MCP for complex/novel code:**
 
 1. **Query patterns** using `get_file_design_pattern` for the target file
 2. **Generate code** following the returned patterns
 3. **Validate code** using `review_code_change` after generation
 
-## Mandatory Workflow
+**Skip Architect MCP for well-known patterns:**
+- Standard Angular components (standalone, OnPush)
+- Standard services (providedIn: 'root', inject())
+- Section components (follows BaseSectionComponent pattern)
+- Simple utilities
+- Standard TypeScript patterns
 
-### Step 1: Pre-Generation Pattern Query
+## Workflow for Complex/Novel Code
 
-**ALWAYS** call `get_file_design_pattern` before generating code:
+### Step 1: Pre-Generation Pattern Query (For Complex Code)
+
+**For complex/novel code**, call `get_file_design_pattern` before generating:
 
 ```
 Before creating [file path], check what architectural patterns apply.
@@ -34,7 +41,7 @@ Generate code following the patterns returned in Step 1.
 
 ### Step 3: Post-Generation Validation
 
-**ALWAYS** call `review_code_change` after generating code:
+**Call `review_code_change` after generating code (when using Architect MCP):**
 
 ```
 Review [file path] for pattern compliance
@@ -46,47 +53,85 @@ This validates:
 - Specific violations
 - Auto-fix suggestions
 
+## When to Use vs Skip
+
+### Use Architect MCP For:
+
+- **Complex features** (new architecture patterns)
+- **Novel code** (unfamiliar patterns)
+- **Large refactoring** (major changes)
+- **Critical code** (security, performance)
+
+### Skip Architect MCP For:
+
+- **Standard Angular components** (standalone, OnPush, standard patterns)
+- **Standard services** (providedIn: 'root', inject(), signals)
+- **Section components** (extends BaseSectionComponent, follows 5-file structure)
+- **Simple utilities** (pure functions, helpers)
+- **Minor changes** (bug fixes, small improvements)
+
 ## Automation Rules
 
-### For New Files
+### For New Files (Complex Code)
 
-When creating a new file:
+When creating complex/novel code:
 1. ✅ Query patterns first
 2. ✅ Generate following patterns
 3. ✅ Validate after generation
 4. ✅ Fix any HIGH severity violations
 5. ✅ Document MEDIUM severity issues
 
+### For Standard Patterns
+
+When creating standard patterns (components, services, sections):
+1. ✅ Follow established patterns directly
+2. ✅ Reference existing code (e.g., "similar to CardFacadeService")
+3. ✅ Skip pattern query (well-known patterns)
+4. ✅ Validate manually if needed
+
 ### For Modified Files
 
 When modifying existing files:
-1. ✅ Query patterns for the file
-2. ✅ Review existing code against patterns
-3. ✅ Make changes following patterns
-4. ✅ Validate changes
-5. ✅ Ensure no new violations introduced
+1. ✅ Match existing patterns in the file
+2. ✅ Maintain consistency with file's style
+3. ✅ Skip pattern query if changes are simple
+4. ✅ Use pattern query for major refactoring
 
 ### For Service Files
 
-Services MUST follow:
-- Service Layer Pattern
-- Singleton Pattern
-- Dependency Injection Pattern
-- Observer Pattern (RxJS)
-- Error Handling Pattern
+**Standard services (skip Architect MCP - well-known pattern):**
+- Use `providedIn: 'root'`
+- Use `inject()` function
+- Use signals for reactive state (Angular 20+)
+- See existing services for examples: `CardFacadeService`, `LoggerService`
 
-**Always check:** `projects/osi-cards-lib/src/lib/services/**/*.ts`
+**Complex services (use Architect MCP):**
+- Novel service patterns
+- Complex integrations
+- New architectural approaches
+
+**Reference:** `projects/osi-cards-lib/src/lib/services/**/*.ts` for examples
 
 ### For Component Files
 
-Components MUST follow:
-- Component Pattern
-- Dependency Injection Pattern
-- Observer Pattern (RxJS)
-- Performance Pattern
-- Accessibility Pattern
+**Standard components (skip Architect MCP - well-known pattern):**
+- Standalone components
+- OnPush change detection
+- Input/Output communication
+- See existing components for examples: `AICardRendererComponent`, `CardActionsComponent`
 
-**Always check:** `projects/osi-cards-lib/src/lib/components/**/*.component.ts`
+**Section components (skip Architect MCP - well-known pattern):**
+- Extend BaseSectionComponent
+- Use section.definition.json
+- 5-file structure
+- See existing sections for examples: `AnalyticsSectionComponent`, `InfoSectionComponent`
+
+**Complex components (use Architect MCP):**
+- Novel component patterns
+- Complex integrations
+- New architectural approaches
+
+**Reference:** `projects/osi-cards-lib/src/lib/components/**/*.component.ts` for examples
 
 ## Pattern Violation Handling
 

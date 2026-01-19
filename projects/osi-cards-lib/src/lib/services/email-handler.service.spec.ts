@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { EmailHandlerService } from './email-handler.service';
-import { MailCardAction, CardAction } from '../models';
+import { MailCardAction, CardAction } from '@osi-cards/models';
 
 describe('EmailHandlerService', () => {
   let service: EmailHandlerService;

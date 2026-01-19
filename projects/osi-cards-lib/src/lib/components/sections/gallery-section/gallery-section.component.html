@@ -6,16 +6,16 @@
     <div
       class="section-item"
       *ngFor="let i of section.items; let idx = index"
-      (click)="onImageClick(i, idx)"
+      (click)="onImageClick(i, idx, $event)"
       tabindex="0"
       role="button"
+      [attr.aria-label]="getCaption(i) || getAltText(i)"
     >
       <div class="img-container">
         <img
           [src]="getImageUrl(i)"
           [alt]="getAltText(i)"
           class="img"
-          loading="lazy"
           decoding="async"
           (error)="onImageError($event, i)"
           (load)="onImageLoad($event, i)"
@@ -29,4 +29,6 @@
 
   <lib-empty-state *ngIf="!section.items?.length" message="No gallery data" icon="🖼️" variant="minimal">
   </lib-empty-state>
+
+  <!-- Overlay modal is now rendered at document body level to break out of Shadow DOM -->
 </div>

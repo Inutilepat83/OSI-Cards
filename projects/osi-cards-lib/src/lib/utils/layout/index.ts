@@ -6,34 +6,34 @@
  */
 
 // Core layout utilities (kept separate - too large/complex to merge)
-export * from '../grid-config.util';
-export * from '../row-packer.util';
-export * from '../gap-filler-optimizer.util';
-export * from '../streaming-layout.util';
-export * from '../smart-grid.util';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
 
 // Consolidated utilities
 export * from './grid-logger.consolidated';
 
 // Algorithm utilities
-export * from '../algorithm-selector.util';
-export * from '../skyline-algorithm.util';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
 
 // Optimization utilities
-export * from '../column-span-optimizer.util';
-export * from '../local-swap-optimizer.util';
-export * from '../unified-layout-optimizer.util';
-export * from '../layout-optimizer.util';
-export * from '../layout-performance.util';
-export * from '../incremental-layout.util';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export * from '@osi-cards/utils';
 
 // Caching utilities
-export { LayoutCache, type LayoutCacheEntry, type LayoutCacheKey } from '../layout-cache.util';
-export * from '../layout-memoization.util';
-export { LRUCache, type LRUCacheOptions } from '../lru-cache.util';
+export { LayoutCache, type LayoutCacheEntry, type LayoutCacheKey } from '@osi-cards/utils';
+export * from '@osi-cards/utils';
+export { LRUCache, type LRUCacheOptions } from '@osi-cards/utils';
 
 // Height estimation
-export * from '../height-estimation.util';
+export * from '@osi-cards/utils';
 
 // Backwards compatibility - consolidated logger
 export { GridLogger } from './grid-logger.consolidated';

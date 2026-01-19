@@ -27,6 +27,31 @@ lsof -ti:4200
 
 # If not running, start it
 npm start
+# Note: This runs 'compile-all-sections-example.js' then 'ng serve'
+```
+
+### Project-Specific Commands
+
+**Common commands:**
+
+```bash
+# Development
+npm start                    # Start dev server (compiles sections first)
+npm run sections:build       # Build sections (generates artifacts)
+npm run generate:all         # Generate all artifacts (sections + others)
+
+# Testing
+npm test                     # Run unit tests (Jasmine/Karma)
+npm run test:e2e             # Run E2E tests (Playwright)
+npm run test:unit            # Run unit tests only
+
+# Library
+npm run build:lib            # Build library
+npm run test:lib             # Test library only
+
+# Quality
+npm run lint                 # Lint code
+npm run format               # Format code
 ```
 
 ### Step 2: Navigate to Feature
@@ -68,34 +93,44 @@ npm start
 
 ### Step 4: Log Analysis (MANDATORY)
 
-**ALWAYS check stored logs FIRST before debugging:**
+**🚨 CRITICAL: ALWAYS check stored logs FIRST before debugging!**
 
-1. **Check Stored Logs from localStorage**
+**Full documentation:** See `.cursor/rules/development/log-analysis.mdc` for comprehensive logging workflow.
 
-   Logs are automatically stored in localStorage and cleared on page refresh.
+**Quick Reference:**
+
+1. **Check Stored Logs from localStorage (MANDATORY FIRST STEP)**
+
+   Logs are automatically stored in localStorage and persist across page refreshes.
 
    **Library logs:**
 
    ```javascript
-   // In browser console:
+   // Using static method (recommended)
+   import { LoggerService } from '@osi-cards/services';
+   const libLogs = LoggerService.getLogsFromLocalStorage();
+   console.table(libLogs); // View as table
+   
+   // Direct access (alternative)
    JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
    ```
 
    **App logs:**
 
    ```javascript
-   // In browser console:
+   // Using static method (recommended)
+   import { LoggingService } from '@app/core/services/logging.service';
+   const appLogs = LoggingService.getLogsFromLocalStorage();
+   console.table(appLogs); // View as table
+   
+   // Direct access (alternative)
    JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
    ```
 
-   **Access via services:**
-   - `LoggerService.getLogsFromLocalStorage()` - Get library logs
-   - `LoggingService.getLogsFromLocalStorage()` - Get app logs
-
    **What to check:**
-   - 🔴 Errors logged
-   - 🟡 Warnings logged
-   - 🔵 Info messages
+   - 🔴 Errors logged (must fix)
+   - 🟡 Warnings logged (should fix)
+   - 🔵 Info messages (verify)
    - 📊 Context data and stack traces
    - ⏰ Timestamps for debugging timing issues
 
@@ -105,7 +140,7 @@ npm start
    browser_console_messages()
    ```
 
-   Note: Console output is minimal - only storage references. Full logs are in localStorage.
+   **Note:** Console output is minimal - full logs are in localStorage. Always check localStorage first.
 
 3. **Categorize Issues**
    - 🔴 Errors (must fix)
@@ -127,6 +162,11 @@ npm start
    - Address all errors found in stored logs
    - Fix important warnings
    - Document decisions
+
+6. **Verify Fixes**
+   - Clear logs or refresh page (logs persist across refreshes)
+   - Reproduce scenario
+   - Check new logs to confirm fix
 
 ### Step 5: Visual Verification
 

@@ -6,7 +6,28 @@ import { ThemeService } from '../../projects/osi-cards-lib/src/lib/themes/theme.
 import { getVersionString, VERSION_INFO } from '../version';
 import { PerformanceService } from './core';
 import { FileLoggingService } from './core/services/file-logging.service';
+import { LoggingService } from './core/services/logging.service';
+import { sendDebugLog } from './core/utils/debug-log.util';
 import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
+// Force eager loading of BaseSectionComponent to ensure it's available when child classes extend it
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+// #region agent log
+sendDebugLog({
+  location: 'app.component.ts:12',
+  message: 'App component - BaseSectionComponent import check',
+  data: {
+    imported: typeof BaseSectionComponent !== 'undefined',
+    isConstructor: typeof BaseSectionComponent === 'function',
+    isUndefined: typeof BaseSectionComponent === 'undefined',
+    name: BaseSectionComponent?.name || 'undefined',
+    hasStaticProp: !!BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED,
+  },
+  timestamp: Date.now(),
+  sessionId: 'debug-session',
+  runId: 'run1',
+  hypothesisId: 'D',
+});
+// #endregion
 
 @Component({
   selector: 'app-root',
@@ -49,6 +70,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly themeService = inject(ThemeService);
   private readonly performanceService = inject(PerformanceService);
   private readonly fileLogging = inject(FileLoggingService);
+  private readonly loggingService = inject(LoggingService);
   private readonly destroy$ = new Subject<void>();
 
   public ngOnInit(): void {
@@ -59,26 +81,20 @@ export class AppComponent implements OnInit, OnDestroy {
     const appRootBg = getComputedStyle(
       document.querySelector('app-root') || document.body
     ).getPropertyValue('--background');
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'app.component.ts:54',
-        message: 'AppComponent ngOnInit: Theme state',
-        data: {
-          htmlTheme,
-          htmlBg,
-          bodyBg,
-          appRootBg,
-          resolvedTheme: this.themeService.getResolvedTheme(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'E',
-      }),
-    }).catch(() => {
-      // Silently handle fetch errors for logging endpoint
+    sendDebugLog({
+      location: 'app.component.ts:54',
+      message: 'AppComponent ngOnInit: Theme state',
+      data: {
+        htmlTheme,
+        htmlBg,
+        bodyBg,
+        appRootBg,
+        resolvedTheme: this.themeService.getResolvedTheme(),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'E',
     });
     // #endregion
 
@@ -88,20 +104,14 @@ export class AppComponent implements OnInit, OnDestroy {
       const newHtmlTheme = document.documentElement.getAttribute('data-theme');
       const newHtmlBg = getComputedStyle(document.documentElement).getPropertyValue('--background');
       const newBodyBg = getComputedStyle(document.body).getPropertyValue('--background');
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'app.component.ts:57',
-          message: 'AppComponent: Theme changed',
-          data: { newTheme: theme, newHtmlTheme, newHtmlBg, newBodyBg },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'E',
-        }),
-      }).catch(() => {
-        // Silently handle fetch errors for logging endpoint
+      sendDebugLog({
+        location: 'app.component.ts:57',
+        message: 'AppComponent: Theme changed',
+        data: { newTheme: theme, newHtmlTheme, newHtmlBg, newBodyBg },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'E',
       });
       // #endregion
       // Theme is automatically applied by ThemeService
@@ -125,6 +135,101 @@ export class AppComponent implements OnInit, OnDestroy {
         `Build: ${VERSION_INFO.buildHash} | Branch: ${VERSION_INFO.buildBranch} | Date: ${new Date(VERSION_INFO.buildDate).toLocaleString()}`
       );
     }
+
+    // #region agent log - Test logging functionality
+    // Only run test logging in dev mode with explicit debug flag
+    if (isDevMode() && localStorage.getItem('__ENABLE_LOGGING_TEST') === 'true') {
+      try {
+        const VERIFICATION_TIMEOUT_MS = 500;
+        const MIN_EXPECTED_LOGS = 3;
+
+        // Test LoggingService (app-level)
+        this.loggingService.info('LoggingService test: Info log', 'AppComponent', {
+          test: 'logging-verification',
+        });
+        this.loggingService.warn('LoggingService test: Warning log', 'AppComponent', {
+          test: 'logging-verification',
+        });
+        this.loggingService.error('LoggingService test: Error log', 'AppComponent', {
+          test: 'logging-verification',
+        });
+
+        // Test localStorage access via static method
+        setTimeout(() => {
+          try {
+            const appLogs = LoggingService.getLogsFromLocalStorage();
+            const appLogsCount = appLogs.length;
+            const hasRecentLogs = appLogsCount > 0;
+            const latestLog = appLogs.length > 0 ? appLogs[appLogs.length - 1] : null;
+
+            // Send verification log
+            sendDebugLog({
+              location: 'app.component.ts:ngOnInit',
+              message: 'LoggingService localStorage verification',
+              data: {
+                localStorageKey: 'osi-cards-app-logs',
+                logsCount: appLogsCount,
+                hasLogs: hasRecentLogs,
+                latestLogMessage: latestLog?.message,
+                latestLogLevel: latestLog?.level,
+                latestLogTimestamp: latestLog?.timestamp?.toISOString(),
+                verificationPassed: hasRecentLogs && appLogsCount >= MIN_EXPECTED_LOGS,
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'logging-verification',
+              hypothesisId: 'A',
+            });
+
+            // Test direct localStorage access
+            const directStorage = localStorage.getItem('osi-cards-app-logs');
+            const directStorageParsed = directStorage ? JSON.parse(directStorage) : null;
+            const directStorageCount = directStorageParsed?.length || 0;
+
+            sendDebugLog({
+              location: 'app.component.ts:ngOnInit',
+              message: 'Direct localStorage access verification',
+              data: {
+                directStorageExists: !!directStorage,
+                directStorageCount,
+                matchesStaticMethod: directStorageCount === appLogsCount,
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'logging-verification',
+              hypothesisId: 'B',
+            });
+          } catch (error) {
+            sendDebugLog({
+              location: 'app.component.ts:ngOnInit',
+              message: 'Logging verification error in setTimeout',
+              data: {
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'logging-verification',
+              hypothesisId: 'C',
+            });
+          }
+        }, VERIFICATION_TIMEOUT_MS);
+      } catch (error) {
+        sendDebugLog({
+          location: 'app.component.ts:ngOnInit',
+          message: 'Logging verification error',
+          data: {
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'logging-verification',
+          hypothesisId: 'C',
+        });
+      }
+    }
+    // #endregion
   }
 
   public ngOnDestroy(): void {

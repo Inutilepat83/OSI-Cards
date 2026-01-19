@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Type } from '@angular/core';
-import { provideOsiCardsTesting } from '../providers/osi-cards.providers';
+import { provideOsiCardsTesting } from '@osi-cards/providers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const expect: any;

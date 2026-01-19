@@ -28,12 +28,12 @@
  * ```
  */
 
-import type { AICardConfig, CardSection, CardAction } from '../../models/card.model';
+import type { AICardConfig, CardSection, CardAction } from '@osi-cards/models';
 import {
   SAMPLE_CARDS as REGISTRY_SAMPLE_CARDS,
   COMPLETE_FIXTURES,
   getAllFixtures,
-} from '../../registry/fixtures.generated';
+} from '@osi-cards/lib/registry/fixtures.generated';
 
 // ============================================================================
 // FACTORY FUNCTIONS

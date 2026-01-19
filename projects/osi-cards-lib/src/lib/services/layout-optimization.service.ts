@@ -4,6 +4,9 @@
  * Provides injectable layout optimization capabilities for components.
  * Wraps the unified layout optimizer with Angular DI integration.
  *
+ * @dependencies
+ * - Utility functions: findLayoutGaps, fillLayoutGaps, optimizeColumnSpans, localSwapOptimization, optimizeLayout, analyzeLayout
+ *
  * @example
  * ```typescript
  * @Component({...})
@@ -20,7 +23,7 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { CardSection } from '../models';
+import { CardSection } from '@osi-cards/models';
 // Removed - unified-layout-optimizer.util deleted
 type OptimizableLayoutSection = any;
 type FullyOptimizableSection = any;

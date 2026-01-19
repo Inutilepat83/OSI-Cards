@@ -3,6 +3,9 @@
  *
  * Enhanced clipboard service with history and formatting.
  *
+ * @dependencies
+ * - None (uses browser Clipboard API and DOM APIs)
+ *
  * @example
  * ```typescript
  * const clipboard = inject(ClipboardService);

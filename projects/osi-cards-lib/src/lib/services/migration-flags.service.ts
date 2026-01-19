@@ -1,5 +1,8 @@
 import { Injectable, InjectionToken, inject } from '@angular/core';
-import { MigrationFlags, DEFAULT_MIGRATION_FLAGS } from '../config/migration-flags.config';
+import {
+  MigrationFlags,
+  DEFAULT_MIGRATION_FLAGS,
+} from '@osi-cards/lib/config/migration-flags.config';
 
 /**
  * Injection token for providing migration flag overrides
@@ -7,8 +10,13 @@ import { MigrationFlags, DEFAULT_MIGRATION_FLAGS } from '../config/migration-fla
 export const MIGRATION_FLAGS = new InjectionToken<Partial<MigrationFlags>>('MIGRATION_FLAGS');
 
 /**
+ * Migration Flags Service
+ *
  * Service for managing migration feature flags.
  * Allows gradual rollout of consolidated code.
+ *
+ * @dependencies
+ * - MIGRATION_FLAGS: Optional injection token for providing flag overrides
  *
  * @example
  * ```typescript

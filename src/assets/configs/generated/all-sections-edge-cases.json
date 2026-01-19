@@ -269,7 +269,7 @@
     },
     {
       "title": "Edge Case Testing - Extended Fields",
-      "type": "info",
+      "type": "overview",
       "fields": [
         {
           "label": "Empty Value",

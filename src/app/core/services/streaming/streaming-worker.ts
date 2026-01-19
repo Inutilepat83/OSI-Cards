@@ -469,9 +469,9 @@ function getSectionTitle(section: unknown): string {
 
 function getSectionType(section: unknown): string {
   if (!section || typeof section !== 'object') {
-    return 'info';
+    return 'overview';
   }
-  return String((section as Record<string, unknown>).type || 'info');
+  return String((section as Record<string, unknown>).type || 'overview');
 }
 
 function getSectionFields(section: unknown): unknown[] {

@@ -13,6 +13,9 @@ export type AriaLivePoliteness = 'off' | 'polite' | 'assertive';
  * Used to announce dynamic content changes, loading states,
  * and important updates to assistive technology users.
  *
+ * @dependencies
+ * - DOCUMENT: For creating and managing ARIA live regions
+ *
  * @example
  * ```typescript
  * const announcer = inject(LiveAnnouncerService);

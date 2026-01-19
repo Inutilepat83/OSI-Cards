@@ -99,6 +99,13 @@ export class DocCacheService {
       return of(undefined);
     }
 
+    // Trim pageId and validate it's not empty after trimming
+    const trimmedPageId = String(pageId).trim();
+    if (!trimmedPageId || trimmedPageId.length === 0) {
+      console.warn('[DocCache] pageId is empty after trimming:', pageId);
+      return of(undefined);
+    }
+
     // Skip cache write in dev mode
     if (this.cacheDisabled || !this.dbPromise) {
       return of(undefined);
@@ -107,35 +114,53 @@ export class DocCacheService {
     return from(
       this.dbPromise.then((db) => {
         return new Promise<void>((resolve, reject) => {
-          const transaction = db.transaction(STORE_NAME, 'readwrite');
-          const store = transaction.objectStore(STORE_NAME);
+          try {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
 
-          // Ensure pageId is explicitly set and not overwritten
-          // Construct entry explicitly to avoid any property conflicts
-          const entry = {
-            pageId: String(pageId), // Explicitly ensure it's a string
-            contentHash: String(contentHash),
-            timestamp: Date.now(),
-            html: content.html || '',
-            toc: content.toc || [],
-            demoConfigs: content.demoConfigs || {},
-          };
+            // Verify object store has keyPath before put
+            if (!store.keyPath) {
+              console.warn('[DocCache] Object store missing keyPath');
+              resolve(); // Resolve instead of reject to prevent error propagation
+              return;
+            }
 
-          // Validate entry has pageId before storing
-          if (!entry.pageId) {
-            console.warn('[DocCache] Entry missing pageId:', entry);
-            resolve(); // Don't reject, just skip
-            return;
-          }
+            // Ensure pageId is explicitly set and not overwritten
+            // Construct entry explicitly to avoid any property conflicts
+            const entry = {
+              pageId: trimmedPageId, // Use pre-validated trimmed pageId
+              contentHash: String(contentHash),
+              timestamp: Date.now(),
+              html: content.html || '',
+              toc: content.toc || [],
+              demoConfigs: content.demoConfigs || {},
+            };
 
-          const request = store.put(entry);
+            // Validate entry has pageId property matching keyPath before storing
+            const keyPath = store.keyPath as string;
+            if (
+              !entry[keyPath] ||
+              typeof entry[keyPath] !== 'string' ||
+              entry[keyPath].length === 0
+            ) {
+              console.warn('[DocCache] Entry missing keyPath property:', { keyPath, entry });
+              resolve(); // Don't reject, just skip
+              return;
+            }
 
-          request.onerror = () => {
-            // Log but don't reject - cache failures are non-critical
-            console.warn('[DocCache] Failed to store entry:', request.error);
+            const request = store.put(entry);
+
+            request.onerror = () => {
+              // Log but don't reject - cache failures are non-critical
+              console.warn('[DocCache] Failed to store entry:', request.error);
+              resolve(); // Resolve instead of reject to prevent error propagation
+            };
+            request.onsuccess = () => resolve();
+          } catch (error) {
+            // Catch any synchronous errors (e.g., invalid entry structure)
+            console.warn('[DocCache] Error preparing entry for storage:', error);
             resolve(); // Resolve instead of reject to prevent error propagation
-          };
-          request.onsuccess = () => resolve();
+          }
         });
       })
     ).pipe(catchError(() => of(undefined)));

@@ -10,6 +10,9 @@
  * - Performance-optimized with RAF and caching
  * - Automatic cleanup and reset on mouse leave
  *
+ * @dependencies
+ * - NgZone: For running animations in Angular zone
+ *
  * @example
  * ```typescript
  * import { MagneticTiltService } from 'osi-cards-lib';

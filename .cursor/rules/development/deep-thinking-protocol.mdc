@@ -1,13 +1,17 @@
 ---
-description: 'Deep thinking protocol for AI to think thoroughly before acting'
+description: 'Deep thinking protocol - scale thinking depth by task complexity'
 priority: 0
 ---
 
 # Deep Thinking Protocol
 
-## 🧠 Mandatory Thinking Process
+## 🧠 Thinking Depth by Complexity
 
-**BEFORE taking any action, ALWAYS follow this process:**
+**Scale thinking depth based on task complexity:**
+
+- **Simple tasks**: Quick checks (requirements, patterns, consistency)
+- **Moderate tasks**: Standard process (understand, plan, implement, verify)
+- **Complex tasks**: Deep analysis (multiple solutions, trade-offs, thorough planning)
 
 ---
 
@@ -119,10 +123,20 @@ priority: 0
 
 ### Check Logs
 
-- Read console messages
-- Identify errors
-- Check warnings
-- Verify network requests
+**ALWAYS check stored logs from localStorage FIRST:**
+
+1. **Check Stored Logs:**
+   - Library logs: `LoggerService.getLogsFromLocalStorage()`
+   - App logs: `LoggingService.getLogsFromLocalStorage()`
+   - Full context is in localStorage (not console)
+
+2. **Read Console Messages:**
+   - Console output is minimal
+   - Identify errors
+   - Check warnings
+   - Verify network requests
+
+**See:** `.cursor/rules/development/log-analysis.mdc` for detailed workflow
 
 ### Verify Edge Cases
 
@@ -162,7 +176,20 @@ priority: 0
 
 ---
 
-## 🎯 Deep Thinking Checklist
+## ⚡ Quick Checks (Simple Tasks)
+
+**For simple tasks (bug fixes, refactoring, small changes):**
+
+- [ ] Problem understood (root cause identified)
+- [ ] Solution is clear (matches existing patterns)
+- [ ] Consistency checked (matches codebase)
+- [ ] Tests planned/written
+
+**Skip deep analysis for simple, well-understood changes.**
+
+---
+
+## 🎯 Deep Thinking Checklist (Standard/Complex Tasks)
 
 Before responding, ensure:
 
@@ -269,4 +296,68 @@ Before taking action:
 
 ---
 
-**Remember:** Deep thinking is not optional. Take time to think thoroughly before acting.
+---
+
+## 🎯 Thinking Depth Guidelines
+
+### Simple Tasks (Quick Checks)
+
+**For simple tasks (bug fixes, minor changes, standard patterns):**
+
+1. ✅ Understand the requirement
+2. ✅ Identify existing pattern to follow
+3. ✅ Implement following pattern
+4. ✅ Verify consistency
+
+**Time:** 1-2 minutes of analysis
+
+**Examples:**
+- Fix typo
+- Add simple property
+- Standard component creation (follows BaseSectionComponent)
+- Standard service creation (providedIn: 'root', inject())
+
+### Moderate Tasks (Standard Process)
+
+**For moderate tasks (features, refactoring, improvements):**
+
+1. ✅ Understand the requirement fully
+2. ✅ Identify root cause (if bug)
+3. ✅ Plan solution (consider 2-3 approaches)
+4. ✅ Choose best approach
+5. ✅ Implement
+6. ✅ Verify
+
+**Time:** 5-10 minutes of planning
+
+**Examples:**
+- Add new feature following existing patterns
+- Refactor component
+- Add new section type
+- Improve existing code
+
+### Complex Tasks (Deep Analysis)
+
+**For complex tasks (architecture changes, novel patterns, major features):**
+
+1. ✅ Understand problem deeply
+2. ✅ Identify root cause
+3. ✅ Consider multiple solutions (3-5 approaches)
+4. ✅ Evaluate trade-offs thoroughly
+5. ✅ Choose best approach with reasoning
+6. ✅ Plan implementation in detail
+7. ✅ Plan testing strategy
+8. ✅ Plan verification
+9. ✅ Consider edge cases
+10. ✅ Consider error scenarios
+
+**Time:** 15-30 minutes of analysis
+
+**Examples:**
+- Major architecture change
+- New pattern introduction
+- Complex feature with multiple components
+- Performance-critical code
+- Security-sensitive code
+
+**Remember:** Scale thinking depth by complexity. Don't overthink simple tasks, don't underthink complex ones.

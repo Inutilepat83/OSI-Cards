@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Event Overview",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Date", "value": "March 15-17, 2025" },
         { "label": "Location", "value": "Las Vegas, NV" },

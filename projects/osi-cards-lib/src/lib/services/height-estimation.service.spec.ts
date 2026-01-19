@@ -3,7 +3,7 @@
  */
 
 import { HeightEstimationService } from './height-estimation.service';
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 describe('HeightEstimationService', () => {
   let service: HeightEstimationService;

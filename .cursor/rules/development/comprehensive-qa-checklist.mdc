@@ -1,16 +1,67 @@
 ---
-description: "Comprehensive QA checklist for all work"
+description: "QA checklist - quick for simple tasks, comprehensive for complex features"
 priority: 0
 ---
 
 # Comprehensive QA Checklist
+
+## Quick Checklist (Simple Tasks)
+
+**For simple tasks (bug fixes, minor changes, standard patterns):**
+
+- [ ] Requirements understood
+- [ ] Follows existing pattern
+- [ ] Code builds without errors
+- [ ] Tests pass (if applicable)
+- [ ] Consistency maintained
+
+**Time:** 2-5 minutes
+
+---
+
+## Standard Checklist (Moderate Tasks)
+
+**For moderate tasks (features, refactoring, improvements):**
+
+### Pre-Implementation
+
+- [ ] Requirements fully understood
+- [ ] **Stored logs checked from localStorage** (if investigating issue)
+  - Library logs: `LoggerService.getLogsFromLocalStorage()`
+  - App logs: `LoggingService.getLogsFromLocalStorage()`
+- [ ] Root cause identified (if bug)
+- [ ] Architecture pattern identified
+- [ ] Edge cases considered
+- [ ] Testing strategy defined
+
+### Post-Implementation
+
+- [ ] Code reviewed
+- [ ] Tests written and passing
+- [ ] Browser tested (if UI change)
+- [ ] Logs checked
+- [ ] Consistency verified
+- [ ] Documentation updated
+
+**Time:** 10-15 minutes
+
+---
+
+## Comprehensive Checklist (Complex Tasks)
+
+**For complex tasks (architecture changes, major features):**
 
 ## ✅ Pre-Implementation Checklist
 
 Before starting implementation:
 
 - [ ] Requirements fully understood
+- [ ] **Stored logs checked from localStorage** (if investigating issue)
+  - Library logs: `LoggerService.getLogsFromLocalStorage()`
+  - App logs: `LoggingService.getLogsFromLocalStorage()`
 - [ ] Root cause identified (not just symptoms)
+- [ ] Multiple solutions considered
+- [ ] Best solution chosen with reasoning
 - [ ] Architecture pattern identified
 - [ ] Edge cases considered
 - [ ] Error scenarios planned
@@ -70,12 +121,18 @@ After implementing:
 - [ ] Accessibility verified
 - [ ] Performance acceptable
 
-### Log Analysis
-- [ ] Console messages read
-- [ ] Errors identified and fixed
-- [ ] Warnings understood
+### Log Analysis (MANDATORY - Check Stored Logs First)
+- [ ] **Stored logs checked from localStorage** (BEFORE debugging)
+  - [ ] Library logs checked: `LoggerService.getLogsFromLocalStorage()`
+  - [ ] App logs checked: `LoggingService.getLogsFromLocalStorage()`
+- [ ] Console messages read (minimal output - full logs in localStorage)
+- [ ] Errors identified and fixed (from stored logs)
+- [ ] Warnings understood and addressed (from stored logs)
 - [ ] Network requests verified
 - [ ] No memory leaks
+- [ ] Logs exported/cleared if needed for deeper analysis
+
+**See:** `.cursor/rules/development/log-analysis.mdc` for detailed logging workflow
 
 ### Documentation
 - [ ] Code documented
@@ -142,6 +199,7 @@ Before considering work complete:
 - [ ] All tests passing
 - [ ] All documentation complete
 - [ ] All checks passed
+- [ ] **Stored logs verified (no errors in localStorage)**
 
 ---
 
@@ -188,6 +246,8 @@ These can be addressed later:
 
 Track these metrics:
 
+- **Stored Log Errors:** 0 (target - check localStorage)
+- **Stored Log Warnings:** <5 (target - check localStorage)
 - **Console Errors:** 0 (target)
 - **Console Warnings:** <5 (target)
 - **Test Coverage:** >80% (target)
@@ -196,16 +256,34 @@ Track these metrics:
 - **Accessibility Score:** 100% (target)
 - **Pattern Compliance:** 100% (target)
 
+**Note:** Always check stored logs in localStorage for complete error/warning information. Console output is minimal.
+
 ---
 
 ## ✅ Final Checklist
 
-Before marking work as complete:
+### Quick Checklist (Simple Tasks)
+
+**For simple tasks:**
+
+- [ ] Fix implemented
+- [ ] Tests passing
+- [ ] Browser tested (if UI change)
+- [ ] No console errors
+- [ ] Code follows existing patterns
+
+### Full Checklist (Complex Tasks)
+
+**For complex tasks:**
 
 - [ ] All critical issues fixed
 - [ ] All important issues addressed
 - [ ] Browser tested
-- [ ] Logs analyzed
+- [ ] **Stored logs checked from localStorage** (MANDATORY)
+  - Library logs: `LoggerService.getLogsFromLocalStorage()`
+  - App logs: `LoggingService.getLogsFromLocalStorage()`
+- [ ] All errors in stored logs fixed
+- [ ] All warnings in stored logs addressed
 - [ ] Tests passing
 - [ ] Documentation complete
 - [ ] Performance verified
@@ -216,4 +294,14 @@ Before marking work as complete:
 
 ---
 
-**Remember:** Quality is not optional. Complete all checks before considering work done.
+---
+
+## 🎯 Which Checklist to Use?
+
+**Quick Checklist**: Bug fixes, minor changes, standard patterns
+**Standard Checklist**: Features, refactoring, improvements
+**Comprehensive Checklist**: Architecture changes, major features, complex code
+
+**Guideline**: Use the simplest checklist that covers your task. Don't over-process simple tasks.
+
+**Remember:** Quality is not optional. Use the appropriate checklist for your task complexity.

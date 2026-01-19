@@ -159,31 +159,11 @@
 }
 
 /* ===================================================================
-   FULLSCREEN MODE - DISABLE TILT
-   Tilt effects disabled in fullscreen for better usability
+   FULLSCREEN MODE - TILT ENABLED
+   Tilt effects are now enabled in fullscreen mode
    =================================================================== */
 
-.ai-card-surface--fullscreen {
-  .tilt-container {
-    /* Reset all tilt transforms in fullscreen - cross-browser compatible */
-    -webkit-transform: perspective(1000px) translateZ(0) !important;
-    transform: perspective(1000px) translateZ(0) !important;
-    box-shadow: none !important;
-    will-change: auto !important;
-  }
-
-  .glow-container {
-    -webkit-filter: none !important;
-    filter: none !important;
-    will-change: auto !important;
-  }
-
-  .card-reflection,
-  .tilt-glare {
-    opacity: 0 !important;
-    display: none; /* Completely remove from rendering */
-  }
-}
+/* Tilt effects are now enabled in fullscreen mode - no special handling needed */
 
 /* ===================================================================
    TILT DISABLED STATE

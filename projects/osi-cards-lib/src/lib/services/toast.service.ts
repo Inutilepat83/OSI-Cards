@@ -3,6 +3,9 @@
  *
  * Toast notification service with positioning and animations.
  *
+ * @dependencies
+ * - None (uses Angular signals for state management)
+ *
  * @example
  * ```typescript
  * const toast = inject(ToastService);

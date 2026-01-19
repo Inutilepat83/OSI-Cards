@@ -19,7 +19,7 @@
 
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
-import { SECTION_MANIFEST } from '../../section-manifest.generated';
+import { SECTION_MANIFEST } from '@osi-cards/lib/section-manifest.generated';
 import {
   ALL_SECTION_TYPES,
   getAllSectionTypes as getGeneratedSectionTypes,

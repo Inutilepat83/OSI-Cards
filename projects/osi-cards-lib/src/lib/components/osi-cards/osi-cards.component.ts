@@ -6,19 +6,22 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   inject,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig, CardAction } from '../../models';
+import { AICardConfig, CardAction } from '@osi-cards/models';
 import {
   AICardRendererComponent,
   CardFieldInteractionEvent,
   StreamingStage,
-} from '../ai-card-renderer/ai-card-renderer.component';
+  ErrorBoundaryComponent,
+} from '@osi-cards/components';
+import { sendDebugLog } from '@osi-cards/utils';
 import {
   OSI_THEME_CONFIG_TOKEN,
   OSI_ANIMATION_CONFIG,
   OSIAnimationConfig,
-} from '../../providers/injection-tokens';
+} from '@osi-cards/providers';
 
 /**
  * OSI Cards Component
@@ -57,32 +60,39 @@ import {
 @Component({
   selector: 'osi-cards',
   standalone: true,
-  imports: [CommonModule, AICardRendererComponent],
+  imports: [CommonModule, AICardRendererComponent, ErrorBoundaryComponent],
   template: `
     <div
       class="osi-cards-container osi-cards-root"
       [attr.data-theme]="effectiveTheme"
       [class.osi-cards-fullscreen]="fullscreen"
     >
-      <app-ai-card-renderer
-        [cardConfig]="card"
-        [isFullscreen]="fullscreen"
-        [tiltEnabled]="shouldEnableTilt"
-        [streamingStage]="streamingStage"
-        [streamingProgress]="streamingProgress ?? 0"
-        [isStreaming]="isStreaming"
-        [showLoadingByDefault]="showLoadingByDefault"
-        [containerWidth]="containerWidth ?? 0"
-        [loadingMessages]="loadingMessages ?? []"
-        [loadingTitle]="loadingTitle"
-        (fieldInteraction)="onFieldInteraction($event)"
-        (cardInteraction)="onCardInteraction($event)"
-        (fullscreenToggle)="onFullscreenToggle($event)"
-        (agentAction)="onAgentAction($event)"
-        (questionAction)="onQuestionAction($event)"
-        (export)="onExport()"
+      <app-error-boundary
+        [recoveryStrategy]="errorBoundaryRecoveryStrategy"
+        [showDetails]="errorBoundaryShowDetails"
+        [reportErrors]="true"
+        (errorCaught)="onCardError($event)"
       >
-      </app-ai-card-renderer>
+        <app-ai-card-renderer
+          [cardConfig]="card"
+          [isFullscreen]="fullscreen"
+          [tiltEnabled]="shouldEnableTilt"
+          [streamingStage]="streamingStage"
+          [streamingProgress]="streamingProgress ?? 0"
+          [isStreaming]="isStreaming"
+          [showLoadingByDefault]="showLoadingByDefault"
+          [containerWidth]="containerWidth ?? 0"
+          [loadingMessages]="loadingMessages ?? []"
+          [loadingTitle]="loadingTitle"
+          (fieldInteraction)="onFieldInteraction($event)"
+          (cardInteraction)="onCardInteraction($event)"
+          (fullscreenToggle)="onFullscreenToggle($event)"
+          (agentAction)="onAgentAction($event)"
+          (questionAction)="onQuestionAction($event)"
+          (export)="onExport()"
+        >
+        </app-ai-card-renderer>
+      </app-error-boundary>
     </div>
   `,
   styles: [
@@ -120,19 +130,15 @@ export class OsiCardsComponent {
 
   constructor() {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'osi-cards.component.ts:114',
-        message: 'OsiCardsComponent constructor',
-        data: { timestamp: Date.now() },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'osi-cards.component.ts:114',
+      message: 'OsiCardsComponent constructor',
+      data: { timestamp: Date.now() },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'card-debug',
+      hypothesisId: 'A',
+    });
     // #endregion
   }
 
@@ -143,24 +149,20 @@ export class OsiCardsComponent {
   /** The card configuration to render */
   @Input() set card(value: AICardConfig | undefined) {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'osi-cards.component.ts:126',
-        message: 'Card input set',
-        data: {
-          hasCard: !!value,
-          hasSections: !!value?.sections,
-          sectionsCount: value?.sections?.length || 0,
-          timestamp: Date.now(),
-        },
+    sendDebugLog({
+      location: 'osi-cards.component.ts:126',
+      message: 'Card input set',
+      data: {
+        hasCard: !!value,
+        hasSections: !!value?.sections,
+        sectionsCount: value?.sections?.length || 0,
         timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'B',
-      }),
-    }).catch(() => {});
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'card-debug',
+      hypothesisId: 'B',
+    });
     // #endregion
     this._card = value;
   }
@@ -206,6 +208,18 @@ export class OsiCardsComponent {
 
   /** Custom loading title */
   @Input() loadingTitle = 'Creating OSI Card';
+
+  // ========================================
+  // ERROR BOUNDARY CONFIGURATION
+  // ========================================
+
+  /** Error boundary recovery strategy */
+  readonly errorBoundaryRecoveryStrategy = signal<'reload' | 'fallback' | 'retry' | 'ignore'>(
+    'retry'
+  );
+
+  /** Error boundary show details */
+  readonly errorBoundaryShowDetails = signal(false);
 
   // ========================================
   // OUTPUTS
@@ -291,5 +305,14 @@ export class OsiCardsComponent {
 
   onExport(): void {
     this.export.emit();
+  }
+
+  /**
+   * Handle errors from the error boundary
+   * Logs the error and allows the error boundary to handle recovery
+   */
+  onCardError(error: any): void {
+    console.error('[OSICards] Card rendering error:', error);
+    // Error boundary will handle display and retry logic
   }
 }

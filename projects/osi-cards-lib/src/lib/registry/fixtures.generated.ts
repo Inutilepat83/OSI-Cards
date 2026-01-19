@@ -10,7 +10,7 @@
  * Generated: 2025-12-02T10:32:24.373Z
  */
 
-import type { AICardConfig, CardSection } from '../models/card.model';
+import type { AICardConfig, CardSection } from '@osi-cards/models';
 
 // ============================================================================
 // TYPES

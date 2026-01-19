@@ -1,13 +1,24 @@
 import { Injectable, inject } from '@angular/core';
 import { SectionNormalizationService } from './section-normalization.service';
-import { CardSection } from '../models';
-import { LRUCache } from '../utils/lru-cache.util';
+import { CardSection } from '@osi-cards/models';
+import { LRUCache } from '@osi-cards/utils';
 
 /**
- * CachedSectionNormalizationService
+ * Cached Section Normalization Service
  *
  * A caching wrapper around SectionNormalizationService that reduces
  * redundant computations for repeated section normalization.
+ *
+ * @dependencies
+ * - SectionNormalizationService: For actual normalization logic
+ * - LRUCache: For caching normalized sections
+ *
+ * @example
+ * ```typescript
+ * const cachedNormalization = inject(CachedSectionNormalizationService);
+ *
+ * const normalized = cachedNormalization.normalizeSection(section);
+ * ```
  */
 @Injectable({
   providedIn: 'root',

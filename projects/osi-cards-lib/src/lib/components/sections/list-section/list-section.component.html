@@ -28,5 +28,7 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.items?.length" message="No items" icon="📝" variant="minimal"> </lib-empty-state>
+  <!-- #region agent log -->
+  <lib-empty-state *ngIf="shouldShowEmptyState" message="No items" icon="📝" variant="minimal"> </lib-empty-state>
+  <!-- #endregion -->
 </div>

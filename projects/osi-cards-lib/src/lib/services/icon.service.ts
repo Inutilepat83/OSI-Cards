@@ -8,6 +8,9 @@ import { Injectable } from '@angular/core';
  * across the application. Supports exact matching, partial matching, and
  * fallback icons.
  *
+ * @dependencies
+ * - None (pure mapping service with no external dependencies)
+ *
  * @example
  * ```typescript
  * import { IconService } from '@osi-cards/services';

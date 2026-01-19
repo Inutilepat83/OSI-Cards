@@ -4,6 +4,9 @@
  * Provides i18n features including translation, pluralization,
  * date/number formatting, and locale management.
  *
+ * @dependencies
+ * - None (uses browser Intl API for formatting)
+ *
  * @example
  * ```typescript
  * const i18n = inject(I18nService);

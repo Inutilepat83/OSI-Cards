@@ -1,0 +1,400 @@
+---
+description: "SCSS styling patterns: design tokens, CSS variables, component styles"
+alwaysApply: true
+---
+
+# SCSS Styling Patterns
+
+## Design Tokens Architecture
+
+### Single Source of Truth
+
+**All design tokens are defined in `_master.scss`** - this ensures consistency across the entire library.
+
+```
+styles/
+├── tokens/
+│   ├── _master.scss    # SINGLE SOURCE OF TRUTH for all tokens
+│   └── _index.scss     # Re-exports
+```
+
+### Token Categories
+
+1. **Primitive Tokens** - Raw color values, base numbers
+2. **Semantic Tokens** - Meaningful tokens that reference primitives (CSS variables)
+3. **Component Tokens** - UI element-specific values
+4. **Theme Variants** - Light/dark mode overrides
+
+---
+
+## Primitive Tokens (SCSS Variables)
+
+### Define Primitive Values
+
+**Use SCSS variables for primitive values:**
+
+```scss
+// tokens/_master.scss
+
+// Brand Colors
+$osi-color-brand: #ff7900;
+$osi-color-brand-dark: #cc5f00;
+$osi-color-brand-light: #ff9933;
+
+// Neutral Colors
+$osi-color-white: #ffffff;
+$osi-color-black: #000000;
+
+// Grayscale Ramp
+$osi-gray-50: #ffffff;
+$osi-gray-100: #fcfcfc;
+$osi-gray-200: #f0f0f1;
+// ... etc
+```
+
+### Guidelines
+
+- Use SCSS variables (`$variable`) for primitive values
+- Define once in `_master.scss`
+- Reference in semantic tokens and mixins
+- Don't hardcode values in components
+
+---
+
+## Semantic Tokens (CSS Custom Properties)
+
+### Define CSS Variables
+
+**Use CSS custom properties for semantic tokens:**
+
+```scss
+// tokens/_master.scss
+
+:root {
+  // Semantic Colors (reference primitives)
+  --color-brand: #{$osi-color-brand};
+  --color-text: #{$osi-foreground-light};
+  --color-background: #{$osi-background-light};
+  
+  // Spacing Scale
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  
+  // Typography
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+}
+```
+
+### Guidelines
+
+- Use CSS custom properties (`--variable`) for semantic tokens
+- Reference SCSS variables using `#{$variable}`
+- Define in `:root` or `:host` (for Shadow DOM)
+- Document tokens for host applications
+- Use CSS variables for dynamic theming
+
+---
+
+## Using Tokens in Components
+
+### Import Master Tokens
+
+**Import master tokens in component SCSS files:**
+
+```scss
+// component.component.scss
+@use '../../tokens/master' as *;
+
+.my-component {
+  color: var(--color-text);
+  background: var(--color-background);
+  padding: var(--spacing-md);
+}
+```
+
+### Use CSS Variables
+
+**Prefer CSS variables over SCSS variables in components:**
+
+```scss
+// ✅ Good - uses CSS variable (works in Shadow DOM)
+.my-component {
+  color: var(--color-text);
+}
+
+// ❌ Bad - uses SCSS variable (doesn't work in Shadow DOM)
+.my-component {
+  color: $osi-foreground-light;
+}
+```
+
+### Guidelines
+
+- Import master tokens with `@use`
+- Use CSS variables (`var(--variable)`) in component styles
+- CSS variables work in Shadow DOM
+- SCSS variables don't work in Shadow DOM
+- Use SCSS variables only in mixins/token definitions
+
+---
+
+## Mixins for Token Generation
+
+### Define Mixins
+
+**Use mixins to generate CSS variables:**
+
+```scss
+// tokens/_master.scss
+
+@mixin osi-base-colors() {
+  --color-brand: #{$osi-color-brand};
+  --color-white: #{$osi-color-white};
+  // ... etc
+}
+
+@mixin osi-spacing() {
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  // ... etc
+}
+```
+
+### Use Mixins
+
+**Include mixins in root or host:**
+
+```scss
+:root {
+  @include osi-base-colors();
+  @include osi-spacing();
+  @include osi-typography();
+}
+```
+
+### Guidelines
+
+- Use mixins to organize token groups
+- Include mixins in `:root` or `:host`
+- Group related tokens in same mixin
+- Document mixin purpose and usage
+
+---
+
+## Theme Variants
+
+### Light/Dark Themes
+
+**Use data attributes for theme variants:**
+
+```scss
+// tokens/_master.scss
+
+// Default theme (light)
+:root {
+  @include osi-theme-base('demo', false);
+}
+
+// Dark theme
+:root[data-theme="night"],
+[data-theme="night"] {
+  @include osi-theme-dark('demo', false);
+}
+
+// Light theme
+:root[data-theme="day"],
+[data-theme="day"] {
+  @include osi-theme-light('demo', false);
+}
+```
+
+### Guidelines
+
+- Use `data-theme` attribute for theme switching
+- Define theme variants with mixins
+- Support both `:root[data-theme]` and `[data-theme]` selectors
+- Test theme switching in Shadow DOM
+- Document theme usage for host applications
+
+---
+
+## Component SCSS Structure
+
+### Component Style File
+
+**Structure component SCSS files:**
+
+```scss
+// component.component.scss
+
+// 1. Import design system
+@use '../../tokens/master' as *;
+
+// 2. Import component-specific tokens
+@use '../../design-system/tokens' as *;
+
+// 3. Component styles
+:host {
+  display: block;
+  color: var(--color-text);
+}
+
+.component {
+  padding: var(--spacing-md);
+  background: var(--color-background);
+}
+```
+
+### Guidelines
+
+- Import design system tokens first
+- Import component-specific tokens if needed
+- Use `:host` for component root styles
+- Use CSS variables for all values
+- Keep styles scoped to component
+
+---
+
+## Shadow DOM Styles
+
+### Bundle Styles for Shadow DOM
+
+**Bundle all styles for Shadow DOM components:**
+
+```scss
+// styles/bundles/_ai-card.scss
+
+@import '../tokens/master';
+@import '../design-system/sections/design-system';
+@import '../components/card/card';
+@import '../components/sections/sections';
+// ... all necessary styles
+```
+
+### Guidelines
+
+- Bundle all styles for Shadow DOM components
+- Include all necessary SCSS files
+- Import tokens first
+- Import component styles after tokens
+- Test that all styles work in Shadow DOM
+
+---
+
+## Component Styles Organization
+
+### Organize by Category
+
+**Organize styles by category:**
+
+```
+styles/
+├── tokens/              # Design tokens
+│   └── _master.scss
+├── core/                # Core styles (mixins, utilities)
+│   ├── _mixins.scss
+│   └── _utilities.scss
+├── components/          # Component styles
+│   ├── cards/
+│   └── sections/
+├── design-system/       # Design system styles
+│   └── _tokens.scss
+└── bundles/             # Style bundles
+    └── _ai-card.scss
+```
+
+### Guidelines
+
+- Organize styles by category (tokens, core, components)
+- Use bundles for Shadow DOM components
+- Keep component styles in `components/` directory
+- Keep design system styles separate
+- Use clear naming conventions
+
+---
+
+## CSS Custom Properties Best Practices
+
+### Use CSS Variables for Theming
+
+**CSS variables cross Shadow DOM boundaries:**
+
+```scss
+// Define in root/host
+:host {
+  --component-color: var(--color-text);
+  --component-padding: var(--spacing-md);
+}
+
+// Use in component
+.component {
+  color: var(--component-color);
+  padding: var(--component-padding);
+}
+```
+
+### Provide Fallback Values
+
+**Provide fallback values for CSS variables:**
+
+```scss
+.component {
+  color: var(--color-text, #000000); // Fallback to black
+  padding: var(--spacing-md, 12px); // Fallback to 12px
+}
+```
+
+### Guidelines
+
+- Use CSS variables for all dynamic values
+- Provide fallback values for critical styles
+- Document CSS variables for host applications
+- Test CSS variable propagation through Shadow DOM
+- Use CSS variables for theme switching
+
+---
+
+## SCSS Import Patterns
+
+### Use @use Instead of @import
+
+**Prefer `@use` over `@import` (modern SCSS):**
+
+```scss
+// ✅ Good - modern SCSS
+@use '../../tokens/master' as *;
+
+// ⚠️ Acceptable - legacy SCSS (for compatibility)
+@import '../../tokens/master';
+```
+
+### Guidelines
+
+- Prefer `@use` for new code (modern SCSS)
+- Use `@import` for compatibility when needed
+- Use `as *` for namespace import
+- Don't mix `@use` and `@import` unnecessarily
+- Document import patterns
+
+---
+
+## SCSS Checklist
+
+Before creating component styles:
+
+- [ ] Design tokens defined in `_master.scss`
+- [ ] CSS variables used for dynamic values
+- [ ] SCSS variables only for primitive values
+- [ ] Component styles import design system
+- [ ] Styles organized by category
+- [ ] Shadow DOM styles bundled correctly
+- [ ] Theme variants supported
+- [ ] CSS variables documented
+- [ ] Styles tested in Shadow DOM
+- [ ] Fallback values provided where needed
+
+**See also:** `angular-components.mdc`, `shadow-dom.mdc`, `angular-library.mdc`

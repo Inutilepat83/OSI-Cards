@@ -47,7 +47,7 @@ export interface ItemClickEvent {
     >
       @if (item.image) {
         <div class="item__image">
-          <img [src]="item.image" [alt]="item.title" loading="lazy" />
+          <img [src]="item.image" [alt]="item.title" />
         </div>
       } @else if (item.icon) {
         <div class="item__icon" [innerHTML]="item.icon"></div>

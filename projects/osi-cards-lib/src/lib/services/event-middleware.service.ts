@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-import { SectionRenderEvent } from '../components/section-renderer/section-renderer.component';
+import { SectionRenderEvent } from '@osi-cards/components';
 import {
   EventMiddleware,
   EventHandler,
   EventTransformer,
   EventFilter,
-} from '../interfaces/event-middleware.interface';
+} from '@osi-cards/lib/interfaces/event-middleware.interface';
 
 /**
  * Event Middleware Service
  *
  * Manages event middleware chains for processing card events before they reach handlers.
  * Supports logging, transformation, filtering, and analytics integration.
+ *
+ * @dependencies
+ * - None (uses RxJS Subject for event management)
  *
  * @example
  * ```typescript

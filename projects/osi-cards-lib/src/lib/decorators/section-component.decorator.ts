@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { BaseSectionComponent } from '../components/sections/base-section.component';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
 
 /**
  * Section component registration metadata

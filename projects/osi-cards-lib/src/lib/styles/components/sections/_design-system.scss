@@ -518,9 +518,7 @@
   br {
     margin-top: 0.05em !important; // Minimized gap between paragraphs
     line-height: 1.3 !important;
-  }
-
-  // Reduce spacing for paragraphs following titles
+  } // Reduce spacing for paragraphs following titles
   p,
   div,
   span {
@@ -557,9 +555,7 @@
   [class*="header"] + span {
     margin-top: 0.05em !important;
   }
-}
-
-// Exception: Overview sections with single-text format (Executive Summary) use 7px spacing
+} // Exception: Overview sections with single-text format (Executive Summary) use 7px spacing
 // This override comes after the general rule to ensure it takes precedence
 .ai-section.ai-section--overview .overview-item--single-text .overview-item__value--single-text br {
   margin-top: 7px !important; // 7px gap for Executive Summary (reduced from 15px)
@@ -567,6 +563,4 @@
   line-height: 1.3 !important;
   display: block !important;
   content: "";
-}
-
-// =====================================================================
+} // =====================================================================

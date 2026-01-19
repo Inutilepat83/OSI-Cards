@@ -19,11 +19,9 @@ Create `.mdc` files for your language's patterns. Recommended files:
 - `code-quality.mdc` - Code quality standards, modern features
 - `testing.mdc` - Testing framework and patterns
 - `error-handling.mdc` - Error handling patterns
-- `controllers.mdc` - Web framework controllers/endpoints
 - `validation.mdc` - Input validation
 - `dependencies.mdc` - Dependency injection/management
 - `security.mdc` - Security-specific patterns
-- `input-sanitization.mdc` - Input sanitization
 - `logging.mdc` - Logging patterns
 
 ### 3. Set Appropriate Globs

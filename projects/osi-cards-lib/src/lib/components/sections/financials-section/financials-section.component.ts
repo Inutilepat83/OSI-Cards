@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { TrendDirection } from '../../../types';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { TrendDirection } from '@osi-cards/types';
 import { EmptyStateComponent, SectionHeaderComponent, TrendIndicatorComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -18,6 +18,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent],
   templateUrl: './financials-section.component.html',
   styleUrl: './financials-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

@@ -26,8 +26,15 @@
     [style.width]="gridMode === 'absolute-polyfill' && item.width ? item.width : null"
     [attr.aria-label]="'Section: ' + (item.section.title || 'Untitled')"
     #masonryItem
-    (animationend)="onAnimationEnd($event, masonryItem, idx)"
+    (animationend)="onAnimationEnd($event, masonryItem)"
   >
-    <app-section-renderer [section]="item.section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>
+    <app-section-error-boundary
+      [sectionId]="item.section.id"
+      [sectionType]="item.section.type"
+      [config]="{ allowRetry: true, maxRetries: 3, showDetails: false, retryDelayMs: 1000, autoRetry: false }"
+      (errorCaught)="onSectionError($event)"
+    >
+      <app-section-renderer [section]="item.section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>
+    </app-section-error-boundary>
   </div>
 </div>

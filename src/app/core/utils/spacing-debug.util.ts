@@ -1,11 +1,131 @@
 /**
  * Debug utility to measure spacing inconsistencies across all section items
+ *
+ * This utility provides functions to measure spacing properties (padding, margins, gaps)
+ * across all section items on the page. It handles both regular DOM and Shadow DOM.
+ *
+ * **Performance Considerations:**
+ * - Verbose logging is disabled by default to avoid performance overhead
+ * - When verbose logging is enabled, each measurement operation logs detailed information
+ *   which can result in hundreds of log entries and network requests
+ * - Use verbose logging only when detailed debugging is needed
+ *
+ * **Usage:**
+ * ```typescript
+ * import { measureAllSectionItems, enableVerboseLogging } from './spacing-debug.util';
+ *
+ * // Default: Verbose logging disabled (recommended for production)
+ * measureAllSectionItems();
+ *
+ * // Enable verbose logging for detailed debugging (use sparingly)
+ * enableVerboseLogging(true);
+ * measureAllSectionItems();
+ * enableVerboseLogging(false); // Disable after debugging
+ * ```
+ *
+ * @module spacing-debug
  */
-
-const SERVER_ENDPOINT = 'http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a';
 
 // Import export function
 import { exportSpacingData } from './export-spacing-data';
+import { sendDebugLog } from './debug-log.util';
+
+// Module-level configuration for verbose logging
+let ENABLE_VERBOSE_LOGGING = false;
+
+// Size limits for spacing debug logs
+const SPACING_STORAGE_KEY = 'spacing-debug-logs';
+const MAX_SPACING_LOG_ENTRIES = 100;
+const MAX_SPACING_LOG_SIZE_BYTES = 500 * 1024; // 500KB max total
+const MIN_SPACING_LOG_ENTRIES_ON_EMERGENCY = 20; // Keep at least 20 entries in emergency cleanup
+
+/**
+ * Estimate the size of a log entry in bytes using TextEncoder for accurate UTF-8 encoding
+ */
+function estimateSpacingLogEntrySize(entry: any): number {
+  try {
+    const jsonString = JSON.stringify(entry);
+    return new TextEncoder().encode(jsonString).length;
+  } catch {
+    try {
+      return JSON.stringify(entry).length;
+    } catch {
+      return 1024; // Conservative fallback
+    }
+  }
+}
+
+/**
+ * Estimate the size of a JSON string in bytes
+ */
+function estimateSpacingLogStringSize(str: string): number {
+  try {
+    return new TextEncoder().encode(str).length;
+  } catch {
+    return str.length; // Fallback
+  }
+}
+
+/**
+ * Trim spacing logs to fit within size limits
+ */
+function trimSpacingLogs(logs: any[]): any[] {
+  let trimmed = [...logs];
+
+  // First, trim by count
+  if (trimmed.length > MAX_SPACING_LOG_ENTRIES) {
+    trimmed = trimmed.slice(-MAX_SPACING_LOG_ENTRIES);
+  }
+
+  // Then, estimate total size and trim if needed
+  let totalSize = 0;
+  for (const entry of trimmed) {
+    totalSize += estimateSpacingLogEntrySize(entry);
+  }
+
+  // If still too large, remove oldest entries
+  while (
+    totalSize > MAX_SPACING_LOG_SIZE_BYTES &&
+    trimmed.length > MIN_SPACING_LOG_ENTRIES_ON_EMERGENCY
+  ) {
+    const removed = trimmed.shift();
+    if (removed) {
+      totalSize -= estimateSpacingLogEntrySize(removed);
+    }
+  }
+
+  // If still too large, reduce to minimal set
+  if (totalSize > MAX_SPACING_LOG_SIZE_BYTES) {
+    trimmed = trimmed.slice(-MIN_SPACING_LOG_ENTRIES_ON_EMERGENCY);
+  }
+
+  return trimmed;
+}
+
+/**
+ * Enable or disable verbose logging for spacing debug utility.
+ *
+ * **Performance Impact:**
+ * - When enabled, each measurement operation logs detailed information
+ * - This can result in hundreds of log entries per measurement run
+ * - Each log entry triggers a network request (fetch) to the debug server
+ * - Recommended: Keep disabled by default, enable only when detailed debugging is needed
+ *
+ * @param enabled - Whether to enable verbose logging (default: false)
+ *
+ * @example
+ * ```typescript
+ * // Enable verbose logging for debugging
+ * enableVerboseLogging(true);
+ * measureAllSectionItems();
+ *
+ * // Disable after debugging to restore performance
+ * enableVerboseLogging(false);
+ * ```
+ */
+export function enableVerboseLogging(enabled: boolean): void {
+  ENABLE_VERBOSE_LOGGING = enabled;
+}
 
 interface SpacingMeasurement {
   sectionType: string;
@@ -30,6 +150,11 @@ interface SpacingMeasurement {
 }
 
 function logMeasurement(location: string, message: string, data: any, hypothesisId: string): void {
+  // Only log if verbose logging is enabled
+  if (!ENABLE_VERBOSE_LOGGING) {
+    return;
+  }
+
   const logEntry = {
     location,
     message,
@@ -40,24 +165,58 @@ function logMeasurement(location: string, message: string, data: any, hypothesis
     hypothesisId,
   };
 
-  // Try HTTP endpoint
-  fetch(SERVER_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(logEntry),
-  }).catch(() => {});
+  sendDebugLog(logEntry);
 
   // Fallback: console and localStorage
   console.log(`[Spacing Debug ${hypothesisId}]`, message, data);
 
-  // Store in localStorage as backup
+  // Store in localStorage as backup (with size limits and error handling)
   try {
-    const existing = localStorage.getItem('spacing-debug-logs');
-    const logs = existing ? JSON.parse(existing) : [];
+    const existing = localStorage.getItem(SPACING_STORAGE_KEY);
+    let logs: any[] = existing ? JSON.parse(existing) : [];
+
+    // Add new entry
     logs.push(logEntry);
-    localStorage.setItem('spacing-debug-logs', JSON.stringify(logs));
-  } catch (e) {
-    // Ignore localStorage errors
+
+    // Trim logs to fit within limits (proactive cleanup)
+    logs = trimSpacingLogs(logs);
+
+    // Check final size before write
+    const finalJson = JSON.stringify(logs);
+    const finalSize = estimateSpacingLogStringSize(finalJson);
+
+    // If still too large, reduce further
+    if (finalSize > MAX_SPACING_LOG_SIZE_BYTES) {
+      logs = logs.slice(-MIN_SPACING_LOG_ENTRIES_ON_EMERGENCY);
+    }
+
+    // Save to localStorage
+    localStorage.setItem(SPACING_STORAGE_KEY, JSON.stringify(logs));
+  } catch (e: any) {
+    // Handle QuotaExceededError specifically
+    if (e?.name === 'QuotaExceededError') {
+      try {
+        // Clear old logs and retry with minimal set
+        console.warn(
+          '[Spacing Debug] localStorage quota exceeded, clearing old logs and retrying...'
+        );
+        localStorage.removeItem(SPACING_STORAGE_KEY);
+
+        // Retry with just the new entry
+        const minimalLogs = [logEntry];
+        localStorage.setItem(SPACING_STORAGE_KEY, JSON.stringify(minimalLogs));
+
+        console.warn(
+          '[Spacing Debug] Stored minimal log set. Consider exporting and clearing logs.'
+        );
+      } catch (retryError) {
+        // If retry also fails, just log a warning and continue
+        console.warn('[Spacing Debug] Failed to store logs even after cleanup:', retryError);
+      }
+    } else {
+      // For other errors, just log a warning
+      console.warn('[Spacing Debug] Failed to store log entry:', e);
+    }
   }
 }
 
@@ -130,25 +289,6 @@ function measureSectionItem(
         } else if (!sameRow && verticalGap > 0) {
           actualVerticalGap = verticalGap;
         }
-
-        // #region agent log
-        logMeasurement(
-          'spacing-debug.util.ts:measureSectionItem',
-          'Grid gap measurement',
-          {
-            sectionType,
-            itemIndex,
-            horizontalGap,
-            verticalGap,
-            sameRow,
-            actualHorizontalGap,
-            actualVerticalGap,
-            rect1Top: rect1.top,
-            rect2Top: rect2.top,
-          },
-          'H7'
-        );
-        // #endregion
       } else if (parentDisplay === 'flex') {
         const flexDirection = parentStyles.flexDirection;
         const horizontalGap = Math.max(0, rect2.left - rect1.right);
@@ -160,74 +300,9 @@ function measureSectionItem(
         } else if (flexDirection === 'row') {
           actualHorizontalGap = horizontalGap;
         }
-
-        // #region agent log
-        logMeasurement(
-          'spacing-debug.util.ts:measureSectionItem',
-          'Flex gap measurement',
-          {
-            sectionType,
-            itemIndex,
-            flexDirection,
-            horizontalGap,
-            verticalGap,
-            actualHorizontalGap,
-            actualVerticalGap,
-          },
-          'H7'
-        );
-        // #endregion
       }
     }
-
-    // #region agent log
-    logMeasurement(
-      'spacing-debug.util.ts:measureSectionItem',
-      'Parent element gap analysis',
-      {
-        sectionType,
-        itemIndex,
-        parentTag: parent.tagName,
-        parentClass: parent.className,
-        parentDisplay,
-        parentGap,
-        parentComputedGap,
-        actualHorizontalGap,
-        actualVerticalGap,
-        isFlexOrGrid: parentDisplay === 'flex' || parentDisplay === 'grid',
-      },
-      'H3'
-    );
-    // #endregion
   }
-
-  // #region agent log
-  logMeasurement(
-    'spacing-debug.util.ts:measureSectionItem',
-    'Computed spacing values',
-    {
-      sectionType,
-      itemIndex,
-      paddingTop,
-      paddingRight,
-      paddingBottom,
-      paddingLeft,
-      marginTop,
-      marginRight,
-      marginBottom,
-      marginLeft,
-      gap: gapValue,
-      parentGap,
-      isUniformPadding:
-        paddingTop === paddingRight &&
-        paddingRight === paddingBottom &&
-        paddingBottom === paddingLeft,
-      isUniformMargin:
-        marginTop === marginRight && marginRight === marginBottom && marginBottom === marginLeft,
-    },
-    'B'
-  );
-  // #endregion
 
   return {
     sectionType,
@@ -450,12 +525,46 @@ function findAllSectionItems(): HTMLElement[] {
   return uniqueItems;
 }
 
+// Module-level flag to track if measurement is in progress
+let isMeasuring = false;
+
 /**
- * Measure all section items on the page
- * Waits for sections to appear if they're not ready yet
- * Handles Shadow DOM and uses MutationObserver for better detection
+ * Measure all section items on the page.
+ *
+ * This function measures spacing properties (padding, margins, gaps) for all section items
+ * on the page. It automatically handles Shadow DOM and uses MutationObserver to wait for
+ * sections to appear if they're not ready yet.
+ *
+ * **Performance:**
+ * - Only one measurement run can execute at a time (guards prevent simultaneous runs)
+ * - Verbose logging is disabled by default (see `enableVerboseLogging()`)
+ * - Measurements are logged as summaries, not per-item details (unless verbose logging is enabled)
+ *
+ * @param maxWaitMs - Maximum time to wait for sections to appear in milliseconds (default: 10000ms)
+ *
+ * @example
+ * ```typescript
+ * // Basic usage (verbose logging disabled by default)
+ * measureAllSectionItems();
+ *
+ * // With custom wait time
+ * measureAllSectionItems(15000); // Wait up to 15 seconds
+ *
+ * // With verbose logging enabled for debugging
+ * enableVerboseLogging(true);
+ * measureAllSectionItems();
+ * enableVerboseLogging(false);
+ * ```
  */
 export function measureAllSectionItems(maxWaitMs = 10000): void {
+  // Guard: Prevent multiple simultaneous runs
+  if (isMeasuring) {
+    console.warn('[Spacing Debug] Measurement already in progress, skipping');
+    return;
+  }
+
+  isMeasuring = true;
+
   // #region agent log
   logMeasurement(
     'spacing-debug.util.ts:measureAllSectionItems',
@@ -490,6 +599,7 @@ export function measureAllSectionItems(maxWaitMs = 10000): void {
         clearTimeout(timeoutId);
       }
       performMeasurement(sectionItems);
+      isMeasuring = false;
       return;
     }
 
@@ -522,6 +632,7 @@ export function measureAllSectionItems(maxWaitMs = 10000): void {
     console.warn(
       '[Spacing Debug] Try running: measureAllSectionItems() manually after the card loads'
     );
+    isMeasuring = false;
   }
 
   // Use MutationObserver to watch for section items being added
@@ -562,6 +673,7 @@ export function measureAllSectionItems(maxWaitMs = 10000): void {
     if (observer) {
       observer.disconnect();
     }
+    isMeasuring = false;
   }, maxWaitMs);
 }
 
@@ -570,6 +682,7 @@ export function measureAllSectionItems(maxWaitMs = 10000): void {
  */
 function performMeasurement(sectionItems: HTMLElement[]): void {
   const measurements: SpacingMeasurement[] = [];
+  const startTime = performance.now();
 
   sectionItems.forEach((item, index) => {
     const sectionType = findSectionType(item);
@@ -577,17 +690,21 @@ function performMeasurement(sectionItems: HTMLElement[]): void {
 
     if (measurement) {
       measurements.push(measurement);
-
-      // #region agent log
-      logMeasurement(
-        'spacing-debug.util.ts:performMeasurement',
-        'Section item measurement',
-        measurement,
-        'D'
-      );
-      // #endregion
     }
   });
+
+  const duration = performance.now() - startTime;
+
+  // Log summary only (not per-item)
+  logMeasurement(
+    'spacing-debug.util.ts:performMeasurement',
+    'Measurement complete',
+    {
+      totalItems: measurements.length,
+      duration,
+    },
+    'D'
+  );
 
   // Analyze inconsistencies
   const paddingValues = new Set<number>();

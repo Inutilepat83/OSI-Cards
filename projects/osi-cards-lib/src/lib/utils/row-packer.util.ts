@@ -29,7 +29,7 @@
  * ```
  */
 
-import { CardField, CardSection, LayoutPriority } from '../models/card.model';
+import { CardField, CardSection, LayoutPriority } from '@osi-cards/models';
 import {
   EXPANSION_DENSITY_THRESHOLD,
   generateLeftExpression,
@@ -41,7 +41,7 @@ import {
 // HEIGHT ESTIMATION
 // ============================================================================
 
-import { HeightEstimationService } from '../services/height-estimation.service';
+import { HeightEstimationService } from '@osi-cards/services';
 
 // Create a singleton instance for use in utility functions
 // Note: In Angular components, inject the service instead
@@ -1203,6 +1203,17 @@ function optimizeRowsWithSwapping(
   maxPasses: number
 ): void {
   for (let pass = 0; pass < maxPasses; pass++) {
+    // Early exit: Check if layout is already "good enough" (utilization > 95% and no gaps)
+    const totalCells = rows.length * totalColumns;
+    const usedCells = rows.reduce((sum, row) => sum + row.totalWidth, 0);
+    const utilizationPercent = totalCells > 0 ? (usedCells / totalCells) * 100 : 100;
+    const rowsWithGaps = rows.filter((r) => r.remainingCapacity > 0).length;
+
+    if (utilizationPercent >= 95 && rowsWithGaps === 0) {
+      // Layout is excellent - early exit
+      break;
+    }
+
     let improved = false;
 
     for (let i = 0; i < rows.length - 1; i++) {

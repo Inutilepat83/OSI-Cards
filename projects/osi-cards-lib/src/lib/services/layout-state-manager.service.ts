@@ -10,6 +10,9 @@
  * - Manage column heights
  * - Track layout history for undo/redo (future feature)
  *
+ * @dependencies
+ * - None (uses RxJS BehaviorSubject for state management)
+ *
  * @example
  * ```typescript
  * @Component({...})

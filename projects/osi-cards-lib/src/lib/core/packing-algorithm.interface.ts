@@ -20,7 +20,7 @@
  * ```
  */
 
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 // ============================================================================
 // CORE TYPES

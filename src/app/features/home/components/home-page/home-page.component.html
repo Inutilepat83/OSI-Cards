@@ -41,69 +41,59 @@
 
       <!-- Hero Header -->
       <div class="hero-header">
-        <h1
-          class="hero-title selectable-component"
-          [class.selected]="isComponentSelected('heading')"
-          id="osi-hero-heading"
-          (click)="selectComponent('heading')"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="
-            isComponentSelected('heading') ? 'Heading selected. Click to deselect.' : 'Click to select heading'
-          "
-          (keydown.enter)="selectComponent('heading')"
-          (keydown.space)="selectComponent('heading'); $event.preventDefault()"
-        >
+        <h1 class="hero-title" id="osi-hero-heading">
           <span class="hero-title-primary">Orange</span>
-          <span class="hero-title-accent"> Sales Intelligence</span>
+          <span class="hero-title-accent"> Sales Intelligence Cards</span>
         </h1>
-        <p
-          class="hero-description selectable-component"
-          [class.selected]="isComponentSelected('description')"
-          (click)="selectComponent('description')"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="
-            isComponentSelected('description')
-              ? 'Description selected. Click to deselect.'
-              : 'Click to select description'
-          "
-          (keydown.enter)="selectComponent('description')"
-          (keydown.space)="selectComponent('description'); $event.preventDefault()"
-        >
-          Transform raw business data into stunning, interactive intelligence cards in seconds. OSI Cards empowers sales
-          teams with a powerful visual framework that turns complex information into actionable insights through
-          elegant, customizable card layouts.
+        <p class="hero-description">
+          Transform raw business data into stunning, interactive intelligence cards in seconds.<br />
+          OSI Cards empowers sales teams with a powerful visual framework that turns complex information into actionable
+          insights through elegant, customizable card layouts.
         </p>
+
+        <!-- Action Buttons -->
+        <div class="hero-actions">
+          <a routerLink="/docs" class="hero-action-btn" aria-label="View Documentation">
+            <lucide-icon name="book-open" [size]="18" aria-hidden="true"></lucide-icon>
+            <span>Documentation</span>
+          </a>
+          <a
+            href="https://github.com/Inutilepat83/OSI-Cards"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hero-action-btn"
+            aria-label="View on GitHub"
+          >
+            <lucide-icon name="github" [size]="18" aria-hidden="true"></lucide-icon>
+            <span>GitHub</span>
+          </a>
+          <a
+            href="https://www.npmjs.com/package/osi-cards-lib"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hero-action-btn"
+            aria-label="View on npm"
+          >
+            <lucide-icon name="package" [size]="18" aria-hidden="true"></lucide-icon>
+            <span>npm</span>
+          </a>
+        </div>
       </div>
 
       <!-- Feature Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-16 lg:mb-20">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-12 lg:mb-16">
         <!-- Feature Card 1 -->
-        <div
-          class="hero-feature-card selectable-component"
-          [class.selected]="isComponentSelected('feature-card')"
-          (click)="selectComponent('feature-card')"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="
-            isComponentSelected('feature-card')
-              ? 'Dynamic Intelligence feature card selected. Click to deselect.'
-              : 'Click to select Dynamic Intelligence feature card'
-          "
-          (keydown.enter)="selectComponent('feature-card')"
-          (keydown.space)="selectComponent('feature-card'); $event.preventDefault()"
-        >
-          <div class="p-6 sm:p-8 text-center">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
+        <div class="hero-feature-card">
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
               <lucide-icon
                 name="sparkles"
-                [size]="32"
-                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                [size]="24"
+                class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"
               ></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Dynamic Intelligence</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed">
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Dynamic Intelligence</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
               Advanced rendering engine with fluid animations and magnetic interactions that bring your data to life
             </p>
           </div>
@@ -111,34 +101,81 @@
 
         <!-- Feature Card 2 -->
         <div class="hero-feature-card">
-          <div class="p-6 sm:p-8 text-center">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <lucide-icon
-                name="zap"
-                [size]="32"
-                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-              ></lucide-icon>
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+              <lucide-icon name="zap" [size]="24" class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Lightning Fast</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed">
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Lightning Fast</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
               Instant card generation with live preview - see your changes in real-time as you build
             </p>
           </div>
         </div>
 
         <!-- Feature Card 3 -->
-        <div class="hero-feature-card md:col-span-2 lg:col-span-1">
-          <div class="p-6 sm:p-8 text-center">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
+        <div class="hero-feature-card">
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
               <lucide-icon
                 name="code-2"
-                [size]="32"
-                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                [size]="24"
+                class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"
               ></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Developer Friendly</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed">
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Developer Friendly</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
               Intuitive JSON-based configuration with full TypeScript support and comprehensive documentation
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature Card 4 -->
+        <div class="hero-feature-card">
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+              <lucide-icon
+                name="palette"
+                [size]="24"
+                class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"
+              ></lucide-icon>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Highly Customizable</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+              Fully customizable themes, layouts, and styling options to match your brand and design requirements
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature Card 5 -->
+        <div class="hero-feature-card">
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+              <lucide-icon
+                name="shield-check"
+                [size]="24"
+                class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"
+              ></lucide-icon>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Secure & Reliable</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+              Built with security best practices, including XSS protection, input validation, and secure data handling
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature Card 6 -->
+        <div class="hero-feature-card">
+          <div class="p-4 sm:p-5 text-center">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+              <lucide-icon
+                name="layers"
+                [size]="24"
+                class="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-brand)]"
+              ></lucide-icon>
+            </div>
+            <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-foreground">Modular Architecture</h3>
+            <p class="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+              Flexible section-based system allowing you to compose complex cards from reusable, independent components
             </p>
           </div>
         </div>
@@ -151,8 +188,8 @@
     <div class="mx-auto max-w-7xl">
       <div class="text-center mb-8 sm:mb-12">
         <h3
-          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6"
-          style="letter-spacing: -0.03em"
+          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground"
+          style="letter-spacing: -0.03em; margin-bottom: 20px"
         >
           <span class="text-foreground">Interactive </span>
           <span class="text-[#FF7900]">Demo</span>
@@ -160,7 +197,7 @@
       </div>
 
       <!-- Card Type Selector with Label -->
-      <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-3">
         <span class="text-sm font-semibold text-muted-foreground">Card Examples:</span>
         <app-card-type-selector
           [selectedType]="cardType"
@@ -174,7 +211,7 @@
       <!-- Variant Selector -->
       <div
         class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-8 sm:mb-10"
-        style="margin-bottom: 18px"
+        style="margin-top: 12px; margin-bottom: 18px"
       >
         <span class="text-sm font-semibold text-muted-foreground">Variants:</span>
         <div class="variant-selector">
@@ -214,20 +251,8 @@
                 <lucide-icon name="sparkles" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
                 <span class="font-bold text-lg" style="letter-spacing: -0.01em">Live Preview</span>
               </div>
-              <!-- Streaming Status Badges -->
-              <span *ngIf="streamingState?.stage === 'thinking'" class="status-badge status-badge--thinking">
-                <span class="status-badge-spinner"></span>
-                Thinking...
-              </span>
-              <span *ngIf="streamingState?.stage === 'streaming'" class="status-badge status-badge--streaming">
-                <span class="status-badge-spinner"></span>
-                Streaming {{ progressPercent }}%
-              </span>
-              <span *ngIf="streamingState?.stage === 'complete'" class="status-badge status-badge--complete">
-                <lucide-icon name="check-circle-2" [size]="12" aria-hidden="true"></lucide-icon>
-                Complete
-              </span>
-              <span *ngIf="!isStreamingActive && jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
+              <!-- Status Badge -->
+              <span *ngIf="jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
                 <span class="status-badge-dot"></span>
                 Live edit
               </span>
@@ -251,9 +276,6 @@
                   #cardRenderer
                   [cardConfig]="cardConfigForRenderer"
                   [theme]="cardTheme"
-                  [streamingStage]="streamingState?.stage"
-                  [streamingProgress]="streamingState?.progress ?? 0"
-                  [isStreaming]="streamingState?.stage === 'streaming'"
                   [isFullscreen]="isFullscreen"
                   [tiltEnabled]="true"
                   [showLoadingByDefault]="true"
@@ -302,42 +324,20 @@
           </div>
 
           <!-- JSON Editor Card -->
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4 flex flex-col flex-1 min-h-0"
-            style="align-self: stretch; margin-top: 0"
-          >
+          <div class="json-editor-wrapper text-foreground transition-colors">
             <div class="json-editor flex flex-col">
               <!-- JSON Configuration Header -->
               <div class="editor-toolbar__actions">
                 <div class="editor-toolbar__hint-stack">
-                  <p id="json-editor-instructions" class="editor-toolbar__hint">
+                  <p id="json-editor-instructions" class="editor-toolbar__hint" style="margin-bottom: 8px">
                     Tip: Press <span class="kbd">⌘⏎</span> or <span class="kbd">Ctrl⏎</span> to format JSON.
                   </p>
                 </div>
               </div>
 
-              <!-- Streaming Controls Section -->
+              <!-- Generate Button -->
               <div class="streaming-controls">
                 <div class="streaming-controls__row">
-                  <!-- Generation Mode Toggle -->
-                  <div class="streaming-control-group">
-                    <label class="streaming-control-label">
-                      <lucide-icon name="radio" [size]="14"></lucide-icon>
-                      Mode
-                    </label>
-                    <div class="radio-group">
-                      <label class="radio-option">
-                        <input type="radio" name="streaming" [value]="true" [(ngModel)]="useStreaming" />
-                        <span class="radio-label">Streaming</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="streaming" [value]="false" [(ngModel)]="useStreaming" />
-                        <span class="radio-label">Instant</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <!-- Generate/Stop Button -->
                   <div class="streaming-control-actions">
                     @if (!isStreamingActive) {
                       <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput.trim()">
@@ -353,41 +353,41 @@
                   </div>
                 </div>
 
-                <!-- Streaming Speed & Delay Controls (only when streaming mode) -->
-                @if (useStreaming) {
-                  <div class="streaming-controls__sliders">
-                    <div class="streaming-control-group">
-                      <label class="streaming-control-label">
-                        <lucide-icon name="gauge" [size]="14"></lucide-icon>
-                        Speed
-                        <span class="speed-value">{{ streamingSpeed }} tok/s</span>
-                      </label>
-                      <input
-                        type="range"
-                        class="control-range"
-                        min="20"
-                        max="200"
-                        step="10"
-                        [(ngModel)]="streamingSpeed"
-                      />
-                    </div>
-                    <div class="streaming-control-group">
-                      <label class="streaming-control-label">
-                        <lucide-icon name="brain" [size]="14"></lucide-icon>
-                        Thinking Delay
-                        <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
-                      </label>
-                      <input
-                        type="range"
-                        class="control-range"
-                        min="0"
-                        max="8000"
-                        step="500"
-                        [(ngModel)]="thinkingDelay"
-                      />
-                    </div>
+                <!-- Speed & Delay Controls -->
+                <div class="streaming-controls__sliders">
+                  <div class="streaming-control-group">
+                    <label class="streaming-control-label">
+                      <lucide-icon name="gauge" [size]="14"></lucide-icon>
+                      Speed
+                      <span class="speed-value">{{ streamingSpeed }} tok/s</span>
+                    </label>
+                    <input
+                      type="range"
+                      class="control-range"
+                      min="20"
+                      max="2000"
+                      step="50"
+                      [(ngModel)]="streamingSpeed"
+                      [disabled]="isStreamingActive"
+                    />
                   </div>
-                }
+                  <div class="streaming-control-group">
+                    <label class="streaming-control-label">
+                      <lucide-icon name="brain" [size]="14"></lucide-icon>
+                      Thinking Delay
+                      <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
+                    </label>
+                    <input
+                      type="range"
+                      class="control-range"
+                      min="0"
+                      max="8000"
+                      step="500"
+                      [(ngModel)]="thinkingDelay"
+                      [disabled]="isStreamingActive"
+                    />
+                  </div>
+                </div>
 
                 <!-- Progress Bar (during streaming) -->
                 @if (isStreamingActive && streamingState?.stage === 'streaming') {
@@ -401,7 +401,7 @@
               </div>
 
               <!-- JSON Editor Component -->
-              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive" aria-hidden="true">
+              <div class="json-editor-overlay" *ngIf="isGenerating" aria-hidden="true">
                 <div class="json-editor-overlay__inner">
                   <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
                     <circle cx="25" cy="25" r="20" stroke-width="5" stroke-opacity="0.25"></circle>
@@ -425,171 +425,10 @@
     </div>
   </div>
 
-  <!-- Features Section -->
-  <!-- Features Section -->
-  <div class="features-section">
-    <div class="mx-auto max-w-6xl">
-      <div class="text-center mb-12 sm:mb-16">
-        <h3
-          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6"
-          style="letter-spacing: -0.03em"
-        >
-          <span class="text-foreground">System </span>
-          <span class="text-[#FF7900]">Capabilities</span>
-        </h3>
-        <p class="text-muted-foreground max-w-2xl mx-auto text-lg sm:text-xl" style="line-height: 1.7">
-          Enterprise-grade features designed for modern sales intelligence workflows
-        </p>
-      </div>
-
-      <div class="p-6 sm:p-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          <div class="feature-card">
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="zap"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Streaming Generation</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Watch your cards build in real-time with streaming mode or instant rendering - your choice
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
-          >
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="settings"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Infinite Flexibility</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                20+ section types, unlimited customization - from KPIs to charts, timelines to contact grids
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
-          >
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="download"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Export Ready</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Export pixel-perfect PNG images at 2x resolution - presentation and report ready
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
-          >
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="file-text"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Enterprise TypeScript</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Fully typed with comprehensive interfaces - catch errors at compile time, not runtime
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
-          >
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="save"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Smart Persistence</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Automatic local storage - your work is never lost, pick up exactly where you left off
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
-          >
-            <div class="p-6 sm:p-8 text-center">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon
-                  name="code-2"
-                  [size]="32"
-                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
-                  aria-hidden="true"
-                ></lucide-icon>
-              </div>
-              <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Production Ready</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Battle-tested architecture with {{ systemStats.totalFiles }} modular components - built for scale
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Footer Section -->
   <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <h4 class="footer-logo">OSI Cards</h4>
-        <p class="footer-tagline">Premium Sales Intelligence</p>
-      </div>
-      <div class="footer-links">
-        <div class="footer-column">
-          <h5>Product</h5>
-          <a routerLink="/features">Features</a>
-          <a routerLink="/templates">Templates</a>
-          <a routerLink="/pricing">Pricing</a>
-        </div>
-        <div class="footer-column">
-          <h5>Resources</h5>
-          <a routerLink="/api">API</a>
-          <a routerLink="/docs">Documentation</a>
-          <a routerLink="/support">Support</a>
-        </div>
-        <div class="footer-column">
-          <h5>Company</h5>
-          <a routerLink="/about">About</a>
-          <a routerLink="/blog">Blog</a>
-          <a routerLink="/contact">Contact</a>
-        </div>
-      </div>
-    </div>
     <div class="footer-bottom">
-      <p>&copy; 2024 OSI Cards. All rights reserved.</p>
+      <p>OSI Cards 2025 - Arthur Mariani - Orange Business</p>
     </div>
   </footer>
 </main>

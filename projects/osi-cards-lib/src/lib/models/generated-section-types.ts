@@ -16,6 +16,7 @@ export type SectionType =
   | 'faq'
   | 'financials'
   | 'gallery'
+  | 'info'
   | 'list'
   | 'map'
   | 'network-card'
@@ -181,6 +182,17 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsEmoji: false,
     requiresExternalLib: undefined,
     selector: 'lib-gallery-section',
+  },
+  info: {
+    name: 'Info Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-list-section',
   },
   list: {
     name: 'List Section',

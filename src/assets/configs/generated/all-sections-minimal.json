@@ -87,7 +87,7 @@
     },
     {
       "title": "Quick Info",
-      "type": "info",
+      "type": "overview",
       "fields": [
         {
           "label": "Status",

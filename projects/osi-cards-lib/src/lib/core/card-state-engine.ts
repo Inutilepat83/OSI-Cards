@@ -231,7 +231,15 @@ export class CardStateEngine {
     if (sectionIndex === -1) return false;
 
     const newSections = [...card.sections];
-    newSections[sectionIndex] = { ...newSections[sectionIndex], ...updates };
+    const existingSection = newSections[sectionIndex];
+    if (!existingSection || !existingSection.id) return false;
+
+    newSections[sectionIndex] = {
+      ...existingSection,
+      ...updates,
+      id: existingSection.id, // Ensure id is always defined
+      type: existingSection.type, // Ensure type is always defined
+    } as SectionData;
 
     return this.updateCard(cardId, { sections: newSections });
   }

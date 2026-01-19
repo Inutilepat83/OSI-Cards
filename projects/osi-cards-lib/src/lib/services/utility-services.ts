@@ -12,8 +12,9 @@
  * 6. VisibilityService - Page visibility detection
  */
 
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { LoggerService } from './logger.service';
 
 /**
  * 1. Enhanced Title Service
@@ -158,6 +159,7 @@ export class SimpleThemeService {
 })
 export class FullscreenService {
   private isFullscreenSignal = signal(false);
+  private readonly logger = inject(LoggerService);
 
   readonly isFullscreen = this.isFullscreenSignal.asReadonly();
 
@@ -166,7 +168,12 @@ export class FullscreenService {
       await element.requestFullscreen();
       this.isFullscreenSignal.set(true);
     } catch (error) {
-      console.error('Fullscreen request failed:', error);
+      this.logger.error(
+        'Fullscreen request failed',
+        { element: element.tagName },
+        error instanceof Error ? error : new Error(String(error)),
+        ['fullscreen']
+      );
     }
   }
 
@@ -175,7 +182,12 @@ export class FullscreenService {
       await document.exitFullscreen();
       this.isFullscreenSignal.set(false);
     } catch (error) {
-      console.error('Exit fullscreen failed:', error);
+      this.logger.error(
+        'Exit fullscreen failed',
+        {},
+        error instanceof Error ? error : new Error(String(error)),
+        ['fullscreen']
+      );
     }
   }
 

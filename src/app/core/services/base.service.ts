@@ -58,31 +58,31 @@ export abstract class BaseService implements OnDestroy {
   /**
    * Log debug message (only in development mode)
    */
-  protected debug(message: string, context?: string, data?: unknown): void {
+  protected debug(message: string, context?: string, data?: unknown, tags?: string[]): void {
     if (this.isDevelopmentMode) {
-      this.logger.debug(message, context || this.constructor.name, data);
+      this.logger.debug(message, context || this.constructor.name, data, tags);
     }
   }
 
   /**
    * Log info message
    */
-  protected info(message: string, context?: string, data?: unknown): void {
-    this.logger.info(message, context || this.constructor.name, data);
+  protected info(message: string, context?: string, data?: unknown, tags?: string[]): void {
+    this.logger.info(message, context || this.constructor.name, data, tags);
   }
 
   /**
    * Log warning message
    */
-  protected warn(message: string, context?: string, data?: unknown): void {
-    this.logger.warn(message, context || this.constructor.name, data);
+  protected warn(message: string, context?: string, data?: unknown, tags?: string[]): void {
+    this.logger.warn(message, context || this.constructor.name, data, tags);
   }
 
   /**
    * Log error message
    */
-  protected error(message: string, context?: string, data?: unknown): void {
-    this.logger.error(message, context || this.constructor.name, data);
+  protected error(message: string, context?: string, data?: unknown, tags?: string[]): void {
+    this.logger.error(message, context || this.constructor.name, data, tags);
   }
 
   /**

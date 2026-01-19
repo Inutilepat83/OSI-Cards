@@ -1,9 +1,75 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject, isDevMode, ChangeDetectionStrategy } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
+// #region agent log - Track module evaluation start
+if (
+  typeof window !== 'undefined' &&
+  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+  !(window as any).__DISABLE_DEBUG_LOGGING
+) {
+  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      location: 'brand-colors-section.component.ts:1',
+      message: 'Module evaluation START - brand-colors-section.component.ts',
+      data: { timestamp: Date.now(), moduleId: 'brand-colors' },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run2',
+      hypothesisId: 'C',
+    }),
+  }).catch(() => {});
+}
+// #endregion
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+// #region agent log - Check BaseSectionComponent after import
+const baseClassCheck = {
+  imported: typeof BaseSectionComponent !== 'undefined',
+  isConstructor: typeof BaseSectionComponent === 'function',
+  isUndefined: typeof BaseSectionComponent === 'undefined',
+  isNull: BaseSectionComponent === null,
+  name: BaseSectionComponent?.name || 'undefined',
+  hasStaticProp: !!BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED,
+  globalAvailable: !!(typeof window !== 'undefined' && (window as any).__BaseSectionComponent),
+  globalForcedAvailable: !!(
+    typeof window !== 'undefined' && (window as any).__BaseSectionComponentForced
+  ),
+  referencesMatch:
+    typeof window !== 'undefined' &&
+    (window as any).__BaseSectionComponent === BaseSectionComponent,
+};
+if (baseClassCheck.isUndefined || baseClassCheck.isNull || !baseClassCheck.isConstructor) {
+  console.error('[FATAL] BaseSectionComponent is invalid after import!', baseClassCheck);
+  if (typeof window !== 'undefined' && (window as any).__BaseSectionComponent) {
+    console.error(
+      '[FATAL] Global fallback exists but cannot use in extends clause - this is the root cause!'
+    );
+  }
+}
+console.log('[DEBUG] BaseSectionComponent import check:', baseClassCheck);
+if (
+  typeof window !== 'undefined' &&
+  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+  !(window as any).__DISABLE_DEBUG_LOGGING
+) {
+  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      location: 'brand-colors-section.component.ts:11',
+      message: 'Import BaseSectionComponent - checking value',
+      data: baseClassCheck,
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run3',
+      hypothesisId: 'B',
+    }),
+  }).catch(() => {});
+}
+// #endregion
 
 /**
  * Brand Colors Section Component
@@ -17,6 +83,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './brand-colors-section.component.html',
   styleUrl: './brand-colors-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandColorsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
@@ -106,7 +173,10 @@ export class BrandColorsSectionComponent extends BaseSectionComponent implements
       try {
         await navigator.clipboard.writeText(value);
       } catch (err) {
-        console.warn('Failed to copy color', err);
+        // Only warn in development mode - clipboard failures are non-critical
+        if (isDevMode()) {
+          console.warn('Failed to copy color', err);
+        }
       }
     }
   }

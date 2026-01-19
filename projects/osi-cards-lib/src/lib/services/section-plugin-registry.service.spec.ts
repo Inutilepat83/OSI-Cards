@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { Component, Input } from '@angular/core';
 import { SectionPluginRegistry } from './section-plugin-registry.service';
-import { BaseSectionComponent } from '../components/sections/base-section.component';
-import { SectionPlugin } from '../interfaces/section-plugin.interface';
-import { CardSection } from '../models';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { SectionPlugin } from '@osi-cards/lib/interfaces/section-plugin.interface';
+import { CardSection } from '@osi-cards/models';
 
 // Mock plugin component
 @Component({

@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Overview",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Dashboard", "value": "Global Sales" },
         { "label": "Period", "value": "FY2024" },

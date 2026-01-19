@@ -2,6 +2,7 @@
 // CORE SERVICES
 // ============================================================================
 export * from './card-facade.service';
+export * from './clipboard.service';
 export * from './email-handler.service';
 // Removed - implement in your app
 // export * from './empty-state.service';
@@ -24,6 +25,8 @@ export * from './streaming.service';
 export * from './layout-calculation.service';
 export * from './layout-state-manager.service';
 export * from './height-estimation.service';
+export * from './masonry-transform.service';
+export * from './section-layout-preference.service';
 
 // ============================================================================
 // CONSOLIDATED SERVICES (Phase 3 Consolidation)
@@ -90,22 +93,21 @@ export { LogEntry, LogLevel, LoggerService, createLogger } from './logger.servic
 export * from './performance-metrics.service';
 export { Toast, ToastService } from './toast.service';
 export * from './touch-gestures.service';
+export { CardPdfService, CardPdfExportOptions } from './card-pdf.service';
+export { CardPdfHtml2PdfService } from './card-pdf-html2pdf.service';
 
 // ============================================================================
 // RE-EXPORTS FROM OTHER MODULES
 // ============================================================================
 
 // Dynamic loader from section-renderer
-export {
-  ComponentResolution,
-  DynamicSectionLoaderService,
-} from '../components/section-renderer/dynamic-section-loader.service';
+export { ComponentResolution, DynamicSectionLoaderService } from '@osi-cards/components';
 export {
   LAZY_SECTION_TYPES,
   LazySectionLoaderService,
   LazySectionState,
   LazySectionType,
-} from '../components/section-renderer/lazy-section-loader.service';
+} from '@osi-cards/components';
 
 // Theme service from themes folder
-export { ThemeService } from '../themes/theme.service';
+export { ThemeService } from '@osi-cards/themes';

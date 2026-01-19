@@ -11,8 +11,8 @@ export * from './branded.types';
 export * from './utility.types';
 
 // Re-export commonly needed types from other modules
-export type { ThemePreset } from '../themes/theme.service';
-export type { AnimationState } from '../utils/web-animations.util';
+export type { ThemePreset } from '@osi-cards/themes';
+export type { AnimationState } from '@osi-cards/utils';
 // Removed - grid-logger.util deleted
 export type LayoutPhase = 'initial' | 'optimization' | 'finalization';
 export type PackingAlgorithm = 'skyline' | 'bin-packer' | 'row-packer';
@@ -52,3 +52,6 @@ export type FieldValue = string | number | boolean | null | undefined;
 export type FieldFormat = 'text' | 'number' | 'currency' | 'percentage' | 'date' | 'time' | 'ratio';
 export type ComplexityLevel = 'simple' | 'moderate' | 'complex' | 'very-complex';
 export type CardChangeType = 'structural' | 'content' | 'style' | 'none';
+
+// Layout context
+export type { LayoutContext } from './layout-context';

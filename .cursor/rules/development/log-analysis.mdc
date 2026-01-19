@@ -31,6 +31,14 @@ priority: 1
   JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
   ```
 
+### Debug Logs (NDJSON File-Based)
+
+- **File Path:** `.cursor/debug.log`
+- **Format:** NDJSON (one JSON object per line)
+- **Query System:** Use `npm run debug:query` for structured queries
+- **HTTP API:** `http://127.0.0.1:7242/query` (when debug-log-server is running)
+- **Angular Service:** `DebugLogQueryService` for programmatic access
+
 ---
 
 ## 🔄 Log Lifecycle
@@ -67,17 +75,29 @@ priority: 1
 2. **Access Library Logs**
 
    ```javascript
-   const libLogs = JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+   // Using static method (recommended)
+   import { LoggerService } from '@osi-cards/services';
+   const libLogs = LoggerService.getLogsFromLocalStorage();
    console.table(libLogs); // View as table
    console.log('Library Logs:', libLogs); // View as JSON
+   
+   // Direct localStorage access (alternative)
+   const libLogsRaw = JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+   // Note: Direct access returns serialized format (timestamp as ISO string)
    ```
 
 3. **Access App Logs**
 
    ```javascript
-   const appLogs = JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+   // Using static method (recommended)
+   import { LoggingService } from '@app/core/services/logging.service';
+   const appLogs = LoggingService.getLogsFromLocalStorage();
    console.table(appLogs); // View as table
    console.log('App Logs:', appLogs); // View as JSON
+   
+   // Direct localStorage access (alternative)
+   const appLogsRaw = JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+   // Note: Direct access returns serialized format (timestamp as ISO string)
    ```
 
 4. **Filter by Level**
@@ -94,27 +114,109 @@ priority: 1
 
 5. **Search by Context**
    ```javascript
-   // Find logs from specific component
+   // Library logs: context is an object
    const masonryLogs = libLogs.filter((log) => log.context?.source === 'MasonryGridComponent');
    console.log('Masonry Grid Logs:', masonryLogs);
+   
+   // App logs: context is a string
+   const authLogs = appLogs.filter((log) => log.context === 'AuthService');
+   console.log('Auth Service Logs:', authLogs);
+   ```
+
+6. **Filter by Tags** (Recommended for Cursor Debug Feature)
+   ```javascript
+   // Filter library logs by tags
+   import { LoggerService } from '@osi-cards/services';
+   const masonryLogs = LoggerService.getLogsFromLocalStorage(['masonry-grid']);
+   const renderingLogs = LoggerService.getLogsFromLocalStorage(['rendering']);
+   const errorLogs = LoggerService.getLogsFromLocalStorage(['errors']);
+   
+   // Filter app logs by tags
+   import { LoggingService } from '@app/core/services/logging.service';
+   const apiLogs = LoggingService.getLogsFromLocalStorage(['api']);
+   const authLogs = LoggingService.getLogsFromLocalStorage(['auth']);
+   
+   // Filter by multiple tags (logs that have at least one matching tag)
+   const layoutAndRenderingLogs = LoggerService.getLogsFromLocalStorage(['layout', 'rendering']);
+   
+   // Manual filtering (if you already have logs loaded)
+   const taggedLogs = libLogs.filter((log) => 
+     log.tags && log.tags.some((tag) => ['masonry-grid', 'layout'].includes(tag))
+   );
+   ```
+
+   **Common Tag Categories:**
+   - **Component tags:** `masonry-grid`, `section-renderer`, `card-section-list`, `ai-card-renderer`
+   - **Feature tags:** `rendering`, `layout`, `streaming`, `performance`, `state`
+   - **Type tags:** `errors`, `warnings`, `documentation`, `api`, `auth`, `validation`
+   
+   **Using Tag Constants:**
+   ```typescript
+   import { LOG_TAGS } from '@osi-cards/utils';
+   
+   // Use constants for consistency
+   const masonryLogs = LoggerService.getLogsFromLocalStorage([LOG_TAGS.MASONRY_GRID, LOG_TAGS.LAYOUT]);
+   const errorLogs = LoggerService.getLogsFromLocalStorage([LOG_TAGS.ERRORS]);
+   ```
+
+7. **Clear Logs**
+   ```javascript
+   // Library logs
+   import { LoggerService } from '@osi-cards/services';
+   const logger = inject(LoggerService);
+   logger.clearLocalStorageLogs();
+   
+   // App logs
+   import { LoggingService } from '@app/core/services/logging.service';
+   const appLogger = inject(LoggingService);
+   appLogger.clearLocalStorageLogs();
+   ```
+
+8. **Export Logs**
+   ```javascript
+   // Library logs
+   const logger = inject(LoggerService);
+   const exported = logger.exportLocalStorageLogs(); // Returns JSON string
+   console.log(exported);
+   
+   // App logs
+   const appLogger = inject(LoggingService);
+   const exportedApp = appLogger.exportLocalStorageLogs(); // Returns JSON string
+   console.log(exportedApp);
    ```
 
 ### Step 2: Analyze Log Structure
 
-**Each log entry contains:**
+**Library Log Entry (LoggerService):**
 
 ```typescript
 {
-  timestamp: string;      // ISO timestamp
-  level: string;          // 'debug' | 'info' | 'warn' | 'error'
-  message: string;        // Log message
-  context?: {             // Additional context
-    source?: string;      // Component/service name
-    [key: string]: any;   // Custom data
-  };
+  timestamp: Date;        // Date object (converted from ISO string)
+  level: 'debug' | 'info' | 'warn' | 'error';
+  message: string;
+  context?: Record<string, any>;  // Additional context data
   stack?: string;         // Error stack trace (if error)
+  tags?: string[];        // Array of tags for filtering (e.g., ['masonry-grid', 'layout'])
 }
 ```
+
+**App Log Entry (LoggingService):**
+
+```typescript
+{
+  timestamp: Date;        // Date object (converted from ISO string)
+  level: 'debug' | 'info' | 'warn' | 'error';
+  message: string;
+  context?: string;       // Context string (service/component name)
+  data?: unknown;         // Additional data
+  correlationId?: string; // Request correlation ID
+  userId?: string;        // User ID (if available)
+  sessionId?: string;     // Session ID
+  tags?: string[];        // Array of tags for filtering (e.g., ['api', 'errors'])
+}
+```
+
+**Note:** When using `getLogsFromLocalStorage()`, timestamps are Date objects. Direct localStorage access returns ISO strings.
 
 ### Step 3: Categorize Issues
 
@@ -154,11 +256,11 @@ priority: 1
 
 ## 🔍 Common Log Patterns
 
-### Error Pattern
+### Error Pattern (Library Log)
 
 ```javascript
 {
-  timestamp: "2025-12-07T18:00:00.000Z",
+  timestamp: new Date("2025-12-07T18:00:00.000Z"),
   level: "error",
   message: "Failed to load component",
   context: {
@@ -170,11 +272,29 @@ priority: 1
 }
 ```
 
-### Warning Pattern
+### Error Pattern (App Log)
 
 ```javascript
 {
-  timestamp: "2025-12-07T18:00:01.000Z",
+  timestamp: new Date("2025-12-07T18:00:00.000Z"),
+  level: "error",
+  message: "API call failed",
+  context: "ApiService",
+  data: {
+    url: "/api/users",
+    status: 500,
+    error: "Internal Server Error"
+  },
+  correlationId: "corr_1234567890_abc123",
+  sessionId: "session_1234567890_xyz789"
+}
+```
+
+### Warning Pattern (Library Log)
+
+```javascript
+{
+  timestamp: new Date("2025-12-07T18:00:01.000Z"),
   level: "warn",
   message: "No component found for section type",
   context: {
@@ -184,11 +304,11 @@ priority: 1
 }
 ```
 
-### Info Pattern
+### Info Pattern (Library Log)
 
 ```javascript
 {
-  timestamp: "2025-12-07T18:00:02.000Z",
+  timestamp: new Date("2025-12-07T18:00:02.000Z"),
   level: "info",
   message: "Layout complete with actual heights",
   context: {
@@ -212,28 +332,38 @@ priority: 1
 1. ✅ **Check stored logs FIRST**
    - Open browser console
    - Access localStorage logs
+   - Use query system for structured analysis: `npm run debug:query`
    - Filter by error/warn level
+   - **Filter by tags to reduce log pollution** (e.g., `LoggerService.getLogsFromLocalStorage(['masonry-grid'])`)
 
-2. ✅ **Identify patterns**
+2. ✅ **Query debug logs** (for .cursor/debug.log)
+   - Use CLI: `npm run debug:query -- --hypothesisId STREAM_START`
+   - Filter by location: `npm run debug:query -- --location "streaming.service.ts"`
+   - Aggregate by field: `npm run debug:query -- --aggregate location`
+   - Search text: `npm run debug:query -- --search "error"`
+
+3. ✅ **Identify patterns**
    - Same error repeated?
    - Timing issues?
    - Specific component failing?
+   - Use aggregation to find hotspots
 
-3. ✅ **Extract context**
+4. ✅ **Extract context**
    - Component/service name
    - Error messages
    - Stack traces
    - Custom data
+   - Use query system to filter by specific fields
 
-4. ✅ **Fix issues**
+5. ✅ **Fix issues**
    - Address all errors
    - Fix important warnings
    - Document decisions
 
-5. ✅ **Verify fix**
+6. ✅ **Verify fix**
    - Refresh page (clears logs)
    - Reproduce issue
-   - Check new logs
+   - Check new logs (use query system to verify)
    - Confirm fix worked
 
 ---
@@ -244,6 +374,7 @@ Before considering debugging complete:
 
 - [ ] Checked library logs from localStorage
 - [ ] Checked app logs from localStorage
+- [ ] Queried debug logs using query system (if applicable)
 - [ ] Reviewed all error-level logs
 - [ ] Reviewed all warning-level logs
 - [ ] Identified root causes
@@ -254,38 +385,259 @@ Before considering debugging complete:
 
 ---
 
+## 🔧 Cursor Debug Mode Integration
+
+### Server-Based Logging
+
+The debug-log server (`scripts/debug-log-server.js`) writes logs to `.cursor/debug.log`:
+
+1. **Start the debug server:**
+   ```bash
+   npm run debug:log:server
+   # Or: node scripts/debug-log-server.js
+   ```
+
+2. **Server endpoints:**
+   - `POST /ingest/{session-id}` - Receives logs from browser (via fetch)
+   - `GET /health` - Health check endpoint
+   - `GET /query` - Query logs with filters, search, and aggregation
+   - `GET /logs` - Get all logs with optional filters (simpler interface)
+   - Logs written to: `.cursor/debug.log` (NDJSON format)
+
+3. **Cursor can read logs directly from:**
+   - `.cursor/debug.log` - Debug server logs (NDJSON format)
+   - localStorage keys: `osi-cards-logs`, `osi-cards-app-logs`
+
+### Direct File Access
+
+For scenarios where the debug server isn't available:
+
+1. **Export logs from localStorage:**
+   ```javascript
+   const logger = inject(LoggerService);
+   const logsJson = logger.exportLocalStorageLogs();
+   // Copy JSON to .cursor/debug.log
+   ```
+
+2. **Or use debug-log-file utilities:**
+   ```javascript
+   import { exportLogsAsText } from '@osi-cards/utils/debug-log-file.util';
+   const logsText = exportLogsAsText(); // Returns NDJSON string
+   // Copy to .cursor/debug.log
+   ```
+
+---
+
+## 🔍 Debug Log Query System
+
+**Use the debug log query system for structured log analysis instead of manual filtering:**
+
+### CLI Utility (Recommended for Agents)
+
+Query logs directly from the terminal using the CLI utility:
+
+```bash
+# Filter by hypothesis ID
+npm run debug:query -- --hypothesisId STREAM_START
+
+# Filter by location pattern
+npm run debug:query -- --location "streaming.service.ts" --format table
+
+# Filter by data field with comparison
+npm run debug:query -- --data.sectionsCount "> 0" --format table
+
+# Aggregate by location
+npm run debug:query -- --aggregate location --format summary
+
+# Text search
+npm run debug:query -- --search "card update" --limit 50
+
+# Complex query
+npm run debug:query -- --hypothesisId STREAM_SECTION --data.sectionsCount ">= 1" --aggregate location
+```
+
+**CLI Options:**
+
+- `--hypothesisId <id>` - Filter by hypothesis ID
+- `--sessionId <id>` - Filter by session ID
+- `--runId <id>` - Filter by run ID
+- `--location <pattern>` - Filter by location (substring match)
+- `--message <pattern>` - Filter by message (substring match)
+- `--timestampMin <ms>` - Minimum timestamp (milliseconds)
+- `--timestampMax <ms>` - Maximum timestamp (milliseconds)
+- `--data.<field> <value>` - Filter by data field (supports: `>`, `<`, `>=`, `<=`, `==`, `!=`, or range like `1-10`)
+- `--search <text>` - Text search in message and data
+- `--aggregate <field>` - Aggregate by field (location, hypothesisId, sessionId, runId, message)
+- `--aggregateSum true` - Include sum in aggregation (requires --aggregateDataField)
+- `--aggregateAvg true` - Include average in aggregation (requires --aggregateDataField)
+- `--aggregateDataField <path>` - Data field for numeric aggregation (e.g., data.sectionsCount)
+- `--limit <number>` - Maximum number of results
+- `--offset <number>` - Number of results to skip
+- `--format <format>` - Output format: json (default), table, summary
+- `--help` - Show help message
+
+**Use Cases for Agents:**
+
+- **Analyzing streaming issues:** `npm run debug:query -- --hypothesisId STREAM_START --format table`
+- **Finding performance problems:** `npm run debug:query -- --data.sectionsCount "> 10" --aggregate location`
+- **Debugging specific components:** `npm run debug:query -- --location "streaming.service.ts" --format table`
+- **Searching for specific errors:** `npm run debug:query -- --search "error" --limit 20`
+
+### HTTP API (For Browser/Angular)
+
+Query logs via HTTP API when debug-log-server is running:
+
+**Endpoints:**
+
+- `GET http://127.0.0.1:7242/query?hypothesisId=STREAM_START` - Full query interface
+- `GET http://127.0.0.1:7242/logs?location=streaming.service.ts&limit=100` - Simpler interface
+
+**Query Examples:**
+
+```bash
+# Filter by hypothesis ID
+curl "http://127.0.0.1:7242/query?hypothesisId=STREAM_START"
+
+# Filter by location and data field
+curl "http://127.0.0.1:7242/query?location=streaming.service.ts&data.sectionsCount.min=1"
+
+# Aggregate by location
+curl "http://127.0.0.1:7242/query?aggregate=location"
+
+# Text search
+curl "http://127.0.0.1:7242/query?search=card%20update&limit=50"
+```
+
+### Angular Service (For Application Code)
+
+Use `DebugLogQueryService` in Angular code:
+
+```typescript
+import { DebugLogQueryService } from '@core/services/debug-log-query.service';
+
+const queryService = inject(DebugLogQueryService);
+
+// Filter by hypothesis ID
+queryService.filterByHypothesisId('STREAM_START').subscribe(logs => {
+  console.log('Filtered logs:', logs);
+});
+
+// Complex query
+queryService.query({
+  filters: {
+    hypothesisId: 'STREAM_SECTION',
+    location: 'streaming.service.ts',
+    data: {
+      sectionsCount: { min: 1 }
+    }
+  },
+  search: 'card update',
+  limit: 50
+}).subscribe(result => {
+  console.log('Results:', result.logs);
+  console.log('Total:', result.total);
+  console.log('Filtered:', result.filtered);
+});
+
+// Aggregate by location
+queryService.aggregate('location').subscribe(aggregation => {
+  console.log('Aggregation:', aggregation);
+});
+```
+
+**Service Methods:**
+
+- `query(options: DebugLogQueryOptions): Observable<DebugLogQueryResult>` - Full query interface
+- `filterByHypothesisId(id: string | string[]): Observable<DebugLogEntry[]>` - Filter by hypothesis ID
+- `filterByLocation(location: string): Observable<DebugLogEntry[]>` - Filter by location
+- `filterBySessionId(sessionId: string | string[]): Observable<DebugLogEntry[]>` - Filter by session ID
+- `filterByRunId(runId: string | string[]): Observable<DebugLogEntry[]>` - Filter by run ID
+- `filterByDataField(fieldPath: string, value: number | { min?: number; max?: number }): Observable<DebugLogEntry[]>` - Filter by data field
+- `search(text: string): Observable<DebugLogEntry[]>` - Text search
+- `aggregate(field: string, dataField?: string): Observable<AggregationResult>` - Aggregate by field
+- `getAll(limit?: number): Observable<DebugLogEntry[]>` - Get all logs
+
+### Query Capabilities
+
+**Filtering:**
+
+- Filter by fields: `hypothesisId`, `sessionId`, `runId`, `location`, `message`
+- Filter by timestamp ranges: `timestampMin`, `timestampMax`
+- Filter by nested data fields: `data.sectionsCount`, `data.completedSectionsCount`, etc.
+- Support for comparison operators: `>`, `<`, `>=`, `<=`, `==`, `!=`
+- Support for value ranges: `1-10`
+
+**Searching:**
+
+- Text search in messages and data (case-insensitive)
+- Searches in stringified JSON data
+
+**Aggregation:**
+
+- Group by: `location`, `hypothesisId`, `sessionId`, `runId`, `message`
+- Count per group
+- Sum, average, min, max for numeric data fields
+
+**Pagination:**
+
+- Limit number of results
+- Offset for paging
+
+### When to Use Query System
+
+**Use the query system when:**
+
+- Analyzing logs for specific hypotheses or sessions
+- Filtering logs by location or data fields
+- Aggregating logs by field (e.g., count by location)
+- Searching for specific text in logs
+- Analyzing performance data (e.g., filtering by `data.sectionsCount > 0`)
+- Debugging streaming issues (e.g., filtering by `hypothesisId: 'STREAM_START'`)
+
+**Query system locations:**
+
+- CLI: `scripts/query-debug-logs.js`
+- HTTP API: `scripts/debug-log-server.js` (GET /query, GET /logs)
+- Angular Service: `src/app/core/services/debug-log-query.service.ts`
+- Query Engine: `scripts/utils/debug-log-query-engine.js`
+
 ## 🚨 Important Notes
 
-### Log Clearing
+### Log Storage Behavior
 
-- Logs are **automatically cleared** on page refresh
-- This prevents localStorage from filling up
-- Each session starts fresh
-- Check logs **before refreshing** if you need them
+- **Library Logs (LoggerService):** localStorage is opt-in (configure with `enableStorage: true`)
+- **App Logs (LoggingService):** localStorage is always enabled
+- Logs are **NOT automatically cleared** on page refresh (stored persistently)
+- Each service stores up to 1000 entries (configurable for LoggerService)
+- Older logs automatically trimmed when limit exceeded
+- Accessible even after errors occur
 
 ### Console Output
 
-- Console output is **minimal**
-- Only shows storage reference messages
-- Full logs are **only in localStorage**
-- Always check localStorage for details
+- Console output follows configured log levels
+- Structured logging includes full context
+- localStorage contains complete log history
+- Always check localStorage for full details
 
 ### Log Storage
 
 - Logs stored in browser localStorage
-- Limited to ~1000 entries per service
-- Older logs automatically trimmed
+- Limited to ~1000 entries per service (default)
+- Older logs automatically trimmed when limit exceeded
 - Accessible even after errors occur
+- Persistent across page refreshes (until manually cleared)
 
 ---
 
 ## 💡 Tips
 
 1. **Use browser console** to access logs quickly
-2. **Filter by level** to focus on errors/warnings
-3. **Search by context** to find specific component logs
-4. **Check timestamps** for timing-related issues
-5. **Export logs** if needed for deeper analysis
+2. **Use query system** (`npm run debug:query`) for structured analysis
+3. **Filter by level** to focus on errors/warnings
+4. **Search by context** to find specific component logs
+5. **Check timestamps** for timing-related issues
+6. **Use aggregation** to identify patterns (e.g., count by location)
+7. **Export logs** if needed for deeper analysis
 
 ---
 

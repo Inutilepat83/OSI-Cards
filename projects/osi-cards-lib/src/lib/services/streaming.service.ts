@@ -5,6 +5,9 @@
  * Simulates LLM (Large Language Model) streaming behavior for realistic
  * card generation experiences.
  *
+ * @dependencies
+ * - DestroyRef: For automatic cleanup of subscriptions and timers
+ *
  * @example
  * ```typescript
  * import { OSICardsStreamingService } from 'osi-cards-lib';
@@ -28,8 +31,9 @@
 
 import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '../models';
-import { CardChangeType } from '../types';
+import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '@osi-cards/models';
+import { CardChangeType } from '@osi-cards/types';
+import { sendDebugLog } from '@osi-cards/utils';
 
 /**
  * Streaming stage type
@@ -196,6 +200,22 @@ export class OSICardsStreamingService implements OnDestroy {
    * @param options Optional settings for streaming behavior
    */
   start(targetJson: string, options?: { instant?: boolean }): void {
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:start',
+      message: 'Streaming start called',
+      data: {
+        instant: options?.instant || false,
+        targetJsonLength: targetJson.length,
+        chunksQueueLength: this.chunksQueue.length,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_START',
+    });
+    // #endregion
+
     this.stop();
     this.targetJson = targetJson;
     this.buffer = '';
@@ -209,7 +229,34 @@ export class OSICardsStreamingService implements OnDestroy {
     this.partialCardTitle = '';
     this.detectedSectionTitles.clear();
 
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:start',
+      message: 'Chunks created',
+      data: {
+        chunksCount: this.chunksQueue.length,
+        firstChunkPreview: this.chunksQueue[0]?.substring(0, 100),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_START',
+    });
+    // #endregion
+
     if (!this.chunksQueue.length) {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:start',
+        message: 'No chunks created - error state',
+        data: {},
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_ERROR',
+      });
+      // #endregion
+
       this.updateState({
         isActive: false,
         stage: 'error',
@@ -235,10 +282,38 @@ export class OSICardsStreamingService implements OnDestroy {
       targetLength: targetJson.length,
     });
 
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:start',
+      message: 'State updated - starting',
+      data: {
+        isActive: true,
+        stage: options?.instant ? 'streaming' : 'thinking',
+        instant: options?.instant || false,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_STATE',
+    });
+    // #endregion
+
     if (options?.instant) {
       this.processAllChunksInstantly();
     } else {
       this.thinkingTimer = setTimeout(() => {
+        // #region agent log
+        sendDebugLog({
+          location: 'streaming.service.ts:start',
+          message: 'Thinking delay complete - transitioning to streaming',
+          data: {},
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'streaming-investigation',
+          hypothesisId: 'STREAM_STATE',
+        });
+        // #endregion
+
         this.updateState({ stage: 'streaming' });
         this.scheduleNextChunk();
       }, this.config.thinkingDelayMs);
@@ -249,6 +324,23 @@ export class OSICardsStreamingService implements OnDestroy {
    * Stop streaming
    */
   stop(): void {
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:stop',
+      message: 'Streaming stop called',
+      data: {
+        currentStage: this.getState().stage,
+        bufferLength: this.buffer.length,
+        chunksQueueLength: this.chunksQueue.length,
+        sectionsCount: this.placeholderCard?.sections?.length || 0,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_STOP',
+    });
+    // #endregion
+
     this.clearTimers();
     this.updateState({
       isActive: false,
@@ -397,10 +489,34 @@ export class OSICardsStreamingService implements OnDestroy {
 
   private scheduleNextChunk(): void {
     if (!this.getState().isActive) {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:scheduleNextChunk',
+        message: 'Skipping chunk - not active',
+        data: {},
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_CHUNK',
+      });
+      // #endregion
       return;
     }
 
     if (!this.chunksQueue.length) {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:scheduleNextChunk',
+        message: 'No more chunks - finishing',
+        data: {
+          bufferLength: this.buffer.length,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_COMPLETE',
+      });
+      // #endregion
       this.finish();
       return;
     }
@@ -409,17 +525,79 @@ export class OSICardsStreamingService implements OnDestroy {
     this.buffer += nextChunk;
     const hasMore = this.chunksQueue.length > 0;
 
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:scheduleNextChunk',
+      message: 'Processing chunk',
+      data: {
+        chunkSize: nextChunk.length,
+        chunksRemaining: this.chunksQueue.length,
+        bufferLength: this.buffer.length,
+        hasMore,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_CHUNK',
+    });
+    // #endregion
+
     this.bufferUpdateSubject.next(this.buffer);
 
     const parsed = this.tryParseBuffer();
     if (parsed) {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:scheduleNextChunk',
+        message: 'Buffer parsed successfully',
+        data: {
+          sectionsCount: parsed.sections?.length || 0,
+          cardTitle: parsed.cardTitle,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_CHUNK',
+      });
+      // #endregion
+
       const placeholdersCreated = this.initializePlaceholdersIfNeeded(parsed);
       if (placeholdersCreated && this.placeholderCard) {
+        // #region agent log
+        sendDebugLog({
+          location: 'streaming.service.ts:scheduleNextChunk',
+          message: 'Placeholders created',
+          data: {
+            placeholderSectionsCount: this.placeholderCard.sections?.length || 0,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'streaming-investigation',
+          hypothesisId: 'STREAM_SECTION',
+        });
+        // #endregion
         this.emitCardUpdate(this.placeholderCard, 'structural');
       }
 
       if (this.placeholderCard) {
         const completedSections = this.checkSectionCompletions(parsed);
+
+        // #region agent log
+        sendDebugLog({
+          location: 'streaming.service.ts:scheduleNextChunk',
+          message: 'Section completions checked',
+          data: {
+            completedSectionsCount: completedSections.length,
+            completedSectionIndices: completedSections,
+            totalSectionsInParsed: parsed.sections?.length || 0,
+            placeholderSectionsCount: this.placeholderCard.sections?.length || 0,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'streaming-investigation',
+          hypothesisId: 'STREAM_SECTION',
+        });
+        // #endregion
 
         if (completedSections.length > 0) {
           this.updateCompletedSectionsOnly(parsed, completedSections);
@@ -430,7 +608,38 @@ export class OSICardsStreamingService implements OnDestroy {
         this.emitProgressiveUpdate(parsed);
       }
     } else {
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:scheduleNextChunk',
+        message: 'Buffer parse failed - using detectCompletedSectionsFromBuffer',
+        data: {
+          bufferLength: this.buffer.length,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_CHUNK',
+      });
+      // #endregion
+
       const { newlyCompleted, card } = this.detectCompletedSectionsFromBuffer();
+
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:scheduleNextChunk',
+        message: 'detectCompletedSectionsFromBuffer result',
+        data: {
+          newlyCompletedCount: newlyCompleted.length,
+          newlyCompletedIndices: newlyCompleted,
+          cardCreated: !!card,
+          cardSectionsCount: card?.sections?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_SECTION',
+      });
+      // #endregion
 
       if (card) {
         this.placeholderCard = card;
@@ -448,6 +657,23 @@ export class OSICardsStreamingService implements OnDestroy {
     });
 
     const delay = hasMore ? this.computeChunkDelay(nextChunk) : 100;
+
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:scheduleNextChunk',
+      message: 'Scheduling next chunk',
+      data: {
+        delay,
+        hasMore,
+        willFinish: !hasMore,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_CHUNK',
+    });
+    // #endregion
+
     this.chunkTimer = setTimeout(() => {
       if (hasMore) {
         this.scheduleNextChunk();
@@ -458,9 +684,41 @@ export class OSICardsStreamingService implements OnDestroy {
   }
 
   private finish(): void {
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:finish',
+      message: 'Finish called',
+      data: {
+        bufferLength: this.buffer.length,
+        placeholderCardSectionsCount: this.placeholderCard?.sections?.length || 0,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_COMPLETE',
+    });
+    // #endregion
+
     const parsed = this.tryParseBuffer();
     if (parsed && this.placeholderCard) {
       const completedSections = this.checkSectionCompletions(parsed);
+
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:finish',
+        message: 'Final section completions',
+        data: {
+          completedSectionsCount: completedSections.length,
+          completedSectionIndices: completedSections,
+          parsedSectionsCount: parsed.sections?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_COMPLETE',
+      });
+      // #endregion
+
       if (completedSections.length > 0) {
         this.updateCompletedSectionsOnly(parsed, completedSections);
       }
@@ -587,7 +845,10 @@ export class OSICardsStreamingService implements OnDestroy {
       }
     }
 
-    if (this.partialSections.length > 0 || this.partialCardTitle) {
+    // Only return a card if we have at least one section
+    // Returning a card with empty sections will cause placeholderCard to be set to empty,
+    // preventing proper placeholder initialization
+    if (this.partialSections.length > 0) {
       const partialCard: AICardConfig = {
         cardTitle: this.partialCardTitle || 'Generating...',
         sections: [...this.partialSections],
@@ -602,9 +863,41 @@ export class OSICardsStreamingService implements OnDestroy {
     const sections = parsed.sections ?? [];
     const currentSectionCount = sections.length;
 
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:initializePlaceholdersIfNeeded',
+      message: 'Checking if placeholders needed',
+      data: {
+        currentSectionCount,
+        lastKnownSectionCount: this.lastKnownSectionCount,
+        willInitialize: currentSectionCount > this.lastKnownSectionCount && currentSectionCount > 0,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_SECTION',
+    });
+    // #endregion
+
     if (currentSectionCount > this.lastKnownSectionCount && currentSectionCount > 0) {
       this.lastKnownSectionCount = currentSectionCount;
       this.initializePlaceholders(parsed);
+
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:initializePlaceholdersIfNeeded',
+        message: 'Placeholders initialized',
+        data: {
+          sectionsCount: currentSectionCount,
+          placeholderCardSectionsCount: this.placeholderCard?.sections?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_SECTION',
+      });
+      // #endregion
+
       return true;
     }
 
@@ -681,6 +974,27 @@ export class OSICardsStreamingService implements OnDestroy {
       }
 
       const isComplete = this.isSectionComplete(section);
+
+      // #region agent log
+      sendDebugLog({
+        location: 'streaming.service.ts:checkSectionCompletions',
+        message: `Checking section ${index} completion`,
+        data: {
+          sectionIndex: index,
+          sectionKey,
+          wasComplete,
+          isComplete,
+          sectionTitle: section.title,
+          sectionType: section.type,
+          fieldsCount: section.fields?.length || 0,
+          itemsCount: section.items?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_SECTION',
+      });
+      // #endregion
 
       if (isComplete) {
         this.sectionCompletionStates.set(sectionKey, true);
@@ -921,6 +1235,50 @@ export class OSICardsStreamingService implements OnDestroy {
     changeType: CardChangeType,
     completedSections?: number[]
   ): void {
+    // #region agent log - emitCardUpdate entry
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'streaming.service.ts:emitCardUpdate:ENTRY',
+          message: 'Emitting card update',
+          data: {
+            changeType,
+            sectionsCount: card.sections?.length || 0,
+            cardTitle: card.cardTitle,
+            hasCard: !!card,
+            sections: card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'empty-card-debug',
+          hypothesisId: 'A',
+        }),
+      }).catch(() => {});
+    }
+    // #endregion
+    // #region agent log
+    sendDebugLog({
+      location: 'streaming.service.ts:emitCardUpdate',
+      message: 'Emitting card update',
+      data: {
+        changeType,
+        sectionsCount: card.sections?.length || 0,
+        completedSectionsCount: completedSections?.length || 0,
+        completedSectionIndices: completedSections || [],
+        cardTitle: card.cardTitle,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'streaming-investigation',
+      hypothesisId: 'STREAM_SECTION',
+    });
+    // #endregion
     const now = Date.now();
     const throttleMs = this.config.cardUpdateThrottleMs;
     const isStreaming = this.getState().isActive && this.getState().stage === 'streaming';
@@ -942,6 +1300,33 @@ export class OSICardsStreamingService implements OnDestroy {
         this.cardUpdateThrottleTimer = null;
       }
 
+      // #region agent log - emitting card update
+      if (
+        typeof window !== 'undefined' &&
+        localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+        !(window as any).__DISABLE_DEBUG_LOGGING
+      ) {
+        fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'streaming.service.ts:emitCardUpdate:EMITTING',
+            message: 'Emitting card update to subject',
+            data: {
+              changeType,
+              sectionsCount: card.sections?.length || 0,
+              cardTitle: card.cardTitle,
+              sections:
+                card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'empty-card-debug',
+            hypothesisId: 'A',
+          }),
+        }).catch(() => {});
+      }
+      // #endregion
       this.cardUpdateSubject.next({
         card,
         changeType,
@@ -969,10 +1354,34 @@ export class OSICardsStreamingService implements OnDestroy {
   }
 
   private updateState(updates: Partial<StreamingState>): void {
-    this.stateSubject.next({
-      ...this.stateSubject.value,
+    const previousState = this.stateSubject.value;
+    const newState = {
+      ...previousState,
       ...updates,
-    });
+    };
+
+    // #region agent log
+    // Log state transitions (only when stage changes)
+    if (updates.stage && updates.stage !== previousState.stage) {
+      sendDebugLog({
+        location: 'streaming.service.ts:updateState',
+        message: 'State transition',
+        data: {
+          previousStage: previousState.stage,
+          newStage: updates.stage,
+          isActive: newState.isActive,
+          progress: newState.progress,
+          bufferLength: newState.bufferLength,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'streaming-investigation',
+        hypothesisId: 'STREAM_STATE',
+      });
+    }
+    // #endregion
+
+    this.stateSubject.next(newState);
   }
 
   private clearTimers(): void {

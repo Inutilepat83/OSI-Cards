@@ -11,9 +11,26 @@
  * Sections: 23
  */
 
-// Base section component
-export * from './base-section.component';
-export * from './abstract-section-bases';
+// Base section component - exported separately to avoid circular dependencies
+export {
+  BaseSectionComponent,
+  SectionLayoutConfig,
+  DEFAULT_LAYOUT_CONFIG,
+  SectionLayoutPreferences,
+  LayoutSuggestionContext,
+  LayoutSuggestionEvent,
+  SectionInteraction,
+} from './base-section.component';
+export {
+  FieldBasedSectionComponent,
+  ItemBasedSectionComponent,
+  ChartSectionBaseComponent,
+  MixedContentSectionComponent,
+  ContactSectionBaseComponent,
+  ChartDataset,
+  ChartConfig,
+  ContactInfo,
+} from './abstract-section-bases';
 
 // Section Components (Auto-Generated)
 export { AnalyticsSectionComponent } from './analytics-section/analytics-section.component';

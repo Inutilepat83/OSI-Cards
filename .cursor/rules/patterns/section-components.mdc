@@ -1,0 +1,239 @@
+---
+description: "Section component patterns: BaseSectionComponent, definition.json, auto-discovery, 5-file structure"
+alwaysApply: true
+---
+
+# Section Component Patterns
+
+## Section Component Architecture
+
+### Overview
+
+**Sections are self-contained modules** with a specific 5-file structure and use `*.definition.json` files as the single source of truth for metadata.
+
+### File Structure (5 Files)
+
+Each section folder contains exactly **5 files**:
+
+```
+section-name/
+├── section-name.component.ts     # Component logic
+├── section-name.component.html   # Template
+├── section.definition.json       # Schema, metadata, test fixtures (SINGLE SOURCE OF TRUTH)
+├── section-name.scss             # External styles (optional, inherits design system)
+└── README.md                     # Complete documentation
+```
+
+**Never edit generated files** (section-registry.json, sections/index.ts, etc.) - they're auto-generated.
+
+---
+
+## BaseSectionComponent Pattern
+
+### Extending BaseSectionComponent
+
+**All section components extend BaseSectionComponent or its subclasses:**
+
+```typescript
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { BaseSectionComponent } from '../base-section.component';
+import { CardField } from '../../../models';
+
+@Component({
+  selector: 'app-info-section',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './info-section.component.html',
+  styleUrls: ['./info-section.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class InfoSectionComponent extends BaseSectionComponent<CardField> {
+  // Component implementation
+}
+```
+
+### Specialized Base Classes
+
+**Use specialized base classes when appropriate:**
+
+- **FieldBasedSectionComponent**: For sections that display fields (info, analytics, financials)
+- **ItemBasedSectionComponent**: For sections that display items/lists (list, product, solutions)
+- **ChartSectionBaseComponent**: For sections with data visualizations (chart)
+- **MixedContentSectionComponent**: For sections with both fields and items
+
+**See:** `abstract-section-bases.ts` for all base classes
+
+### Example: Field-Based Section
+
+```typescript
+import { Component } from '@angular/core';
+import { FieldBasedSectionComponent } from '../abstract-section-bases';
+import { CardField } from '../../../models';
+
+@Component({
+  selector: 'app-analytics-section',
+  standalone: true,
+  templateUrl: './analytics-section.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AnalyticsSectionComponent extends FieldBasedSectionComponent {
+  // Inherits @Input() section, @Output() fieldInteraction, etc.
+  // Access fields via this.getFields()
+}
+```
+
+---
+
+## Definition Files (Single Source of Truth)
+
+### section.definition.json
+
+**All section metadata comes from `*.definition.json` files** - these are the authoritative source for:
+- Section type identifiers and aliases
+- Use cases and best practices
+- Data schemas (fieldSchema, itemSchema, chartDataSchema)
+- Examples (demo, doc, long)
+- Rendering configuration
+- Portfolio descriptions (for LLM prompts)
+
+**Example structure:**
+
+```json
+{
+  "type": "info",
+  "name": "Information Section",
+  "description": "Displays key-value pairs of information",
+  "aliases": ["information", "details"],
+  "fieldSchema": {
+    "label": "string",
+    "value": "string | number | boolean"
+  },
+  "examples": {
+    "demo": {
+      "title": "Company Overview",
+      "type": "info",
+      "fields": [...]
+    }
+  }
+}
+```
+
+### Guidelines
+
+- **Never hardcode section information** - always read from definition files
+- All documentation, JSON templates, prompts, and TypeScript types are **generated** from definition files
+- Run `npm run sections:build` after adding/modifying sections
+- See existing sections (e.g., `info-section/info.definition.json`) for examples
+
+---
+
+## Auto-Discovery System
+
+### Section Registration
+
+**Sections are automatically discovered** - no manual registration needed:
+
+1. **Add section**: Create folder with 5 files → Done!
+2. **Run build**: `npm run sections:build` → Generates all artifacts
+3. **Remove section**: Delete folder → Run `npm run sections:build`
+
+**Generated files:**
+- `section-registry.json` - Compiled from all `*.definition.json` files
+- `sections/index.ts` - Component exports (auto-discovered)
+- `_all-sections.generated.scss` - Style bundle (auto-imported)
+- `generated-section-types.ts` - TypeScript types
+
+**Never edit generated files directly!**
+
+### Commands
+
+```bash
+# Build sections (generates all artifacts)
+npm run sections:build
+
+# Or generate all (sections + other artifacts)
+npm run generate:all
+```
+
+---
+
+## Section Component Checklist
+
+Before creating a section:
+
+- [ ] 5 files created (component.ts, component.html, definition.json, component.scss, README.md)
+- [ ] Extends BaseSectionComponent or specialized base class
+- [ ] `section.definition.json` defines type, schema, examples
+- [ ] Component is standalone
+- [ ] Uses OnPush change detection
+- [ ] Selector follows pattern (app-*-section)
+- [ ] SCSS imports design system
+- [ ] Run `npm run sections:build` after creation
+- [ ] Never edit generated files
+
+---
+
+## Common Patterns
+
+### Field-Based Section
+
+```typescript
+@Component({
+  selector: 'app-info-section',
+  standalone: true,
+  templateUrl: './info-section.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class InfoSectionComponent extends FieldBasedSectionComponent {
+  // Fields accessible via this.getFields()
+  // Emit interactions via this.fieldInteraction.emit()
+}
+```
+
+### Item-Based Section
+
+```typescript
+@Component({
+  selector: 'app-list-section',
+  standalone: true,
+  templateUrl: './list-section.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ListSectionComponent extends ItemBasedSectionComponent {
+  // Items accessible via this.getItems()
+  // Emit interactions via this.itemInteraction.emit()
+}
+```
+
+### SCSS Pattern
+
+```scss
+// Import design system
+@use '../../../styles/components/sections/design-system' as *;
+
+:host {
+  display: block;
+}
+
+// Section-specific styles
+.info-section {
+  // Use design tokens and mixins
+}
+```
+
+---
+
+## Section Examples
+
+**See existing sections for reference:**
+
+- `info-section/` - Simple field-based section
+- `analytics-section/` - Field-based with specialized styling
+- `list-section/` - Item-based section
+- `chart-section/` - Chart-based section (lazy loaded)
+
+**All sections follow the same 5-file structure pattern.**
+
+---
+
+**See also:** `angular-components.mdc`, `angular-library.mdc`, `scss-styling.mdc`

@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Professional Profile",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Job Title", "value": "Chief Marketing Officer" },
         { "label": "Company", "value": "BrandForward Agency" },

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * Video Section Component
@@ -18,6 +18,7 @@ import { CardSection } from '../../../models';
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './video-section.component.html',
   styleUrl: './video-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

@@ -7,6 +7,10 @@
  *
  * Provides comprehensive layout optimization and analytics tracking.
  *
+ * @dependencies
+ * - FeatureFlagsService: For checking feature flags (e.g., skyline packing)
+ * - Utility functions: findLayoutGaps, fillLayoutGaps, optimizeColumnSpans, localSwapOptimization, optimizeLayout, analyzeLayout
+ *
  * @example
  * ```typescript
  * import { LayoutOptimizerService } from 'osi-cards-lib';
@@ -23,7 +27,7 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { CardSection } from '../models';
+import { CardSection } from '@osi-cards/models';
 import {
   OptimizableLayoutSection,
   PreferredColumns,
@@ -38,9 +42,9 @@ import {
   localSwapOptimization,
   optimizeLayout,
   analyzeLayout,
-} from '../utils/unified-layout-optimizer.util';
-import { LayoutMetrics } from '../core/packing-algorithm.interface';
-import { FeatureFlagsService } from './feature-flags.service';
+} from '@osi-cards/utils';
+import { LayoutMetrics } from '@osi-cards/core';
+import { FeatureFlagsService } from '@osi-cards/services';
 
 // ============================================================================
 // TYPES

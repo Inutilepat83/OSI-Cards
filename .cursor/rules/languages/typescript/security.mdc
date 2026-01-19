@@ -279,4 +279,4 @@ npm update
 - Skip security headers
 - Ignore dependency vulnerabilities
 
-**See also:** `patterns/security.mdc`, `input-sanitization.mdc`, `validation.mdc`
+**See also:** `patterns/security.mdc`, `validation.mdc`, `angular-components.mdc`

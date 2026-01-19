@@ -9,10 +9,13 @@
  * - Content-aware height calculation (items, fields, description)
  * - Caching for performance
  * - Learning from actual measurements (feedback loop)
+ *
+ * @dependencies
+ * - None (pure calculation service with internal caching)
  */
 
 import { Injectable } from '@angular/core';
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 export interface HeightEstimationContext {
   colSpan?: number;

@@ -45,6 +45,7 @@
 .section-item {
   @include card("normal");
   display: flex;
+  align-items: flex-start;
   gap: var(--osi-section-item-gap-md, 8px);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -80,13 +81,19 @@
   align-items: flex-start;
   flex-shrink: 0;
   min-width: 100px;
+  margin-bottom: 0;
+
+  // Remove margin on first item
+  .section-item:first-child & {
+    margin-bottom: 0;
+  }
 }
 
 .timeline-marker-content {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--osi-section-item-gap-xs, 2px);
+  gap: 4px;
   z-index: 1;
   width: 100%;
 }
@@ -119,6 +126,8 @@
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 // Header
@@ -126,7 +135,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--osi-section-item-gap-xs, 2px);
-  margin-top: var(--osi-section-item-gap-xs, 2px);
+  margin-top: 0;
 }
 
 .timeline-title {
@@ -207,7 +216,7 @@
   }
 
   .timeline-marker-content {
-    gap: var(--osi-section-item-gap);
+    gap: 4px;
   }
 
   .timeline-dot {

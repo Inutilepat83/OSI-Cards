@@ -5,7 +5,7 @@ import {
   WorkerPackResult,
   WorkerPositionedSection,
 } from './layout-worker.service';
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 
 describe('LayoutWorkerService', () => {
   let service: LayoutWorkerService;

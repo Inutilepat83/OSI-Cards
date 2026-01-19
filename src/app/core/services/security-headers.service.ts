@@ -105,7 +105,7 @@ export class SecurityHeadersService {
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data: https:",
         "font-src 'self' data: https:",
-        "connect-src 'self' https: http://127.0.0.1:7245 http://localhost:*",
+        "connect-src 'self' https: http://127.0.0.1:7242 http://localhost:*",
         "media-src 'self' https://videos.nexustech.io",
         "frame-src 'self' https://www.youtube.com https://youtube.com https://player.vimeo.com https://vimeo.com",
         "frame-ancestors 'none'",

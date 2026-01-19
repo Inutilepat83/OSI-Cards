@@ -12,6 +12,9 @@
  * - Position control
  * - Observable notifications
  *
+ * @dependencies
+ * - None (uses Angular signals and RxJS for state management)
+ *
  * @example
  * ```typescript
  * import { NotificationService } from '@osi-cards/lib';

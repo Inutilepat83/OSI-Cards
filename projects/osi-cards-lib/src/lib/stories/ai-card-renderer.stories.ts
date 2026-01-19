@@ -8,10 +8,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/angular';
-import { AICardRendererComponent } from '../components/ai-card-renderer/ai-card-renderer.component';
+import { AICardRendererComponent } from '@osi-cards/components';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, moduleMetadata } from '@storybook/angular';
-import type { AICardConfig, CardSection, CardField, CardAction } from '../models';
+import type { AICardConfig, CardSection, CardField, CardAction } from '@osi-cards/models';
 
 /**
  * Sample card configurations for stories

@@ -15,7 +15,6 @@
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
-            loading="lazy"
             title="{{ video.title || 'Video player' }}"
           >
           </iframe>
@@ -65,9 +64,11 @@
           </button>
 
           <div class="video-meta">
-            <span class="video-duration" *ngIf="video.meta?.duration">{{ video.meta?.duration }}</span>
-            <span class="video-platform" *ngIf="video.meta?.platform">{{ video.meta?.platform }}</span>
-            <span class="video-views" *ngIf="video.meta?.views">{{ video.meta?.views }} views</span>
+            <div class="video-meta-left">
+              <span class="video-duration" *ngIf="video.meta?.duration">{{ video.meta?.duration }}</span>
+              <span class="video-platform" *ngIf="video.meta?.platform">{{ video.meta?.platform }}</span>
+              <span class="video-views" *ngIf="video.meta?.views">{{ video.meta?.views }} views</span>
+            </div>
             <span class="video-category" *ngIf="video.meta?.category">{{ video.meta?.category }}</span>
           </div>
         </div>

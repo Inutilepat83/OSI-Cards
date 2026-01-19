@@ -25,13 +25,30 @@ export {
 export { CardStreamingIndicatorComponent } from './card-streaming-indicator/card-streaming-indicator.component';
 
 // Section Components
-export { SectionErrorBoundaryComponent } from './section-error-boundary/section-error-boundary.component';
+export {
+  SectionErrorBoundaryComponent,
+  SectionError,
+  ErrorBoundaryConfig as SectionErrorBoundaryConfig,
+  DEFAULT_ERROR_BOUNDARY_CONFIG,
+} from './section-error-boundary/section-error-boundary.component';
 export {
   SectionRendererComponent,
   type SectionRenderEvent,
 } from './section-renderer/section-renderer.component';
 export { SectionSkeletonComponent } from './section-skeleton/section-skeleton.component';
 export * from './sections';
+
+// Section Renderer Services
+export {
+  ComponentResolution,
+  DynamicSectionLoaderService,
+} from './section-renderer/dynamic-section-loader.service';
+export {
+  LAZY_SECTION_TYPES,
+  LazySectionLoaderService,
+  LazySectionState,
+  LazySectionType,
+} from './section-renderer/lazy-section-loader.service';
 
 // Grid & Layout
 export { MasonryGridComponent } from './masonry-grid/masonry-grid.component';
@@ -44,7 +61,7 @@ export { OsiCardsComponent } from './osi-cards/osi-cards.component';
 // Error Boundary
 export {
   ErrorBoundaryComponent,
-  ErrorBoundaryConfig,
+  ErrorBoundaryConfig as GlobalErrorBoundaryConfig,
   ErrorBoundaryError,
   createErrorBoundaryConfig,
 } from './error-boundary/error-boundary.component';

@@ -62,7 +62,8 @@ import { JsonProcessingService } from '../../../core/services/json-processing.se
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0;
+        height: fit-content;
       }
 
       .json-editor-label {
@@ -192,6 +193,13 @@ import { JsonProcessingService } from '../../../core/services/json-processing.se
 
       .json-textarea::-webkit-scrollbar-thumb:hover {
         background: color-mix(in srgb, var(--border) 80%, transparent);
+      }
+
+      /* Discrete resize handle */
+      .json-textarea::-webkit-resizer {
+        background: color-mix(in srgb, var(--border) 30%, transparent);
+        border: none;
+        border-radius: 0 0 12px 0;
       }
 
       .json-error {

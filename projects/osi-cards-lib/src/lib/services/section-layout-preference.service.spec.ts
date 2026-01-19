@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { SectionLayoutPreferenceService } from './section-layout-preference.service';
-import { CardSection } from '../models/card.model';
-import { SectionLayoutPreferences } from '../components/sections/base-section.component';
-import { LayoutContext } from '../types/layout-context';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferences } from '@osi-cards/components';
+import { LayoutContext } from '@osi-cards/types';
 
 describe('SectionLayoutPreferenceService', () => {
   let service: SectionLayoutPreferenceService;

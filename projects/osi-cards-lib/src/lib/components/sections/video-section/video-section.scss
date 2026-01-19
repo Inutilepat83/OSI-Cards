@@ -47,7 +47,10 @@
   cursor: pointer;
   min-width: 0; // Prevent grid item overflow
   width: 100%; // Ensure full width of grid cell
+  max-width: 100%; // Prevent overflow
   box-sizing: border-box; // Ensure proper box model
+  display: flex; // Use flex layout
+  flex-direction: column; // Stack children vertically
 
   // Unified hover effect
   @include section-card-hover;
@@ -94,6 +97,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--osi-section-item-gap-xs);
+  width: 100%; // Ensure full horizontal width
+  max-width: 100%; // Prevent overflow
+  min-width: 0; // Allow shrinking
+  box-sizing: border-box; // Ensure proper box model
+  flex: 1; // Take available space
 
   @include responsive-down("sm") {
     padding-left: var(--osi-section-item-padding-compact);
@@ -107,6 +115,10 @@
   @include text-overflow-ellipsis(2); // Limit to 2 lines
   overflow-wrap: break-word;
   word-wrap: break-word;
+  width: 100%; // Ensure full width
+  max-width: 100%; // Prevent overflow
+  min-width: 0; // Allow shrinking
+  box-sizing: border-box;
 }
 
 .video-description {
@@ -117,6 +129,10 @@
   @include text-overflow-ellipsis(2); // Limit to 2 lines by default
   overflow-wrap: break-word;
   word-wrap: break-word;
+  width: 100%; // Ensure full width
+  max-width: 100%; // Prevent overflow
+  min-width: 0; // Allow shrinking
+  box-sizing: border-box;
   transition:
     color var(--osi-section-item-transition),
     opacity var(--osi-section-item-transition);
@@ -139,12 +155,37 @@
 
 .video-meta {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: var(--osi-section-item-gap);
   font-size: var(--text-sm);
   color: var(--muted-foreground);
-  flex-wrap: wrap;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  width: 100%; // Ensure full horizontal width
+  max-width: 100%; // Prevent overflow
+  min-width: 0; // Allow shrinking
+  box-sizing: border-box; // Ensure proper box model
+
+  .video-meta-left {
+    display: flex;
+    gap: var(--osi-section-item-gap);
+    align-items: center;
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    flex: 1; // Take available space
+    min-width: 0; // Allow shrinking
+    max-width: 100%; // Prevent overflow
+
+    @include responsive-down("sm") {
+      gap: var(--osi-section-item-gap-sm);
+    }
+  }
+
+  .video-category {
+    margin-left: auto; // Push category to the right
+    flex-shrink: 0; // Prevent category from shrinking
+    white-space: nowrap; // Prevent category from wrapping
+  }
 }
 
 .video-wrapper {
@@ -153,7 +194,8 @@
   margin-left: calc(var(--osi-section-item-padding-normal) * -1);
   margin-right: calc(var(--osi-section-item-padding-normal) * -1);
   margin-top: calc(var(--osi-section-item-padding-normal) * -1);
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 9; // Maintain 16:9 aspect ratio for responsive height
+  min-height: 0; // Prevent minimum height issues
   background: var(--osi-surface-hover);
   // Only round top corners to match section-item border-radius
   border-radius: var(--osi-section-item-border-radius) var(--osi-section-item-border-radius) 0 0;
@@ -169,22 +211,30 @@
   }
 
   iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    position: absolute !important;
+    inset: 0 !important; // Use inset for all sides (more reliable than individual properties)
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    // Remove any conflicting styles
+    aspect-ratio: unset !important;
+    min-height: unset !important;
+    max-height: unset !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    object-fit: unset !important;
+    vertical-align: unset !important;
+    // Ensure iframe fills container completely
+    transform: none !important;
   }
 
   video {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0; // Use inset for top/right/bottom/left all at once
     width: 100%;
     height: 100%;
     border: none;

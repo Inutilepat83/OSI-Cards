@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { CardSection } from '../../../models';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { EmptyStateComponent, SectionHeaderComponent, type ProgressBarVariant } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+import { sendDebugLog } from '@osi-cards/lib/utils/debug-log.util';
 
 /**
  * Analytics Section Component - Compact & Minimalist with Progressive Disclosure
@@ -18,6 +19,7 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './analytics-section.component.html',
   styleUrl: './analytics-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalyticsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
@@ -124,23 +126,19 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
    */
   formatMetricValue(metric: any): string {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:125',
-        message: 'formatMetricValue entry',
-        data: {
-          metricValue: metric?.value,
-          metricFormat: metric?.format,
-          metricLabel: metric?.label,
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:125',
+      message: 'formatMetricValue entry',
+      data: {
+        metricValue: metric?.value,
+        metricFormat: metric?.format,
+        metricLabel: metric?.label,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'A',
+    });
     // #endregion
     if (metric.value === null || metric.value === undefined) return '—';
 
@@ -153,19 +151,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
         metric.value.includes('K'))
     ) {
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:136',
-          message: 'formatMetricValue returning formatted string',
-          data: { value: metric.value },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:136',
+        message: 'formatMetricValue returning formatted string',
+        data: { value: metric.value },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
       // #endregion
       return metric.value;
     }
@@ -174,19 +168,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     if (metric.format === 'currency') {
       const numValue = Number(metric.value);
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:141',
-          message: 'formatMetricValue currency conversion',
-          data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:141',
+        message: 'formatMetricValue currency conversion',
+        data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
       // #endregion
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -199,19 +189,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     if (metric.format === 'percentage') {
       const numValue = Number(metric.value);
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:150',
-          message: 'formatMetricValue percentage conversion',
-          data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:150',
+        message: 'formatMetricValue percentage conversion',
+        data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
       // #endregion
       if (isNaN(numValue)) {
         return '—';
@@ -222,19 +208,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     if (metric.format === 'number') {
       const numValue = Number(metric.value);
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:154',
-          message: 'formatMetricValue number conversion',
-          data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:154',
+        message: 'formatMetricValue number conversion',
+        data: { originalValue: metric.value, numValue, isNaN: isNaN(numValue) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
       // #endregion
       if (isNaN(numValue)) {
         return '—';
@@ -251,19 +233,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
 
     const result = metric.value.toString();
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:165',
-        message: 'formatMetricValue toString result',
-        data: { originalValue: metric.value, result },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:165',
+      message: 'formatMetricValue toString result',
+      data: { originalValue: metric.value, result },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'A',
+    });
     // #endregion
     return result;
   }
@@ -288,41 +266,33 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
    */
   getProgressPercentage(metric: any): number {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:186',
-        message: 'getProgressPercentage entry',
-        data: {
-          metricPercentage: metric?.percentage,
-          metricValue: metric?.value,
-          metricGoal: (metric as any)?.goal,
-          metricLabel: metric?.label,
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'B',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:186',
+      message: 'getProgressPercentage entry',
+      data: {
+        metricPercentage: metric?.percentage,
+        metricValue: metric?.value,
+        metricGoal: (metric as any)?.goal,
+        metricLabel: metric?.label,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'B',
+    });
     // #endregion
     if (metric.percentage !== undefined) {
       const result = Math.min(100, Math.max(0, metric.percentage));
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:188',
-          message: 'getProgressPercentage using percentage',
-          data: { percentage: metric.percentage, result },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'B',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:188',
+        message: 'getProgressPercentage using percentage',
+        data: { percentage: metric.percentage, result },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'B',
+      });
       // #endregion
       return result;
     }
@@ -331,53 +301,41 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
       const value = Number(metric.value);
       const goalValue = Number(goal);
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:193',
-          message: 'getProgressPercentage calculation',
-          data: { value, goalValue, valueIsNaN: isNaN(value), goalIsNaN: isNaN(goalValue) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'B',
-        }),
-      }).catch(() => {});
-      // #endregion
-      if (goalValue === 0) return 0;
-      const result = Math.min(100, Math.max(0, (value / goalValue) * 100));
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:195',
-          message: 'getProgressPercentage result',
-          data: { result, isNaN: isNaN(result) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'B',
-        }),
-      }).catch(() => {});
-      // #endregion
-      return result;
-    }
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:197',
-        message: 'getProgressPercentage returning 0',
-        data: {},
+      sendDebugLog({
+        location: 'analytics-section.component.ts:193',
+        message: 'getProgressPercentage calculation',
+        data: { value, goalValue, valueIsNaN: isNaN(value), goalIsNaN: isNaN(goalValue) },
         timestamp: Date.now(),
         sessionId: 'debug-session',
         runId: 'run1',
         hypothesisId: 'B',
-      }),
-    }).catch(() => {});
+      });
+      // #endregion
+      if (goalValue === 0) return 0;
+      const result = Math.min(100, Math.max(0, (value / goalValue) * 100));
+      // #region agent log
+      sendDebugLog({
+        location: 'analytics-section.component.ts:195',
+        message: 'getProgressPercentage result',
+        data: { result, isNaN: isNaN(result) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'B',
+      });
+      // #endregion
+      return result;
+    }
+    // #region agent log
+    sendDebugLog({
+      location: 'analytics-section.component.ts:197',
+      message: 'getProgressPercentage returning 0',
+      data: {},
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'B',
+    });
     // #endregion
     return 0;
   }
@@ -402,63 +360,51 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
    */
   getProgressClass(metric: any): string {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:218',
-        message: 'getProgressClass entry',
-        data: { metricLabel: metric?.label, metricPerformance: metric?.performance },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:218',
+      message: 'getProgressClass entry',
+      data: { metricLabel: metric?.label, metricPerformance: metric?.performance },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'C',
+    });
     // #endregion
     const percentage = this.getProgressPercentage(metric);
     const target = this.getTargetPercentage(metric);
     const variant = this.getVariant(metric.performance);
     const goal = (metric as any).goal;
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:222',
-        message: 'getProgressClass calculated values',
-        data: {
-          percentage,
-          target,
-          variant,
-          goal,
-          percentageIsNaN: isNaN(percentage),
-          targetIsNaN: isNaN(target),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:222',
+      message: 'getProgressClass calculated values',
+      data: {
+        percentage,
+        target,
+        variant,
+        goal,
+        percentageIsNaN: isNaN(percentage),
+        targetIsNaN: isNaN(target),
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'C',
+    });
     // #endregion
 
     // If we have a goal and current value is below target
     if (goal !== undefined && percentage < target - 5) {
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:226',
-          message: 'getProgressClass returning warning',
-          data: {},
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:226',
+        message: 'getProgressClass returning warning',
+        data: {},
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      });
       // #endregion
       return 'metric-progress-fill--warning';
     }
@@ -466,19 +412,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     // If we have a goal and current value meets/exceeds target
     if (goal !== undefined && percentage >= target - 5) {
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:231',
-          message: 'getProgressClass returning success',
-          data: {},
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:231',
+        message: 'getProgressClass returning success',
+        data: {},
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      });
       // #endregion
       return 'metric-progress-fill--success';
     }
@@ -489,19 +431,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     if (variant === 'error') return 'metric-progress-fill--error';
     const result = 'metric-progress-fill--default';
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:238',
-        message: 'getProgressClass returning default',
-        data: { result },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:238',
+      message: 'getProgressClass returning default',
+      data: { result },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'C',
+    });
     // #endregion
     return result;
   }
@@ -511,23 +449,19 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
    */
   getProgressLabel(metric: any): string {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:244',
-        message: 'getProgressLabel entry',
-        data: {
-          metricValue: metric?.value,
-          metricGoal: (metric as any)?.goal,
-          metricLabel: metric?.label,
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'D',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:244',
+      message: 'getProgressLabel entry',
+      data: {
+        metricValue: metric?.value,
+        metricGoal: (metric as any)?.goal,
+        metricLabel: metric?.label,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'D',
+    });
     // #endregion
     // If goal exists (via any field), show "X of Y" format
     // Try goal field, or use percentage as goal reference
@@ -536,35 +470,27 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
       const value = Number(metric.value);
       const goalValue = Number(goal);
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:249',
-          message: 'getProgressLabel calculation',
-          data: { value, goalValue, valueIsNaN: isNaN(value), goalIsNaN: isNaN(goalValue) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'D',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:249',
+        message: 'getProgressLabel calculation',
+        data: { value, goalValue, valueIsNaN: isNaN(value), goalIsNaN: isNaN(goalValue) },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'D',
+      });
       // #endregion
       const result = `${this.formatValueWithMetricFormat(metric, value)} / ${this.formatValueWithMetricFormat(metric, goalValue)}`;
       // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'analytics-section.component.ts:251',
-          message: 'getProgressLabel result',
-          data: { result },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'D',
-        }),
-      }).catch(() => {});
+      sendDebugLog({
+        location: 'analytics-section.component.ts:251',
+        message: 'getProgressLabel result',
+        data: { result },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'D',
+      });
       // #endregion
       return result;
     }
@@ -572,19 +498,15 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     const percentage = this.getProgressPercentage(metric);
     const result = `${Math.round(percentage)}%`;
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'analytics-section.component.ts:255',
-        message: 'getProgressLabel percentage result',
-        data: { percentage, result, percentageIsNaN: isNaN(percentage) },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'D',
-      }),
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'analytics-section.component.ts:255',
+      message: 'getProgressLabel percentage result',
+      data: { percentage, result, percentageIsNaN: isNaN(percentage) },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'run1',
+      hypothesisId: 'D',
+    });
     // #endregion
     return result;
   }

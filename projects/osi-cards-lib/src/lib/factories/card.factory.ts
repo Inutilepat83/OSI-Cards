@@ -30,8 +30,8 @@ import type {
   CardItem,
   CardAction,
   CardType,
-} from '../models/card.model';
-import type { SectionTypeInput } from '../models/generated-section-types';
+} from '@osi-cards/models';
+import type { SectionTypeInput } from '@osi-cards/models';
 
 // ============================================================================
 // TYPES

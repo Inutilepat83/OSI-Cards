@@ -231,12 +231,28 @@
   opacity: 1 !important;
 }
 
+// Copied state - show checkmark with green color
+.overview-section-copy-btn--copied {
+  color: #10b981 !important; // Success green
+  opacity: 1 !important;
+}
+
+.overview-section-copy-btn--copied:hover {
+  color: #10b981 !important;
+  opacity: 1 !important;
+}
+
 // Lucide icon styling
 .overview-section-copy-btn lucide-icon {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   vertical-align: middle !important;
+  transition: transform 0.2s ease !important;
+}
+
+.overview-section-copy-btn--copied lucide-icon {
+  transform: scale(1.1) !important;
 }
 
 .overview-section-copy-btn lucide-icon svg {
@@ -248,4 +264,5 @@
   stroke-width: 2 !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
+  transition: stroke 0.2s ease !important;
 }

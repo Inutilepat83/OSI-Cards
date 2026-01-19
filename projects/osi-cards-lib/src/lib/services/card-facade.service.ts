@@ -10,6 +10,11 @@
  * - Manages internal service coordination
  * - Handles state synchronization
  *
+ * @dependencies
+ * - OSICardsStreamingService: For streaming card generation and updates
+ * - ThemeService: For theme configuration and management
+ * - DestroyRef: For automatic cleanup of subscriptions
+ *
  * @example
  * ```typescript
  * import { CardFacade } from 'osi-cards-lib';
@@ -39,23 +44,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, BehaviorSubject, merge, EMPTY } from 'rxjs';
 import { map, filter, tap, catchError, shareReplay } from 'rxjs/operators';
 
-import type {
-  AICardConfig,
-  CardSection,
-  CardField,
-  CardItem,
-  CardAction,
-} from '../models/card.model';
-import { CardUtils, CardTypeGuards } from '../models/card.model';
+import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '@osi-cards/models';
+import { CardUtils, CardTypeGuards } from '@osi-cards/models';
 import {
   OSICardsStreamingService,
   CardUpdate,
   StreamingState,
   StreamingConfig,
-} from './streaming.service';
-import { ThemeService } from '../themes/theme.service';
-import { CardFactory, SectionFactory } from '../factories/card.factory';
-import { ValidationError } from '../errors';
+} from '@osi-cards/services';
+import { ThemeService } from '@osi-cards/themes';
+import { CardFactory, SectionFactory } from '@osi-cards/lib/factories';
+import { ValidationError } from '@osi-cards/lib/errors';
 
 // ============================================================================
 // TYPES
@@ -193,6 +192,19 @@ export class CardFacade {
 
   /**
    * Create a new card
+   *
+   * @example
+   * ```typescript
+   * const card = facade.createCard({
+   *   title: 'Company Profile',
+   *   sections: [
+   *     { title: 'Overview', type: 'info', fields: [] }
+   *   ],
+   *   actions: [
+   *     { type: 'website', label: 'Visit Website', url: 'https://example.com' }
+   *   ]
+   * });
+   * ```
    */
   public createCard(options: CreateCardOptions): AICardConfig {
     const {
@@ -440,6 +452,17 @@ export class CardFacade {
 
   /**
    * Add a section to a card
+   *
+   * @example
+   * ```typescript
+   * const added = facade.addSection('card-123', {
+   *   title: 'Analytics',
+   *   type: 'analytics',
+   *   fields: [
+   *     { label: 'Revenue', value: '$1M', trend: 'up' }
+   *   ]
+   * });
+   * ```
    */
   public addSection(cardId: string, section: CardSection): boolean {
     const card = this._cards().get(cardId);

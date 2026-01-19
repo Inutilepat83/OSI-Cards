@@ -147,6 +147,18 @@ module.exports = tseslint.config(
       ],
       // No duplicate imports
       'no-duplicate-imports': 'error',
+      // Warn on deep relative imports (encourage path aliases)
+      'no-restricted-imports': [
+        'warn',
+        {
+          patterns: [
+            {
+              group: ['../../*', '../../../*', '../../../../*'],
+              message: 'Prefer path aliases (@osi-cards/*) over deep relative imports',
+            },
+          ],
+        },
+      ],
 
       // ============================================================
       // CODE QUALITY

@@ -34,6 +34,15 @@ export class SectionLoaderService {
         ).OverviewSectionComponent,
     });
 
+    // Overview section - from library (same component as info)
+    this.registry.register('overview', {
+      canHandle: () => true,
+      loadComponent: async () =>
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/overview-section/overview-section.component')
+        ).OverviewSectionComponent,
+    });
+
     // Analytics section - from library
     this.registry.register(
       'analytics',

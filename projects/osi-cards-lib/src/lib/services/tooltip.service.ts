@@ -3,6 +3,9 @@
  *
  * Manages tooltips with positioning, delays, and accessibility.
  *
+ * @dependencies
+ * - None (uses DOM APIs directly for tooltip creation)
+ *
  * @example
  * ```typescript
  * const tooltip = inject(TooltipService);

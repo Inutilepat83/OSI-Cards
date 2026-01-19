@@ -4,6 +4,9 @@
  * Angular service for interacting with the layout Web Worker.
  * Provides promise-based API for off-thread layout calculations.
  *
+ * @dependencies
+ * - None (manages Web Worker lifecycle directly)
+ *
  * @example
  * ```typescript
  * @Component({...})
@@ -21,12 +24,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject, ReplaySubject, from, of } from 'rxjs';
 import { takeUntil, map, catchError, timeout } from 'rxjs/operators';
-import { CardSection } from '../models/card.model';
+import { CardSection } from '@osi-cards/models';
 import type {
   LayoutWorkerMessage,
   LayoutWorkerResponse,
   LayoutWorkerMessageType,
-} from '../workers/layout-worker';
+} from '@osi-cards/lib/workers/layout-worker';
 
 // ============================================================================
 // TYPES

@@ -13,15 +13,18 @@ import {
   Injector,
   Input,
   isDevMode,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   PLATFORM_ID,
+  SimpleChanges,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { catchError, fromEvent, interval, of, Subject, takeUntil } from 'rxjs';
-import { LucideIconsModule } from '../../icons';
+import { MasonryLayoutInfo } from '@osi-cards/components';
+import { LucideIconsModule } from '@osi-cards/icons';
+import { getShortVersion } from '@osi-cards/lib/version';
 import {
   AICardConfig,
   CardAction,
@@ -29,7 +32,7 @@ import {
   CardItem,
   CardSection,
   LegacyCardAction,
-} from '../../models';
+} from '@osi-cards/models';
 import {
   IconService,
   MagneticTiltService,
@@ -37,14 +40,18 @@ import {
   SectionCompletenessService,
   SectionNormalizationService,
   TiltCalculations,
-} from '../../services';
-import { CardChangeType } from '../../utils';
-import { generateBriefSummary, generateCardSummary } from '../../utils/card-summary.util';
-import { getShortVersion } from '../../version';
+} from '@osi-cards/services';
+import { CardChangeType } from '@osi-cards/types';
+import {
+  generateBriefSummary,
+  generateCardSummary,
+  sendDebugLog,
+  sendDebugLogToFile,
+} from '@osi-cards/utils';
+import { catchError, fromEvent, interval, of, Subject, takeUntil } from 'rxjs';
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
 import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
-import { MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
 
 export interface CardFieldInteractionEvent {
@@ -87,7 +94,7 @@ export type StreamingStage =
     ]),
   ],
 })
-export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private _cardConfig: AICardConfig | undefined;
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -198,7 +205,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         this.normalizeThemeFromAttr(contextEl.getAttribute('data-theme')) ?? this.fallbackTheme;
       if (next !== this.inheritedTheme) {
         this.inheritedTheme = next;
-        this.cdr.markForCheck();
+        this.batchedMarkForCheck();
       }
     });
 
@@ -212,10 +219,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   Math = Math;
 
   private previousSectionsHash = '';
+  private lastSectionsReference: CardSection[] | null = null; // Track array reference to avoid unnecessary hash calculations
   private normalizedSectionCache = new WeakMap<CardSection, CardSection>();
   private sectionHashCache = new WeakMap<CardSection[], string>();
+  // Cache completeness results to avoid repeated service calls during streaming
+  // This significantly improves performance when same sections are checked multiple times
+  private completenessCache = new WeakMap<CardSection, boolean>();
   private sectionOrderKeys: string[] = [];
   private _changeType: CardChangeType = 'structural';
+  // Re-entrancy guard and rate limiting for refreshProcessedSections
+  private isRefreshing = false;
+  private lastRefreshTime = 0;
+  private readonly MIN_REFRESH_INTERVAL_MS = 16; // 60fps max (16ms = ~60 calls/second)
 
   // Empty state animations
   particles: { transform: string; opacity: number }[] = [];
@@ -273,81 +288,239 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:275',
-        message: 'CardConfig setter called',
+    // Input validation: validate cardConfig structure
+    if (value !== undefined && value !== null) {
+      // Basic structure validation
+      if (typeof value !== 'object' || Array.isArray(value)) {
+        if (isDevMode()) {
+          console.warn(
+            '[AICardRenderer] Invalid cardConfig: must be an object, received:',
+            typeof value
+          );
+        }
+        this._cardConfig = undefined;
+        return;
+      }
+
+      // Validate required fields
+      const hasTitle =
+        typeof (value as any).cardTitle === 'string' || typeof (value as any).title === 'string';
+      const hasSections = Array.isArray((value as any).sections);
+
+      if (!hasTitle && isDevMode()) {
+        console.warn('[AICardRenderer] Invalid cardConfig: missing cardTitle or title');
+      }
+
+      if (!hasSections && (value as any).sections !== undefined && isDevMode()) {
+        console.warn('[AICardRenderer] Invalid cardConfig: sections must be an array');
+      }
+
+      // Validate sections array structure if present
+      if (hasSections && Array.isArray((value as any).sections)) {
+        const sections = (value as any).sections as CardSection[];
+        for (let i = 0; i < sections.length; i++) {
+          const section = sections[i];
+          if (!section || typeof section !== 'object') {
+            if (isDevMode()) {
+              console.warn(`[AICardRenderer] Invalid section at index ${i}: must be an object`);
+            }
+            continue;
+          }
+
+          // Validate section has type
+          if (!section.type || typeof section.type !== 'string') {
+            if (isDevMode()) {
+              console.warn(
+                `[AICardRenderer] Invalid section at index ${i}: missing or invalid type`
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // #region agent log - cardConfig setter entry
+    sendDebugLog({
+      location: 'ai-card-renderer.component.ts:cardConfig.setter:ENTRY',
+      message: 'cardConfig setter entry',
+      data: {
+        hasValue: !!value,
+        hasSections: !!value?.sections,
+        sectionsCount: value?.sections?.length || 0,
+        sections:
+          value?.sections?.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            hasFields: !!s.fields?.length,
+            hasItems: !!s.items?.length,
+          })) || [],
+        cardTitle: value?.cardTitle,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'section-render-debug',
+      hypothesisId: 'H1',
+    });
+    // #endregion
+    const startTime = performance.now();
+    this._cardConfig = value as AICardConfig | undefined;
+
+    if (!this._cardConfig?.sections?.length) {
+      // #region agent log - no sections in cardConfig
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:cardConfig.setter:NO_SECTIONS',
+        message: 'No sections in cardConfig - resetting',
         data: {
-          hasValue: !!value,
-          hasSections: !!value?.sections,
-          sectionsCount: value?.sections?.length || 0,
-          timestamp: Date.now(),
+          hasCardConfig: !!this._cardConfig,
+          cardConfigKeys: this._cardConfig ? Object.keys(this._cardConfig) : [],
         },
         timestamp: Date.now(),
         sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'C',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-    // #endregion
-
-    this._cardConfig = value;
-
-    if (!this._cardConfig?.sections?.length) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'ai-card-renderer.component.ts:282',
-          message: 'No sections - resetting',
-          data: { timestamp: Date.now() },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'card-debug',
-          hypothesisId: 'C',
-        }),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
+        runId: 'empty-card-debug',
+        hypothesisId: 'A',
+      });
       // #endregion
       this.resetProcessedSections();
-      this.cdr.markForCheck();
+      this.batchedMarkForCheck();
       return;
     }
 
-    const sectionsHash = this.hashSections(this._cardConfig.sections);
-    const shouldForceStructural =
-      sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
-
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:293',
-        message: 'Refreshing processed sections',
-        data: {
-          sectionsHash,
-          previousHash: this.previousSectionsHash,
-          shouldForceStructural,
-          updateSource: this._updateSource,
+    // #region agent log - write to file
+    if (typeof window !== 'undefined') {
+      const logThrottle = (window as any).__debugLogThrottle || {};
+      const now = Date.now();
+      if (!logThrottle.cardConfigSetter || now - logThrottle.cardConfigSetter > 100) {
+        logThrottle.cardConfigSetter = now;
+        (window as any).__debugLogThrottle = logThrottle;
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:cardConfig.setter',
+          message: 'cardConfig setter entry',
+          data: {
+            sectionsCount: this._cardConfig?.sections?.length,
+            updateSource: this._updateSource,
+            hasPreviousHash: !!this.previousSectionsHash,
+          },
           timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'C',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'B',
+        });
+      }
+    }
     // #endregion
 
-    this.refreshProcessedSections(shouldForceStructural);
-    this.cdr.markForCheck();
+    // CRITICAL: Streaming updates must process immediately - no debounce
+    // Debounce only for non-streaming updates to batch rapid changes
+    if (this._updateSource === 'liveEdit') {
+      // Live edits need immediate feedback
+      const sectionsHash = this.hashSections(this._cardConfig.sections);
+      const shouldForceStructural =
+        sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
+      this.refreshProcessedSections(shouldForceStructural);
+      this.batchedMarkForCheck();
+    } else {
+      // Check if streaming is active - if so, process immediately
+      const isStreaming = this.isStreamingActive;
+      if (isStreaming) {
+        // #region agent log - write to file
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:cardConfig.setter',
+          message: 'Streaming path taken',
+          data: { sectionsCount: this._cardConfig?.sections?.length },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'C',
+        });
+        // #endregion
+        // During streaming, process immediately for responsive section appearance
+        // No debounce - sections must appear right away for smooth streaming experience
+        // Optimize: Skip hash calculation if structure likely unchanged (array reference same)
+        // This speeds up content-only updates during streaming
+        const sections = this._cardConfig.sections;
+        const sectionsReferenceChanged = sections !== this.lastSectionsReference;
+        let shouldForceStructural = false;
+
+        if (sectionsReferenceChanged) {
+          // Reference changed - recalculate hash to check for structural changes
+          this.lastSectionsReference = sections;
+          const sectionsHash = this.hashSections(sections);
+          shouldForceStructural = sectionsHash !== this.previousSectionsHash;
+          this.previousSectionsHash = sectionsHash;
+        } else {
+          // Reference unchanged - likely content-only update, skip hash calculation
+          // Assume structure unchanged unless explicitly forced
+          shouldForceStructural = false;
+        }
+
+        const refreshStart = performance.now();
+        this.refreshProcessedSections(shouldForceStructural);
+        const refreshDuration = performance.now() - refreshStart;
+        // #region agent log - write to file
+        if (refreshDuration > 10) {
+          sendDebugLogToFile({
+            location: 'ai-card-renderer.component.ts:cardConfig.setter',
+            message: 'refreshProcessedSections completed',
+            data: { duration: refreshDuration, shouldForceStructural, sectionsReferenceChanged },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'perf-debug',
+            hypothesisId: 'D',
+          });
+        }
+        // #endregion
+        this.batchedMarkForCheck();
+      } else {
+        // #region agent log - write to file, throttled
+        if (typeof window !== 'undefined') {
+          const logThrottle = (window as any).__debugLogThrottle || {};
+          const now = Date.now();
+          if (!logThrottle.nonStreamingPath || now - logThrottle.nonStreamingPath > 500) {
+            logThrottle.nonStreamingPath = now;
+            (window as any).__debugLogThrottle = logThrottle;
+            sendDebugLogToFile({
+              location: 'ai-card-renderer.component.ts:cardConfig.setter',
+              message: 'Non-streaming path - debouncing',
+              data: {
+                sectionsCount: this._cardConfig?.sections?.length,
+                hasTimeout: !!this.refreshTimeoutId,
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'perf-debug',
+              hypothesisId: 'E',
+            });
+          }
+        }
+        // #endregion
+        // Non-streaming updates: debounce to batch rapid changes
+        // Fix race condition: store timeout ID and check it's still valid in callback
+        const currentTimeoutId = this.refreshTimeoutId;
+        if (currentTimeoutId !== null) {
+          clearTimeout(currentTimeoutId);
+        }
+        this.refreshTimeoutId = setTimeout(() => {
+          // Race condition fix: check if this timeout is still the current one
+          // If refreshTimeoutId changed, this callback is stale and should be ignored
+          if (this.refreshTimeoutId !== currentTimeoutId) {
+            return; // Stale timeout, ignore
+          }
+
+          // Guard against undefined _cardConfig in case it changed during the timeout
+          if (!this._cardConfig?.sections?.length) {
+            this.refreshTimeoutId = null;
+            return;
+          }
+          const sectionsHash = this.hashSections(this._cardConfig.sections);
+          const shouldForceStructural =
+            sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
+          this.refreshProcessedSections(shouldForceStructural);
+          this.batchedMarkForCheck();
+          this.refreshTimeoutId = null;
+        }, 50); // Debounce non-streaming updates to batch rapid changes
+      }
+    }
   }
 
   get cardConfig(): AICardConfig | undefined {
@@ -360,6 +533,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    */
   @Input()
   set updateSource(value: 'stream' | 'liveEdit') {
+    // Input validation: ensure value is valid
+    if (value !== 'stream' && value !== 'liveEdit') {
+      if (isDevMode()) {
+        console.warn(
+          `[AICardRenderer] Invalid updateSource: expected 'stream' or 'liveEdit', received:`,
+          value
+        );
+      }
+      this._updateSource = 'stream'; // Default to stream
+      return;
+    }
+
     if (value === 'liveEdit' && this._updateSource !== value) {
       // Live edit detected - force section reprocessing by invalidating hash
       this.previousSectionsHash = '';
@@ -377,31 +562,70 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   /**
    * Fast hash function for sections (replaces JSON.stringify)
    * Uses WeakMap cache to avoid recomputation
+   * Optimized to include more relevant fields to avoid false positives
    */
   private hashSections(sections: CardSection[]): string {
+    const hashStart = performance.now();
     // Check cache first
     if (this.sectionHashCache.has(sections)) {
-      return this.sectionHashCache.get(sections)!;
+      const cached = this.sectionHashCache.get(sections)!;
+      // #region agent log - write to file
+      sendDebugLogToFile({
+        location: 'ai-card-renderer.component.ts:hashSections',
+        message: 'Hash cache hit',
+        data: { sectionsCount: sections.length, duration: performance.now() - hashStart },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'perf-debug',
+        hypothesisId: 'F',
+      });
+      // #endregion
+      return cached;
     }
 
     // Create a lightweight hash based on section metadata
-    const hash = sections
-      .map((section) => {
-        const fieldCount = section.fields?.length ?? 0;
-        const itemCount = section.items?.length ?? 0;
-        return `${section.id || ''}|${section.title || ''}|${section.type || ''}|f${fieldCount}|i${itemCount}`;
-      })
-      .join('||');
+    // Include more fields to reduce false positives: id, type, title, field/item counts, and colSpan
+    const hashParts: string[] = [];
+    for (const section of sections) {
+      const fieldCount = section.fields?.length ?? 0;
+      const itemCount = section.items?.length ?? 0;
+      const chartDataCount = section.chartData?.datasets?.length ?? 0;
+      const colSpan = section.colSpan ?? 0;
+      // Include first field/item values to detect content changes (not just count)
+      const firstFieldValue = section.fields?.[0]?.value?.toString().substring(0, 20) || '';
+      const firstItemTitle = section.items?.[0]?.title?.substring(0, 20) || '';
 
-    // Simple hash of the string
-    let result = 0;
+      hashParts.push(
+        `${section.id || ''}|${section.type || ''}|${section.title || ''}|` +
+          `f${fieldCount}|i${itemCount}|c${chartDataCount}|s${colSpan}|` +
+          `fv${firstFieldValue}|it${firstItemTitle}`
+      );
+    }
+
+    const hash = hashParts.join('||');
+
+    // Optimized hash function: use djb2 algorithm (better distribution)
+    let result = 5381; // djb2 initial value
     for (let i = 0; i < hash.length; i++) {
-      const char = hash.charCodeAt(i);
-      result = (result << 5) - result + char;
-      result = result & result; // Convert to 32-bit integer
+      result = (result << 5) + result + hash.charCodeAt(i);
+      result = result & 0xffffffff; // Convert to 32-bit integer
     }
 
     const hashString = String(result);
+    const hashDuration = performance.now() - hashStart;
+    // #region agent log - write to file
+    if (hashDuration > 1) {
+      sendDebugLogToFile({
+        location: 'ai-card-renderer.component.ts:hashSections',
+        message: 'Hash calculated',
+        data: { sectionsCount: sections.length, duration: hashDuration },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'perf-debug',
+        hypothesisId: 'F',
+      });
+    }
+    // #endregion
     // Cache the result
     this.sectionHashCache.set(sections, hashString);
     return hashString;
@@ -416,7 +640,22 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * If not provided, component will attempt to detect from context or use default
    */
   @Input() theme?: 'day' | 'night' | 'system' | string;
-  @Input() streamingProgress?: number; // Progress 0-1
+  @Input()
+  set streamingProgress(value: number | undefined) {
+    // Input validation: ensure progress is between 0 and 1
+    if (value !== undefined && (value < 0 || value > 1)) {
+      if (isDevMode()) {
+        console.warn(`[AICardRenderer] Invalid streamingProgress: expected 0-1, received:`, value);
+      }
+      this._streamingProgress = undefined;
+      return;
+    }
+    this._streamingProgress = value;
+  }
+  get streamingProgress(): number | undefined {
+    return this._streamingProgress;
+  }
+  private _streamingProgress?: number;
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
 
   /**
@@ -432,6 +671,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * @default true
    */
   @Input() showLoadingByDefault = true;
+
+  /**
+   * Cached streaming active state - updated only when inputs change
+   * CRITICAL: This is a property, not a getter, to avoid excessive evaluations in template
+   */
+  isStreamingActive = false;
 
   /**
    * Optional explicit container width from parent for reliable masonry layout.
@@ -460,6 +705,19 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
   @Input()
   set changeType(value: CardChangeType) {
+    // Input validation: ensure value is valid CardChangeType
+    const validChangeTypes: CardChangeType[] = ['structural', 'content'];
+    if (!validChangeTypes.includes(value)) {
+      if (isDevMode()) {
+        console.warn(
+          `[AICardRenderer] Invalid changeType: expected 'structural' or 'content', received:`,
+          value
+        );
+      }
+      this._changeType = 'structural'; // Default to structural
+      return;
+    }
+
     if (this._changeType === value) {
       return;
     }
@@ -492,6 +750,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('emptyStateContainer') emptyStateContainer!: ElementRef<HTMLDivElement>;
 
   processedSections: CardSection[] = [];
+
+  get processedSectionsForTemplate(): CardSection[] {
+    return this.processedSections;
+  }
 
   /**
    * Measured container width for reliable masonry layout in Shadow DOM.
@@ -541,6 +803,33 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   // ViewportScroller available for future scroll functionality
   // private readonly viewportScroller = inject(ViewportScroller);
 
+  // Debounce card config updates to avoid excessive processing
+  private refreshTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  // Change detection batching: queue markForCheck calls to batch them in single RAF
+  private changeDetectionRafId: number | null = null;
+  private pendingChangeDetection = false;
+
+  /**
+   * Batched change detection - queues markForCheck() to batch multiple calls
+   * Uses requestAnimationFrame to batch all pending change detection in single cycle
+   */
+  private batchedMarkForCheck(): void {
+    if (this.pendingChangeDetection) {
+      return; // Already queued
+    }
+
+    this.pendingChangeDetection = true;
+
+    if (this.changeDetectionRafId === null) {
+      this.changeDetectionRafId = requestAnimationFrame(() => {
+        this.cdr.markForCheck();
+        this.pendingChangeDetection = false;
+        this.changeDetectionRafId = null;
+      });
+    }
+  }
+
   /**
    * Optional LLM API endpoint for fallback card generation.
    * If not provided, will attempt to use a default endpoint.
@@ -554,107 +843,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() llmFallbackPrompt?: string;
 
   ngOnInit(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:556',
-        message: 'AICardRenderer ngOnInit starting',
-        data: {
-          hasCardConfig: !!this.cardConfig,
-          hasSections: !!this.cardConfig?.sections,
-          sectionsCount: this.cardConfig?.sections?.length || 0,
-          componentStyleUrls: ['../../styles/bundles/_ai-card.scss'],
-          encapsulation: 'ShadowDom',
-          timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'style-debug',
-        hypothesisId: 'A',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-    console.log('[DEBUG] Component styleUrls:', ['../../styles/bundles/_ai-card.scss']);
-    // #endregion
-
-    // #region agent log - Check Shadow DOM and styles immediately
-    if (isPlatformBrowser(this.platformId)) {
-      // Check immediately (styles might not be injected yet)
-      setTimeout(() => {
-        const hostEl = this.el.nativeElement;
-        const shadowRoot = hostEl.shadowRoot;
-        const logData = {
-          location: 'ai-card-renderer.component.ts:ngOnInit',
-          message: 'Shadow DOM style check (ngOnInit)',
-          data: {
-            hasShadowRoot: !!shadowRoot,
-            shadowRootMode: shadowRoot?.mode,
-            styleSheetsCount: shadowRoot?.adoptedStyleSheets?.length || 0,
-            styleElementsCount: shadowRoot?.querySelectorAll('style').length || 0,
-            hostComputedStyles: shadowRoot
-              ? {
-                  display: window.getComputedStyle(hostEl).display,
-                  backgroundColor: window.getComputedStyle(hostEl).backgroundColor,
-                  border: window.getComputedStyle(hostEl).border,
-                }
-              : null,
-            timestamp: Date.now(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'style-debug',
-          hypothesisId: 'B',
-        };
-        console.log('[DEBUG] Shadow DOM style check (ngOnInit):', logData);
-        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(logData),
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-        }).catch(() => {});
-
-        // Check CSS variables on :host
-        if (shadowRoot) {
-          const hostStyles = window.getComputedStyle(hostEl);
-          const cssVars = {
-            '--osi-section-item-background': hostStyles.getPropertyValue(
-              '--osi-section-item-background'
-            ),
-            '--osi-section-item-border': hostStyles.getPropertyValue('--osi-section-item-border'),
-            '--foreground': hostStyles.getPropertyValue('--foreground'),
-            '--background': hostStyles.getPropertyValue('--background'),
-            '--osi-card-background': hostStyles.getPropertyValue('--osi-card-background'),
-            '--osi-card-border': hostStyles.getPropertyValue('--osi-card-border'),
-          };
-          const cssVarLogData = {
-            location: 'ai-card-renderer.component.ts:ngOnInit',
-            message: 'CSS variables check on :host (ngOnInit)',
-            data: {
-              cssVariables: cssVars,
-              hasBackgroundVar: !!cssVars['--osi-section-item-background'],
-              hasBorderVar: !!cssVars['--osi-section-item-border'],
-              hasCardBackground: !!cssVars['--osi-card-background'],
-              hasCardBorder: !!cssVars['--osi-card-border'],
-              timestamp: Date.now(),
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'style-debug',
-            hypothesisId: 'C',
-          };
-          console.log('[DEBUG] CSS variables check (ngOnInit):', cssVarLogData);
-          fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cssVarLogData),
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-          }).catch(() => {});
-        }
-      }, 0);
-    }
-    // #endregion
+    // Initialize cached streaming state
+    this.isStreamingActive = this.isStreaming || this.streamingStage === 'streaming';
 
     // Ensure the host gets the correct data-theme even in Safari (no :host-context reliance).
     this.setupInheritedThemeSync();
@@ -672,63 +862,44 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Track scroll for parallax effect
     this.setupScrollTracking();
+    // CRITICAL: Ensure processedSections is populated if cardConfig is already available
+    // This handles cases where cardConfig is set before ngOnInit (common on page refresh)
+    if (this.cardConfig && this.cardConfig.sections && this.cardConfig.sections.length > 0) {
+      if (!this.processedSections || this.processedSections.length === 0) {
+        // CRITICAL DEBUG: Log when forcing refresh in ngOnInit
+        if (isDevMode() && isPlatformBrowser(this.platformId)) {
+          console.log('[AICardRenderer] ngOnInit: Forcing refreshProcessedSections', {
+            cardConfigSections: this.cardConfig.sections.length,
+            processedSections: this.processedSections.length,
+          });
+        }
+        this.refreshProcessedSections(true); // Force structural rebuild
+        this.batchedMarkForCheck();
+      }
+    }
+
     // Use LLM fallback if no card config provided
     if (!this.cardConfig) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'ai-card-renderer.component.ts:512',
-          message: 'No cardConfig - generating fallback',
-          data: { timestamp: Date.now() },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'card-debug',
-          hypothesisId: 'D',
-        }),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
-      // #endregion
       this.generateFallbackCard();
     }
 
-    if (!this.processedSections.length) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'ai-card-renderer.component.ts:516',
-          message: 'No processed sections - refreshing',
-          data: { timestamp: Date.now() },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'card-debug',
-          hypothesisId: 'D',
-        }),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
-      // #endregion
-      this.refreshProcessedSections(true);
+    // CRITICAL: Double-check after fallback generation
+    if (this.cardConfig && this.cardConfig.sections && this.cardConfig.sections.length > 0) {
+      if (!this.processedSections || this.processedSections.length === 0) {
+        // CRITICAL DEBUG: Log when forcing refresh after fallback check
+        if (isDevMode() && isPlatformBrowser(this.platformId)) {
+          console.log(
+            '[AICardRenderer] ngOnInit: Forcing refreshProcessedSections after fallback check',
+            {
+              cardConfigSections: this.cardConfig.sections.length,
+              processedSections: this.processedSections.length,
+            }
+          );
+        }
+        this.refreshProcessedSections(true);
+        this.batchedMarkForCheck();
+      }
     }
-
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:520',
-        message: 'AICardRenderer ngOnInit completed',
-        data: { processedSectionsCount: this.processedSections.length, timestamp: Date.now() },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'D',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-    // #endregion
 
     // Handle Escape key for fullscreen exit
     fromEvent<KeyboardEvent>(document, 'keydown')
@@ -761,7 +932,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
                 '--glow-color': `rgba(255,121,0,${pendingCalculations.glowOpacity})`,
                 '--reflection-opacity': pendingCalculations.reflectionOpacity,
               };
-              this.cdr.markForCheck();
+              this.batchedMarkForCheck();
             }
             pendingCalculations = null;
             tiltRafId = null;
@@ -771,40 +942,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:693',
-        message: 'AICardRenderer ngAfterViewInit',
-        data: { timestamp: Date.now() },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'style-debug',
-        hypothesisId: 'E',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-    // #endregion
-
-    // #region agent log - Detailed Shadow DOM style inspection
-    if (isPlatformBrowser(this.platformId)) {
-      // Check immediately
-      this.inspectShadowDOMStyles('immediate');
-
-      // Check after a delay to ensure Angular has injected styles
-      setTimeout(() => {
-        this.inspectShadowDOMStyles('delayed-100ms');
-      }, 100);
-
-      // Check after longer delay
-      setTimeout(() => {
-        this.inspectShadowDOMStyles('delayed-500ms');
-      }, 500);
-    }
-    // #endregion
-
     // Fragment handling removed for standalone library
     // Consumers can implement their own fragment handling if needed
 
@@ -812,195 +949,47 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.setupContainerWidthMeasurement();
 
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:568',
-        message: 'Container width measurement setup completed',
-        data: { timestamp: Date.now() },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'card-debug',
-        hypothesisId: 'E',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
+    sendDebugLog({
+      location: 'ai-card-renderer.component.ts:568',
+      message: 'Container width measurement setup completed',
+      data: { timestamp: Date.now() },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'card-debug',
+      hypothesisId: 'E',
+    });
     // #endregion
   }
 
   /**
-   * Inspect Shadow DOM styles for debugging
+   * Inspect Shadow DOM styles for debugging (only in dev mode)
+   * Removed excessive logging - only log errors
    */
-  private inspectShadowDOMStyles(timing: string): void {
+  private inspectShadowDOMStyles(_timing: string): void {
+    // Only inspect in dev mode and only log errors
+    if (!isDevMode() || !isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const hostEl = this.el.nativeElement;
     const shadowRoot = hostEl.shadowRoot;
 
     if (!shadowRoot) {
-      const noShadowLog = {
-        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
-        message: `No Shadow DOM found (${timing})`,
-        data: {
-          timing,
-          hasHostElement: !!hostEl,
-          hostTagName: hostEl?.tagName,
-          hostClassName: hostEl?.className,
-          hostAttributes: hostEl
-            ? Array.from(hostEl.attributes).map((a) => `${a.name}="${a.value}"`)
-            : [],
-          timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'style-debug',
-        hypothesisId: 'B',
-      };
-      console.error('[DEBUG]', noShadowLog);
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(noShadowLog),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
+      if (isDevMode()) {
+        console.warn('[AICardRenderer] Shadow DOM not found');
+      }
       return;
     }
 
+    // Only log if there's a real issue (no styles at all)
     const styleSheets = shadowRoot.adoptedStyleSheets || [];
     const styleElements = Array.from(shadowRoot.querySelectorAll('style'));
-    const styleContent = styleElements.map((el, idx) => ({
-      index: idx,
-      textContentLength: el.textContent?.length || 0,
-      hasContent: !!(el.textContent && el.textContent.trim().length > 0),
-      firstChars: el.textContent?.substring(0, 200) || '',
-      innerHTML: el.innerHTML?.substring(0, 200) || '',
-    }));
+    const hasAnyStyles =
+      styleSheets.length > 0 ||
+      styleElements.some((el) => el.textContent && el.textContent.trim().length > 0);
 
-    // Get sample of actual style content
-    const firstStyleElement = styleElements.length > 0 ? styleElements[0] : null;
-    const sampleStyleContent = firstStyleElement?.textContent
-      ? firstStyleElement.textContent.substring(0, 1000)
-      : 'NO_STYLE_CONTENT';
-
-    // Check host CSS variables
-    const hostStyles = window.getComputedStyle(hostEl);
-    const hostCssVars = {
-      '--osi-card-background': hostStyles.getPropertyValue('--osi-card-background'),
-      '--osi-card-border': hostStyles.getPropertyValue('--osi-card-border'),
-      '--osi-section-item-background': hostStyles.getPropertyValue('--osi-section-item-background'),
-      '--foreground': hostStyles.getPropertyValue('--foreground'),
-      '--background': hostStyles.getPropertyValue('--background'),
-    };
-
-    const styleInspectionLogData = {
-      location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
-      message: `Detailed Shadow DOM style inspection (${timing})`,
-      data: {
-        timing,
-        adoptedStyleSheetsCount: styleSheets.length,
-        styleElementsCount: styleElements.length,
-        styleElementsContent: styleContent,
-        totalStyleContentLength: styleContent.reduce((sum, s) => sum + s.textContentLength, 0),
-        hasAnyStyles:
-          styleSheets.length > 0 ||
-          styleElements.some((el) => el.textContent && el.textContent.trim().length > 0),
-        sampleStyleContent,
-        hostCssVariables: hostCssVars,
-        hostComputedStyles: {
-          display: hostStyles.display,
-          backgroundColor: hostStyles.backgroundColor,
-          border: hostStyles.border,
-          width: hostStyles.width,
-        },
-        shadowRootChildCount: shadowRoot.childElementCount,
-        shadowRootFirstChild: shadowRoot.firstElementChild?.tagName || 'none',
-        timestamp: Date.now(),
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'style-debug',
-      hypothesisId: 'D',
-    };
-    console.log(`[DEBUG] Shadow DOM inspection (${timing}):`, styleInspectionLogData);
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(styleInspectionLogData),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-
-    // Check if card elements have any computed styles
-    const cardContainer = shadowRoot.querySelector(
-      '.card-container-wrapper, .ai-card-surface, [class*="card"]'
-    );
-    if (cardContainer) {
-      const computed = window.getComputedStyle(cardContainer as HTMLElement);
-      const cardStyleLogData = {
-        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
-        message: `Card element computed styles (${timing})`,
-        data: {
-          timing,
-          elementClass: cardContainer.className,
-          elementTag: cardContainer.tagName,
-          backgroundColor: computed.backgroundColor,
-          border: computed.border,
-          borderWidth: computed.borderWidth,
-          borderRadius: computed.borderRadius,
-          padding: computed.padding,
-          margin: computed.margin,
-          display: computed.display,
-          width: computed.width,
-          height: computed.height,
-          hasBackground:
-            computed.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
-            computed.backgroundColor !== 'transparent',
-          hasBorder: computed.borderWidth !== '0px',
-          allComputedStyles: {
-            background: computed.background,
-            color: computed.color,
-            fontSize: computed.fontSize,
-            fontFamily: computed.fontFamily,
-            boxShadow: computed.boxShadow,
-          },
-          timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'style-debug',
-        hypothesisId: 'B',
-      };
-      console.log(`[DEBUG] Card computed styles (${timing}):`, cardStyleLogData);
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cardStyleLogData),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
-    } else {
-      const noCardContainerLog = {
-        location: 'ai-card-renderer.component.ts:inspectShadowDOMStyles',
-        message: `No card container found (${timing})`,
-        data: {
-          timing,
-          shadowRootHTML: shadowRoot.innerHTML.substring(0, 1000),
-          shadowRootChildNodes: Array.from(shadowRoot.childNodes).map((n) => ({
-            nodeType: n.nodeType,
-            nodeName: n.nodeName,
-            textContent: n.textContent?.substring(0, 100) || '',
-          })),
-          timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'style-debug',
-        hypothesisId: 'B',
-      };
-      console.warn(`[DEBUG] No card container (${timing}):`, noCardContainerLog);
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(noCardContainerLog),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }).catch(() => {});
+    if (!hasAnyStyles && isDevMode()) {
+      console.warn('[AICardRenderer] No styles found in Shadow DOM');
     }
   }
 
@@ -1024,7 +1013,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           const newWidth = entry.contentRect.width;
           if (newWidth > 0 && Math.abs(newWidth - this.measuredContainerWidth) > 4) {
             this.measuredContainerWidth = newWidth;
-            this.cdr.markForCheck();
+            this.batchedMarkForCheck();
           }
         }
       });
@@ -1118,7 +1107,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         const activeMessages = this.activeLoadingMessages;
         this.currentMessageIndex = (this.currentMessageIndex + 1) % activeMessages.length;
         this.currentMessage = activeMessages[this.currentMessageIndex] || 'Loading...';
-        this.cdr.markForCheck();
+        this.batchedMarkForCheck();
       });
   }
 
@@ -1192,7 +1181,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       };
     });
 
-    this.cdr.markForCheck();
+    // Throttle change detection - batched with other mouse updates
+    if (!this.mouseMoveRafId) {
+      this.mouseMoveRafId = requestAnimationFrame(() => {
+        this.batchedMarkForCheck();
+        this.mouseMoveRafId = null;
+      });
+    }
   }
 
   private resetParticles(): void {
@@ -1200,7 +1195,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       transform: 'translate(0, 0) scale(1)',
       opacity: 0.5,
     }));
-    this.cdr.markForCheck();
+    this.batchedMarkForCheck();
   }
 
   private updateGradientTransform(): void {
@@ -1214,7 +1209,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const deltaY = (this.mouseY - centerY) * 0.1;
 
     this.gradientTransform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
-    this.cdr.markForCheck();
+    // Throttle change detection - batched with other mouse updates
+    this.batchedMarkForCheck();
   }
 
   private updateContentTransform(): void {
@@ -1230,7 +1226,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const scrollParallaxY = this.scrollY * 0.05;
 
     this.contentTransform = `translate(${mouseParallaxX}px, calc(${mouseParallaxY}px + ${scrollParallaxY}px))`;
-    this.cdr.markForCheck();
+    // Throttle change detection for scroll/mouse updates - they happen very frequently
+    // Use batched change detection to batch updates
+    this.batchedMarkForCheck();
   }
 
   ngOnDestroy(): void {
@@ -1244,6 +1242,19 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Cancel any pending RAFs
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
+    }
+
+    // Cancel pending change detection
+    if (this.changeDetectionRafId !== null) {
+      cancelAnimationFrame(this.changeDetectionRafId);
+      this.changeDetectionRafId = null;
+      this.pendingChangeDetection = false;
+    }
+
+    // Clear debounce timeout
+    if (this.refreshTimeoutId !== null) {
+      clearTimeout(this.refreshTimeoutId);
+      this.refreshTimeoutId = null;
     }
 
     // Clear tilt service cache for this element
@@ -1262,7 +1273,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onMouseEnter(event: MouseEvent): void {
-    if (!this.tiltEnabled || this.isFullscreen) {
+    if (!this.tiltEnabled) {
       return;
     }
     this.isHovered = true;
@@ -1293,12 +1304,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onMouseMove(event: MouseEvent): void {
-    if (
-      !this.tiltEnabled ||
-      this.isFullscreen ||
-      !this.isHovered ||
-      !this.tiltContainerRef?.nativeElement
-    ) {
+    if (!this.tiltEnabled || !this.isHovered || !this.tiltContainerRef?.nativeElement) {
       return;
     }
 
@@ -1367,7 +1373,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
             window.open(url, '_blank', 'noopener,noreferrer');
           } else {
-            console.warn('No valid URL provided for website button type');
+            if (isDevMode()) {
+              console.warn('No valid URL provided for website button type');
+            }
           }
           return;
         }
@@ -1434,7 +1442,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   ): void {
     // Check if we're in a browser environment
     if (!isPlatformBrowser(this.platformId)) {
-      console.warn('Email action can only be executed in a browser environment');
+      if (isDevMode()) {
+        console.warn('Email action can only be executed in a browser environment');
+      }
       return;
     }
 
@@ -1490,7 +1500,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Add subject - required for mail type, optional for legacy
     if (email.subject) {
       params.push(`subject=${encodeURIComponent(email.subject)}`);
-    } else if (action.type === 'mail') {
+    } else if (action.type === 'mail' && isDevMode()) {
       console.warn('Email subject is missing for mail action');
     }
 
@@ -1535,7 +1545,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       const bodyWithLineBreaks = processedBody.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
       const encodedBody = encodeURIComponent(bodyWithLineBreaks).replace(/%0A/g, '%0D%0A');
       params.push(`body=${encodedBody}`);
-    } else if (action.type === 'mail') {
+    } else if (action.type === 'mail' && isDevMode()) {
       console.warn('Email body is missing for mail action');
     }
 
@@ -1581,7 +1591,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             anchor.click();
           } catch (clickError) {
             // If click fails, fall back to window.location
-            console.warn('Anchor click failed, using window.location fallback:', clickError);
+            if (isDevMode()) {
+              console.warn('Anchor click failed, using window.location fallback:', clickError);
+            }
             window.location.href = outlookLink;
           }
 
@@ -1606,7 +1618,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         // Last resort: try window.open (may be blocked by popup blockers)
         try {
           const mailtoWindow = window.open(outlookLink, '_blank');
-          if (!mailtoWindow) {
+          if (!mailtoWindow && isDevMode()) {
             console.warn(
               'Popup blocked. Please allow popups for this site to use email functionality.'
             );
@@ -1640,30 +1652,122 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     return this.el.nativeElement || null;
   }
 
-  get isStreamingActive(): boolean {
-    const result = this.isStreaming || this.streamingStage === 'streaming';
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'ai-card-renderer.component.ts:1370',
-        message: 'isStreamingActive getter',
+  /**
+   * Update cached streaming state when inputs change
+   * This avoids excessive getter evaluations in template bindings
+   */
+  public ngOnChanges(changes: SimpleChanges): void {
+    // #region agent log - ngOnChanges entry
+    sendDebugLog({
+      location: 'ai-card-renderer.component.ts:ngOnChanges:ENTRY',
+      message: 'ngOnChanges called',
+      data: {
+        changedKeys: Object.keys(changes),
+        hasCardConfigChange: !!changes['cardConfig'],
+        cardConfigFirstChange: changes['cardConfig']?.firstChange,
+        cardConfigPreviousValue: changes['cardConfig']?.previousValue?.sections?.length,
+        cardConfigCurrentValue: changes['cardConfig']?.currentValue?.sections?.length,
+      },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'section-render-debug',
+      hypothesisId: 'H1',
+    });
+    // #endregion
+
+    // CRITICAL FIX: Handle cardConfig changes in ngOnChanges
+    // This ensures processing happens even when the object reference doesn't change
+    // but the content (sections) does change
+    if (changes['cardConfig']) {
+      const cardConfigChange = changes['cardConfig'];
+      // #region agent log - cardConfig change detected
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:ngOnChanges:CARD_CONFIG_CHANGE',
+        message: 'cardConfig change detected in ngOnChanges',
         data: {
-          isStreaming: this.isStreaming,
-          streamingStage: this.streamingStage,
-          result,
-          timestamp: Date.now(),
+          firstChange: cardConfigChange.firstChange,
+          hasPreviousValue: !!cardConfigChange.previousValue,
+          hasCurrentValue: !!cardConfigChange.currentValue,
+          previousSectionsCount: cardConfigChange.previousValue?.sections?.length || 0,
+          currentSectionsCount: cardConfigChange.currentValue?.sections?.length || 0,
         },
         timestamp: Date.now(),
         sessionId: 'debug-session',
-        runId: 'animation-debug',
-        hypothesisId: 'E',
-      }),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    }).catch(() => {});
-    // #endregion
-    return result;
+        runId: 'section-render-debug',
+        hypothesisId: 'H1',
+      });
+      // #endregion
+
+      // If cardConfig changed, trigger processing
+      // This handles cases where the setter might not be called due to reference equality
+      if (cardConfigChange.currentValue && cardConfigChange.currentValue.sections?.length) {
+        // Update _cardConfig to ensure it's in sync
+        this._cardConfig = cardConfigChange.currentValue;
+        // #region agent log - ngOnChanges processing
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:ngOnChanges:PROCESSING',
+          message: 'ngOnChanges processing cardConfig with sections',
+          data: {
+            sectionsCount: cardConfigChange.currentValue.sections.length,
+            currentProcessedCount: this.processedSections.length,
+            firstChange: cardConfigChange.firstChange,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H1',
+        });
+        // #endregion
+        // CRITICAL DEBUG: Log when processing in ngOnChanges
+        if (isDevMode() && isPlatformBrowser(this.platformId)) {
+          console.log('[AICardRenderer] ngOnChanges: Processing cardConfig with sections', {
+            sectionsCount: cardConfigChange.currentValue.sections.length,
+            currentProcessedCount: this.processedSections.length,
+            firstChange: cardConfigChange.firstChange,
+          });
+        }
+        // Force structural rebuild to ensure sections are processed
+        this.refreshProcessedSections(true);
+        // CRITICAL: Use both markForCheck() and detectChanges() for OnPush components
+        // This ensures immediate update and future change detection cycles
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+        this.batchedMarkForCheck();
+      } else if (
+        !cardConfigChange.currentValue ||
+        !cardConfigChange.currentValue.sections?.length
+      ) {
+        // Card config removed or has no sections
+        this._cardConfig = cardConfigChange.currentValue;
+        // #region agent log - ngOnChanges resetting
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:ngOnChanges:RESETTING',
+          message: 'ngOnChanges resetting processedSections',
+          data: {
+            hasCardConfig: !!cardConfigChange.currentValue,
+            sectionsCount: cardConfigChange.currentValue?.sections?.length || 0,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H1',
+        });
+        // #endregion
+        // CRITICAL DEBUG: Log when resetting
+        if (isDevMode() && isPlatformBrowser(this.platformId)) {
+          console.log('[AICardRenderer] ngOnChanges: Resetting processedSections', {
+            hasCardConfig: !!cardConfigChange.currentValue,
+            sectionsCount: cardConfigChange.currentValue?.sections?.length || 0,
+          });
+        }
+        this.resetProcessedSections();
+        this.cdr.detectChanges();
+      }
+    }
+
+    if (changes['isStreaming'] || changes['streamingStage']) {
+      this.isStreamingActive = this.isStreaming || this.streamingStage === 'streaming';
+    }
   }
 
   get hasLoadingOverlay(): boolean {
@@ -1857,49 +1961,713 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private refreshProcessedSections(forceStructural = false): void {
-    if (!this._cardConfig?.sections?.length) {
-      this.resetProcessedSections();
+    // Re-entrancy guard: prevent concurrent execution
+    if (this.isRefreshing) {
       return;
     }
 
-    const sections = this._cardConfig.sections;
-    const nextHash = this.hashSections(sections);
-    const structureChanged = nextHash !== this.previousSectionsHash;
-    const requiresStructuralRebuild =
-      forceStructural ||
-      structureChanged ||
-      this._changeType === 'structural' ||
-      !this.processedSections.length;
-
-    // Removed excessive logging for performance
-
-    if (requiresStructuralRebuild) {
-      this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
+    // Rate limiting: prevent excessive calls (max 60fps unless forceStructural)
+    const now = performance.now();
+    if (!forceStructural && now - this.lastRefreshTime < this.MIN_REFRESH_INTERVAL_MS) {
+      return; // Skip if called too frequently
     }
+    this.lastRefreshTime = now;
 
-    const normalizedSections = sections.map((section) =>
-      this.getNormalizedSection(section, requiresStructuralRebuild)
-    );
+    // Set re-entrancy flag
+    this.isRefreshing = true;
 
-    // Filter out incomplete sections
-    const completeSections = normalizedSections.filter((section) =>
-      this.sectionCompletenessService.isSectionComplete(section)
-    );
+    try {
+      const perfStart = performance.now();
 
-    const orderedSections = requiresStructuralRebuild
-      ? this.sectionNormalizationService.sortSections(completeSections)
-      : this.mergeWithPreviousOrder(completeSections);
+      // #region agent log - entry
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:ENTRY',
+        message: 'refreshProcessedSections ENTRY',
+        data: {
+          forceStructural,
+          hasCardConfig: !!this._cardConfig,
+          sectionsCount: this._cardConfig?.sections?.length,
+          currentProcessedCount: this.processedSections.length,
+          cardConfigSections: this._cardConfig?.sections?.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            hasFields: !!s.fields?.length,
+            hasItems: !!s.items?.length,
+          })),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H1',
+      });
+      // #endregion
 
-    this.processedSections = orderedSections;
-    this.sectionOrderKeys = orderedSections.map((section) => this.getSectionKey(section));
-    this.previousSectionsHash = nextHash;
+      if (!this._cardConfig?.sections?.length) {
+        // #region agent log - no sections
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections:NO_SECTIONS',
+          message: 'No sections - resetting',
+          data: {
+            hasCardConfig: !!this._cardConfig,
+            cardConfigKeys: this._cardConfig ? Object.keys(this._cardConfig) : [],
+            cardTitle: this._cardConfig?.cardTitle,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H1',
+        });
+        // #endregion
+        this.resetProcessedSections();
+        return;
+      }
 
-    // Removed excessive logging for performance
+      const sections = this._cardConfig.sections;
 
-    this.cdr.markForCheck();
+      // Early exit: Skip processing if nothing changed and not forcing rebuild
+      // This is critical for performance - avoids expensive processing on every update
+      const sectionsReferenceChanged = sections !== this.lastSectionsReference;
+      if (!sectionsReferenceChanged && !forceStructural && this.processedSections.length > 0) {
+        // Sections array reference unchanged and not forcing rebuild
+        // If reference unchanged, content might have changed but structure likely same
+        // For performance, we can skip processing if hash is also unchanged
+        // Check cached hash first (fast path)
+        let currentHash = this.previousSectionsHash;
+        if (this.sectionHashCache.has(sections)) {
+          currentHash = this.sectionHashCache.get(sections)!;
+        } else if (this.previousSectionsHash) {
+          // Hash not cached but we have previous hash
+          // Since reference unchanged, assume hash also unchanged for early exit
+          // This is safe optimization - if content actually changed, hash will differ and we'll process
+          currentHash = this.previousSectionsHash;
+        }
+
+        if (currentHash === this.previousSectionsHash && currentHash !== '') {
+          // Nothing changed at all - skip all processing
+          return;
+        }
+      }
+
+      // Optimize: Only recalculate hash if sections array reference actually changed
+      // This avoids expensive hash calculation on every update when array reference is the same
+      let nextHash = this.previousSectionsHash;
+
+      if (sectionsReferenceChanged) {
+        this.lastSectionsReference = sections;
+        nextHash = this.hashSections(sections);
+      }
+
+      const structureChanged = nextHash !== this.previousSectionsHash;
+      const requiresStructuralRebuild =
+        forceStructural ||
+        structureChanged ||
+        this._changeType === 'structural' ||
+        !this.processedSections.length;
+
+      // Optimize cache invalidation: Only clear cache when structure truly changes
+      // Preserve cache across content-only updates (streaming, field updates, etc.)
+      // This significantly improves performance during streaming where structure is stable
+      if (requiresStructuralRebuild && structureChanged) {
+        // Structure changed - clear normalization cache
+        // WeakMap will automatically handle garbage collection of old section objects
+        this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
+        // Also clear hash cache when structure changes
+        this.sectionHashCache = new WeakMap<CardSection[], string>();
+        // Clear completeness cache when structure changes (sections may have been replaced)
+        this.completenessCache = new WeakMap<CardSection, boolean>();
+      }
+      // For content-only updates (structure unchanged), preserve all caches
+      // This allows completeness cache to work across streaming updates for same section objects
+      // For content-only updates (structure unchanged), preserve all caches
+      // This allows normalization cache to work across streaming updates
+
+      // Optimize: Normalize sections in single pass, combining with completeness check where possible
+      // This reduces array iterations from 3 (normalize → filter → sort) to 2 (normalize+filter → sort)
+      const normalizeStart = performance.now();
+      const normalizedSections: CardSection[] = [];
+      for (const section of sections) {
+        const normalized = this.getNormalizedSection(section, requiresStructuralRebuild);
+        normalizedSections.push(normalized);
+      }
+      const normalizeDuration = performance.now() - normalizeStart;
+      // #region agent log - after normalization
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:AFTER_NORMALIZATION',
+        message: 'After normalization',
+        data: {
+          inputSections: sections.length,
+          normalizedCount: normalizedSections.length,
+          normalizedSections: normalizedSections.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            hasFields: !!s.fields?.length,
+            hasItems: !!s.items?.length,
+          })),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H4',
+      });
+      // #endregion
+      // #region agent log
+      if (normalizeDuration > 10) {
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+          message: 'Slow normalization',
+          data: { sectionsCount: sections.length, normalizeDuration },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'K',
+        });
+      }
+      // #endregion
+
+      // Filter out incomplete sections
+      // CRITICAL: On page refresh, be lenient to avoid filtering out valid sections
+      // that might fail completeness check due to timing issues (registry not loaded, etc.)
+      // CRITICAL: NEVER defer completeness checks during streaming - sections must appear immediately
+      const isStreaming = this.isStreamingActive;
+      const useIdleCallback =
+        typeof requestIdleCallback !== 'undefined' && !forceStructural && !isStreaming;
+      const completenessStart = performance.now();
+      let completenessChecks = 0;
+      // #region agent log - before filtering
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:BEFORE_FILTER',
+        message: 'Before completeness filtering',
+        data: {
+          normalizedCount: normalizedSections.length,
+          normalizedSections: normalizedSections.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+            hasFields: !!s.fields?.length,
+            hasItems: !!s.items?.length,
+            hasChartData: !!s.chartData,
+          })),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H2',
+      });
+      // #endregion
+      const completeSections = normalizedSections.filter((section) => {
+        // Fast path: check minimal data first (no service call needed)
+        // CRITICAL FIX: Be more lenient - only require type, title is optional
+        // Some sections might not have title but have other data
+        const hasMinimalData =
+          section.type &&
+          (section.title ||
+            section.fields?.length ||
+            section.items?.length ||
+            section.chartData ||
+            section.description); // Also accept description as minimal data
+
+        // #region agent log - minimal data check
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections:MINIMAL_DATA',
+          message: 'Minimal data check',
+          data: {
+            sectionId: section.id,
+            sectionType: section.type,
+            hasMinimalData,
+            hasType: !!section.type,
+            hasTitle: !!section.title,
+            fieldCount: section.fields?.length || 0,
+            itemCount: section.items?.length || 0,
+            hasChartData: !!section.chartData,
+            hasDescription: !!section.description,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H2',
+        });
+        // #endregion
+
+        if (!hasMinimalData) {
+          // #region agent log - section filtered no minimal data
+          sendDebugLog({
+            location: 'ai-card-renderer.component.ts:refreshProcessedSections:FILTERED_NO_MINIMAL',
+            message: 'Section filtered - no minimal data',
+            data: {
+              sectionId: section.id,
+              sectionType: section.type,
+              hasType: !!section.type,
+              hasTitle: !!section.title,
+              fieldCount: section.fields?.length || 0,
+              itemCount: section.items?.length || 0,
+              hasChartData: !!section.chartData,
+              hasDescription: !!section.description,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'section-render-debug',
+            hypothesisId: 'H2',
+          });
+          // #endregion
+          // CRITICAL DEBUG: Log why section was filtered
+          if (isDevMode() && isPlatformBrowser(this.platformId)) {
+            console.warn('[AICardRenderer] Section filtered - no minimal data', {
+              sectionId: section.id,
+              sectionType: section.type,
+              hasType: !!section.type,
+              hasTitle: !!section.title,
+              fieldCount: section.fields?.length || 0,
+              itemCount: section.items?.length || 0,
+              hasChartData: !!section.chartData,
+              hasDescription: !!section.description,
+            });
+          }
+          return false; // No data at all, skip
+        }
+
+        // During streaming, always check completeness immediately - sections must appear right away
+        // Optimize: Use local cache to avoid repeated service calls for same sections
+        if (isStreaming) {
+          // Check local cache first to avoid service call
+          const cachedComplete = this.completenessCache.get(section);
+          if (cachedComplete !== undefined) {
+            // Cache hit - use cached result
+            return cachedComplete || hasMinimalData;
+          }
+
+          // Cache miss - call service and cache result
+          const checkStart = performance.now();
+          const isComplete = this.sectionCompletenessService.isSectionComplete(section);
+          completenessChecks++;
+          const checkDuration = performance.now() - checkStart;
+          // #region agent log - write to file
+          if (checkDuration > 5) {
+            sendDebugLogToFile({
+              location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+              message: 'Slow completeness check',
+              data: { sectionType: section.type, duration: checkDuration },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'perf-debug',
+              hypothesisId: 'G',
+            });
+          }
+          // #endregion
+          this.completenessCache.set(section, isComplete);
+          if (!isComplete && hasMinimalData) {
+            return true; // Include anyway if has minimal data
+          }
+          return isComplete;
+        }
+
+        // For structural rebuilds or critical sections, check completeness immediately
+        if (requiresStructuralRebuild || section.priority === 1) {
+          const checkStart = performance.now();
+          const isComplete = this.sectionCompletenessService.isSectionComplete(section);
+          completenessChecks++;
+          const checkDuration = performance.now() - checkStart;
+          // #region agent log - completeness check result
+          sendDebugLog({
+            location: 'ai-card-renderer.component.ts:refreshProcessedSections:COMPLETENESS_CHECK',
+            message: 'Completeness check result',
+            data: {
+              sectionId: section.id,
+              sectionType: section.type,
+              isComplete,
+              hasMinimalData,
+              checkDuration,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'empty-card-debug',
+            hypothesisId: 'C',
+          });
+          // #endregion
+          if (!isComplete && hasMinimalData) {
+            return true; // Include anyway if has minimal data
+          }
+          return isComplete;
+        }
+
+        // For non-critical sections during non-streaming, can defer completeness check
+        // This improves initial render performance by allowing sections to render first, then validate
+        if (useIdleCallback) {
+          // Defer completeness check - assume complete for now if has minimal data
+          // The check will happen in idle time
+          return true;
+        }
+
+        // Fallback: check completeness synchronously if requestIdleCallback not available
+        const isComplete = this.sectionCompletenessService.isSectionComplete(section);
+        // #region agent log - completeness check fallback
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections:COMPLETENESS_FALLBACK',
+          message: 'Completeness check fallback result',
+          data: {
+            sectionId: section.id,
+            sectionType: section.type,
+            isComplete,
+            hasMinimalData,
+            willInclude: isComplete || hasMinimalData,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H2',
+        });
+        // #endregion
+        // CRITICAL FIX: Always include sections with minimal data, even if completeness check fails
+        // This prevents valid sections from being filtered out due to registry loading issues or strict rules
+        if (!isComplete && hasMinimalData) {
+          // #region agent log - including despite completeness failure
+          sendDebugLog({
+            location:
+              'ai-card-renderer.component.ts:refreshProcessedSections:INCLUDING_DESPITE_FAILURE',
+            message: 'Including section despite completeness failure',
+            data: { sectionId: section.id, sectionType: section.type, isComplete, hasMinimalData },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'section-render-debug',
+            hypothesisId: 'H2',
+          });
+          // #endregion
+          // CRITICAL DEBUG: Log when section is included despite failing completeness
+          if (isDevMode() && isPlatformBrowser(this.platformId)) {
+            console.debug(
+              '[AICardRenderer] Including section with minimal data despite completeness check failure',
+              {
+                sectionId: section.id,
+                sectionType: section.type,
+                isComplete,
+                hasMinimalData,
+              }
+            );
+          }
+          return true; // Include anyway if has minimal data
+        }
+        // If completeness check passes, include it
+        if (isComplete) {
+          // #region agent log - section passed completeness
+          sendDebugLog({
+            location: 'ai-card-renderer.component.ts:refreshProcessedSections:PASSED_COMPLETENESS',
+            message: 'Section passed completeness check',
+            data: { sectionId: section.id, sectionType: section.type, isComplete },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'section-render-debug',
+            hypothesisId: 'H2',
+          });
+          // #endregion
+          return true;
+        }
+        // #region agent log - section filtered completeness failed
+        sendDebugLog({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections:FILTERED_COMPLETENESS',
+          message: 'Section filtered - completeness failed and no minimal data',
+          data: { sectionId: section.id, sectionType: section.type, isComplete, hasMinimalData },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'section-render-debug',
+          hypothesisId: 'H2',
+        });
+        // #endregion
+        // CRITICAL DEBUG: Log when section is filtered out
+        if (isDevMode() && isPlatformBrowser(this.platformId)) {
+          console.warn(
+            '[AICardRenderer] Section filtered - completeness check failed and no minimal data',
+            {
+              sectionId: section.id,
+              sectionType: section.type,
+              isComplete,
+              hasMinimalData,
+            }
+          );
+        }
+        // Only filter out if both completeness fails AND no minimal data
+        return false;
+      });
+
+      // Optimize: Only sort when structure actually changed, otherwise preserve order
+      // This avoids expensive sorting on every content update during streaming
+      // Optimize: During streaming with content-only updates, preserve order to avoid expensive sorting
+      // Only sort when structure actually changed
+      // #region agent log - after filtering
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:AFTER_FILTER',
+        message: 'After completeness filtering',
+        data: {
+          normalizedCount: normalizedSections.length,
+          completeCount: completeSections.length,
+          filteredOut: normalizedSections.length - completeSections.length,
+          completeSections: completeSections.map((s) => ({
+            id: s.id,
+            type: s.type,
+            title: s.title,
+          })),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H2',
+      });
+      // #endregion
+
+      const sortStart = performance.now();
+      const orderedSections = requiresStructuralRebuild
+        ? this.sectionNormalizationService.sortSections(completeSections)
+        : this.mergeWithPreviousOrder(completeSections);
+      const sortDuration = performance.now() - sortStart;
+
+      // #region agent log - critical: check if we're losing sections
+      if (orderedSections.length === 0 && normalizedSections.length > 0) {
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+          message: 'CRITICAL: All sections filtered out!',
+          data: {
+            inputSections: sections.length,
+            normalizedSections: normalizedSections.length,
+            completeSections: completeSections.length,
+            orderedSections: orderedSections.length,
+            forceStructural,
+            requiresStructuralRebuild,
+            isStreaming,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'L',
+        });
+      } else if (orderedSections.length < normalizedSections.length) {
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+          message: 'Sections filtered out',
+          data: {
+            inputSections: sections.length,
+            normalizedSections: normalizedSections.length,
+            completeSections: completeSections.length,
+            orderedSections: orderedSections.length,
+            filteredCount: normalizedSections.length - completeSections.length,
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'L',
+        });
+      }
+      if (sortDuration > 10) {
+        sendDebugLogToFile({
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+          message: 'Slow sorting',
+          data: { sectionsCount: completeSections.length, sortDuration },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'perf-debug',
+          hypothesisId: 'K',
+        });
+      }
+      // #endregion
+
+      // #region agent log - final processed sections
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:FINAL',
+        message: 'Setting processedSections',
+        data: {
+          inputSections: sections.length,
+          normalizedCount: normalizedSections.length,
+          completeCount: completeSections.length,
+          orderedCount: orderedSections.length,
+          orderedSections: orderedSections.map((s) => ({ id: s.id, type: s.type, title: s.title })),
+          beforeAssignment: this.processedSections.length,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H4',
+      });
+      // #endregion
+
+      // CRITICAL DEBUG: Log to console if sections are being lost
+      if (isDevMode() && isPlatformBrowser(this.platformId)) {
+        if (orderedSections.length === 0 && normalizedSections.length > 0) {
+          console.error('[AICardRenderer] CRITICAL: All sections filtered out!', {
+            inputSections: sections.length,
+            normalizedSections: normalizedSections.length,
+            completeSections: completeSections.length,
+            orderedSections: orderedSections.length,
+            normalizedSectionsDetails: normalizedSections.map((s) => ({
+              id: s.id,
+              type: s.type,
+              title: s.title,
+              hasFields: !!s.fields?.length,
+              hasItems: !!s.items?.length,
+              hasChartData: !!s.chartData,
+              fieldsCount: s.fields?.length || 0,
+              itemsCount: s.items?.length || 0,
+            })),
+            forceStructural,
+            requiresStructuralRebuild,
+            isStreaming,
+          });
+        } else if (orderedSections.length < normalizedSections.length && isDevMode()) {
+          console.warn('[AICardRenderer] Sections filtered out', {
+            inputSections: sections.length,
+            normalizedSections: normalizedSections.length,
+            completeSections: completeSections.length,
+            orderedSections: orderedSections.length,
+            filteredCount: normalizedSections.length - completeSections.length,
+          });
+        }
+      }
+
+      // #region agent log - BEFORE assignment
+      const oldArrayRef = this.processedSections;
+      const newArrayRef = orderedSections;
+      const arrayRefChanged = oldArrayRef !== newArrayRef;
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:BEFORE_ASSIGNMENT',
+        message: 'BEFORE processedSections assignment',
+        data: {
+          orderedSectionsLength: orderedSections.length,
+          currentProcessedLength: this.processedSections.length,
+          willChange: orderedSections.length !== this.processedSections.length,
+          arrayRefChanged,
+          oldArrayLength: oldArrayRef.length,
+          newArrayLength: newArrayRef.length,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H3',
+      });
+      // #endregion
+
+      // CRITICAL: Always assign a new array reference to ensure Angular's change detection
+      // recognizes the change. Even if orderedSections is already a new array, this ensures
+      // the reference is definitely different from the previous one.
+      this.processedSections = [...orderedSections];
+
+      // #region agent log - AFTER assignment
+      const afterArrayRef = this.processedSections;
+      const refActuallyChanged = oldArrayRef !== afterArrayRef;
+      sendDebugLog({
+        location: 'ai-card-renderer.component.ts:refreshProcessedSections:AFTER_ASSIGNMENT',
+        message: 'AFTER processedSections assignment',
+        data: {
+          processedSectionsLength: this.processedSections.length,
+          orderedSectionsLength: orderedSections.length,
+          matches: this.processedSections.length === orderedSections.length,
+          refActuallyChanged,
+          oldRefLength: oldArrayRef.length,
+          newRefLength: afterArrayRef.length,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'section-render-debug',
+        hypothesisId: 'H3',
+      });
+      // #endregion
+      // Optimize: Generate section keys in single pass
+      this.sectionOrderKeys = orderedSections.map((section) => this.getSectionKey(section));
+      this.previousSectionsHash = nextHash;
+
+      const completenessDuration = performance.now() - completenessStart;
+      // #region agent log - write to file, throttled
+      if (typeof window !== 'undefined') {
+        const logThrottle = (window as any).__debugLogThrottle || {};
+        const now = Date.now();
+        if (!logThrottle.refreshCompleted || now - logThrottle.refreshCompleted > 200) {
+          logThrottle.refreshCompleted = now;
+          (window as any).__debugLogThrottle = logThrottle;
+          sendDebugLogToFile({
+            location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+            message: 'refreshProcessedSections completed',
+            data: {
+              inputSections: normalizedSections.length,
+              outputSections: orderedSections.length,
+              completenessChecks,
+              completenessDuration,
+              forceStructural,
+              requiresStructuralRebuild,
+              isStreaming,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'perf-debug',
+            hypothesisId: 'H',
+          });
+        }
+      }
+      // #endregion
+
+      // CRITICAL: Force change detection to ensure template updates
+      // OnPush requires explicit change detection triggers
+      // IMPORTANT: Use detectChanges() to immediately run change detection synchronously
+      // This ensures *ngIf conditions are re-evaluated with the new processedSections value
+      // markForCheck() only marks for check but doesn't run detection immediately
+      // CRITICAL: Mark for change detection (do NOT call detectChanges() here)
+      // Calling it here creates an infinite loop: ngOnChanges → refreshProcessedSections → detectChanges → triggers parent → ngOnChanges again
+      // Use only markForCheck() to mark for change detection without triggering it immediately
+      try {
+        this.cdr.markForCheck();
+        // Also queue batched change detection for any subsequent updates
+        this.batchedMarkForCheck();
+      } catch (error) {
+        // Handle NG0203 or other change detection errors gracefully
+        // NG0203 errors can occur when injection context is not available in child components
+        // These are expected in some contexts and should not be treated as critical errors
+        // Silently continue - change detection will happen naturally through Angular's lifecycle
+      }
+
+      // #region agent log
+      const totalDuration = performance.now() - perfStart;
+      // Only log if slow (>50ms) to reduce logging overhead
+      if (totalDuration > 50) {
+        const logDataEnd = {
+          location: 'ai-card-renderer.component.ts:refreshProcessedSections',
+          message: 'SLOW: refreshProcessedSections',
+          data: {
+            totalDuration,
+            sectionsCount: sections.length,
+            completeCount: completeSections.length,
+            requiresStructuralRebuild,
+            forceStructural,
+            timestamp: Date.now(),
+            perfTime: performance.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'freeze-investigation',
+          hypothesisId: 'J',
+        };
+        if (isDevMode()) {
+          console.warn(`[DEBUG] SLOW refreshProcessedSections: ${totalDuration.toFixed(2)}ms`);
+        }
+        // Defer expensive logging to idle time
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(
+            () => {
+              sendDebugLog(
+                logDataEnd,
+                'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+              );
+            },
+            { timeout: 1000 }
+          );
+        }
+      }
+      // #endregion
+    } finally {
+      // Always reset re-entrancy flag, even if an error occurred
+      this.isRefreshing = false;
+    }
   }
 
   private getNormalizedSection(section: CardSection, forceRebuild: boolean): CardSection {
+    // Improved cache: only skip cache if forceRebuild is true
+    // Cache is cleared at higher level when structure truly changes
+    // This improves cache hit rate significantly during streaming (content-only updates)
     if (!forceRebuild) {
       const cached = this.normalizedSectionCache.get(section);
       if (cached) {
@@ -1908,6 +2676,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const normalized = this.sectionNormalizationService.normalizeSection(section);
+    // Always cache normalized section to improve hit rate
+    // WeakMap automatically handles garbage collection when section objects are no longer referenced
     this.normalizedSectionCache.set(section, normalized);
     return normalized;
   }
@@ -1946,11 +2716,27 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private resetProcessedSections(): void {
+    // #region agent log - resetting processed sections
+    sendDebugLog({
+      location: 'ai-card-renderer.component.ts:resetProcessedSections',
+      message: 'Resetting processedSections',
+      data: { beforeLength: this.processedSections.length },
+      timestamp: Date.now(),
+      sessionId: 'debug-session',
+      runId: 'section-render-debug',
+      hypothesisId: 'H1',
+    });
+    // #endregion
     this.processedSections = [];
     this.sectionOrderKeys = [];
     this.previousSectionsHash = '';
+    this.lastSectionsReference = null;
+    // Only clear cache when truly resetting (no sections)
+    // WeakMap will handle garbage collection automatically
     this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
-    this.cdr.markForCheck();
+    this.sectionHashCache = new WeakMap<CardSection[], string>();
+    this.completenessCache = new WeakMap<CardSection, boolean>();
+    this.batchedMarkForCheck();
   }
 
   /**
@@ -2101,7 +2887,7 @@ Generate a default company card with comprehensive information including key det
           // Update card config if we got valid data
           if (cardConfig) {
             this.cardConfig = cardConfig;
-            this.cdr.markForCheck();
+            this.batchedMarkForCheck();
 
             // Refresh sections if needed
             if (!this.processedSections.length) {

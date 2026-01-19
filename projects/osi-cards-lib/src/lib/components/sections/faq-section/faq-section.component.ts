@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '@osi-cards/models';
 
 /**
  * FAQ Section Component
@@ -17,6 +17,7 @@ import { CardSection } from '../../../models';
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './faq-section.component.html',
   styleUrl: './faq-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaqSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);

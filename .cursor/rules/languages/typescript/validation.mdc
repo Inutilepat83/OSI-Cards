@@ -52,24 +52,41 @@ function validateCreateUser(data: unknown): Result<CreateUserDto, ValidationErro
 
 ## Validation Strategies
 
-### Validate at Boundaries
+### Validate in Angular Forms
 
 ```typescript
-// API endpoint
-@Post('users')
-async createUser(@Body() dto: CreateUserDto): Promise<UserDto> {
-  // Validation happens automatically via ValidationPipe
-  const result = await this.userService.createUser(dto);
-  // ...
-}
+import { FormBuilder, Validators } from '@angular/forms';
 
-// Service layer
-async createUser(data: CreateUserData): Promise<Result<User, UserError>> {
-  // Additional business rule validation
-  if (await this.userRepository.existsByEmail(data.email)) {
-    return failure(new UserError('Email already exists'));
+@Component({...})
+export class UserFormComponent {
+  private readonly fb = inject(FormBuilder);
+  
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+  });
+  
+  onSubmit(): void {
+    if (this.form.valid) {
+      // Process form data
+    }
   }
-  // ...
+}
+```
+
+### Validate in Services
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  createUser(data: CreateUserData): Observable<User> {
+    // Validate input
+    if (!this.isValidEmail(data.email)) {
+      throw new ValidationError('Invalid email');
+    }
+    // ... create user
+  }
 }
 ```
 
@@ -233,4 +250,4 @@ function formatValidationError(errors: ValidationError[], instance: string) {
 - Use generic error messages
 - Validate in multiple places unnecessarily
 
-**See also:** `input-sanitization.mdc`, `controllers.mdc`, `error-handling.mdc`
+**See also:** `security.mdc`, `error-handling.mdc`, `angular-components.mdc`

@@ -1,0 +1,355 @@
+---
+description: "Angular library patterns: public API, providers, exports, packaging"
+alwaysApply: true
+---
+
+# Angular Library Patterns
+
+## Public API Structure
+
+### Single Entry Point
+
+**All public APIs must be exported through `public-api.ts`:**
+
+```typescript
+// projects/osi-cards-lib/src/public-api.ts
+
+// Components
+export * from './lib/components/osi-cards/osi-cards.component';
+export * from './lib/components/ai-card-renderer/ai-card-renderer.component';
+
+// Models
+export * from './lib/models';
+
+// Services
+export * from './lib/services';
+
+// Types
+export * from './lib/types';
+
+// Providers
+export * from './lib/providers';
+```
+
+### Guidelines
+
+- Export from `public-api.ts` only
+- Don't export internal implementation details
+- Group exports by category (components, models, services, etc.)
+- Use barrel exports (`index.ts`) for organization
+- Document public APIs with JSDoc
+
+---
+
+## Provider Configuration
+
+### Function-based Providers
+
+**Use provider functions for configuration:**
+
+```typescript
+// lib/providers/osi-cards.providers.ts
+import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
+import { OSI_THEME_CONFIG_TOKEN } from './injection-tokens';
+
+export interface OsiCardsConfig {
+  theme?: 'day' | 'night';
+  animationEnabled?: boolean;
+}
+
+export function provideOsiCards(config?: OsiCardsConfig): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    // Provide services
+    { provide: MyService, useClass: MyService },
+    
+    // Provide configuration tokens
+    {
+      provide: OSI_THEME_CONFIG_TOKEN,
+      useValue: config?.theme || 'day',
+    },
+    
+    // Provide feature flags
+    {
+      provide: FEATURE_FLAGS_TOKEN,
+      useValue: config?.animationEnabled !== false,
+    },
+  ]);
+}
+```
+
+### Usage in Application
+
+```typescript
+// app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { provideOsiCards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOsiCards({
+      theme: 'night',
+      animationEnabled: true,
+    }),
+    // ... other providers
+  ],
+};
+```
+
+### Guidelines
+
+- Return `EnvironmentProviders` from provider functions
+- Use `makeEnvironmentProviders()` for multiple providers
+- Provide configuration through tokens
+- Use optional configuration with defaults
+- Document configuration options
+
+---
+
+## Component Exports
+
+### Export Standalone Components
+
+**Export components that users will import:**
+
+```typescript
+// lib/components/index.ts
+export * from './osi-cards/osi-cards.component';
+export * from './ai-card-renderer/ai-card-renderer.component';
+export * from './osi-cards-container/osi-cards-container.component';
+```
+
+### Export Component Classes
+
+**Export component classes, not just selectors:**
+
+```typescript
+// public-api.ts
+export { OsiCardsComponent } from './lib/components/osi-cards/osi-cards.component';
+export { AICardRendererComponent } from './lib/components/ai-card-renderer/ai-card-renderer.component';
+```
+
+### Guidelines
+
+- Export standalone components directly
+- Don't export NgModules (deprecated)
+- Export types/interfaces used with components
+- Document component APIs with JSDoc
+- Include usage examples in documentation
+
+---
+
+## Injection Tokens
+
+### Define Configuration Tokens
+
+```typescript
+// lib/providers/injection-tokens.ts
+import { InjectionToken } from '@angular/core';
+
+export interface ThemeConfig {
+  defaultTheme: 'day' | 'night';
+  allowThemeSwitch: boolean;
+}
+
+export const OSI_THEME_CONFIG_TOKEN = new InjectionToken<ThemeConfig>(
+  'OSI_THEME_CONFIG',
+  {
+    providedIn: 'root',
+    factory: () => ({
+      defaultTheme: 'day',
+      allowThemeSwitch: true,
+    }),
+  }
+);
+```
+
+### Usage in Components
+
+```typescript
+export class MyComponent {
+  private readonly themeConfig = inject(OSI_THEME_CONFIG_TOKEN, { optional: true });
+  
+  get theme(): 'day' | 'night' {
+    return this.themeConfig?.defaultTheme || 'day';
+  }
+}
+```
+
+### Guidelines
+
+- Use InjectionToken for configuration
+- Provide default values with `factory`
+- Use `providedIn: 'root'` for singleton tokens
+- Use `{ optional: true }` when token may not be provided
+- Document token purpose and type
+
+---
+
+## Library Packaging
+
+### ng-packagr Configuration
+
+```json
+// ng-package.json
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/osi-cards-lib",
+  "lib": {
+    "entryFile": "public-api.ts",
+    "umdModuleIds": {
+      "@angular/core": "ng.core",
+      "@angular/common": "ng.common"
+    }
+  }
+}
+```
+
+### Package.json Configuration
+
+```json
+// package.json (in dist/osi-cards-lib)
+{
+  "name": "osi-cards-lib",
+  "version": "1.5.52",
+  "peerDependencies": {
+    "@angular/core": "^17.0.0 || ^18.0.0 || ^20.0.0",
+    "@angular/common": "^17.0.0 || ^18.0.0 || ^20.0.0",
+    "rxjs": "~7.8.0"
+  },
+  "sideEffects": false
+}
+```
+
+### Guidelines
+
+- Use `entryFile` pointing to `public-api.ts`
+- Declare peer dependencies (Angular, RxJS)
+- Set `sideEffects: false` for tree-shaking
+- Include proper package metadata
+- Version according to semver
+
+---
+
+## Version Management
+
+### Version Synchronization
+
+**Keep versions synchronized across:**
+
+- `package.json` (root)
+- `projects/osi-cards-lib/package.json`
+- `dist/osi-cards-lib/package.json` (after build)
+- `projects/osi-cards-lib/src/lib/version.ts`
+- `src/version.ts` (app version)
+
+### Version File Pattern
+
+```typescript
+// lib/version.ts
+export const VERSION = '1.5.52';
+```
+
+### Guidelines
+
+- Use semantic versioning (MAJOR.MINOR.PATCH)
+- Synchronize versions across all locations
+- Update changelog with version changes
+- Tag releases in git
+- Document breaking changes
+
+---
+
+## Type Exports
+
+### Export Types and Interfaces
+
+```typescript
+// lib/models/index.ts
+export * from './card.model';
+export * from './section.model';
+export * from './field.model';
+
+// lib/types/index.ts
+export * from './card-id.type';
+export * from './section-id.type';
+```
+
+### Public Types
+
+**Export types that users will use:**
+
+```typescript
+// public-api.ts
+export type { AICardConfig } from './lib/models/card.model';
+export type { CardSection } from './lib/models/section.model';
+export type { CardId, SectionId } from './lib/types';
+```
+
+### Guidelines
+
+- Export public types/interfaces
+- Use type exports (not value exports) when possible
+- Document types with JSDoc
+- Use branded types for IDs (CardId, SectionId)
+- Export utility types when useful
+
+---
+
+## Style Exports
+
+### SCSS Entry Point
+
+**Export styles for consumers:**
+
+```typescript
+// styles/_styles-scoped.scss
+@import 'tokens/master';
+@import 'components/sections/design-system';
+// ... other imports
+```
+
+### Usage in Consumer Application
+
+```json
+// angular.json
+{
+  "styles": [
+    "src/styles.scss",
+    "node_modules/osi-cards-lib/styles/_styles-scoped.scss"
+  ]
+}
+```
+
+### Guidelines
+
+- Provide SCSS entry point
+- Use design tokens (CSS custom properties)
+- Document style integration
+- Support theme customization
+- Keep styles modular
+
+---
+
+## Library Checklist
+
+Before publishing:
+
+- [ ] Public API exports only necessary items
+- [ ] Provider functions properly configured
+- [ ] Components exported correctly
+- [ ] Injection tokens defined and documented
+- [ ] Package.json configured correctly
+- [ ] Peer dependencies declared
+- [ ] Version synchronized across files
+- [ ] Types exported properly
+- [ ] Styles exportable
+- [ ] Documentation complete
+- [ ] Changelog updated
+- [ ] Breaking changes documented
+
+**Examples:**
+- See `projects/osi-cards-lib/src/public-api.ts` for public API structure
+- See `projects/osi-cards-lib/src/lib/providers/osi-cards.providers.ts` for provider configuration
+- See `app.config.ts` in demo app for usage examples
+
+**See also:** `angular-components.mdc`, `shadow-dom.mdc`, `scss-styling.mdc`

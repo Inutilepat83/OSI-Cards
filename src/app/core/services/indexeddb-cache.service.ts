@@ -3,7 +3,7 @@
  * Provides persistent caching using IndexedDB for HTTP responses
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -38,7 +38,9 @@ export class IndexedDBCacheService {
     this.initPromise = new Promise((resolve, reject) => {
       // Check if IndexedDB is available
       if (!('indexedDB' in window)) {
-        console.warn('IndexedDB is not available in this browser');
+        if (isDevMode()) {
+          console.warn('IndexedDB is not available in this browser');
+        }
         reject(new Error('IndexedDB not available'));
         return;
       }
@@ -46,7 +48,9 @@ export class IndexedDBCacheService {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
       request.onerror = () => {
-        console.warn('Failed to open IndexedDB:', request.error);
+        if (isDevMode()) {
+          console.warn('Failed to open IndexedDB:', request.error);
+        }
         reject(request.error);
       };
 
@@ -110,9 +114,28 @@ export class IndexedDBCacheService {
    * @param version Optional version string (e.g., "1.5.40") for cache invalidation
    */
   set(key: string, value: any, timestamp: number, version?: string): Observable<void> {
-    // Validate key exists and is a valid string
+    // Validate key exists and is a valid non-empty string
     if (!key || typeof key !== 'string') {
-      console.warn('[IndexedDBCache] Invalid key provided:', key);
+      if (isDevMode()) {
+        console.warn('[IndexedDBCache] Invalid key provided:', key);
+      }
+      return of(undefined);
+    }
+
+    // Trim key and validate it's not empty after trimming
+    const trimmedKey = String(key).trim();
+    if (!trimmedKey || trimmedKey.length === 0) {
+      if (isDevMode()) {
+        console.warn('[IndexedDBCache] Key is empty after trimming:', key);
+      }
+      return of(undefined);
+    }
+
+    // Validate timestamp is a valid number
+    if (typeof timestamp !== 'number' || isNaN(timestamp) || !isFinite(timestamp)) {
+      if (isDevMode()) {
+        console.warn('[IndexedDBCache] Invalid timestamp provided:', timestamp);
+      }
       return of(undefined);
     }
 
@@ -120,23 +143,67 @@ export class IndexedDBCacheService {
       this.initDB()
         .then((db) => {
           return new Promise<void>((resolve, reject) => {
-            const transaction = db.transaction([this.STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(this.STORE_NAME);
-            const entry: CacheEntry & { key: string } = {
-              key,
-              data: value,
-              timestamp,
-              ...(version && { version }),
-            };
-            const request = store.put(entry);
+            try {
+              const transaction = db.transaction([this.STORE_NAME], 'readwrite');
+              const store = transaction.objectStore(this.STORE_NAME);
 
-            request.onsuccess = () => {
-              resolve();
-            };
+              // Verify object store has keyPath before put
+              if (!store.keyPath) {
+                if (isDevMode()) {
+                  console.warn('[IndexedDBCache] Object store missing keyPath');
+                }
+                resolve(); // Resolve instead of reject to prevent error propagation
+                return;
+              }
 
-            request.onerror = () => {
-              reject(request.error);
-            };
+              // Ensure entry has valid structure with required key property
+              // Handle undefined/null values by storing them explicitly as null
+              const entry: CacheEntry & { key: string } = {
+                key: trimmedKey, // Use pre-validated trimmed key
+                data: value !== undefined ? value : null, // Store null instead of undefined
+                timestamp: Number(timestamp), // Ensure timestamp is a number
+                ...(version &&
+                  typeof version === 'string' &&
+                  version.trim().length > 0 && { version: String(version).trim() }),
+              };
+
+              // Validate entry has key property matching keyPath before put operation
+              const keyPath = store.keyPath as string;
+              if (
+                !entry[keyPath] ||
+                typeof entry[keyPath] !== 'string' ||
+                entry[keyPath].length === 0
+              ) {
+                if (isDevMode()) {
+                  console.warn('[IndexedDBCache] Entry missing keyPath property:', {
+                    keyPath,
+                    entry,
+                  });
+                }
+                resolve(); // Resolve instead of reject to prevent error propagation
+                return;
+              }
+
+              const request = store.put(entry);
+
+              request.onsuccess = () => {
+                resolve();
+              };
+
+              request.onerror = () => {
+                // Log but don't reject - cache failures are non-critical
+                if (isDevMode()) {
+                  console.warn('[IndexedDBCache] Failed to store entry:', request.error);
+                }
+                resolve(); // Resolve instead of reject to prevent error propagation
+              };
+            } catch (error) {
+              // Catch any synchronous errors (e.g., invalid entry structure)
+              if (isDevMode()) {
+                console.warn('[IndexedDBCache] Error preparing entry for storage:', error);
+              }
+              resolve(); // Resolve instead of reject to prevent error propagation
+            }
           });
         })
         .catch(() => undefined)

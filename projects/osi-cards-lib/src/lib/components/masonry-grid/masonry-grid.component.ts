@@ -8,6 +8,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  isDevMode,
   NgZone,
   OnChanges,
   OnDestroy,
@@ -16,20 +17,25 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CardSection } from '../../models';
-import { LoggerService } from '../../services';
-import { MasonryTransformService } from '../../services/masonry-transform.service';
-import { SectionLayoutPreferenceService } from '../../services/section-layout-preference.service';
-import { Breakpoint } from '../../types';
+import { CardSection } from '@osi-cards/models';
+import { LoggerService } from '@osi-cards/services';
+import { MasonryTransformService } from '@osi-cards/services';
+import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { Breakpoint } from '@osi-cards/types';
+import { sendDebugLog, LOG_TAGS } from '@osi-cards/utils';
 import {
   calculateColumns,
   generateLeftExpression,
   generateWidthExpression,
-} from '../../utils/grid-config.util';
+} from '@osi-cards/utils';
 import {
   SectionRendererComponent,
   SectionRenderEvent,
 } from '../section-renderer/section-renderer.component';
+import {
+  SectionErrorBoundaryComponent,
+  SectionError,
+} from '../section-error-boundary/section-error-boundary.component';
 
 interface SectionWithSpan {
   section: CardSection;
@@ -62,7 +68,7 @@ export interface LayoutLogEntry {
 @Component({
   selector: 'app-masonry-grid',
   standalone: true,
-  imports: [CommonModule, SectionRendererComponent],
+  imports: [CommonModule, SectionRendererComponent, SectionErrorBoundaryComponent],
   templateUrl: './masonry-grid.component.html',
   styleUrls: ['./masonry-grid.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,10 +91,34 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
 
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService, { optional: true });
   private readonly ngZone = inject(NgZone);
   private readonly layoutPreferenceService = inject(SectionLayoutPreferenceService);
   private readonly masonryTransformService = inject(MasonryTransformService);
+
+  // Change detection batching: queue markForCheck calls to batch them in single RAF
+  private changeDetectionRafId: number | null = null;
+  private pendingChangeDetection = false;
+
+  /**
+   * Batched change detection - queues markForCheck() to batch multiple calls
+   * Uses requestAnimationFrame to batch all pending change detection in single cycle
+   */
+  private batchedMarkForCheck(): void {
+    if (this.pendingChangeDetection) {
+      return; // Already queued
+    }
+
+    this.pendingChangeDetection = true;
+
+    if (this.changeDetectionRafId === null) {
+      this.changeDetectionRafId = requestAnimationFrame(() => {
+        this.cdr.markForCheck();
+        this.pendingChangeDetection = false;
+        this.changeDetectionRafId = null;
+      });
+    }
+  }
 
   sectionsWithSpan: SectionWithSpan[] = [];
   currentColumns = 1;
@@ -109,12 +139,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private initialLayoutPollingTimeout?: ReturnType<typeof setTimeout>;
   private itemElements = new Map<string, HTMLElement>(); // Cache element references by section key
   private cachedPadding: { left: number; right: number; total: number } | null = null;
+  // Cache container width to avoid repeated measurements
+  private cachedContainerWidth: number | null = null;
+  private cachedContainerWidthTimestamp = 0;
+  private readonly CONTAINER_WIDTH_CACHE_TTL = 100;
   private isFirstCalculation = true;
   private isFirstPositioning = true;
   private animationMonitorInterval?: ReturnType<typeof setInterval>;
   private previousSectionKeys = new Set<string>(); // Track previous sections to detect new ones
 
   ngAfterViewInit(): void {
+    // Removed expensive fetch call - defer to idle time if needed
+    // Defer expensive operations to keep UI responsive
+
     this.detectGridMode();
     this.setupResizeObserver();
 
@@ -151,11 +188,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
                             container.querySelectorAll<HTMLElement>('.masonry-item')
                           );
                           // Check if all items have valid heights
-                          const allItemsHaveHeights = items.every((item) => {
+                          // Batch DOM reads to avoid layout thrashing
+                          const itemHeights = items.map((item) => {
+                            // Batch: read both measurements at once
+                            const rect = item.getBoundingClientRect();
                             const offsetHeight = item.offsetHeight || 0;
-                            const rectHeight = item.getBoundingClientRect().height || 0;
+                            const rectHeight = rect.height || 0;
                             return Math.max(offsetHeight, rectHeight) > 0;
                           });
+                          const allItemsHaveHeights = itemHeights.every((hasHeight) => hasHeight);
 
                           if (allItemsHaveHeights) {
                             // Items are ready, trigger positioning
@@ -189,6 +230,26 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // #region agent log - masonry grid ngOnChanges
+    if (changes['sections']) {
+      sendDebugLog({
+        location: 'masonry-grid.component.ts:ngOnChanges',
+        message: 'MasonryGrid sections input changed',
+        data: {
+          sectionsCount: this.sections?.length || 0,
+          hasSections: !!this.sections,
+          isArray: Array.isArray(this.sections),
+          sections: this.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+          previousValue: changes['sections'].previousValue?.length || 0,
+          currentValue: changes['sections'].currentValue?.length || 0,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'empty-card-debug',
+        hypothesisId: 'F',
+      });
+    }
+    // #endregion
     if (
       changes['sections'] ||
       changes['containerWidth'] ||
@@ -196,45 +257,66 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       changes['minColumnWidth'] ||
       changes['maxColumns']
     ) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'masonry-grid.component.ts:189',
-          message: 'ngOnChanges: sections changed',
-          data: {
-            sectionsChanged: !!changes['sections'],
-            sectionsCount: this.sections?.length || 0,
-            prevSectionsCount: changes['sections']?.previousValue?.length || 0,
-            isStreaming: this.isStreaming,
-            streamingChanged: !!changes['isStreaming'],
-            prevStreaming: changes['isStreaming']?.previousValue,
-            timestamp: Date.now(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'animation-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
-      // #endregion
+      // Removed expensive fetch call - defer logging if needed
+      // Defer expensive operations to keep UI responsive
 
       // If streaming stopped, clean up any stuck animations
       if (changes['isStreaming'] && !this.isStreaming && changes['isStreaming'].previousValue) {
         this.cleanupStuckAnimations();
       }
 
-      // Clear cached padding when container width or gap changes to force recalculation
+      // Clear cached padding and width when container width or gap changes to force recalculation
       if (changes['containerWidth'] || changes['gap']) {
         this.cachedPadding = null;
+        this.cachedContainerWidth = null;
+        this.cachedContainerWidthTimestamp = 0;
         // Reset first calculation flags if gap changes
         if (changes['gap']) {
           this.isFirstCalculation = true;
           this.isFirstPositioning = true;
         }
       }
-      this.updateLayout();
+      // CRITICAL: Populate sectionsWithSpan immediately when sections change
+      // This ensures *ngFor has data to render even if updateLayout() is deferred
+      // Without this, sectionsWithSpan remains empty and nothing renders
+      if (
+        changes['sections'] &&
+        this.sections &&
+        this.sections.length > 0 &&
+        this.sectionsWithSpan.length === 0
+      ) {
+        // Create initial sectionsWithSpan entries immediately so *ngFor can render
+        // They'll be properly positioned when updateLayout() runs
+        const effectiveWidth = this.containerWidth || 1200; // Use fallback width if needed
+        const columns = this.calculateColumns(effectiveWidth);
+        this.sectionsWithSpan = this.sections.map((section, index) => {
+          const key = this.getSectionKey(section, index);
+          const colSpan = this.decideSpanForSection(section, columns, false);
+          const layoutVariant = this.determineLayoutVariant(section, colSpan, columns);
+          const estimatedHeight = this.estimateSectionHeight(section, colSpan);
+          return {
+            section,
+            key,
+            colSpan,
+            layoutVariant,
+            displayOrder: index,
+            estimatedHeight,
+          };
+        });
+        // CRITICAL: Force change detection immediately so *ngFor creates components
+        // OnPush components need explicit change detection when properties change
+        // Use both markForCheck() and detectChanges() to ensure immediate update
+        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      }
+
+      // Defer full layout update to avoid blocking UI after card generation
+      // Use next frame to batch with rendering
+      this.ngZone.runOutsideAngular(() => {
+        requestAnimationFrame(() => {
+          this.ngZone.run(() => this.updateLayout());
+        });
+      });
     }
   }
 
@@ -253,6 +335,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (this.absolutePositionUpdateRafId !== null) {
       cancelAnimationFrame(this.absolutePositionUpdateRafId);
     }
+    if (this.changeDetectionRafId !== null) {
+      cancelAnimationFrame(this.changeDetectionRafId);
+      this.changeDetectionRafId = null;
+      this.pendingChangeDetection = false;
+    }
   }
 
   private calculateColumns(containerWidth: number): number {
@@ -269,8 +356,27 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private detectGridMode(): void {
     if (typeof CSS !== 'undefined' && CSS.supports('grid-template-rows', 'masonry')) {
       this.gridMode = 'native';
+      if (this.debug || isDevMode()) {
+        this.logger?.debug(
+          'Grid mode: NATIVE (CSS masonry supported) - updateAbsolutePositions will NOT be called',
+          {},
+          ['GRID_MODE']
+        );
+      }
     } else {
       this.gridMode = 'absolute-polyfill';
+      if (this.debug || isDevMode()) {
+        this.logger?.debug(
+          'Grid mode: ABSOLUTE-POLYFILL (CSS masonry NOT supported) - updateAbsolutePositions WILL be called',
+          {},
+          ['GRID_MODE']
+        );
+      }
+    }
+    if (this.debug || isDevMode()) {
+      this.logger?.debug(`Grid mode detected: ${this.gridMode}`, { gridMode: this.gridMode }, [
+        'GRID_MODE',
+      ]);
     }
   }
 
@@ -281,7 +387,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private decideSpanForSection(
     section: CardSection,
     columns: number,
-    isHybridReorder: boolean = false
+    isHybridReorder = false
   ): number {
     if (columns === 1) return 1;
 
@@ -333,19 +439,74 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   private getContainerWidth(): number {
     if (this.containerWidth && this.containerWidth > 0) {
+      // #region agent log
+      sendDebugLog(
+        {
+          location: 'masonry-grid.component.ts:getContainerWidth',
+          message: 'Using explicit containerWidth',
+          data: {
+            containerWidth: this.containerWidth,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'initial',
+          hypothesisId: 'C',
+        },
+        'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+      );
+      // #endregion
       return this.containerWidth;
     }
 
     const el = this.containerRef?.nativeElement;
     if (!el) {
+      // #region agent log
+      sendDebugLog(
+        {
+          location: 'masonry-grid.component.ts:getContainerWidth',
+          message: 'Container element not found, returning 0',
+          data: {
+            hasContainerRef: !!this.containerRef,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'initial',
+          hypothesisId: 'C',
+        },
+        'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+      );
+      // #endregion
       // Don't use window fallback - return 0 to force retry mechanism
       return 0;
     }
 
+    // Batch DOM reads: getComputedStyle + clientWidth in one operation
+    // Use cached value if available to avoid expensive getComputedStyle calls
+    if (this.cachedPadding && this.lastContainerWidth > 0) {
+      const clientWidth = el.clientWidth;
+      const contentWidth = clientWidth - this.cachedPadding.total;
+      if (contentWidth >= 200) {
+        return contentWidth;
+      }
+    }
+
+    // Cache padding to avoid repeated getComputedStyle calls
     const computedStyle = window.getComputedStyle(el);
     const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
     const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
-    const contentWidth = el.clientWidth - paddingLeft - paddingRight;
+    const clientWidth = el.clientWidth;
+    const contentWidth = clientWidth - paddingLeft - paddingRight;
+
+    // Cache padding for next time
+    if (contentWidth >= 200) {
+      this.cachedPadding = {
+        left: paddingLeft,
+        right: paddingRight,
+        total: paddingLeft + paddingRight,
+      };
+    }
 
     // Only return 0 if truly invalid - don't use window fallback here
     // This forces the retry mechanism to wait for actual container width
@@ -365,14 +526,158 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private updateLayout(): void {
-    const containerWidth = this.getContainerWidth();
+    // Defer expensive DOM measurements using requestIdleCallback for non-blocking updates
+    // This prevents freezing interactions after card generation
+    const useIdleCallback = typeof requestIdleCallback !== 'undefined';
+    if (useIdleCallback && !this.isStreaming) {
+      // For non-streaming updates, defer to idle time to keep UI responsive
+      requestIdleCallback(
+        () => {
+          this.ngZone.run(() => this.performLayoutUpdate());
+        },
+        { timeout: 100 } // Fallback to setTimeout after 100ms
+      );
+      return;
+    }
+
+    // For streaming updates, use next frame to batch with rendering
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(() => {
+        this.ngZone.run(() => this.performLayoutUpdate());
+      });
+    });
+  }
+
+  private performLayoutUpdate(): void {
+    const startTime = performance.now();
+
+    // Optimize: Skip layout calculation if sections hash unchanged and layout is already ready
+    // This avoids expensive recalculations when only content changed (not structure)
+    const currentSectionHash = this.computeSectionHash();
+    if (
+      currentSectionHash === this.lastSectionHash &&
+      this.isLayoutReady &&
+      this.sectionsWithSpan.length > 0
+    ) {
+      // Sections haven't changed structurally, and layout is already calculated
+      // Only update if container width changed significantly
+      const containerWidth = this.getContainerWidth();
+      if (containerWidth > 0 && Math.abs(containerWidth - this.lastContainerWidth) < 10) {
+        return; // No significant change, skip layout recalculation
+      }
+    }
+    this.lastSectionHash = currentSectionHash;
+
+    let containerWidth = this.getContainerWidth();
 
     if (containerWidth <= 0 || !this.sections || this.sections.length === 0) {
-      this.sectionsWithSpan = [];
-      this.currentColumns = 1;
-      this.isLayoutReady = false;
-      this.cdr.markForCheck();
-      return;
+      // If we have sections but container width is invalid, retry after a delay
+      // This handles cases where container hasn't rendered yet on page refresh
+      if (this.sections && this.sections.length > 0 && containerWidth <= 0) {
+        // Removed console.log - expensive operation, guard with isDevMode if needed
+        if (isDevMode()) {
+          console.log('[MasonryGrid] Container width invalid, scheduling retry', {
+            sectionsCount: this.sections.length,
+            containerWidth,
+            isFirstCalculation: this.isFirstCalculation,
+          });
+        }
+
+        // Keep sectionsWithSpan populated even if width is invalid
+        // This allows section renderers to be created and start loading content
+        // They just won't be positioned until width is available
+        if (this.sectionsWithSpan.length === 0 && this.sections.length > 0) {
+          // Create basic sectionsWithSpan entries without positioning
+          this.sectionsWithSpan = this.sections.map((section, index) => {
+            const key = this.getSectionKey(section, index);
+            return {
+              section,
+              key,
+              colSpan: 1, // Default span
+              layoutVariant: 'default',
+              displayOrder: index,
+              estimatedHeight: 200, // Default height
+            };
+          });
+          if (isDevMode()) {
+            console.log('[MasonryGrid] Created placeholder sectionsWithSpan for retry', {
+              count: this.sectionsWithSpan.length,
+            });
+          }
+          this.batchedMarkForCheck(); // Trigger change detection so *ngFor creates components
+        }
+
+        if (this.isFirstCalculation) {
+          this.isFirstCalculation = false; // Prevent infinite retries
+          this.ngZone.runOutsideAngular(() => {
+            // Use multiple retries with increasing delays
+            let retryCount = 0;
+            const maxRetries = 5;
+            const retry = () => {
+              retryCount++;
+              setTimeout(() => {
+                const retryWidth = this.getContainerWidth();
+                if (isDevMode() && retryCount <= 2) {
+                  console.log('[MasonryGrid] Retry attempt', {
+                    retryCount,
+                    retryWidth,
+                    sectionsCount: this.sections?.length || 0,
+                  });
+                }
+                if (retryWidth > 0) {
+                  this.ngZone.run(() => {
+                    this.updateLayout();
+                  });
+                } else if (retryCount < maxRetries) {
+                  retry();
+                } else {
+                  if (isDevMode()) {
+                    console.warn(
+                      '[MasonryGrid] Max retries reached, container width still invalid'
+                    );
+                  }
+                }
+              }, 100 * retryCount); // Exponential backoff
+            };
+            retry();
+          });
+        }
+        // Continue with placeholder sections - allow them to render
+        // They'll be properly positioned when width becomes available via retry
+        if (this.sectionsWithSpan.length > 0) {
+          // Set basic layout state so sections can render
+          this.currentColumns = 1; // Default to 1 column until width is known
+          this.isLayoutReady = true; // Allow rendering even without valid width
+          if (isDevMode()) {
+            console.log('[MasonryGrid] Returning early with placeholder sections', {
+              sectionsCount: this.sectionsWithSpan.length,
+            });
+          }
+          this.batchedMarkForCheck();
+          return; // Return early but sections are already set, so they'll render
+        }
+      }
+
+      // Only clear sections if we truly have no sections
+      if (!this.sections || this.sections.length === 0) {
+        this.sectionsWithSpan = [];
+        this.currentColumns = 1;
+        this.isLayoutReady = false;
+        this.batchedMarkForCheck();
+        return;
+      }
+
+      // If we reach here with invalid width, use fallback to allow rendering
+      // Note: containerWidth is const, so we'll use a variable for calculations
+      const effectiveWidth = containerWidth <= 0 ? 1200 : containerWidth;
+      if (containerWidth <= 0 && isDevMode()) {
+        console.warn('[MasonryGrid] Using fallback width for initial render', {
+          sectionsCount: this.sections.length,
+          fallbackWidth: effectiveWidth,
+        });
+      }
+      // Use effectiveWidth for remaining calculations (but this code path shouldn't be reached due to return above)
+      containerWidth = effectiveWidth;
     }
 
     // Validate layout prerequisites (padding and gap) before first layout
@@ -382,18 +687,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (this.isFirstCalculation && !prerequisites.valid) {
       this.isFirstCalculation = false; // Prevent infinite loop
       this.ngZone.runOutsideAngular(() => {
-        // Use multiple RAF cycles + longer timeout for first calculation
+        // Use single RAF cycle + timeout for first calculation (reduced from 3 RAF cycles)
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              setTimeout(() => {
-                // Clear cache to force recalculation
-                this.cachedPadding = null;
-                // Retry layout calculation
-                this.ngZone.run(() => this.updateLayout());
-              }, 200);
-            });
-          });
+          setTimeout(() => {
+            // Clear cache to force recalculation
+            this.cachedPadding = null;
+            // Retry layout calculation
+            this.ngZone.run(() => this.updateLayout());
+          }, 200);
         });
       });
       return;
@@ -428,7 +729,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (sectionHash !== this.lastSectionHash) {
       this.isFirstCalculation = true;
       this.isFirstPositioning = true;
-      this.cachedPadding = null; // Clear padding cache when sections change
+      // Don't clear padding/width cache on section changes - they're independent
+      // Only clear if container width actually changed
     }
 
     this.currentColumns = columns;
@@ -442,33 +744,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Detect new sections for animation
     const currentSectionKeys = new Set(this.sections.map((s, idx) => this.getSectionKey(s, idx)));
-    const newSectionKeys = new Set(
-      Array.from(currentSectionKeys).filter((key) => !this.previousSectionKeys.has(key))
-    );
+    // Removed unused newSectionKeys variable - only used for logging
 
-    // #region agent log
-    if (newSectionKeys.size > 0) {
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'masonry-grid.component.ts:updateLayout',
-          message: 'New sections detected',
-          data: {
-            newSectionKeys: Array.from(newSectionKeys),
-            previousCount: this.previousSectionKeys.size,
-            currentCount: currentSectionKeys.size,
-            isStreaming: this.isStreaming,
-            timestamp: Date.now(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'animation-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
-    }
-    // #endregion
+    // Removed expensive fetch call from hot path - defer to idle time if needed
 
     // Update previous keys AFTER marking animations (so we can detect new ones)
     this.previousSectionKeys = currentSectionKeys;
@@ -484,6 +762,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       const layoutVariant = this.determineLayoutVariant(section, colSpan, columns);
       const estimatedHeight = this.estimateSectionHeight(section, colSpan);
 
+      // Removed expensive console.log from loop - guard with isDevMode if needed
+      // if (isDevMode() && index === 0) {
+      //   console.log('[MasonryGrid] Creating sectionWithSpan', { index, key, sectionType: section.type });
+      // }
+
       return {
         section,
         key,
@@ -494,6 +777,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       };
     });
 
+    // Removed expensive console.log - guard with isDevMode if needed
+    // if (isDevMode()) {
+    //   console.log('[MasonryGrid] sectionsWithSpan populated', { count: this.sectionsWithSpan.length });
+    // }
+
     this.isLayoutReady = true;
     this.layoutVersion++;
 
@@ -501,7 +789,17 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.layoutChange.emit({ columns, containerWidth, breakpoint });
     this.layoutCompleted.emit({ version: this.layoutVersion, height: 0 });
 
+    // Removed expensive console.log - guard with isDevMode if needed
+    // if (isDevMode()) {
+    //   console.log('[MasonryGrid] Layout updated', { sectionsWithSpanCount: this.sectionsWithSpan.length });
+    // }
+
     this.applyLayout(containerWidth, columns);
+
+    // CRITICAL: Force change detection after setting sectionsWithSpan
+    // This ensures *ngFor creates the section renderer components
+    // Use batched change detection to batch with other updates
+    this.batchedMarkForCheck();
 
     // Mark new sections for animation after layout and DOM update
     // Use multiple delays to ensure DOM is ready
@@ -515,41 +813,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       });
     });
 
-    // #region agent log - Check animation class state after layout update
-    if (typeof window !== 'undefined' && this.containerRef?.nativeElement) {
-      setTimeout(() => {
-        const container = this.containerRef.nativeElement;
-        const items = container.querySelectorAll<HTMLElement>('.masonry-item');
-        const animationStates = Array.from(items).map((item, idx) => ({
-          index: idx,
-          hasAnimating: item.classList.contains('masonry-item--animating'),
-          hasAnimated: item.classList.contains('masonry-item--animated'),
-          dataAnimated: item.getAttribute('data-animated'),
-          computedAnimation: window.getComputedStyle(item).animation,
-          computedAnimationName: window.getComputedStyle(item).animationName,
-        }));
-
-        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'masonry-grid.component.ts:437',
-            message: 'After applyLayout: animation class state',
-            data: {
-              itemsCount: items.length,
-              isStreaming: this.isStreaming,
-              animationStates,
-              timestamp: Date.now(),
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'animation-debug',
-            hypothesisId: 'B',
-          }),
-        }).catch(() => {});
-      }, 100);
-    }
-    // #endregion
+    // Removed expensive fetch call and getComputedStyle from hot path
+    // Defer to idle time if monitoring needed
 
     // Schedule absolute positioning updates for polyfill mode
     if (this.gridMode === 'absolute-polyfill') {
@@ -607,19 +872,33 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       });
     }
 
-    this.cdr.markForCheck();
+    this.batchedMarkForCheck();
+
+    // Only log if performance is slow (threshold: 50ms)
+    const totalDuration = performance.now() - startTime;
+    if (totalDuration > 50 && isDevMode()) {
+      console.warn(`[MasonryGrid] Slow performLayoutUpdate: ${totalDuration.toFixed(2)}ms`, {
+        sectionsCount: this.sectionsWithSpan.length,
+        columns,
+      });
+    }
   }
 
   /**
    * Compute a hash of section characteristics to detect meaningful changes
+   * Optimized to include more relevant fields and use efficient hashing
    */
   private computeSectionHash(): string {
-    return this.sections
-      .map(
-        (s) =>
-          `${s.id || ''}|${s.type}|${s.fields?.length || 0}|${s.items?.length || 0}|${s.description?.length || 0}`
-      )
-      .join(';');
+    // Use djb2 hash algorithm for better distribution
+    let hash = 5381;
+    for (const s of this.sections) {
+      const sectionStr = `${s.id || ''}|${s.type}|${s.fields?.length || 0}|${s.items?.length || 0}|${s.description?.length || 0}|${s.colSpan || 0}`;
+      for (let i = 0; i < sectionStr.length; i++) {
+        hash = (hash << 5) + hash + sectionStr.charCodeAt(i);
+        hash = hash & 0xffffffff; // Convert to 32-bit integer
+      }
+    }
+    return String(hash);
   }
 
   /**
@@ -628,18 +907,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    */
   private applyHybridReordering(sections: CardSection[], columns: number): CardSection[] {
     // Group sections by priority
-    const criticalSections: Array<{
+    const criticalSections: {
       section: CardSection;
       originalIndex: number;
       estimatedHeight: number;
       colSpan: number;
-    }> = [];
-    const reorderableSections: Array<{
+    }[] = [];
+    const reorderableSections: {
       section: CardSection;
       originalIndex: number;
       estimatedHeight: number;
       colSpan: number;
-    }> = [];
+    }[] = [];
 
     sections.forEach((section, index) => {
       const isCritical =
@@ -684,7 +963,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Interleave sections by height to create better packing opportunities
     // This helps shorter sections fill gaps left by taller ones
-    const heightGroups: Array<Array<(typeof reorderableSections)[0]>> = [];
+    const heightGroups: (typeof reorderableSections)[0][][] = [];
     const HEIGHT_TOLERANCE = 50; // Group sections within 50px of each other
 
     for (const item of reorderableSections) {
@@ -708,7 +987,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Interleave groups: take one from each group in round-robin fashion
     // This creates better opportunities for gap filling
     const interleaved: typeof reorderableSections = [];
-    let maxGroupSize = Math.max(...heightGroups.map((g) => g.length), 0);
+    const maxGroupSize = Math.max(...heightGroups.map((g) => g.length), 0);
 
     for (let i = 0; i < maxGroupSize; i++) {
       for (const group of heightGroups) {
@@ -842,7 +1121,28 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (!container) return;
 
     // Use validated prerequisites
+    const prerequisitesStart = performance.now();
     const prerequisites = this.validateLayoutPrerequisites();
+    const prerequisitesDuration = performance.now() - prerequisitesStart;
+    // #region agent log
+    if (prerequisitesDuration > 10) {
+      sendDebugLog(
+        {
+          location: 'masonry-grid.component.ts:applyLayout',
+          message: 'SLOW: validateLayoutPrerequisites',
+          data: {
+            duration: prerequisitesDuration,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'freeze-investigation',
+          hypothesisId: 'C',
+        },
+        'http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc'
+      );
+    }
+    // #endregion
     const padding = prerequisites.padding;
     const gap = prerequisites.gap;
 
@@ -973,7 +1273,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       // Default fallback: 8px (standard card padding)
       return 8;
-    } catch (error) {
+    } catch {
       // If anything fails, return default
       return 12;
     }
@@ -1065,6 +1365,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.sectionEvent.emit(event);
   }
 
+  /**
+   * Handle errors from section error boundaries
+   * Logs the error and allows the error boundary to handle recovery
+   */
+  onSectionError(error: SectionError): void {
+    this.logger?.error(
+      'Section rendering error',
+      {
+        component: 'MasonryGridComponent',
+        sectionId: error.sectionId,
+        sectionType: error.sectionType,
+      },
+      error.originalError
+    );
+    // Error boundary will handle display and retry logic
+  }
+
   getSectionId(section: CardSection): string {
     return `section-${section.id || section.title?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`;
   }
@@ -1073,7 +1390,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Handle animation end event for masonry items
    * This transitions items from animating to animated state
    */
-  onAnimationEnd(event: AnimationEvent, element: HTMLElement, index: number): void {
+  onAnimationEnd(event: AnimationEvent, element: HTMLElement): void {
     // Only handle masonry item animations
     if (
       !event.animationName ||
@@ -1083,54 +1400,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'masonry-grid.component.ts:onAnimationEnd',
-        message: 'Animation end event fired',
-        data: {
-          index,
-          animationName: event.animationName,
-          elapsedTime: event.elapsedTime,
-          targetClasses: Array.from(element.classList),
-          hasAnimating: element.classList.contains('masonry-item--animating'),
-          hasAnimated: element.classList.contains('masonry-item--animated'),
-          timestamp: Date.now(),
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'animation-debug',
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
-    // #endregion
-
     // Transition from animating to animated
     if (element.classList.contains('masonry-item--animating')) {
       element.classList.remove('masonry-item--animating');
       element.classList.add('masonry-item--animated');
       element.setAttribute('data-animated', 'true');
-
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'masonry-grid.component.ts:onAnimationEnd',
-          message: 'Transitioned to animated state',
-          data: {
-            index,
-            timestamp: Date.now(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'animation-debug',
-          hypothesisId: 'B',
-        }),
-      }).catch(() => {});
-      // #endregion
     }
   }
 
@@ -1159,32 +1433,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Check if this section was previously animated (check data attribute for persistence)
       const wasAnimated = dataAnimated || animatedSectionKeys.has(sectionKey);
 
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
-          message: 'Checking section animation state',
-          data: {
-            index: idx,
-            sectionKey,
-            hasAnimating,
-            hasAnimated,
-            dataAnimated,
-            wasAnimated,
-            isStreaming: this.isStreaming,
-            previousKeysCount: this.previousSectionKeys.size,
-            timestamp: Date.now(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'animation-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
-      // #endregion
-
       // If already animated, ensure it has the animated class and data attribute
       if (wasAnimated) {
         if (!hasAnimated) {
@@ -1200,8 +1448,21 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         return;
       }
 
+      // For non-streaming mode: ensure sections are immediately visible (no animation classes)
+      if (!this.isStreaming) {
+        // Remove any animation classes that might have persisted from previous renders
+        if (hasAnimating) {
+          item.classList.remove('masonry-item--animating');
+        }
+        // Mark as animated immediately so they're visible
+        if (!hasAnimated) {
+          item.classList.add('masonry-item--animated');
+          item.setAttribute('data-animated', 'true');
+        }
+        return; // Skip animation logic for non-streaming
+      }
+
       // For new sections during streaming: add animating class
-      // For non-streaming: skip animation (immediate display)
       if (this.isStreaming && !hasAnimating && !hasAnimated) {
         // Check if this is truly a new section (not in previous keys)
         const isNew = !this.previousSectionKeys.has(sectionKey);
@@ -1216,59 +1477,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
               item.classList.contains('masonry-item--animating') &&
               !item.classList.contains('masonry-item--animated')
             ) {
-              // #region agent log
-              fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
-                  message:
-                    'Timeout fallback: transitioning to animated (animationend did not fire)',
-                  data: {
-                    index: idx,
-                    sectionKey,
-                    timestamp: Date.now(),
-                  },
-                  timestamp: Date.now(),
-                  sessionId: 'debug-session',
-                  runId: 'animation-debug',
-                  hypothesisId: 'C',
-                }),
-              }).catch(() => {});
-              // #endregion
-
               item.classList.remove('masonry-item--animating');
               item.classList.add('masonry-item--animated');
               item.setAttribute('data-animated', 'true');
             }
           }, 1000); // 1 second timeout (700ms animation + 300ms buffer)
-
-          // #region agent log
-          fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'masonry-grid.component.ts:markNewSectionsForAnimation',
-              message: 'Added masonry-item--animating class to new section',
-              data: {
-                index: idx,
-                sectionKey,
-                timestamp: Date.now(),
-              },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'animation-debug',
-              hypothesisId: 'A',
-            }),
-          }).catch(() => {});
-          // #endregion
-        }
-      } else if (!this.isStreaming && hasAnimating) {
-        // If streaming stopped, clean up animating class
-        item.classList.remove('masonry-item--animating');
-        if (!hasAnimated) {
-          item.classList.add('masonry-item--animated');
-          item.setAttribute('data-animated', 'true');
         }
       }
     });
@@ -1283,42 +1496,43 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const container = this.containerRef.nativeElement;
     const items = container.querySelectorAll<HTMLElement>('.masonry-item');
 
+    // Batch getComputedStyle calls to avoid layout thrashing
+    // Check classList first (fast), only call getComputedStyle when needed
+    const itemsToCheck: { item: HTMLElement; hasAnimating: boolean }[] = [];
     items.forEach((item) => {
       const hasAnimating = item.classList.contains('masonry-item--animating');
       const hasAnimated = item.classList.contains('masonry-item--animated');
-      const computedStyle = window.getComputedStyle(item);
-      const animationName = computedStyle.animationName;
-      const animationPlayState = computedStyle.animationPlayState;
 
-      // If item has animating class but animation is not running or is paused
-      if (
-        hasAnimating &&
-        !hasAnimated &&
-        (animationPlayState === 'paused' || animationName === 'none' || !animationName)
-      ) {
-        // #region agent log
-        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'masonry-grid.component.ts:cleanupStuckAnimations',
-            message: 'Cleaning up stuck animation',
-            data: {
-              animationName,
-              animationPlayState,
-              timestamp: Date.now(),
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'animation-debug',
-            hypothesisId: 'D',
-          }),
-        }).catch(() => {});
-        // #endregion
+      // Only check getComputedStyle if item has animating class but not animated
+      // This avoids expensive style calculations for most items
+      if (hasAnimating && !hasAnimated) {
+        itemsToCheck.push({ item, hasAnimating });
+      } else if (hasAnimated) {
+        // Already animated, skip expensive style check
+        return;
+      }
+    });
 
-        item.classList.remove('masonry-item--animating');
-        item.classList.add('masonry-item--animated');
-        item.setAttribute('data-animated', 'true');
+    // Batch getComputedStyle calls for items that need checking
+    itemsToCheck.forEach(({ item }) => {
+      // Defer expensive getComputedStyle check using requestIdleCallback if available
+      const checkStyle = () => {
+        const computedStyle = window.getComputedStyle(item);
+        const animationName = computedStyle.animationName;
+        const animationPlayState = computedStyle.animationPlayState;
+
+        if (animationPlayState === 'paused' || animationName === 'none' || !animationName) {
+          item.classList.remove('masonry-item--animating');
+          item.classList.add('masonry-item--animated');
+          item.setAttribute('data-animated', 'true');
+        }
+      };
+
+      // Use requestIdleCallback if available, otherwise use setTimeout to defer
+      if (typeof requestIdleCallback !== 'undefined') {
+        requestIdleCallback(checkStyle, { timeout: 50 });
+      } else {
+        setTimeout(checkStyle, 0);
       }
     });
   }
@@ -1336,97 +1550,42 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       const container = this.containerRef.nativeElement;
       const items = container.querySelectorAll<HTMLElement>('.masonry-item');
-      const surface = container.closest('.ai-card-surface');
-      const hasStreamingActive = surface?.classList.contains('streaming-active');
 
-      const stuckItems: Array<{
-        index: number;
-        hasAnimating: boolean;
-        hasAnimated: boolean;
-        animationName: string;
-        animationPlayState: string;
-        animationDuration: string;
-      }> = [];
-
-      items.forEach((item, idx) => {
+      // Batch DOM reads: check classList first (fast), defer getComputedStyle (expensive)
+      // Only check items that might have stuck animations (has animating but not animated)
+      items.forEach((item) => {
         const hasAnimating = item.classList.contains('masonry-item--animating');
         const hasAnimated = item.classList.contains('masonry-item--animated');
-        const computedStyle = window.getComputedStyle(item);
-        const animationName = computedStyle.animationName;
-        const animationPlayState = computedStyle.animationPlayState;
-        const animationDuration = computedStyle.animationDuration;
 
-        // #region agent log - Check each item's animation state
-        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'masonry-grid.component.ts:setupAnimationMonitoring',
-            message: 'Animation state check',
-            data: {
-              itemIndex: idx,
-              hasAnimating,
-              hasAnimated,
-              hasStreamingActive,
-              animationName,
-              animationPlayState,
-              animationDuration,
-              isStreaming: this.isStreaming,
-              timestamp: Date.now(),
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'animation-debug',
-            hypothesisId: 'C',
-          }),
-        }).catch(() => {});
-        // #endregion
+        // Skip items that don't need checking
+        if (!hasAnimating || hasAnimated) {
+          return;
+        }
 
-        // Detect stuck: has animating class but animation is not running or is paused
-        if (
-          hasAnimating &&
-          !hasAnimated &&
-          (animationPlayState === 'paused' || animationName === 'none' || !animationName)
-        ) {
-          stuckItems.push({
-            index: idx,
-            hasAnimating,
-            hasAnimated,
-            animationName,
-            animationPlayState,
-            animationDuration,
-          });
+        // Defer expensive getComputedStyle calls using requestIdleCallback to avoid blocking
+        // Check styles in batches to keep UI responsive
+        const checkStyle = () => {
+          const computedStyle = window.getComputedStyle(item);
+          const animationName = computedStyle.animationName;
+          const animationPlayState = computedStyle.animationPlayState;
 
-          // Auto-fix: Clean up stuck animation
-          item.classList.remove('masonry-item--animating');
-          item.classList.add('masonry-item--animated');
-          item.setAttribute('data-animated', 'true');
+          // Detect stuck: has animating class but animation is not running or is paused
+          if (animationPlayState === 'paused' || animationName === 'none' || !animationName) {
+            // Auto-fix: Clean up stuck animation
+            item.classList.remove('masonry-item--animating');
+            item.classList.add('masonry-item--animated');
+            item.setAttribute('data-animated', 'true');
+          }
+        };
+
+        // Use requestIdleCallback if available, otherwise setTimeout to defer expensive operation
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(checkStyle, { timeout: 100 });
+        } else {
+          // Batch checks: delay to avoid blocking main thread
+          setTimeout(checkStyle, 0);
         }
       });
-
-      if (stuckItems.length > 0) {
-        // #region agent log - Stuck animations detected
-        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'masonry-grid.component.ts:setupAnimationMonitoring',
-            message: 'STUCK ANIMATIONS DETECTED',
-            data: {
-              stuckCount: stuckItems.length,
-              stuckItems,
-              hasStreamingActive,
-              isStreaming: this.isStreaming,
-              timestamp: Date.now(),
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'animation-debug',
-            hypothesisId: 'D',
-          }),
-        }).catch(() => {});
-        // #endregion
-      }
     }, 500); // Check every 500ms
   }
 
@@ -1501,13 +1660,17 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
 
       // Throttle resize updates to avoid excessive recalculations
-      let lastHeight = item.offsetHeight;
-      let lastWidth = item.offsetWidth;
+      // Batch DOM reads to avoid layout thrashing
+      const rect = item.getBoundingClientRect();
+      let lastHeight = item.offsetHeight || rect.height;
+      let lastWidth = item.offsetWidth || rect.width;
       let resizeTimeout: number | null = null;
 
       const observer = new ResizeObserver(() => {
-        const newHeight = item.offsetHeight;
-        const newWidth = item.offsetWidth;
+        // Batch DOM reads
+        const rect = item.getBoundingClientRect();
+        const newHeight = item.offsetHeight || rect.height;
+        const newWidth = item.offsetWidth || rect.width;
         const heightDiff = Math.abs(newHeight - lastHeight);
         const widthDiff = Math.abs(newWidth - lastWidth);
 
@@ -1553,6 +1716,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /**
    * Update absolute positions for all items using MasonryTransformService (polyfill mode)
+   * Deferred to avoid blocking UI after card generation
    */
   private updateAbsolutePositions(): void {
     if (this.gridMode !== 'absolute-polyfill') return;
@@ -1616,20 +1780,38 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Ensure items match sections (should already be in sync)
     if (items.length !== this.sectionsWithSpan.length) {
-      this.logger.warn(
-        `[MasonryGrid] Item count (${items.length}) doesn't match sections (${this.sectionsWithSpan.length})`
+      this.logger?.warn(
+        `[MasonryGrid] Item count (${items.length}) doesn't match sections (${this.sectionsWithSpan.length})`,
+        undefined,
+        [LOG_TAGS.MASONRY_GRID, LOG_TAGS.LAYOUT]
       );
       return;
     }
 
     // CRITICAL: Validate all items have valid heights before positioning
     // If items have height 0, they will all stack at top: 0
-    const allItemsHaveHeights = items.every((item) => {
+    // Batch DOM reads to avoid layout thrashing - read all measurements first, then process
+    // THIS IS THE ONLY PLACE WE MEASURE - pass results to calculateTransforms to avoid double measurement
+    const itemHeights = items.map((item, idx) => {
+      // Batch DOM reads: get both measurements at once to avoid layout thrashing
+      // This is the ONLY measurement - results will be reused in calculateTransforms
+      const rect = item.getBoundingClientRect();
       const offsetHeight = item.offsetHeight || 0;
-      const rectHeight = item.getBoundingClientRect().height || 0;
+      const rectHeight = rect.height || 0;
       const height = Math.max(offsetHeight, rectHeight);
-      return height > 0;
+      // Store both index and element for mapping
+      return {
+        index: idx,
+        offsetHeight,
+        rectHeight,
+        height,
+        sectionKey: this.sectionsWithSpan[idx]?.key,
+        element: item,
+      };
     });
+    const allItemsHaveHeights = itemHeights.every((item) => item.height > 0);
+
+    // Removed expensive fetch call - defer to idle time if needed
 
     if (!allItemsHaveHeights) {
       // Items aren't ready yet - wait and retry
@@ -1660,16 +1842,40 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Calculate transforms using MasonryTransformService with validated gap
+    // CRITICAL: Pass pre-measured heights to avoid double DOM measurements
+    // This eliminates the expensive second getBoundingClientRect() call that causes performance issues
+    // Create Map of index -> height for fast lookup in calculateTransforms
+    // CRITICAL: Use index-based mapping since sections and items are in same order
+    // This eliminates double DOM measurements
+    const heightMap = new Map<number, number>();
+    itemHeights.forEach((itemHeight) => {
+      // Safety check: only add valid heights (> 0) and valid indices
+      if (itemHeight.height > 0 && itemHeight.index >= 0) {
+        heightMap.set(itemHeight.index, itemHeight.height);
+      }
+    });
+
+    const transformsCalcStart = performance.now();
     const transforms = this.masonryTransformService.calculateTransforms(
       this.sectionsWithSpan.map((s) => s.section),
       items,
       {
         columns: this.currentColumns,
         gap: gap, // Use validated gap
-        containerWidth: this.getContainerWidth(),
+        containerWidth: this.containerWidth || this.getContainerWidth(), // Use cached width if available
       },
-      (section, columns) => this.decideSpanForSection(section, columns, true)
+      (section, columns) => this.decideSpanForSection(section, columns, true),
+      heightMap // Pass pre-measured heights (by index) to avoid expensive double DOM measurements
     );
+    const transformsDuration = performance.now() - transformsCalcStart;
+
+    // Only log if slow (threshold: 100ms)
+    if (transformsDuration > 100 && isDevMode()) {
+      console.warn(`[MasonryGrid] Slow calculateTransforms: ${transformsDuration.toFixed(2)}ms`, {
+        sectionsCount: this.sectionsWithSpan.length,
+        itemsCount: items.length,
+      });
+    }
 
     // Apply transforms and positions to items, and calculate container height in same loop
     let maxContainerHeight = 0;
@@ -1730,19 +1936,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     container.style.height = `${finalContainerHeight}px`;
 
     // Trigger change detection so template bindings update
-    this.cdr.markForCheck();
+    this.batchedMarkForCheck();
 
     // Debug diagnostics
     if (this.debug) {
       const columnHeights = this.calculateColumnHeights(transforms, items);
-      this.logger.debug('Masonry Grid Diagnostics', {
-        mode: this.gridMode,
-        columns: this.currentColumns,
-        items: items.length,
-        containerHeight: Math.round(finalContainerHeight),
-        columnHeights: columnHeights.map((h) => Math.round(h)),
-        gapVariance: Math.max(...columnHeights) - Math.min(...columnHeights),
-      });
+      this.logger?.debug(
+        'Masonry Grid Diagnostics',
+        {
+          mode: this.gridMode,
+          columns: this.currentColumns,
+          items: items.length,
+          containerHeight: Math.round(finalContainerHeight),
+          columnHeights: columnHeights.map((h) => Math.round(h)),
+          gapVariance: Math.max(...columnHeights) - Math.min(...columnHeights),
+        },
+        [LOG_TAGS.MASONRY_GRID, LOG_TAGS.LAYOUT, LOG_TAGS.PERFORMANCE]
+      );
     }
   }
 
@@ -1800,17 +2010,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Check prerequisites - if invalid, force recalculation
       const prerequisites = this.validateLayoutPrerequisites();
       if (!prerequisites.valid) {
-        // Clear cache and retry after delay with multiple RAF cycles
+        // Clear cache and retry after delay with single RAF cycle (reduced from 3)
         this.cachedPadding = null;
         this.ngZone.runOutsideAngular(() => {
           requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                setTimeout(() => {
-                  this.ngZone.run(() => this.updateLayout());
-                }, 200);
-              });
-            });
+            setTimeout(() => {
+              this.ngZone.run(() => this.updateLayout());
+            }, 200);
           });
         });
       }

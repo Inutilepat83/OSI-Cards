@@ -1,4 +1,4 @@
-import { AICardConfig } from '../models';
+import { AICardConfig } from '@osi-cards/models';
 import {
   createCompanyCard,
   CompanyCardOptions,

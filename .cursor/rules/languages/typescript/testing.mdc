@@ -1,5 +1,5 @@
 ---
-description: "TypeScript testing with Jest/Vitest, Angular testing"
+description: "TypeScript testing with Jasmine/Karma, Angular testing, Playwright E2E"
 globs: ["**/*.spec.ts", "**/*.test.ts"]
 ---
 
@@ -7,19 +7,28 @@ globs: ["**/*.spec.ts", "**/*.test.ts"]
 
 ## Testing Frameworks
 
-### Jest / Vitest
+### Jasmine + Karma (Unit Testing)
 
-- Fast test runner
-- Built-in mocking
-- Snapshot testing
-- Code coverage
+- Jasmine testing framework
+- Karma test runner
+- Angular Testing Utilities (TestBed)
+- Component testing
+- Service testing
+
+### Playwright (E2E Testing)
+
+- End-to-end testing
+- Browser automation
+- User workflow testing
+- Cross-browser testing
 
 ### Angular Testing
 
-- Jasmine/Karma (legacy)
-- Jest (modern)
-- Angular Testing Utilities
+- Jasmine + Karma for unit tests
+- Playwright for E2E tests
+- Angular Testing Utilities (TestBed)
 - Component testing
+- Service testing
 
 ## Test Structure
 
@@ -46,67 +55,77 @@ it('should return user when found', async () => {
   // Arrange
   const userId = '123';
   const expectedUser: User = { id: userId, name: 'John' };
-  const mockRepository = {
-    findById: jest.fn().mockResolvedValue(expectedUser)
-  };
-  const service = new UserService(mockRepository);
-
+  const mockService = jasmine.createSpyObj('UserService', ['getUser']);
+  mockService.getUser.and.returnValue(of(expectedUser));
+  
   // Act
-  const result = await service.getUser(userId);
+  const result = await mockService.getUser(userId).toPromise();
 
   // Assert
   expect(result).toEqual(expectedUser);
-  expect(mockRepository.findById).toHaveBeenCalledWith(userId);
+  expect(mockService.getUser).toHaveBeenCalledWith(userId);
 });
 ```
 
 ## Mocking
 
-### Mock Functions
+### Mock Services (Jasmine)
 
 ```typescript
-// Jest/Vitest
-const mockFn = jest.fn();
-const mockFn = jest.fn().mockReturnValue(value);
-const mockFn = jest.fn().mockResolvedValue(value);
-const mockFn = jest.fn().mockRejectedValue(error);
+// Jasmine spy objects
+const mockService = jasmine.createSpyObj('MyService', ['method1', 'method2']);
+mockService.method1.and.returnValue(value);
+mockService.method1.and.returnValue(of(observableValue)); // For observables
+
+// Spies
+const spy = jasmine.createSpy('methodName');
+spy.and.returnValue(value);
+spy.and.throwError(new Error('Error'));
 ```
 
-### Mock Objects
+### Mock Services in TestBed
 
 ```typescript
-const mockRepository: Partial<UserRepository> = {
-  findById: jest.fn().mockResolvedValue(user),
-  save: jest.fn().mockResolvedValue(user)
-};
+const mockService = jasmine.createSpyObj('MyService', ['getData']);
+
+TestBed.configureTestingModule({
+  providers: [
+    { provide: MyService, useValue: mockService }
+  ]
+});
 ```
 
-### Mock Modules
+### HTTP Mocking
 
 ```typescript
-jest.mock('./user-repository', () => ({
-  UserRepository: jest.fn().mockImplementation(() => ({
-    findById: jest.fn()
-  }))
-}));
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
+TestBed.configureTestingModule({
+  imports: [HttpClientTestingModule]
+});
+
+const httpMock = TestBed.inject(HttpTestingController);
+const req = httpMock.expectOne('/api/data');
+req.flush(mockData);
 ```
 
-## Angular Component Testing
+## Angular Component Testing (Jasmine + Karma)
 
 ### Test Setup
 
 ```typescript
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { UserComponent } from './user.component';
+
 describe('UserComponent', () => {
   let component: UserComponent;
   let fixture: ComponentFixture<UserComponent>;
-
+  
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UserComponent],
-      imports: [HttpClientTestingModule],
-      providers: [UserService]
+      imports: [UserComponent], // Standalone component
     }).compileComponents();
-
+    
     fixture = TestBed.createComponent(UserComponent);
     component = fixture.componentInstance;
   });
@@ -214,11 +233,11 @@ function createMockUser(overrides?: Partial<User>): User {
 ### Coverage Commands
 
 ```bash
-# Jest
-npm test -- --coverage
+# Jasmine + Karma (Angular)
+npm test -- --code-coverage
 
-# Vitest
-npm test -- --coverage
+# Or
+ng test --code-coverage
 ```
 
 ## Best Practices

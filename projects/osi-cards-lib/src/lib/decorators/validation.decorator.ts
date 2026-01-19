@@ -20,8 +20,8 @@
  * ```
  */
 
-import { ValidationError as LibValidationError, RequiredFieldError } from '../errors';
-import { CardField, CardItem, CardSection } from '../models';
+import { ValidationError as LibValidationError, RequiredFieldError } from '@osi-cards/lib/errors';
+import { CardField, CardItem, CardSection } from '@osi-cards/models';
 
 // Re-export for convenience
 export { RequiredFieldError };

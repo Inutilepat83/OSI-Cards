@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { AppConfig } from '../config/app-config.interface';
+import { ConfigValidator } from '../config/config-validator';
 
 /**
  * Centralized application configuration service
  *
  * Contains all configurable constants, thresholds, and timing values used throughout the application.
  * This service centralizes configuration to make it easier to adjust values and maintain consistency.
+ *
+ * Implements AppConfig interface for type safety and runtime validation.
  *
  * @example
  * ```typescript
@@ -18,7 +22,21 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class AppConfigService {
+export class AppConfigService implements AppConfig {
+  private readonly validator = new ConfigValidator();
+
+  constructor() {
+    // Validate configuration on initialization
+    const validationResult = this.validator.validate(this);
+    if (!validationResult.valid) {
+      console.error(this.validator.getErrorMessage(validationResult));
+      throw new Error('Invalid application configuration');
+    }
+
+    if (validationResult.warnings.length > 0) {
+      console.warn(this.validator.getWarningMessage(validationResult));
+    }
+  }
   // JSON Processing Configuration
   readonly JSON_PROCESSING = {
     IMMEDIATE_DEBOUNCE_MS: 10,
@@ -96,9 +114,9 @@ export class AppConfigService {
 
   // Logging Configuration
   readonly LOGGING = {
-    ENABLE_SECTION_STATE_LOGGING: true,
+    ENABLE_SECTION_STATE_LOGGING: environment.enableDebug ?? false, // Only enable when debug is enabled
     ENABLE_POSITION_LOGGING: false,
-    LOG_LEVEL: (environment.logLevel || 'info') as 'debug' | 'info' | 'warn' | 'error',
+    LOG_LEVEL: (environment.logLevel || 'warn') as 'debug' | 'info' | 'warn' | 'error', // Default to 'warn' to reduce console noise
     ENABLE_DEBUG: environment.enableDebug ?? false,
     ENABLE_PERFORMANCE_LOGGING: environment.enablePerformanceLogging ?? false,
     ENABLE_STATE_LOGGING: environment.enableStateLogging ?? false,

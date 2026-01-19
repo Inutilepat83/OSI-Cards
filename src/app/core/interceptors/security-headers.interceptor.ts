@@ -62,6 +62,30 @@ export class SecurityHeadersInterceptor implements HttpInterceptor {
       tap((event) => {
         // Log response for security auditing
         if (event instanceof HttpResponse) {
+          // Skip checking static assets and common non-API endpoints
+          const url = req.url;
+          const isStaticAsset =
+            url.includes('.js') ||
+            url.includes('.css') ||
+            url.includes('.png') ||
+            url.includes('.jpg') ||
+            url.includes('.jpeg') ||
+            url.includes('.gif') ||
+            url.includes('.svg') ||
+            url.includes('.woff') ||
+            url.includes('.woff2') ||
+            url.includes('.ttf') ||
+            url.includes('.eot') ||
+            url.includes('.ico') ||
+            url.includes('/assets/') ||
+            url.includes('/@vite/') ||
+            url.includes('/node_modules/');
+
+          // Only check API endpoints and HTML responses
+          if (isStaticAsset || !url.startsWith('/')) {
+            return;
+          }
+
           // Check if response has security headers
           const responseHeaders = event.headers.keys();
           const hasSecurityHeaders = Array.from(responseHeaders).some(
@@ -71,10 +95,12 @@ export class SecurityHeadersInterceptor implements HttpInterceptor {
               header.toLowerCase().includes('content-security-policy')
           );
 
-          if (!hasSecurityHeaders && req.url.startsWith('/')) {
-            // Warn if internal requests don't have security headers
-            this.logger.warn('Response missing security headers', 'SecurityHeadersInterceptor', {
+          if (!hasSecurityHeaders) {
+            // Only warn for API-like endpoints (not static assets)
+            // This is expected for local development - security headers should be set at server level
+            this.logger.debug('Response missing security headers', 'SecurityHeadersInterceptor', {
               url: req.url,
+              method: req.method,
             });
           }
         }

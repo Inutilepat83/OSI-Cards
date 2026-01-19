@@ -19,13 +19,7 @@
  * ```
  */
 
-import type {
-  AICardConfig,
-  CardSection,
-  CardField,
-  CardItem,
-  CardAction,
-} from '../models/card.model';
+import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '@osi-cards/models';
 
 // ============================================================================
 // DEEP PARTIAL & REQUIRED

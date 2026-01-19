@@ -4,7 +4,7 @@
   "sections": [
     {
       "title": "Company Overview",
-      "type": "info",
+      "type": "overview",
       "fields": [
         { "label": "Industry", "value": "Enterprise Software" },
         { "label": "Employees", "value": "2,500+" },

@@ -1,14 +1,14 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { CardSection } from '../../models';
-import { BaseSectionComponent } from '../sections/base-section.component';
-import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
+import { CardSection } from '@osi-cards/models';
+import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { SectionPluginRegistry } from '@osi-cards/services';
 import {
   SectionType,
   SectionTypeInput,
   resolveSectionType,
   isValidSectionType,
   getSectionMetadata,
-} from '../../models/generated-section-types';
+} from '@osi-cards/models';
 import { SECTION_COMPONENT_MAP, getSectionComponent } from './section-component-map.generated';
 import {
   LazySectionLoaderService,
@@ -57,6 +57,30 @@ export class DynamicSectionLoaderService {
    * 4. Fall back to OverviewSectionComponent
    */
   getComponentForSection(section: CardSection): AnySectionComponent {
+    // #region agent log
+    if (
+      typeof window !== 'undefined' &&
+      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+      !(window as any).__DISABLE_DEBUG_LOGGING
+    ) {
+      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'dynamic-section-loader.service.ts:59',
+          message: 'getComponentForSection called',
+          data: {
+            sectionType: section?.type,
+            baseClassAvailable: typeof BaseSectionComponent !== 'undefined',
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'run1',
+          hypothesisId: 'E',
+        }),
+      }).catch(() => {});
+    }
+    // #endregion
     if (!section?.type) {
       return this.getFallbackComponent();
     }
@@ -81,6 +105,32 @@ export class DynamicSectionLoaderService {
     if (isValidSectionType(typeInput)) {
       const resolvedType = resolveSectionType(typeInput);
       const component = getSectionComponent(resolvedType);
+      // #region agent log
+      if (
+        typeof window !== 'undefined' &&
+        localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
+        !(window as any).__DISABLE_DEBUG_LOGGING
+      ) {
+        fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'dynamic-section-loader.service.ts:85',
+            message: 'Component retrieved from map',
+            data: {
+              resolvedType,
+              componentAvailable: typeof component !== 'undefined',
+              componentName: component?.name || 'undefined',
+              isBaseSectionComponent: component?.prototype instanceof BaseSectionComponent,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'E',
+          }),
+        }).catch(() => {});
+      }
+      // #endregion
 
       if (component) {
         this.componentCache.set(cacheKey, component);
