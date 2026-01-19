@@ -33,18 +33,37 @@ jobs:
       - name: Build Application
         run: npm run build
 
+      - name: Install serve package
+        run: npm install -g serve
+
+      - name: Start server in background
+        run: |
+          serve -s dist/osi-cards/browser -l 4200 &
+          echo $! > server.pid
+          sleep 5
+
       - name: Run Smoke Tests
-        run: npx playwright test smoke-tests.e2e-spec.ts --project=chromium --reporter=line
+        run: npx playwright test smoke-tests.e2e-spec.ts --project=chromium --reporter=line --baseURL=http://localhost:4200
         timeout-minutes: 5
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+            rm server.pid
+          fi
 
       - name: Report Results
         if: always()
         run: |
-          if [ $? -eq 0 ]; then
+          TEST_EXIT_CODE=$?
+          if [ $TEST_EXIT_CODE -eq 0 ]; then
             echo "✅ Smoke tests passed"
           else
             echo "❌ Smoke tests failed - critical issues detected"
-            exit 1
+            echo "Exit code: $TEST_EXIT_CODE"
+            exit $TEST_EXIT_CODE
           fi
 
 
