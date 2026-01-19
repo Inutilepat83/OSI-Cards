@@ -38,9 +38,17 @@ jobs:
 
       - name: Start server in background
         run: |
-          serve -s dist/osi-cards/browser -l 4200 &
+          serve -s dist/osi-cards/browser -l 4200 > /dev/null 2>&1 &
           echo $! > server.pid
-          sleep 5
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -f http://localhost:4200 > /dev/null 2>&1; then
+              echo "✅ Server is ready"
+              break
+            fi
+            echo "Waiting for server... ($i/30)"
+            sleep 1
+          done
 
       - name: Run Smoke Tests
         run: npx playwright test smoke-tests.e2e-spec.ts --project=chromium --reporter=line --baseURL=http://localhost:4200
