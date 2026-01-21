@@ -33,7 +33,7 @@ import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '@osi-cards/models';
 import { CardChangeType } from '@osi-cards/types';
-import { sendDebugLog } from '@osi-cards/utils';
+import { sendDebugLog, safeDebugFetch } from '@osi-cards/utils';
 
 /**
  * Streaming stage type
@@ -1236,30 +1236,22 @@ export class OSICardsStreamingService implements OnDestroy {
     completedSections?: number[]
   ): void {
     // #region agent log - emitCardUpdate entry
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'streaming.service.ts:emitCardUpdate:ENTRY',
-          message: 'Emitting card update',
-          data: {
-            changeType,
-            sectionsCount: card.sections?.length || 0,
-            cardTitle: card.cardTitle,
-            hasCard: !!card,
-            sections: card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'empty-card-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'streaming.service.ts:emitCardUpdate:ENTRY',
+        message: 'Emitting card update',
+        data: {
+          changeType,
+          sectionsCount: card.sections?.length || 0,
+          cardTitle: card.cardTitle,
+          hasCard: !!card,
+          sections: card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'empty-card-debug',
+        hypothesisId: 'A',
+      });
     }
     // #endregion
     // #region agent log
@@ -1301,30 +1293,21 @@ export class OSICardsStreamingService implements OnDestroy {
       }
 
       // #region agent log - emitting card update
-      if (
-        typeof window !== 'undefined' &&
-        localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-        !(window as any).__DISABLE_DEBUG_LOGGING
-      ) {
-        fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: 'streaming.service.ts:emitCardUpdate:EMITTING',
-            message: 'Emitting card update to subject',
-            data: {
-              changeType,
-              sectionsCount: card.sections?.length || 0,
-              cardTitle: card.cardTitle,
-              sections:
-                card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
-            },
-            timestamp: Date.now(),
-            sessionId: 'debug-session',
-            runId: 'empty-card-debug',
-            hypothesisId: 'A',
-          }),
-        }).catch(() => {});
+      if (typeof window !== 'undefined') {
+        safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+          location: 'streaming.service.ts:emitCardUpdate:EMITTING',
+          message: 'Emitting card update to subject',
+          data: {
+            changeType,
+            sectionsCount: card.sections?.length || 0,
+            cardTitle: card.cardTitle,
+            sections: card.sections?.map((s) => ({ id: s.id, type: s.type, title: s.title })) || [],
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'empty-card-debug',
+          hypothesisId: 'A',
+        });
       }
       // #endregion
       this.cardUpdateSubject.next({

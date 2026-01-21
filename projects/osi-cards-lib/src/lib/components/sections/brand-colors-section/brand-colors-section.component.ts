@@ -2,26 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, isDevMode, ChangeDetectionStrategy } from '@angular/core';
 import { CardSection } from '@osi-cards/models';
 import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { safeDebugFetch } from '@osi-cards/utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 // #region agent log - Track module evaluation start
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'brand-colors-section.component.ts:1',
-      message: 'Module evaluation START - brand-colors-section.component.ts',
-      data: { timestamp: Date.now(), moduleId: 'brand-colors' },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run2',
-      hypothesisId: 'C',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'brand-colors-section.component.ts:1',
+    message: 'Module evaluation START - brand-colors-section.component.ts',
+    data: { timestamp: Date.now(), moduleId: 'brand-colors' },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run2',
+    hypothesisId: 'C',
+  });
 }
 // #endregion
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
@@ -50,24 +43,16 @@ if (baseClassCheck.isUndefined || baseClassCheck.isNull || !baseClassCheck.isCon
   }
 }
 console.log('[DEBUG] BaseSectionComponent import check:', baseClassCheck);
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'brand-colors-section.component.ts:11',
-      message: 'Import BaseSectionComponent - checking value',
-      data: baseClassCheck,
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run3',
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'brand-colors-section.component.ts:11',
+    message: 'Import BaseSectionComponent - checking value',
+    data: baseClassCheck,
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run3',
+    hypothesisId: 'B',
+  });
 }
 // #endregion
 

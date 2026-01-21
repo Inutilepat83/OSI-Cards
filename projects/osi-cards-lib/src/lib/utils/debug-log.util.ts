@@ -10,6 +10,38 @@
 const DEFAULT_DEBUG_LOG_ENDPOINT =
   'http://127.0.0.1:7242/ingest/ae037419-79db-44fb-9060-a10d5503303a';
 
+/**
+ * Check if code is running on localhost (development environment)
+ * This prevents debug log requests from being made in production
+ */
+export function isLocalhost(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  const hostname = window.location.hostname;
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
+}
+
+/**
+ * Check if debug logging should be enabled
+ * Returns true only if:
+ * - Running on localhost
+ * - Not disabled via kill switch
+ */
+export function shouldEnableDebugLogging(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  // Must be on localhost
+  if (!isLocalhost()) {
+    return false;
+  }
+
+  // Check kill switch
+  return !isDebugLoggingDisabled();
+}
+
 // Global kill switch - check localStorage first, then window flag
 function isDebugLoggingDisabled(): boolean {
   if (typeof window === 'undefined') {
@@ -367,6 +399,32 @@ function shouldLogToConsoleFallback(): boolean {
   // Allow logging and increment counter
   consoleFallbackThrottle.count++;
   return true;
+}
+
+/**
+ * Safe debug fetch - only makes request if on localhost and debug logging is enabled
+ * Fails silently if server is unavailable (no console errors)
+ *
+ * @param endpoint - The endpoint URL
+ * @param body - The request body (will be JSON stringified)
+ * @returns Promise that resolves/rejects silently
+ */
+export function safeDebugFetch(endpoint: string, body: any): void {
+  // Only make request on localhost
+  if (!shouldEnableDebugLogging()) {
+    return;
+  }
+
+  // Make fetch call with silent error handling
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }).catch(() => {
+    // Silently ignore all errors - server may not be running
+    // This prevents console errors in production or when server is unavailable
+    // Empty catch is intentional for silent failure
+  });
 }
 
 /**

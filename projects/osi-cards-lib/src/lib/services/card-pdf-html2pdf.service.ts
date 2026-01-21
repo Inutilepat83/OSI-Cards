@@ -228,7 +228,7 @@ export class CardPdfHtml2PdfService {
 
       // Try ES module import first - Vite should process this since it's in allowedCommonJsDependencies
       // Don't use @vite-ignore - we want Vite to process and bundle it
-      const html2pdfModule = await import('html2pdf.js') as any;
+      const html2pdfModule = (await import('html2pdf.js')) as any;
 
       // #region agent log
       sendDebugLog(

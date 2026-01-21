@@ -4,6 +4,7 @@ import { CardSection } from '@osi-cards/models';
 import { ClipboardService, ToastService } from '@osi-cards/services';
 import { SectionLayoutPreferenceService } from '@osi-cards/services';
 import { LucideIconsModule } from '@osi-cards/icons';
+import { safeDebugFetch } from '@osi-cards/utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -31,32 +32,24 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
 
   ngOnInit(): void {
     // #region agent log
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'overview-section.component.ts:28',
-          message: 'OverviewSectionComponent: ngOnInit',
-          data: {
-            sectionType: this.section?.type,
-            sectionTitle: this.section?.title,
-            fieldsCount: this.section?.fields?.length || 0,
-            itemsCount: this.section?.items?.length || 0,
-            fields: this.section?.fields,
-            hasFields: this.hasFields,
-            getFieldsResult: this.getFields(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'H1',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'overview-section.component.ts:28',
+        message: 'OverviewSectionComponent: ngOnInit',
+        data: {
+          sectionType: this.section?.type,
+          sectionTitle: this.section?.title,
+          fieldsCount: this.section?.fields?.length || 0,
+          itemsCount: this.section?.items?.length || 0,
+          fields: this.section?.fields,
+          hasFields: this.hasFields,
+          getFieldsResult: this.getFields(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'H1',
+      });
     }
     // #endregion
 

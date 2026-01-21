@@ -11,6 +11,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { safeDebugFetch } from '@osi-cards/utils';
 
 /**
  * Shared Empty State Component
@@ -39,24 +40,16 @@ import { CommonModule } from '@angular/common';
 export class EmptyStateComponent implements OnInit, OnChanges, AfterViewInit {
   // #region agent log
   constructor(private cdr: ChangeDetectorRef) {
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'empty-state.component.ts:constructor',
-          message: 'EmptyStateComponent constructor called',
-          data: { timestamp: Date.now() },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'empty-state.component.ts:constructor',
+        message: 'EmptyStateComponent constructor called',
+        data: { timestamp: Date.now() },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
     }
   }
   // #endregion
@@ -101,66 +94,53 @@ export class EmptyStateComponent implements OnInit, OnChanges, AfterViewInit {
 
   // #region agent log
   ngOnInit(): void {
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'empty-state.component.ts:ngOnInit',
-          message: 'EmptyStateComponent ngOnInit',
-          data: {
-            message: this.message,
-            icon: this.icon,
-            variant: this.variant,
-            size: this.size,
-            hasActionLabel: !!this.actionLabel,
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'empty-state.component.ts:ngOnInit',
+        message: 'EmptyStateComponent ngOnInit',
+        data: {
+          message: this.message,
+          icon: this.icon,
+          variant: this.variant,
+          size: this.size,
+          hasActionLabel: !!this.actionLabel,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'A',
+      });
     }
   }
   // #endregion
 
   // #region agent log
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'empty-state.component.ts:ngOnChanges',
-          message: 'EmptyStateComponent input changes detected',
-          data: {
-            changes: Object.keys(changes),
-            currentValues: {
-              message: this.message,
-              icon: this.icon,
-              variant: this.variant,
-              size: this.size,
-            },
-            previousValues: Object.keys(changes).reduce((acc: Record<string, any>, key) => {
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'empty-state.component.ts:ngOnChanges',
+        message: 'EmptyStateComponent input changes detected',
+        data: {
+          changes: Object.keys(changes),
+          currentValues: {
+            message: this.message,
+            icon: this.icon,
+            variant: this.variant,
+            size: this.size,
+          },
+          previousValues: Object.keys(changes).reduce(
+            (acc: Record<string, any>, key) => {
               acc[key] = changes[key]?.previousValue;
               return acc;
-            }, {} as Record<string, any>),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'B',
-        }),
-      }).catch(() => {});
+            },
+            {} as Record<string, any>
+          ),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'B',
+      });
     }
     this.cdr.markForCheck();
   }
@@ -168,29 +148,21 @@ export class EmptyStateComponent implements OnInit, OnChanges, AfterViewInit {
 
   // #region agent log
   ngAfterViewInit(): void {
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'empty-state.component.ts:ngAfterViewInit',
-          message: 'EmptyStateComponent view initialized',
-          data: {
-            message: this.message,
-            icon: this.icon,
-            variant: this.variant,
-            classes: this.getClassArray(),
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'D',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'empty-state.component.ts:ngAfterViewInit',
+        message: 'EmptyStateComponent view initialized',
+        data: {
+          message: this.message,
+          icon: this.icon,
+          variant: this.variant,
+          classes: this.getClassArray(),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'D',
+      });
     }
   }
   // #endregion
@@ -211,29 +183,21 @@ export class EmptyStateComponent implements OnInit, OnChanges, AfterViewInit {
     const classes = [this.variant, this.size, this.containerClass].filter(
       (cls): cls is string => cls !== undefined && cls !== null
     );
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'empty-state.component.ts:getClassArray',
-          message: 'getClassArray called',
-          data: {
-            variant: this.variant,
-            size: this.size,
-            containerClass: this.containerClass,
-            resultClasses: classes,
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'D',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'empty-state.component.ts:getClassArray',
+        message: 'getClassArray called',
+        data: {
+          variant: this.variant,
+          size: this.size,
+          containerClass: this.containerClass,
+          resultClasses: classes,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'D',
+      });
     }
     return classes;
   }

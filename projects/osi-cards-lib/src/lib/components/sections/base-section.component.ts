@@ -11,26 +11,18 @@ import {
 } from '@angular/core';
 import { CardField, CardItem, CardSection } from '@osi-cards/models';
 import { SectionDesignParams, getSectionDesignParams } from '@osi-cards/models';
-import { sendDebugLog } from '@osi-cards/utils';
+import { sendDebugLog, safeDebugFetch } from '@osi-cards/utils';
 // #region agent log - Track module evaluation start
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'base-section.component.ts:1',
-      message: 'Module evaluation START - base-section.component.ts',
-      data: { timestamp: Date.now(), moduleId: 'base-section' },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run1',
-      hypothesisId: 'A',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'base-section.component.ts:1',
+    message: 'Module evaluation START - base-section.component.ts',
+    data: { timestamp: Date.now(), moduleId: 'base-section' },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run1',
+    hypothesisId: 'A',
+  });
 }
 // #endregion
 
@@ -135,24 +127,16 @@ export interface SectionInteraction<T = CardField | CardItem> {
  * Provides common functionality and ensures consistency
  */
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'base-section.component.ts:118',
-      message: 'BaseSectionComponent class definition starting',
-      data: { timestamp: Date.now(), module: 'base-section.component' },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run2',
-      hypothesisId: 'A',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'base-section.component.ts:118',
+    message: 'BaseSectionComponent class definition starting',
+    data: { timestamp: Date.now(), module: 'base-section.component' },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run2',
+    hypothesisId: 'A',
+  });
 }
 // #endregion
 @Component({
@@ -715,29 +699,21 @@ export abstract class BaseSectionComponent<
   }
 }
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'base-section.component.ts:594',
-      message: 'BaseSectionComponent class definition complete',
-      data: {
-        classDefined: typeof BaseSectionComponent !== 'undefined',
-        isConstructor: typeof BaseSectionComponent === 'function',
-        name: BaseSectionComponent?.name || 'undefined',
-        hasStaticProp: !!BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED,
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run3',
-      hypothesisId: 'A',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'base-section.component.ts:594',
+    message: 'BaseSectionComponent class definition complete',
+    data: {
+      classDefined: typeof BaseSectionComponent !== 'undefined',
+      isConstructor: typeof BaseSectionComponent === 'function',
+      name: BaseSectionComponent?.name || 'undefined',
+      hasStaticProp: !!BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED,
+    },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run3',
+    hypothesisId: 'A',
+  });
 }
 // Ensure BaseSectionComponent is available globally to prevent chunk loading issues
 if (typeof window !== 'undefined') {

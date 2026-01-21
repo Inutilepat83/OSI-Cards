@@ -255,19 +255,25 @@ export class LoggingService {
       if (timeSinceReset > 1000) {
         // Reset counter every second and log if excessive
         if (logCounter.count > 100) {
-          fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: 'logging.service.ts:log',
-              message: 'EXCESSIVE LOGGING DETECTED',
-              data: { callsPerSecond: logCounter.count, level, message, context },
-              timestamp: Date.now(),
-              sessionId: 'debug-session',
-              runId: 'run1',
-              hypothesisId: 'B',
-            }),
-          }).catch(() => {});
+          // Only log on localhost - use safeDebugFetch to prevent production errors
+          if (
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ) {
+            fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'logging.service.ts:log',
+                message: 'EXCESSIVE LOGGING DETECTED',
+                data: { callsPerSecond: logCounter.count, level, message, context },
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: 'B',
+              }),
+            }).catch(() => {});
+          }
         }
         logCounter.count = 0;
         logCounter.lastReset = Date.now();
@@ -496,10 +502,10 @@ export class LoggingService {
     }
 
     // #region agent log - Track debounce calls
+    // Only log on localhost - use safeDebugFetch to prevent production errors
     if (
       typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ) {
       fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
         method: 'POST',
@@ -556,10 +562,10 @@ export class LoggingService {
         }
 
         // #region agent log - Track successful write
+        // Only log on localhost - use safeDebugFetch to prevent production errors
         if (
           typeof window !== 'undefined' &&
-          localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-          !(window as any).__DISABLE_DEBUG_LOGGING
+          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ) {
           fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
             method: 'POST',

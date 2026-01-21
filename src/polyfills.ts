@@ -15,8 +15,12 @@ if (typeof window !== 'undefined') {
     return (
       fullMessage.includes('127.0.0.1:7242') ||
       fullMessage.includes('localhost:7242') ||
+      fullMessage.includes('127.0.0.1:7245') ||
+      fullMessage.includes('localhost:7245') ||
       fullMessage.includes('/ingest/') ||
       fullMessage.includes('7242') ||
+      fullMessage.includes('7245') ||
+      fullMessage.includes('ERR_CONNECTION_REFUSED') ||
       (fullMessage.includes('400') && fullMessage.includes('Bad Request'))
     );
   };

@@ -65,7 +65,12 @@ export * from './debounce-throttle.util';
 export * from './performance.util';
 
 // Debug logging utilities
-export { sendDebugLog } from './debug-log.util';
+export {
+  sendDebugLog,
+  safeDebugFetch,
+  isLocalhost,
+  shouldEnableDebugLogging,
+} from './debug-log.util';
 export { sendDebugLogToFile } from './debug-log-file.util';
 export { LOG_TAGS, createTags, combineTags, type LogTag } from './log-tags';
 export {

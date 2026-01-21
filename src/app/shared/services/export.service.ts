@@ -245,69 +245,19 @@ export class ExportService {
     options: CardPdfExportOptions = {}
   ): Promise<void> {
     // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'export.service.ts:exportAsPdfFromConfig:ENTRY',
-        message: 'PDF export entry point called',
-        data: {
-          hasCard: !!card,
-          hasOptions: !!options,
-          cardTitle: card?.cardTitle,
-          hasCardElement: !!options.cardElement,
-        },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'pdf-export-debug',
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
-    // #endregion
-    try {
-      // #region agent log
+    // Only log on localhost - prevent production errors
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
       fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          location: 'export.service.ts:exportAsPdfFromConfig:BEFORE_CALL',
-          message: 'Calling cardPdfService.generatePdf',
-          data: {},
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'pdf-export-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
-      // #endregion
-      await this.cardPdfService.generatePdf(card, options);
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'export.service.ts:exportAsPdfFromConfig:SUCCESS',
-          message: 'PDF export completed successfully',
-          data: {},
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'pdf-export-debug',
-          hypothesisId: 'A',
-        }),
-      }).catch(() => {});
-      // #endregion
-      this.logger.info('Card exported as PDF from config', 'ExportService');
-    } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'export.service.ts:exportAsPdfFromConfig:ERROR',
-          message: 'PDF export failed',
+          location: 'export.service.ts:exportAsPdfFromConfig:ENTRY',
+          message: 'PDF export entry point called',
           data: {
-            errorMessage: error instanceof Error ? error.message : String(error),
-            errorStack: error instanceof Error ? error.stack : undefined,
+            hasCard: !!card,
+            hasOptions: !!options,
+            cardTitle: card?.cardTitle,
+            hasCardElement: !!options.cardElement,
           },
           timestamp: Date.now(),
           sessionId: 'debug-session',
@@ -315,6 +265,68 @@ export class ExportService {
           hypothesisId: 'A',
         }),
       }).catch(() => {});
+    }
+    // #endregion
+    try {
+      // #region agent log
+      // Only log on localhost - prevent production errors
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'export.service.ts:exportAsPdfFromConfig:BEFORE_CALL',
+            message: 'Calling cardPdfService.generatePdf',
+            data: {},
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'pdf-export-debug',
+            hypothesisId: 'A',
+          }),
+        }).catch(() => {});
+      }
+      // #endregion
+      await this.cardPdfService.generatePdf(card, options);
+      // #region agent log
+      // Only log on localhost - prevent production errors
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'export.service.ts:exportAsPdfFromConfig:SUCCESS',
+            message: 'PDF export completed successfully',
+            data: {},
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'pdf-export-debug',
+            hypothesisId: 'A',
+          }),
+        }).catch(() => {});
+      }
+      // #endregion
+      this.logger.info('Card exported as PDF from config', 'ExportService');
+    } catch (error) {
+      // #region agent log
+      // Only log on localhost - prevent production errors
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'export.service.ts:exportAsPdfFromConfig:ERROR',
+            message: 'PDF export failed',
+            data: {
+              errorMessage: error instanceof Error ? error.message : String(error),
+              errorStack: error instanceof Error ? error.stack : undefined,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'pdf-export-debug',
+            hypothesisId: 'A',
+          }),
+        }).catch(() => {});
+      }
       // #endregion
       this.logger.error('Failed to export card as PDF from config', 'ExportService', error);
       throw error;

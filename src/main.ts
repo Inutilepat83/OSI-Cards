@@ -16,8 +16,12 @@ if (typeof window !== 'undefined') {
     if (
       fullMessage.includes('127.0.0.1:7242') ||
       fullMessage.includes('localhost:7242') ||
+      fullMessage.includes('127.0.0.1:7245') ||
+      fullMessage.includes('localhost:7245') ||
       fullMessage.includes('/ingest/') ||
       fullMessage.includes('7242') ||
+      fullMessage.includes('7245') ||
+      fullMessage.includes('ERR_CONNECTION_REFUSED') ||
       (fullMessage.includes('400') && fullMessage.includes('Bad Request'))
     ) {
       return true;
@@ -29,8 +33,12 @@ if (typeof window !== 'undefined') {
       if (
         str.includes('127.0.0.1:7242') ||
         str.includes('localhost:7242') ||
+        str.includes('127.0.0.1:7245') ||
+        str.includes('localhost:7245') ||
         str.includes('/ingest/') ||
-        str.includes('7242')
+        str.includes('7242') ||
+        str.includes('7245') ||
+        str.includes('ERR_CONNECTION_REFUSED')
       ) {
         return true;
       }
@@ -61,9 +69,14 @@ if (typeof window !== 'undefined') {
     if (
       msgStr.includes('127.0.0.1:7242') ||
       msgStr.includes('localhost:7242') ||
+      msgStr.includes('127.0.0.1:7245') ||
+      msgStr.includes('localhost:7245') ||
       msgStr.includes('/ingest/') ||
       msgStr.includes('7242') ||
+      msgStr.includes('7245') ||
+      msgStr.includes('ERR_CONNECTION_REFUSED') ||
       sourceStr.includes('7242') ||
+      sourceStr.includes('7245') ||
       (msgStr.includes('400') && msgStr.includes('Bad Request'))
     ) {
       return true; // Suppress
@@ -81,8 +94,12 @@ if (typeof window !== 'undefined') {
     if (
       msgStr.includes('127.0.0.1:7242') ||
       msgStr.includes('localhost:7242') ||
+      msgStr.includes('127.0.0.1:7245') ||
+      msgStr.includes('localhost:7245') ||
       msgStr.includes('/ingest/') ||
       msgStr.includes('7242') ||
+      msgStr.includes('7245') ||
+      msgStr.includes('ERR_CONNECTION_REFUSED') ||
       (msgStr.includes('400') && msgStr.includes('Bad Request'))
     ) {
       event.preventDefault(); // Suppress

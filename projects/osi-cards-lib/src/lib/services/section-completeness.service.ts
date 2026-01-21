@@ -4,6 +4,7 @@ import { CardSection, CardField, CardItem, CompletionRules } from '@osi-cards/mo
 import { resolveSectionType } from '@osi-cards/models';
 import { firstValueFrom } from 'rxjs';
 import { sendDebugLogToFile } from '@osi-cards/lib/utils/debug-log-file.util';
+import { safeDebugFetch } from '@osi-cards/utils';
 
 /**
  * Interface for section definition from registry
@@ -384,34 +385,26 @@ export class SectionCompletenessService {
         !!(section.description && section.description.trim().length > 0)); // Description also counts
 
     // #region agent log - default rules validation
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'section-completeness.service.ts:validateWithDefaultRules',
-          message: 'Default rules validation',
-          data: {
-            sectionId: section.id,
-            sectionType: section.type,
-            hasBasicData,
-            fieldCount: section.fields?.length || 0,
-            itemCount: section.items?.length || 0,
-            hasChartData: !!section.chartData,
-            hasTitle: !!section.title,
-            hasDescription: !!section.description,
-            result: hasBasicData,
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'empty-card-debug',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'section-completeness.service.ts:validateWithDefaultRules',
+        message: 'Default rules validation',
+        data: {
+          sectionId: section.id,
+          sectionType: section.type,
+          hasBasicData,
+          fieldCount: section.fields?.length || 0,
+          itemCount: section.items?.length || 0,
+          hasChartData: !!section.chartData,
+          hasTitle: !!section.title,
+          hasDescription: !!section.description,
+          result: hasBasicData,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'empty-card-debug',
+        hypothesisId: 'C',
+      });
     }
     // #endregion
 

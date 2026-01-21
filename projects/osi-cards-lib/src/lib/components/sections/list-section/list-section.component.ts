@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CardSection } from '@osi-cards/models';
 import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { safeDebugFetch } from '@osi-cards/utils';
 import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
@@ -29,30 +30,22 @@ export class ListSectionComponent extends BaseSectionComponent implements OnInit
     const items = this.section?.items;
     const itemsLength = items?.length ?? 0;
     const shouldShowEmpty = !itemsLength;
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'list-section.component.ts:ngOnInit',
-          message: 'ListSectionComponent ngOnInit - checking empty state condition',
-          data: {
-            hasSection: !!this.section,
-            itemsValue: items,
-            itemsLength,
-            shouldShowEmpty,
-            sectionType: this.section?.type,
-          },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'list-section.component.ts:ngOnInit',
+        message: 'ListSectionComponent ngOnInit - checking empty state condition',
+        data: {
+          hasSection: !!this.section,
+          itemsValue: items,
+          itemsLength,
+          shouldShowEmpty,
+          sectionType: this.section?.type,
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      });
     }
     // #endregion
     // Register layout preference function for this section type
@@ -68,24 +61,16 @@ export class ListSectionComponent extends BaseSectionComponent implements OnInit
     const items = this.section?.items;
     const itemsLength = items?.length ?? 0;
     const result = !itemsLength;
-    if (
-      typeof window !== 'undefined' &&
-      localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-      !(window as any).__DISABLE_DEBUG_LOGGING
-    ) {
-      fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'list-section.component.ts:shouldShowEmptyState',
-          message: 'shouldShowEmptyState getter called',
-          data: { itemsValue: items, itemsLength, result, sectionId: this.section?.id },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'C',
-        }),
-      }).catch(() => {});
+    if (typeof window !== 'undefined') {
+      safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+        location: 'list-section.component.ts:shouldShowEmptyState',
+        message: 'shouldShowEmptyState getter called',
+        data: { itemsValue: items, itemsLength, result, sectionId: this.section?.id },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        runId: 'run1',
+        hypothesisId: 'C',
+      });
     }
     return result;
   }

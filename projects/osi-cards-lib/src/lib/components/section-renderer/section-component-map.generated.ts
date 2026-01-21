@@ -7,9 +7,10 @@
 import { Type } from '@angular/core';
 import { SectionType } from '@osi-cards/models';
 import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { safeDebugFetch } from '@osi-cards/utils';
 // #region agent log
-if (typeof window !== 'undefined' && localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' && !(window as any).__DISABLE_DEBUG_LOGGING) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'section-component-map.generated.ts:9',message:'Component map - BaseSectionComponent import check',data:{imported:typeof BaseSectionComponent !== 'undefined',isConstructor:typeof BaseSectionComponent === 'function',isUndefined:typeof BaseSectionComponent === 'undefined',name:BaseSectionComponent?.name || 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {location:'section-component-map.generated.ts:9',message:'Component map - BaseSectionComponent import check',data:{imported:typeof BaseSectionComponent !== 'undefined',isConstructor:typeof BaseSectionComponent === 'function',isUndefined:typeof BaseSectionComponent === 'undefined',name:BaseSectionComponent?.name || 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'});
 }
 // #endregion
 
@@ -42,8 +43,8 @@ import { VideoSectionComponent } from '../sections/video-section/video-section.c
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // #region agent log
-if (typeof window !== 'undefined' && localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' && !(window as any).__DISABLE_DEBUG_LOGGING) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'section-component-map.generated.ts:38',message:'Before SECTION_COMPONENT_MAP initialization',data:{baseClassAvailable:typeof BaseSectionComponent !== 'undefined',brandColorsAvailable:typeof BrandColorsSectionComponent !== 'undefined',analyticsAvailable:typeof AnalyticsSectionComponent !== 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {location:'section-component-map.generated.ts:38',message:'Before SECTION_COMPONENT_MAP initialization',data:{baseClassAvailable:typeof BaseSectionComponent !== 'undefined',brandColorsAvailable:typeof BrandColorsSectionComponent !== 'undefined',analyticsAvailable:typeof AnalyticsSectionComponent !== 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'});
 }
 // #endregion
 export const SECTION_COMPONENT_MAP: Record<SectionType, Type<BaseSectionComponent<any>>> = {
@@ -77,8 +78,8 @@ export const SECTION_COMPONENT_MAP: Record<SectionType, Type<BaseSectionComponen
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getSectionComponent(type: SectionType): Type<BaseSectionComponent<any>> {
   // #region agent log
-  if (typeof window !== 'undefined' && localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' && !(window as any).__DISABLE_DEBUG_LOGGING) {
-    fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'section-component-map.generated.ts:67',message:'getSectionComponent called',data:{type,baseClassAvailable:typeof BaseSectionComponent !== 'undefined',componentAvailable:typeof SECTION_COMPONENT_MAP[type] !== 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+  if (typeof window !== 'undefined') {
+    safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {location:'section-component-map.generated.ts:67',message:'getSectionComponent called',data:{type,baseClassAvailable:typeof BaseSectionComponent !== 'undefined',componentAvailable:typeof SECTION_COMPONENT_MAP[type] !== 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'});
   }
   // #endregion
   return SECTION_COMPONENT_MAP[type];

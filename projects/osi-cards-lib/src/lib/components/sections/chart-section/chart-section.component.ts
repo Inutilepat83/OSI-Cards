@@ -18,67 +18,52 @@ import type { ChartData, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { CardSection } from '@osi-cards/models';
 import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { safeDebugFetch } from '@osi-cards/utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 // CRITICAL FIX: Import ChartSectionBaseComponent directly from source to avoid barrel export resolution issues in production builds
 import { ChartSectionBaseComponent, ChartConfig } from '../abstract-section-bases';
 
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'chart-section.component.ts:22',
-      message: 'Module evaluation START - chart-section.component.ts',
-      data: { timestamp: Date.now(), moduleId: 'chart-section' },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run1',
-      hypothesisId: 'C',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'chart-section.component.ts:22',
+    message: 'Module evaluation START - chart-section.component.ts',
+    data: { timestamp: Date.now(), moduleId: 'chart-section' },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run1',
+    hypothesisId: 'C',
+  });
 }
 // #endregion
 
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'chart-section.component.ts:23',
-      message: 'Import ChartSectionBaseComponent from barrel - checking value',
-      data: {
-        imported: typeof ChartSectionBaseComponent !== 'undefined',
-        isConstructor: typeof ChartSectionBaseComponent === 'function',
-        isUndefined: typeof ChartSectionBaseComponent === 'undefined',
-        isNull: ChartSectionBaseComponent === null,
-        name: ChartSectionBaseComponent?.name || 'undefined',
-        baseClassAvailable: typeof BaseSectionComponent !== 'undefined',
-        baseClassIsFunction: typeof BaseSectionComponent === 'function',
-        baseClassName: BaseSectionComponent?.name || 'undefined',
-        globalAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponent !== 'undefined',
-        globalForcedAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponentForced !== 'undefined',
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run2',
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'chart-section.component.ts:23',
+    message: 'Import ChartSectionBaseComponent from barrel - checking value',
+    data: {
+      imported: typeof ChartSectionBaseComponent !== 'undefined',
+      isConstructor: typeof ChartSectionBaseComponent === 'function',
+      isUndefined: typeof ChartSectionBaseComponent === 'undefined',
+      isNull: ChartSectionBaseComponent === null,
+      name: ChartSectionBaseComponent?.name || 'undefined',
+      baseClassAvailable: typeof BaseSectionComponent !== 'undefined',
+      baseClassIsFunction: typeof BaseSectionComponent === 'function',
+      baseClassName: BaseSectionComponent?.name || 'undefined',
+      globalAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponent !== 'undefined',
+      globalForcedAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponentForced !== 'undefined',
+    },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run2',
+    hypothesisId: 'B',
+  });
 }
 // #endregion
 
@@ -91,39 +76,31 @@ if (
  * Note: Requires Chart.js library to be installed.
  */
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'chart-section.component.ts:40',
-      message: 'CRITICAL: Before ChartSectionComponent extends ChartSectionBaseComponent',
-      data: {
-        baseClassAvailable: typeof ChartSectionBaseComponent !== 'undefined',
-        baseClassIsFunction: typeof ChartSectionBaseComponent === 'function',
-        baseClassName: ChartSectionBaseComponent?.name || 'undefined',
-        baseClassIsNull: ChartSectionBaseComponent === null,
-        baseClassIsUndefined: typeof ChartSectionBaseComponent === 'undefined',
-        baseSectionAvailable: typeof BaseSectionComponent !== 'undefined',
-        baseSectionIsFunction: typeof BaseSectionComponent === 'function',
-        baseSectionName: BaseSectionComponent?.name || 'undefined',
-        globalAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponent !== 'undefined',
-        globalForcedAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponentForced !== 'undefined',
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run3',
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'chart-section.component.ts:40',
+    message: 'CRITICAL: Before ChartSectionComponent extends ChartSectionBaseComponent',
+    data: {
+      baseClassAvailable: typeof ChartSectionBaseComponent !== 'undefined',
+      baseClassIsFunction: typeof ChartSectionBaseComponent === 'function',
+      baseClassName: ChartSectionBaseComponent?.name || 'undefined',
+      baseClassIsNull: ChartSectionBaseComponent === null,
+      baseClassIsUndefined: typeof ChartSectionBaseComponent === 'undefined',
+      baseSectionAvailable: typeof BaseSectionComponent !== 'undefined',
+      baseSectionIsFunction: typeof BaseSectionComponent === 'function',
+      baseSectionName: BaseSectionComponent?.name || 'undefined',
+      globalAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponent !== 'undefined',
+      globalForcedAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponentForced !== 'undefined',
+    },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run3',
+    hypothesisId: 'B',
+  });
 }
 // #endregion
 @Component({

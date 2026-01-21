@@ -13,6 +13,7 @@
 import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 
 import { CardField, CardItem } from '@osi-cards/models';
+import { safeDebugFetch } from '@osi-cards/utils';
 import {
   BaseSectionComponent,
   DEFAULT_LAYOUT_CONFIG,
@@ -20,62 +21,46 @@ import {
 } from './base-section.component';
 
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'abstract-section-bases.ts:20',
-      message: 'Module evaluation START - abstract-section-bases.ts',
-      data: { timestamp: Date.now(), moduleId: 'abstract-section-bases' },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run1',
-      hypothesisId: 'C',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'abstract-section-bases.ts:20',
+    message: 'Module evaluation START - abstract-section-bases.ts',
+    data: { timestamp: Date.now(), moduleId: 'abstract-section-bases' },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run1',
+    hypothesisId: 'C',
+  });
 }
 // #endregion
 
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'abstract-section-bases.ts:21',
-      message: 'Import BaseSectionComponent in abstract-section-bases - checking value',
-      data: {
-        imported: typeof BaseSectionComponent !== 'undefined',
-        isConstructor: typeof BaseSectionComponent === 'function',
-        isUndefined: typeof BaseSectionComponent === 'undefined',
-        isNull: BaseSectionComponent === null,
-        name: BaseSectionComponent?.name || 'undefined',
-        hasStaticProp: BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED === true,
-        globalAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponent !== 'undefined',
-        globalForcedAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponentForced !== 'undefined',
-        referencesMatch:
-          typeof window !== 'undefined' &&
-          (window as any).__BaseSectionComponent === BaseSectionComponent,
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run2',
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'abstract-section-bases.ts:21',
+    message: 'Import BaseSectionComponent in abstract-section-bases - checking value',
+    data: {
+      imported: typeof BaseSectionComponent !== 'undefined',
+      isConstructor: typeof BaseSectionComponent === 'function',
+      isUndefined: typeof BaseSectionComponent === 'undefined',
+      isNull: BaseSectionComponent === null,
+      name: BaseSectionComponent?.name || 'undefined',
+      hasStaticProp: BaseSectionComponent?.__DEBUG_BASE_CLASS_DEFINED === true,
+      globalAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponent !== 'undefined',
+      globalForcedAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponentForced !== 'undefined',
+      referencesMatch:
+        typeof window !== 'undefined' &&
+        (window as any).__BaseSectionComponent === BaseSectionComponent,
+    },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run2',
+    hypothesisId: 'B',
+  });
 }
 // #endregion
 
@@ -399,36 +384,28 @@ export interface ChartConfig {
  * ```
  */
 // #region agent log
-if (
-  typeof window !== 'undefined' &&
-  localStorage.getItem('__DISABLE_DEBUG_LOGGING') !== 'true' &&
-  !(window as any).__DISABLE_DEBUG_LOGGING
-) {
-  fetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'abstract-section-bases.ts:345',
-      message: 'CRITICAL: Before ChartSectionBaseComponent extends BaseSectionComponent',
-      data: {
-        baseClassAvailable: typeof BaseSectionComponent !== 'undefined',
-        baseClassIsFunction: typeof BaseSectionComponent === 'function',
-        baseClassName: BaseSectionComponent?.name || 'undefined',
-        baseClassIsNull: BaseSectionComponent === null,
-        baseClassIsUndefined: typeof BaseSectionComponent === 'undefined',
-        globalAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponent !== 'undefined',
-        globalForcedAvailable:
-          typeof window !== 'undefined' &&
-          typeof (window as any).__BaseSectionComponentForced !== 'undefined',
-      },
-      timestamp: Date.now(),
-      sessionId: 'debug-session',
-      runId: 'run3',
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
+if (typeof window !== 'undefined') {
+  safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {
+    location: 'abstract-section-bases.ts:345',
+    message: 'CRITICAL: Before ChartSectionBaseComponent extends BaseSectionComponent',
+    data: {
+      baseClassAvailable: typeof BaseSectionComponent !== 'undefined',
+      baseClassIsFunction: typeof BaseSectionComponent === 'function',
+      baseClassName: BaseSectionComponent?.name || 'undefined',
+      baseClassIsNull: BaseSectionComponent === null,
+      baseClassIsUndefined: typeof BaseSectionComponent === 'undefined',
+      globalAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponent !== 'undefined',
+      globalForcedAvailable:
+        typeof window !== 'undefined' &&
+        typeof (window as any).__BaseSectionComponentForced !== 'undefined',
+    },
+    timestamp: Date.now(),
+    sessionId: 'debug-session',
+    runId: 'run3',
+    hypothesisId: 'B',
+  });
 }
 // #endregion
 @Component({
