@@ -123,21 +123,39 @@
         "datasets": [
           {
             "label": "Revenue ($M)",
-            "data": [28.5, 32.1, 35.8, 42.4, 48.2],
+            "data": [
+              28.5,
+              32.1,
+              35.8,
+              42.4,
+              48.2
+            ],
             "backgroundColor": "#FF7900",
             "borderColor": "#FF7900",
             "borderWidth": 1
           },
           {
             "label": "Operating Costs ($M)",
-            "data": [22.1, 24.3, 26.8, 31.2, 34.5],
+            "data": [
+              22.1,
+              24.3,
+              26.8,
+              31.2,
+              34.5
+            ],
             "backgroundColor": "#4CAF50",
             "borderColor": "#4CAF50",
             "borderWidth": 1
           },
           {
             "label": "Net Profit ($M)",
-            "data": [6.4, 7.8, 9, 11.2, 13.7],
+            "data": [
+              6.4,
+              7.8,
+              9,
+              11.2,
+              13.7
+            ],
             "backgroundColor": "#2196F3",
             "borderColor": "#2196F3",
             "borderWidth": 1
