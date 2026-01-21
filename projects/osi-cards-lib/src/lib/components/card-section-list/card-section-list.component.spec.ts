@@ -7,11 +7,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CardSectionListComponent } from './card-section-list.component';
 import { By } from '@angular/platform-browser';
-import { CardSection } from '@osi-cards/models';
-import { LoggerService } from '@osi-cards/services';
+import { CardSection } from '../../models';
+import { LoggerService } from '../../services';
 import { MasonryGridComponent } from '../masonry-grid/masonry-grid.component';
 import { ChangeDetectorRef } from '@angular/core';
-import { SectionRenderEvent, MasonryLayoutInfo } from '@osi-cards/components';
+import { SectionRenderEvent, MasonryLayoutInfo } from '..';
 
 describe('CardSectionListComponent', () => {
   let component: CardSectionListComponent;

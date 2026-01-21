@@ -7,9 +7,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CardBodyComponent } from './card-body.component';
 import { By } from '@angular/platform-browser';
-import { CardSection } from '@osi-cards/models';
-import { MasonryGridComponent } from '@osi-cards/components';
-import { SectionRenderEvent, MasonryLayoutInfo } from '@osi-cards/components';
+import { CardSection } from '../../models';
+import { MasonryGridComponent } from '..';
+import { SectionRenderEvent, MasonryLayoutInfo } from '..';
 
 describe('CardBodyComponent', () => {
   let component: CardBodyComponent;

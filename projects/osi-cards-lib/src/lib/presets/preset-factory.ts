@@ -1,4 +1,4 @@
-import { AICardConfig } from '@osi-cards/models';
+import { AICardConfig } from '../models';
 import {
   createCompanyCard,
   CompanyCardOptions,
@@ -14,7 +14,7 @@ import { createAnalyticsDashboard, AnalyticsDashboardOptions } from './analytics
  *
  * @example
  * ```typescript
- * import { PresetFactory } from 'osi-cards-lib';
+ * import { PresetFactory } from '../../public-api';
  *
  * // Create a company card
  * const companyCard = PresetFactory.createCompany({

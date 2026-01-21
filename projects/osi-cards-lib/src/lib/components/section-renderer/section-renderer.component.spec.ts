@@ -7,11 +7,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SectionRendererComponent, SectionRenderEvent } from './section-renderer.component';
 import { By } from '@angular/platform-browser';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../../models';
 import { DynamicSectionLoaderService, ComponentResolution } from './dynamic-section-loader.service';
 import { LazySectionLoaderService, LazySectionType } from './lazy-section-loader.service';
-import { SectionPluginRegistry } from '@osi-cards/services';
-import { LoggerService } from '@osi-cards/services';
+import { SectionPluginRegistry } from '../../services';
+import { LoggerService } from '../../services';
 import { ChangeDetectorRef, ViewContainerRef, ComponentRef } from '@angular/core';
 import { BaseSectionComponent } from '../sections/base-section.component';
 import { LazySectionPlaceholderComponent } from './lazy-section-placeholder.component';

@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { LayoutAnalyticsService } from '@osi-cards/services';
+ * import { LayoutAnalyticsService } from './';
  *
  * const analytics = LayoutAnalyticsService.getInstance();
  * analytics.trackLayout(layoutResult);
@@ -25,7 +25,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { LayoutMetrics } from '@osi-cards/core';
+import { LayoutMetrics } from '../core';
 
 // ============================================================================
 // TYPES

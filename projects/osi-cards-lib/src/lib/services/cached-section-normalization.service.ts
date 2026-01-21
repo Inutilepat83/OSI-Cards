@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SectionNormalizationService } from './section-normalization.service';
-import { CardSection } from '@osi-cards/models';
-import { LRUCache } from '@osi-cards/utils';
+import { CardSection } from '../models';
+import { LRUCache } from '../utils';
 
 /**
  * Cached Section Normalization Service

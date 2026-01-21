@@ -9,9 +9,9 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { CardField, CardItem, CardSection } from '@osi-cards/models';
-import { SectionDesignParams, getSectionDesignParams } from '@osi-cards/models';
-import { sendDebugLog, safeDebugFetch } from '@osi-cards/utils';
+import { CardField, CardItem, CardSection } from '../../models';
+import { SectionDesignParams, getSectionDesignParams } from '../../models';
+import { sendDebugLog, safeDebugFetch } from '../../utils';
 // #region agent log - Track module evaluation start
 if (typeof window !== 'undefined') {
   safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {

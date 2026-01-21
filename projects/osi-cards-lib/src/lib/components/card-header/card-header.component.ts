@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideIconsModule } from '@osi-cards/icons';
+import { LucideIconsModule } from '../../icons';
 
 /**
  * Card Header Component

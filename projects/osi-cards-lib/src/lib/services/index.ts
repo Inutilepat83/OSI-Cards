@@ -101,13 +101,13 @@ export { CardPdfHtml2PdfService } from './card-pdf-html2pdf.service';
 // ============================================================================
 
 // Dynamic loader from section-renderer
-export { ComponentResolution, DynamicSectionLoaderService } from '@osi-cards/components';
+export { ComponentResolution, DynamicSectionLoaderService } from '../components';
 export {
   LAZY_SECTION_TYPES,
   LazySectionLoaderService,
   LazySectionState,
   LazySectionType,
-} from '@osi-cards/components';
+} from '../components';
 
 // Theme service from themes folder
-export { ThemeService } from '@osi-cards/themes';
+export { ThemeService } from '../themes';

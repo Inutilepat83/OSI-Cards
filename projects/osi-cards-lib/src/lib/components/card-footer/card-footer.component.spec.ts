@@ -7,8 +7,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CardFooterComponent } from './card-footer.component';
 import { By } from '@angular/platform-browser';
-import { CardAction } from '@osi-cards/models';
-import { LucideIconsModule } from '@osi-cards/icons';
+import { CardAction } from '../../models';
+import { LucideIconsModule } from '../../icons';
 
 describe('CardFooterComponent', () => {
   let component: CardFooterComponent;

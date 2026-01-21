@@ -9,19 +9,15 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig, CardAction } from '@osi-cards/models';
+import { AICardConfig, CardAction } from '../../models';
 import {
   AICardRendererComponent,
   CardFieldInteractionEvent,
   StreamingStage,
   ErrorBoundaryComponent,
-} from '@osi-cards/components';
-import { sendDebugLog } from '@osi-cards/utils';
-import {
-  OSI_THEME_CONFIG_TOKEN,
-  OSI_ANIMATION_CONFIG,
-  OSIAnimationConfig,
-} from '@osi-cards/providers';
+} from '..';
+import { sendDebugLog } from '../../utils';
+import { OSI_THEME_CONFIG_TOKEN, OSI_ANIMATION_CONFIG, OSIAnimationConfig } from '../../providers';
 
 /**
  * OSI Cards Component

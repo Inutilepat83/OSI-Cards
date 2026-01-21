@@ -6,7 +6,7 @@ import {
   CardUpdate,
   StreamingConfig,
 } from './streaming.service';
-import { AICardConfig } from '@osi-cards/models';
+import { AICardConfig } from '../models';
 
 describe('OSICardsStreamingService', () => {
   let service: OSICardsStreamingService;

@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { EmailHandlerService } from 'osi-cards-lib';
+ * import { EmailHandlerService } from '../../public-api';
  *
  * const emailHandler = inject(EmailHandlerService);
  *
@@ -24,8 +24,8 @@
 
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { MailCardAction, CardAction, CardTypeGuards } from '@osi-cards/models';
-import { validateEmail, validateEmailConfig } from '@osi-cards/utils';
+import { MailCardAction, CardAction, CardTypeGuards } from '../models';
+import { validateEmail, validateEmailConfig } from '../utils';
 
 // ============================================================================
 // TYPES

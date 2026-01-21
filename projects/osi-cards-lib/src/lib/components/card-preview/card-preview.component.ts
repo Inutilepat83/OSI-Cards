@@ -11,9 +11,9 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig, CardAction } from '@osi-cards/models';
-import { AICardRendererComponent, CardFieldInteractionEvent } from '@osi-cards/components';
-import { CardSkeletonComponent } from '@osi-cards/components';
+import { AICardConfig, CardAction } from '../../models';
+import { AICardRendererComponent, CardFieldInteractionEvent } from '..';
+import { CardSkeletonComponent } from '..';
 
 /**
  * Event payload for agent action triggered from card

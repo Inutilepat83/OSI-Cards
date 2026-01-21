@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { FlipAnimator } from 'osi-cards-lib';
+ * import { FlipAnimator } from '../../public-api';
  *
  * const flip = new FlipAnimator(containerElement);
  *

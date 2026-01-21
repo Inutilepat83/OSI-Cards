@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardAction } from '@osi-cards/models';
+import { AICardConfig, CardSection, CardAction } from '../models';
 
 /**
  * Analytics Dashboard Preset

@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { measure, fps, idle } from '@osi-cards/utils';
+ * import { measure, fps, idle } from './';
  *
  * const time = await measure(() => doWork());
  * const currentFps = await fps();

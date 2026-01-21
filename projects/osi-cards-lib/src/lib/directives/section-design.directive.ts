@@ -14,7 +14,7 @@
  */
 
 import { Directive, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
-import { SectionDesignParams, getSectionDesignParams } from '@osi-cards/models';
+import { SectionDesignParams, getSectionDesignParams } from '../models';
 
 /**
  * Mapping of design parameter keys to CSS custom property names

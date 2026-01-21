@@ -5,9 +5,9 @@
  */
 
 import { Type } from '@angular/core';
-import { SectionType } from '@osi-cards/models';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { SectionType } from '../../models';
+import { BaseSectionComponent } from '../sections/base-section.component';
+import { safeDebugFetch } from '../../utils';
 // #region agent log
 if (typeof window !== 'undefined') {
   safeDebugFetch('http://127.0.0.1:7242/ingest/cda34362-e921-4930-ae25-e92145425dbc', {location:'section-component-map.generated.ts:9',message:'Component map - BaseSectionComponent import check',data:{imported:typeof BaseSectionComponent !== 'undefined',isConstructor:typeof BaseSectionComponent === 'function',isUndefined:typeof BaseSectionComponent === 'undefined',name:BaseSectionComponent?.name || 'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'});

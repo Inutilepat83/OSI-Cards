@@ -1,7 +1,7 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { CardFacadeService, CreateCardOptions, CardValidationResult } from './card-facade.service';
-import { AICardConfig, CardSection } from '@osi-cards/models';
+import { AICardConfig, CardSection } from '../models';
 
 describe('CardFacadeService', () => {
   let service: CardFacadeService;

@@ -10,7 +10,7 @@
  *   ANIMATION_TIMING,
  *   SPACING,
  *   STREAMING_CONFIG
- * } from 'osi-cards-lib';
+ * } from '../../public-api';
  * ```
  *
  * @module constants

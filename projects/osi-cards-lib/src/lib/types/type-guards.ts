@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { isString, isObject, hasProperty } from '@osi-cards/types';
+ * import { isString, isObject, hasProperty } from './';
  *
  * function process(value: unknown) {
  *   if (isString(value)) {

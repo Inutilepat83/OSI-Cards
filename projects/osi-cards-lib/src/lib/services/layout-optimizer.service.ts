@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { LayoutOptimizerService } from 'osi-cards-lib';
+ * import { LayoutOptimizerService } from '../../public-api';
  *
  * const optimizer = inject(LayoutOptimizerService);
  *
@@ -27,7 +27,7 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 import {
   OptimizableLayoutSection,
   PreferredColumns,
@@ -42,9 +42,9 @@ import {
   localSwapOptimization,
   optimizeLayout,
   analyzeLayout,
-} from '@osi-cards/utils';
-import { LayoutMetrics } from '@osi-cards/core';
-import { FeatureFlagsService } from '@osi-cards/services';
+} from '../utils';
+import { LayoutMetrics } from '../core';
+import { FeatureFlagsService } from './';
 
 // ============================================================================
 // TYPES

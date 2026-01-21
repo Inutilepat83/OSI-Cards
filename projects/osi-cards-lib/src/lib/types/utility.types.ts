@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { DeepPartial, RequiredFields, SectionOf } from 'osi-cards-lib';
+ * import { DeepPartial, RequiredFields, SectionOf } from '../../public-api';
  *
  * // Create a partial card config for merging
  * const partialConfig: DeepPartial<AICardConfig> = {
@@ -19,7 +19,7 @@
  * ```
  */
 
-import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '@osi-cards/models';
+import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../models';
 
 // ============================================================================
 // DEEP PARTIAL & REQUIRED

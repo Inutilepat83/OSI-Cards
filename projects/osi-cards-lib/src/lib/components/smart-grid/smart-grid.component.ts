@@ -52,8 +52,8 @@ import {
   PositionedGridSection,
   GridLayout,
   createGridLayoutEngine,
-} from '@osi-cards/core';
-import { ResizeManager, createGridResizeManager } from '@osi-cards/core';
+} from '../../core';
+import { ResizeManager, createGridResizeManager } from '../../core';
 
 // ============================================================================
 // TYPES

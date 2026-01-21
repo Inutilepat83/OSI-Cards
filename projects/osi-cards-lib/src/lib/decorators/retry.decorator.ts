@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { Retry, RetryAsync } from '@osi-cards/decorators';
+ * import { Retry, RetryAsync } from './';
  *
  * class ApiService {
  *   @RetryAsync({ attempts: 3, delay: 1000, backoff: 2 })

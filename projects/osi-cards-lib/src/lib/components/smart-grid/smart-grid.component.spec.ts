@@ -8,8 +8,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SmartGridComponent, SmartGridSection, SectionClickEvent } from './smart-grid.component';
 import { By } from '@angular/platform-browser';
 import { ElementRef, ChangeDetectorRef } from '@angular/core';
-import { GridLayoutEngine, GridLayout, PositionedGridSection } from '@osi-cards/core';
-import { ResizeManager } from '@osi-cards/core';
+import { GridLayoutEngine, GridLayout, PositionedGridSection } from '../../core';
+import { ResizeManager } from '../../core';
 
 describe('SmartGridComponent', () => {
   let component: SmartGridComponent;

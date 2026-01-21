@@ -1,5 +1,5 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { SectionPluginRegistry } from '@osi-cards/services';
+import { SectionPluginRegistry } from '../services';
 
 /**
  * Section types supported by the library

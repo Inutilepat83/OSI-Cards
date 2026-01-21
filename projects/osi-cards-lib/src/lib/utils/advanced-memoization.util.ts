@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { Memoize, MemoizeTTL } from '@osi-cards/utils';
+ * import { Memoize, MemoizeTTL } from './';
  *
  * class Calculator {
  *   @Memoize()

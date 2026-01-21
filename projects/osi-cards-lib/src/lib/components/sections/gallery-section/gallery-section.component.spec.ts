@@ -7,8 +7,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GallerySectionComponent } from './gallery-section.component';
 import { By } from '@angular/platform-browser';
-import { CardSection, CardItem } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection, CardItem } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 import { DOCUMENT } from '@angular/common';
 
 describe('GallerySectionComponent', () => {

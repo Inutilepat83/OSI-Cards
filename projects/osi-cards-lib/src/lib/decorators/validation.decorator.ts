@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { ValidSection, RequiredFields, ValidateOnChange } from 'osi-cards-lib';
+ * import { ValidSection, RequiredFields, ValidateOnChange } from '../../public-api';
  *
  * @ValidSection({
  *   requiredFields: ['title', 'type'],
@@ -20,8 +20,8 @@
  * ```
  */
 
-import { ValidationError as LibValidationError, RequiredFieldError } from '@osi-cards/lib/errors';
-import { CardField, CardItem, CardSection } from '@osi-cards/models';
+import { ValidationError as LibValidationError, RequiredFieldError } from '../errors';
+import { CardField, CardItem, CardSection } from '../models';
 
 // Re-export for convenience
 export { RequiredFieldError };

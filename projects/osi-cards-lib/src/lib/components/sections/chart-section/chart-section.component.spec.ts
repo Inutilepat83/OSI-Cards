@@ -7,8 +7,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChartSectionComponent } from './chart-section.component';
 import { By } from '@angular/platform-browser';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 import { ChangeDetectorRef } from '@angular/core';
 
 describe('ChartSectionComponent', () => {

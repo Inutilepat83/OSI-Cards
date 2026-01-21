@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { match, exhaustive } from '@osi-cards/types';
+ * import { match, exhaustive } from './';
  *
  * type Result =
  *   | { type: 'success'; data: string }

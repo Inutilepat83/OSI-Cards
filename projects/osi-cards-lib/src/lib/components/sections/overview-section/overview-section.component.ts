@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { ClipboardService, ToastService } from '@osi-cards/services';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { LucideIconsModule } from '@osi-cards/icons';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { CardSection } from '../../../models';
+import { ClipboardService, ToastService } from '../../../services';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { LucideIconsModule } from '../../../icons';
+import { safeDebugFetch } from '../../../utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 

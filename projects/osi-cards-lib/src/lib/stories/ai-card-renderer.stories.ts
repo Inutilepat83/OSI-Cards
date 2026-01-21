@@ -8,10 +8,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/angular';
-import { AICardRendererComponent } from '@osi-cards/components';
+import { AICardRendererComponent } from '../components';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, moduleMetadata } from '@storybook/angular';
-import type { AICardConfig, CardSection, CardField, CardAction } from '@osi-cards/models';
+import type { AICardConfig, CardSection, CardField, CardAction } from '../models';
 
 /**
  * Sample card configurations for stories
@@ -135,7 +135,7 @@ It supports streaming data, animations, and various section types.
 
 ## Usage
 \`\`\`typescript
-import { AICardRendererComponent } from 'osi-cards-lib';
+import { AICardRendererComponent } from '../../public-api';
 
 @Component({
   imports: [AICardRendererComponent],

@@ -11,7 +11,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { safeDebugFetch } from '../../../utils';
 
 /**
  * Shared Empty State Component

@@ -3,8 +3,8 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { CardSection } from '../../../models';
 
 /**
  * Video Section Component

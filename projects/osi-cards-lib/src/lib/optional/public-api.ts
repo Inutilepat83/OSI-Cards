@@ -15,10 +15,10 @@
  */
 
 // Chart Section (heavy - uses chart.js)
-export { ChartSectionComponent } from '@osi-cards/components';
+export { ChartSectionComponent } from '../components';
 
 // Map Section (heavy - uses leaflet)
-export { MapSectionComponent } from '@osi-cards/components';
+export { MapSectionComponent } from '../components';
 
 // Network Card Section (complex visualization)
-export { NetworkCardSectionComponent } from '@osi-cards/components';
+export { NetworkCardSectionComponent } from '../components';

@@ -333,7 +333,7 @@ export class CardServiceContracts {
  *
  * @example
  * ```typescript
- * import { ContractValidator, CardServiceContracts } from '@osi-cards/testing';
+ * import { ContractValidator, CardServiceContracts } from './';
  *
  * describe('Card Service Contracts', () => {
  *   it('should satisfy GetCard contract', () => {

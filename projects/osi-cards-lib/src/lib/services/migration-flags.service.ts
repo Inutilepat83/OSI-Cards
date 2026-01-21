@@ -1,8 +1,5 @@
 import { Injectable, InjectionToken, inject } from '@angular/core';
-import {
-  MigrationFlags,
-  DEFAULT_MIGRATION_FLAGS,
-} from '@osi-cards/lib/config/migration-flags.config';
+import { MigrationFlags, DEFAULT_MIGRATION_FLAGS } from '../config/migration-flags.config';
 
 /**
  * Injection token for providing migration flag overrides

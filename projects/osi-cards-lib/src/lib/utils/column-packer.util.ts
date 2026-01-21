@@ -32,7 +32,7 @@
  * ```
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 import {
   PreferredColumns,
   generateLeftExpression,
@@ -46,7 +46,7 @@ import { packWithSkyline, skylineResultToPositions } from './skyline-algorithm.u
 // HEIGHT ESTIMATION
 // ============================================================================
 
-import { HeightEstimationService } from '@osi-cards/services';
+import { HeightEstimationService } from '../services';
 
 // Create a singleton instance for use in utility functions
 // Note: In Angular components, inject the service instead

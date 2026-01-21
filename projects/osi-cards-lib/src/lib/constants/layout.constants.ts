@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { GRID_CONFIG, SPACING, BREAKPOINTS } from 'osi-cards-lib';
+ * import { GRID_CONFIG, SPACING, BREAKPOINTS } from '../../public-api';
  *
  * const columns = GRID_CONFIG.DEFAULT_COLUMNS;
  * const gap = SPACING.MD;

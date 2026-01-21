@@ -23,7 +23,7 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 // Removed - unified-layout-optimizer.util deleted
 type OptimizableLayoutSection = any;
 type FullyOptimizableSection = any;

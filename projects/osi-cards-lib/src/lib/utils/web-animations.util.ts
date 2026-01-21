@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import { AnimationController, fadeIn, slideUp } from 'osi-cards-lib';
+ * import { AnimationController, fadeIn, slideUp } from '../../public-api';
  *
  * const controller = new AnimationController(element);
  * await controller.play(fadeIn({ duration: 300 }));

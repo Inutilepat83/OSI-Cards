@@ -2,8 +2,8 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { CardSection } from '../../../models';
 
 /**
  * Social Media Section Component

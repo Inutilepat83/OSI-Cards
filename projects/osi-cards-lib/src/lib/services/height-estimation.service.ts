@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 export interface HeightEstimationContext {
   colSpan?: number;

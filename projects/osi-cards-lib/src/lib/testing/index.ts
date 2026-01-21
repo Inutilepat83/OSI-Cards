@@ -70,13 +70,13 @@ export {
   // Types
   type FixtureCategory,
   type SectionFixtures,
-} from '@osi-cards/lib/registry/fixtures.generated';
+} from '../registry/fixtures.generated';
 
 // ============================================================================
 // MOCK FACTORIES
 // ============================================================================
 
-import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '@osi-cards/models';
+import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../models';
 
 /**
  * Create a mock card configuration

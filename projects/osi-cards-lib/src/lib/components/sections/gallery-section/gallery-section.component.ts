@@ -12,8 +12,8 @@ import {
 } from '@angular/core';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService, LoggerService } from '@osi-cards/services';
-import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService, LoggerService } from '../../../services';
+import { CardSection } from '../../../models';
 
 /**
  * Gallery Section Component

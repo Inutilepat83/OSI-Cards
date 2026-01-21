@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
-import { LucideIconsModule } from '@osi-cards/icons';
-import { SectionPlugin } from '@osi-cards/lib/interfaces/section-plugin.interface';
-import { CardSection } from '@osi-cards/models';
+import { BaseSectionComponent } from '../components/sections/base-section.component';
+import { LucideIconsModule } from '../icons';
+import { SectionPlugin } from '../interfaces/section-plugin.interface';
+import { CardSection } from '../models';
 
 /**
  * Example custom section plugin component
@@ -13,7 +13,7 @@ import { CardSection } from '@osi-cards/models';
  * @example
  * ```typescript
  * // Register the plugin in your app.config.ts or component
- * import { SectionPluginRegistry } from 'osi-cards-lib';
+ * import { SectionPluginRegistry } from '../../public-api';
  * import { MyCustomSectionComponent } from './my-custom-section.component';
  *
  * const registry = inject(SectionPluginRegistry);

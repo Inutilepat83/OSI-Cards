@@ -17,7 +17,7 @@
  * ```
  */
 
-import { CardAction, CardField, CardItem, CardSection, AICardConfig } from '@osi-cards/models';
+import { CardAction, CardField, CardItem, CardSection, AICardConfig } from '../models';
 
 // ============================================
 // EVENT TYPE DEFINITIONS

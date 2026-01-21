@@ -15,7 +15,7 @@
  *
  * @example
  * ```typescript
- * import { MagneticTiltService } from 'osi-cards-lib';
+ * import { MagneticTiltService } from '../../public-api';
  *
  * const tilt = inject(MagneticTiltService);
  *

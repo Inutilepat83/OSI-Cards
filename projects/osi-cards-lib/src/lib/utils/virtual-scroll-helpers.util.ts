@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { VirtualScrollManager } from '@osi-cards/utils';
+ * import { VirtualScrollManager } from './';
  *
  * const manager = new VirtualScrollManager({
  *   itemCount: 10000,

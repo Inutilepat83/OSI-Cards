@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { SectionRenderError, StreamingError, ValidationError } from 'osi-cards-lib';
+ * import { SectionRenderError, StreamingError, ValidationError } from '../../public-api';
  *
  * try {
  *   // Section rendering code

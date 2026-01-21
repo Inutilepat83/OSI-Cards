@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { CardId, SectionId, createCardId } from 'osi-cards-lib';
+ * import { CardId, SectionId, createCardId } from '../../public-api';
  *
  * const cardId: CardId = createCardId('card-123');
  * const sectionId: SectionId = createSectionId('section-456');

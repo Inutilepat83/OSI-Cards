@@ -7,7 +7,7 @@
  *
  * @example
  * ```typescript
- * import { VirtualScrollManager } from 'osi-cards-lib';
+ * import { VirtualScrollManager } from '../../public-api';
  *
  * const manager = new VirtualScrollManager(containerRef, {
  *   bufferSize: 3,
@@ -19,7 +19,7 @@
  * ```
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 // Stub function - smart-grid.util was removed
 function estimateSectionHeight(section: any): number {
   return 200; // Default height estimate

@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { PackingAlgorithm, LayoutResult } from '@osi-cards/core';
+ * import { PackingAlgorithm, LayoutResult } from './';
  *
  * class MyCustomPacker implements PackingAlgorithm {
  *   readonly name = 'custom';
@@ -20,7 +20,7 @@
  * ```
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 // ============================================================================
 // CORE TYPES

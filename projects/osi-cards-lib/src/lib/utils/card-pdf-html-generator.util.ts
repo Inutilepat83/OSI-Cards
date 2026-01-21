@@ -5,7 +5,7 @@
  * Reuses card structure and class names for consistency.
  */
 
-import { AICardConfig, CardSection, CardField, CardItem } from '@osi-cards/models';
+import { AICardConfig, CardSection, CardField, CardItem } from '../models';
 
 /**
  * Escape HTML special characters

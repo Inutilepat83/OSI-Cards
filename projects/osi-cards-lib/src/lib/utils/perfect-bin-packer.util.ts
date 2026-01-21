@@ -10,7 +10,7 @@
  * Algorithm: Best-Fit with Dynamic Span Adjustment (BFDSA)
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 export interface PackedSection {
   section: CardSection;

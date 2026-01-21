@@ -16,7 +16,7 @@
  * ```
  */
 
-import { AICardConfig, CardSection } from '@osi-cards/models';
+import { AICardConfig, CardSection } from '../models';
 
 // =============================================================================
 // TYPES

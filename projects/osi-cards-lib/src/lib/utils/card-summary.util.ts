@@ -4,7 +4,7 @@
  * Generates text summaries from card content for use in emails and other contexts.
  */
 
-import { AICardConfig, CardField, CardItem, CardSection } from '@osi-cards/models';
+import { AICardConfig, CardField, CardItem, CardSection } from '../models';
 
 /**
  * Generate a summary from card content

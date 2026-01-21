@@ -13,7 +13,7 @@ import { Injectable } from '@angular/core';
  *
  * @example
  * ```typescript
- * import { IconService } from '@osi-cards/services';
+ * import { IconService } from './';
  *
  * @Component({...})
  * export class MyComponent {

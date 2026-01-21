@@ -1,15 +1,15 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
-import { SectionPluginRegistry } from '@osi-cards/services';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { CardSection } from '../../models';
+import { BaseSectionComponent } from '../sections/base-section.component';
+import { SectionPluginRegistry } from '../../services';
+import { safeDebugFetch } from '../../utils';
 import {
   SectionType,
   SectionTypeInput,
   resolveSectionType,
   isValidSectionType,
   getSectionMetadata,
-} from '@osi-cards/models';
+} from '../../models';
 import { SECTION_COMPONENT_MAP, getSectionComponent } from './section-component-map.generated';
 import {
   LazySectionLoaderService,

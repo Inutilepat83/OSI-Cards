@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { CardFactory, SectionFactory } from 'osi-cards-lib';
+ * import { CardFactory, SectionFactory } from '../../public-api';
  *
  * const card = CardFactory.create()
  *   .withTitle('Company Overview')
@@ -30,8 +30,8 @@ import type {
   CardItem,
   CardAction,
   CardType,
-} from '@osi-cards/models';
-import type { SectionTypeInput } from '@osi-cards/models';
+} from '../models';
+import type { SectionTypeInput } from '../models';
 
 // ============================================================================
 // TYPES

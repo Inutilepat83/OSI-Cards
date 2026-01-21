@@ -121,7 +121,7 @@ export const OSI_CUSTOM_THEMES = new InjectionToken<Map<string, OSICardsThemeCon
  * ```typescript
  * // app.config.ts
  * import { ApplicationConfig } from '@angular/core';
- * import { provideOSICardsTheme } from 'osi-cards-lib';
+ * import { provideOSICardsTheme } from '../../public-api';
  *
  * export const appConfig: ApplicationConfig = {
  *   providers: [

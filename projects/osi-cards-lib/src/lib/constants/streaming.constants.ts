@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { STREAMING_CONFIG, STREAMING_STAGES } from 'osi-cards-lib';
+ * import { STREAMING_CONFIG, STREAMING_STAGES } from '../../public-api';
  *
  * const delay = STREAMING_CONFIG.THINKING_DELAY_MS;
  * ```

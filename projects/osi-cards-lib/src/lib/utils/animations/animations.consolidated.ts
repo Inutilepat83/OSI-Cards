@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { AnimationUtil } from 'osi-cards-lib';
+ * import { AnimationUtil } from '../../../public-api';
  *
  * // Web Animations API
  * const anim = AnimationUtil.fadeIn(element, { duration: 300 });
@@ -26,12 +26,12 @@
  */
 
 // Re-export all animation utilities
-export * from '@osi-cards/utils';
-export * from '@osi-cards/utils';
-export * from '@osi-cards/utils';
+export * from '..';
+export * from '..';
+export * from '..';
 
 // Create consolidated namespace
-import { FlipAnimator, flipAnimate } from '@osi-cards/utils';
+import { FlipAnimator, flipAnimate } from '..';
 import {
   AnimationController,
   fadeIn,
@@ -42,10 +42,10 @@ import {
   slideInRight,
   scaleIn,
   staggerAnimate,
-} from '@osi-cards/utils';
+} from '..';
 
 // Export slideInLeft as slideIn for backwards compatibility
-export { slideInLeft as slideIn } from '@osi-cards/utils';
+export { slideInLeft as slideIn } from '..';
 
 export const AnimationUtil = {
   // FLIP animations

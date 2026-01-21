@@ -1,5 +1,5 @@
-import { OSICardsThemeConfig } from '@osi-cards/themes';
-import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '@osi-cards/themes';
+import { OSICardsThemeConfig } from '..';
+import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '..';
 
 /**
  * Light theme preset configuration

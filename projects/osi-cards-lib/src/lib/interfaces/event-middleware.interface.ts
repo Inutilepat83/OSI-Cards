@@ -1,4 +1,4 @@
-import { SectionRenderEvent } from '@osi-cards/components';
+import { SectionRenderEvent } from '../components';
 
 /**
  * Event middleware interface for intercepting and transforming card events

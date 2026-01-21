@@ -12,8 +12,8 @@
 
 import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 
-import { CardField, CardItem } from '@osi-cards/models';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { CardField, CardItem } from '../../models';
+import { safeDebugFetch } from '../../utils';
 import {
   BaseSectionComponent,
   DEFAULT_LAYOUT_CONFIG,

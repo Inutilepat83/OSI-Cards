@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { detectMasonrySupport, getOptimalLayoutMode } from 'osi-cards-lib';
+ * import { detectMasonrySupport, getOptimalLayoutMode } from '../../public-api';
  *
  * const support = detectMasonrySupport();
  * const layoutMode = getOptimalLayoutMode(support);

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, isDevMode, ChangeDetectionStrategy } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { safeDebugFetch } from '../../../utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 // #region agent log - Track module evaluation start
 if (typeof window !== 'undefined') {

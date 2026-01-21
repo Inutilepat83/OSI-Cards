@@ -7,8 +7,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FaqSectionComponent } from './faq-section.component';
 import { By } from '@angular/platform-browser';
-import { CardSection, CardItem } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection, CardItem } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 
 describe('FaqSectionComponent', () => {
   let component: FaqSectionComponent;

@@ -26,7 +26,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, timer, take } from 'rxjs';
-import { LucideIconsModule } from '@osi-cards/icons';
+import { LucideIconsModule } from '../../icons';
 
 // ============================================================================
 // TYPES

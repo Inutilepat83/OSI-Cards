@@ -16,9 +16,9 @@ import {
 import type { ChartData, ChartOptions, ChartType } from 'chart.js';
 // @ts-ignore - ng2-charts may not be installed yet, but it's in dependencies
 import { BaseChartDirective } from 'ng2-charts';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { safeDebugFetch } from '../../../utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 // CRITICAL FIX: Import ChartSectionBaseComponent directly from source to avoid barrel export resolution issues in production builds

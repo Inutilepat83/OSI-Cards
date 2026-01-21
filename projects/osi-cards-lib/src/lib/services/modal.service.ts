@@ -18,7 +18,7 @@
  *
  * @example
  * ```typescript
- * import { ModalService } from '@osi-cards/lib';
+ * import { ModalService } from '../../public-api';
  *
  * const modal = inject(ModalService);
  *

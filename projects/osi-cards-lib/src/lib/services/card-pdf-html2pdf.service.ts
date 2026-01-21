@@ -23,7 +23,7 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { AICardConfig } from '@osi-cards/models';
+import { AICardConfig } from '../models';
 import { LoggerService } from './logger.service';
 import { generateCardHtml } from '../utils/card-pdf-html-generator.util';
 import { generateCardPdfStyles } from '../utils/card-pdf-styles.util';

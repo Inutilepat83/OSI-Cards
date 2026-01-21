@@ -19,7 +19,7 @@
  *
  * @example
  * ```typescript
- * import { SectionNormalizationService } from '@osi-cards/services';
+ * import { SectionNormalizationService } from './';
  *
  * @Component({...})
  * export class MyComponent {
@@ -46,19 +46,19 @@
  * @public
  */
 import { Injectable } from '@angular/core';
-import { CardSection, LayoutPriority } from '@osi-cards/models';
+import { CardSection, LayoutPriority } from '../models';
 import {
   SectionType,
   SectionTypeInput,
   resolveSectionType as resolveType,
   isValidSectionType,
-} from '@osi-cards/models';
+} from '../models';
 import {
   getPreferredColumns,
   DEFAULT_SECTION_COLUMN_PREFERENCES,
   PreferredColumns,
-} from '@osi-cards/utils';
-import { LRUCache } from '@osi-cards/utils';
+} from '../utils';
+import { LRUCache } from '../utils';
 
 interface ColSpanThresholds {
   two: number;

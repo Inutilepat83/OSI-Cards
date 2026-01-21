@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { ObjectPool } from '@osi-cards/utils';
+ * import { ObjectPool } from './';
  *
  * interface Point { x: number; y: number; }
  *

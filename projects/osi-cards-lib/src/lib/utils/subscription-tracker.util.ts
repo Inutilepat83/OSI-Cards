@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { AutoUnsubscribe, track } from '@osi-cards/utils';
+ * import { AutoUnsubscribe, track } from './';
  *
  * @AutoUnsubscribe()
  * @Component({...})

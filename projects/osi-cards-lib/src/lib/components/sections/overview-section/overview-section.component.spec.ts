@@ -7,9 +7,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OverviewSectionComponent } from './overview-section.component';
 import { By } from '@angular/platform-browser';
-import { CardSection, CardField } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { ClipboardService } from '@osi-cards/services';
+import { CardSection, CardField } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { ClipboardService } from '../../../services';
 import { ChangeDetectorRef } from '@angular/core';
 
 describe('OverviewSectionComponent', () => {

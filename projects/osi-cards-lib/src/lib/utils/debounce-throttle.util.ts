@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { debounce, throttle } from '@osi-cards/utils';
+ * import { debounce, throttle } from './';
  *
  * const debouncedFn = debounce(() => search(query), 300);
  * const throttledFn = throttle(() => updateUI(), 100);

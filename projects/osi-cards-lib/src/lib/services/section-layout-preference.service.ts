@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferences } from '@osi-cards/components';
+import { CardSection } from '../models';
+import { SectionLayoutPreferences } from '../components';
 
 /**
  * Cache key for memoization

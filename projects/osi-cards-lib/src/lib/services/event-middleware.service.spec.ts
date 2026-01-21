@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { EventMiddlewareService } from './event-middleware.service';
-import { SectionRenderEvent } from '@osi-cards/components';
-import { EventMiddleware } from '@osi-cards/lib/interfaces/event-middleware.interface';
+import { SectionRenderEvent } from '../components';
+import { EventMiddleware } from '../interfaces/event-middleware.interface';
 
 describe('EventMiddlewareService', () => {
   let service: EventMiddlewareService;

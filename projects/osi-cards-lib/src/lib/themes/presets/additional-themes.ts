@@ -1,4 +1,4 @@
-import { OSICardsThemeConfig } from '@osi-cards/themes';
+import { OSICardsThemeConfig } from '..';
 
 /**
  * Additional Theme Presets for OSI Cards

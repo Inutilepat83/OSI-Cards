@@ -7,7 +7,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TrendIndicatorComponent } from './trend-indicator.component';
 import { By } from '@angular/platform-browser';
-import { TrendDirection } from '@osi-cards/types';
+import { TrendDirection } from '../../../types';
 
 describe('TrendIndicatorComponent', () => {
   let component: TrendIndicatorComponent;

@@ -29,7 +29,7 @@
  * ```
  */
 
-import { CardField, CardSection, LayoutPriority } from '@osi-cards/models';
+import { CardField, CardSection, LayoutPriority } from '../models';
 import {
   EXPANSION_DENSITY_THRESHOLD,
   generateLeftExpression,
@@ -41,7 +41,7 @@ import {
 // HEIGHT ESTIMATION
 // ============================================================================
 
-import { HeightEstimationService } from '@osi-cards/services';
+import { HeightEstimationService } from '../services';
 
 // Create a singleton instance for use in utility functions
 // Note: In Angular components, inject the service instead

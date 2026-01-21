@@ -16,7 +16,7 @@
  *
  * @example
  * ```typescript
- * import { AccessibilityService } from 'osi-cards-lib';
+ * import { AccessibilityService } from '../../public-api';
  *
  * const a11y = inject(AccessibilityService);
  *
@@ -40,7 +40,7 @@ import { Injectable, OnDestroy, inject, PLATFORM_ID, NgZone } from '@angular/cor
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { ANIMATION_TIMING, EASING } from '@osi-cards/constants';
+import { ANIMATION_TIMING, EASING } from '../constants';
 
 // ============================================================================
 // TYPES

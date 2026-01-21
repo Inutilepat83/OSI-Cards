@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { Debounce, Throttle } from '@osi-cards/decorators';
+ * import { Debounce, Throttle } from './';
  *
  * class SearchComponent {
  *   @Debounce(300)

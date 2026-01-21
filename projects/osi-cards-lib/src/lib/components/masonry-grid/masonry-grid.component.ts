@@ -17,17 +17,13 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { LoggerService } from '@osi-cards/services';
-import { MasonryTransformService } from '@osi-cards/services';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { Breakpoint } from '@osi-cards/types';
-import { sendDebugLog, LOG_TAGS } from '@osi-cards/utils';
-import {
-  calculateColumns,
-  generateLeftExpression,
-  generateWidthExpression,
-} from '@osi-cards/utils';
+import { CardSection } from '../../models';
+import { LoggerService } from '../../services';
+import { MasonryTransformService } from '../../services';
+import { SectionLayoutPreferenceService } from '../../services';
+import { Breakpoint } from '../../types';
+import { sendDebugLog, LOG_TAGS } from '../../utils';
+import { calculateColumns, generateLeftExpression, generateWidthExpression } from '../../utils';
 import {
   SectionRendererComponent,
   SectionRenderEvent,

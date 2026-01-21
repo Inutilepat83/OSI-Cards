@@ -7,9 +7,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SimpleGridComponent, SimpleGridLayoutInfo } from './simple-grid.component';
 import { By } from '@angular/platform-browser';
-import { CardSection } from '@osi-cards/models';
-import { LayoutCalculationService, LayoutStateManager } from '@osi-cards/services';
-import { SectionRendererComponent } from '@osi-cards/components';
+import { CardSection } from '../../models';
+import { LayoutCalculationService, LayoutStateManager } from '../../services';
+import { SectionRendererComponent } from '..';
 import { ChangeDetectorRef } from '@angular/core';
 
 describe('SimpleGridComponent', () => {

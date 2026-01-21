@@ -7,8 +7,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnalyticsSectionComponent } from './analytics-section.component';
 import { By } from '@angular/platform-browser';
-import { CardSection, CardField } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection, CardField } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 
 describe('AnalyticsSectionComponent', () => {
   let component: AnalyticsSectionComponent;

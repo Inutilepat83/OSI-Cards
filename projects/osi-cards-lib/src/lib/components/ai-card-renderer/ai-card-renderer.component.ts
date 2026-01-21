@@ -22,9 +22,9 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { MasonryLayoutInfo } from '@osi-cards/components';
-import { LucideIconsModule } from '@osi-cards/icons';
-import { getShortVersion } from '@osi-cards/lib/version';
+import { MasonryLayoutInfo } from '..';
+import { LucideIconsModule } from '../../icons';
+import { getShortVersion } from '../../version';
 import {
   AICardConfig,
   CardAction,
@@ -32,7 +32,7 @@ import {
   CardItem,
   CardSection,
   LegacyCardAction,
-} from '@osi-cards/models';
+} from '../../models';
 import {
   IconService,
   MagneticTiltService,
@@ -40,14 +40,14 @@ import {
   SectionCompletenessService,
   SectionNormalizationService,
   TiltCalculations,
-} from '@osi-cards/services';
-import { CardChangeType } from '@osi-cards/types';
+} from '../../services';
+import { CardChangeType } from '../../types';
 import {
   generateBriefSummary,
   generateCardSummary,
   sendDebugLog,
   sendDebugLogToFile,
-} from '@osi-cards/utils';
+} from '../../utils';
 import { catchError, fromEvent, interval, of, Subject, takeUntil } from 'rxjs';
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
@@ -2928,7 +2928,7 @@ Generate a default company card with comprehensive information including key det
           '⚠️ OSI Cards Library: Animation providers may not be configured.\n' +
             'The library requires animation providers to function correctly.\n' +
             'Please add provideOSICards() to your app.config.ts providers array:\n\n' +
-            "  import { provideOSICards } from 'osi-cards-lib';\n" +
+            "  import { provideOSICards } from '../../../public-api';\n" +
             '  export const appConfig: ApplicationConfig = {\n' +
             '    providers: [provideOSICards(), ...]\n' +
             '  };\n\n' +

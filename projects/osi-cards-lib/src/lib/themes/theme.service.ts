@@ -10,9 +10,9 @@ import {
   inject,
 } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, fromEvent, map, takeUntil } from 'rxjs';
-import { EventBusService, LoggerService } from '@osi-cards/services';
+import { EventBusService, LoggerService } from '../services';
 import { DEFAULT_THEME_PRESET } from './presets';
-import { sendDebugLog } from '@osi-cards/utils';
+import { sendDebugLog } from '../utils';
 
 // ============================================
 // Types & Interfaces

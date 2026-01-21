@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { CardFactory, SectionFactory, FieldFactory } from 'osi-cards-lib';
+ * import { CardFactory, SectionFactory, FieldFactory } from '../../public-api';
  *
  * const card = CardFactory.create()
  *   .withTitle('My Card')

@@ -11,8 +11,8 @@ export * from './branded.types';
 export * from './utility.types';
 
 // Re-export commonly needed types from other modules
-export type { ThemePreset } from '@osi-cards/themes';
-export type { AnimationState } from '@osi-cards/utils';
+export type { ThemePreset } from '../themes';
+export type { AnimationState } from '../utils';
 // Removed - grid-logger.util deleted
 export type LayoutPhase = 'initial' | 'optimization' | 'finalization';
 export type PackingAlgorithm = 'skyline' | 'bin-packer' | 'row-packer';

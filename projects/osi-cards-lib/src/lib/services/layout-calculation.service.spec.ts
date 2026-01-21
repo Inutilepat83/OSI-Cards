@@ -3,7 +3,7 @@
  */
 
 import { TestBed } from '@angular/core/testing';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 import { LayoutCalculationService, LayoutConfig } from './layout-calculation.service';
 
 describe('LayoutCalculationService', () => {

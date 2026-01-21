@@ -5,7 +5,7 @@
  */
 
 import { packSectionsIntoColumns, ColumnPackerConfig } from './column-packer.util';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 describe('ColumnPacker', () => {
   const createSection = (id: string, type: string = 'info', colSpan?: number): CardSection => ({

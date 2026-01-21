@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { CardSection } from '@osi-cards/models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { CardSection } from '../../../models';
 
 /**
  * Network Card Section Component

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-import { SectionRenderEvent } from '@osi-cards/components';
+import { SectionRenderEvent } from '../components';
 import {
   EventMiddleware,
   EventHandler,
   EventTransformer,
   EventFilter,
-} from '@osi-cards/lib/interfaces/event-middleware.interface';
+} from '../interfaces/event-middleware.interface';
 
 /**
  * Event Middleware Service

@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { OSICardsStreamingService } from 'osi-cards-lib';
+ * import { OSICardsStreamingService } from '../../public-api';
  *
  * const streamingService = inject(OSICardsStreamingService);
  *
@@ -31,9 +31,9 @@
 
 import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '@osi-cards/models';
-import { CardChangeType } from '@osi-cards/types';
-import { sendDebugLog, safeDebugFetch } from '@osi-cards/utils';
+import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '../models';
+import { CardChangeType } from '../types';
+import { sendDebugLog, safeDebugFetch } from '../utils';
 
 /**
  * Streaming stage type

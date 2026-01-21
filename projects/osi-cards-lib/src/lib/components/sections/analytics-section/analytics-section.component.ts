@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 import { EmptyStateComponent, SectionHeaderComponent, type ProgressBarVariant } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { sendDebugLog } from '@osi-cards/lib/utils/debug-log.util';
+import { sendDebugLog } from '../../../utils/debug-log.util';
 
 /**
  * Analytics Section Component - Compact & Minimalist with Progressive Disclosure

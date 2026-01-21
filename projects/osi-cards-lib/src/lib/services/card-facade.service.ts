@@ -17,7 +17,7 @@
  *
  * @example
  * ```typescript
- * import { CardFacade } from 'osi-cards-lib';
+ * import { CardFacade } from '../../public-api';
  *
  * @Component({...})
  * export class MyComponent {
@@ -44,17 +44,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, BehaviorSubject, merge, EMPTY } from 'rxjs';
 import { map, filter, tap, catchError, shareReplay } from 'rxjs/operators';
 
-import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '@osi-cards/models';
-import { CardUtils, CardTypeGuards } from '@osi-cards/models';
-import {
-  OSICardsStreamingService,
-  CardUpdate,
-  StreamingState,
-  StreamingConfig,
-} from '@osi-cards/services';
-import { ThemeService } from '@osi-cards/themes';
-import { CardFactory, SectionFactory } from '@osi-cards/lib/factories';
-import { ValidationError } from '@osi-cards/lib/errors';
+import type { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../models';
+import { CardUtils, CardTypeGuards } from '../models';
+import { OSICardsStreamingService, CardUpdate, StreamingState, StreamingConfig } from './';
+import { ThemeService } from '../themes';
+import { CardFactory, SectionFactory } from '../factories';
+import { ValidationError } from '../errors';
 
 // ============================================================================
 // TYPES

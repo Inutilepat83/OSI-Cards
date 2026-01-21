@@ -13,14 +13,14 @@
  *
  * @example
  * ```typescript
- * import { SkylinePacker } from 'osi-cards-lib';
+ * import { SkylinePacker } from '../../public-api';
  *
  * const packer = new SkylinePacker(4, 1200); // 4 columns, 1200px width
  * const layout = packer.pack(sections);
  * ```
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 // Removed - smart-grid.util deleted
 // Stub implementations
 function estimateSectionHeight(section: any): number {

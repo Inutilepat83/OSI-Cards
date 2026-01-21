@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardAction, CardField, CardItem } from '@osi-cards/models';
+import { AICardConfig, CardSection, CardAction, CardField, CardItem } from '../models';
 
 /**
  * Company Card Preset

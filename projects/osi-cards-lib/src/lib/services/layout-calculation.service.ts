@@ -32,8 +32,8 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { Memoize } from '@osi-cards/utils';
+import { CardSection } from '../models';
+import { Memoize } from '../utils';
 import {
   calculateColumnWidth,
   getPreferredColumns,
@@ -43,9 +43,9 @@ import {
   PreferredColumns,
   resolveColumnSpan,
   calculateColumns as utilCalculateColumns,
-} from '@osi-cards/utils';
-import { HeightEstimator } from '@osi-cards/utils';
-import { estimateSectionHeight } from '@osi-cards/utils';
+} from '../utils';
+import { HeightEstimator } from '../utils';
+import { estimateSectionHeight } from '../utils';
 
 // ============================================================================
 // TYPES

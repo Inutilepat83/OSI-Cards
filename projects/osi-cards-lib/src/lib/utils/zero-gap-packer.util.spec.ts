@@ -1,6 +1,6 @@
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { LayoutContext } from '@osi-cards/types';
+import { CardSection } from '../models';
+import { SectionLayoutPreferenceService } from '../services';
+import { LayoutContext } from '../types';
 import { packWithZeroGapsGuarantee } from './zero-gap-packer.util';
 
 describe('ZeroGapPacker', () => {

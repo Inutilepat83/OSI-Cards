@@ -1,10 +1,10 @@
 import { Injectable, inject, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CardSection, CardField, CardItem, CompletionRules } from '@osi-cards/models';
-import { resolveSectionType } from '@osi-cards/models';
+import { CardSection, CardField, CardItem, CompletionRules } from '../models';
+import { resolveSectionType } from '../models';
 import { firstValueFrom } from 'rxjs';
-import { sendDebugLogToFile } from '@osi-cards/lib/utils/debug-log-file.util';
-import { safeDebugFetch } from '@osi-cards/utils';
+import { sendDebugLogToFile } from '../utils/debug-log-file.util';
+import { safeDebugFetch } from '../utils';
 
 /**
  * Interface for section definition from registry

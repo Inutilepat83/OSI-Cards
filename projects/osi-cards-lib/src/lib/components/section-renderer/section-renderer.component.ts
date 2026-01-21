@@ -22,16 +22,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { CardAction, CardField, CardItem, CardSection } from '@osi-cards/models';
-import { isValidSectionType, resolveSectionType, SectionTypeInput } from '@osi-cards/models';
-import { LoggerService, SectionPluginRegistry } from '@osi-cards/services';
-import { sendDebugLog } from '@osi-cards/lib/utils/debug-log.util';
-import { sendDebugLogToFile } from '@osi-cards/lib/utils/debug-log-file.util';
-import { LOG_TAGS } from '@osi-cards/utils';
-import {
-  BaseSectionComponent,
-  SectionInteraction,
-} from '@osi-cards/lib/components/sections/base-section.component';
+import { CardAction, CardField, CardItem, CardSection } from '../../models';
+import { isValidSectionType, resolveSectionType, SectionTypeInput } from '../../models';
+import { LoggerService, SectionPluginRegistry } from '../../services';
+import { sendDebugLog } from '../../utils/debug-log.util';
+import { sendDebugLogToFile } from '../../utils/debug-log-file.util';
+import { LOG_TAGS } from '../../utils';
+import { BaseSectionComponent, SectionInteraction } from '../sections/base-section.component';
 import { DynamicSectionLoaderService } from './dynamic-section-loader.service';
 import { LazySectionLoaderService, LazySectionType } from './lazy-section-loader.service';
 import { LazySectionPlaceholderComponent } from './lazy-section-placeholder.component';

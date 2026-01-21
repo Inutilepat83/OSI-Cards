@@ -9,4 +9,4 @@ export * from '../accessibility.util';
 export * from '../grid-accessibility.util';
 export * from '../masonry-detection.util';
 // Note: virtual-scroll exports are available from main utils/index.ts
-// Import directly if needed: import { ... } from '@osi-cards/utils';
+// Import directly if needed: import { ... } from '..';

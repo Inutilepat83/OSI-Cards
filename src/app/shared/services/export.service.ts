@@ -246,7 +246,10 @@ export class ExportService {
   ): Promise<void> {
     // #region agent log
     // Only log on localhost - prevent production errors
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    if (
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ) {
       fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -270,7 +273,10 @@ export class ExportService {
     try {
       // #region agent log
       // Only log on localhost - prevent production errors
-      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      if (
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ) {
         fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -289,7 +295,10 @@ export class ExportService {
       await this.cardPdfService.generatePdf(card, options);
       // #region agent log
       // Only log on localhost - prevent production errors
-      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      if (
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ) {
         fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -309,7 +318,10 @@ export class ExportService {
     } catch (error) {
       // #region agent log
       // Only log on localhost - prevent production errors
-      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      if (
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ) {
         fetch('http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

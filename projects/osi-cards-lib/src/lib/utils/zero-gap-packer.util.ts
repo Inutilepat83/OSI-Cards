@@ -8,9 +8,9 @@
  * shape with gap metrics that can be used by layout services and diagnostics.
  */
 
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { LayoutContext } from '@osi-cards/types';
+import { CardSection } from '../models';
+import { SectionLayoutPreferenceService } from '../services';
+import { LayoutContext } from '../types';
 import { packSectionsIntoColumns, type ColumnPackingResult } from './column-packer.util';
 
 export interface ZeroGapPackingResult extends ColumnPackingResult {}

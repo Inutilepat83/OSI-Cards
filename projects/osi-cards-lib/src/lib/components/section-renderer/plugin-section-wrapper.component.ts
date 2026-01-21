@@ -13,9 +13,9 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardSection } from '@osi-cards/models';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
-import { SectionPluginRegistry } from '@osi-cards/services';
+import { CardSection } from '../../models';
+import { BaseSectionComponent } from '../sections/base-section.component';
+import { SectionPluginRegistry } from '../../services';
 import { Subject, takeUntil } from 'rxjs';
 
 /**

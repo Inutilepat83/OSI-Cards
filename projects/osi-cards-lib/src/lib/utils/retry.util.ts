@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { retryWithBackoff, RetryConfig } from 'osi-cards-lib';
+ * import { retryWithBackoff, RetryConfig } from '../../public-api';
  *
  * const config: RetryConfig = {
  *   maxRetries: 3,

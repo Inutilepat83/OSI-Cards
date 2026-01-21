@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
-import { TrendDirection } from '@osi-cards/types';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
+import { TrendDirection } from '../../../types';
 import { EmptyStateComponent, SectionHeaderComponent, TrendIndicatorComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 

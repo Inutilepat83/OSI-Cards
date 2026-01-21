@@ -23,7 +23,7 @@
  * ```
  */
 
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 // Removed - weighted-column-selector.util deleted
 type ColumnSelectionResult = any;
 class WeightedColumnSelector {

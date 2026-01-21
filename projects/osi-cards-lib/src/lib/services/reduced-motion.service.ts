@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { ReducedMotionService } from 'osi-cards-lib';
+ * import { ReducedMotionService } from '../../public-api';
  *
  * export class MyComponent {
  *   private reducedMotion = inject(ReducedMotionService);
@@ -31,7 +31,7 @@ import { Injectable, inject, PLATFORM_ID, NgZone, OnDestroy } from '@angular/cor
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, fromEvent, Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, map, startWith } from 'rxjs/operators';
-import { ANIMATION_TIMING, EASING } from '@osi-cards/constants';
+import { ANIMATION_TIMING, EASING } from '../constants';
 
 /** Animation configuration for reduced motion mode */
 export interface ReducedMotionAnimationConfig {

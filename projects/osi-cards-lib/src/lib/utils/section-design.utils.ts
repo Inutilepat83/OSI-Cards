@@ -17,7 +17,7 @@ import {
   SectionAnimationParams,
   SectionShadowParams,
   SectionTypographyParams,
-} from '@osi-cards/models';
+} from '../models';
 
 /**
  * Create a design configuration from a preset

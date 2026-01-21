@@ -8,7 +8,7 @@
  * - custom: User-defined configuration
  */
 
-import { ColumnPackerConfig } from '@osi-cards/utils';
+import { ColumnPackerConfig } from '../utils';
 
 export type LayoutPreset = 'performance' | 'quality' | 'balanced' | 'custom';
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { LucideIconsModule } from '@osi-cards/icons';
-import { CardAction } from '@osi-cards/models';
+import { LucideIconsModule } from '../../icons';
+import { CardAction } from '../../models';
 
 /**
  * Card Footer Component

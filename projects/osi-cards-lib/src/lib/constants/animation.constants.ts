@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { ANIMATION_TIMING, STAGGER_DELAYS } from 'osi-cards-lib';
+ * import { ANIMATION_TIMING, STAGGER_DELAYS } from '../../public-api';
  *
  * const delay = index * STAGGER_DELAYS.FIELD;
  * const duration = ANIMATION_TIMING.FIELD_ENTER;

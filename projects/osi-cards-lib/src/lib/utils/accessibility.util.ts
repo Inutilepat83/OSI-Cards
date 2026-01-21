@@ -10,7 +10,7 @@
  *   trapFocus,
  *   announceToScreenReader,
  *   getContrastRatio
- * } from 'osi-cards-lib';
+ * } from '../../public-api';
  *
  * // Trap focus in modal
  * const releaseFocus = trapFocus(modalElement);

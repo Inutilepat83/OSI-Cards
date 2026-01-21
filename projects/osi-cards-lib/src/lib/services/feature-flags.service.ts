@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { FeatureFlagsService, OSI_FEATURE_FLAGS } from 'osi-cards-lib';
+ * import { FeatureFlagsService, OSI_FEATURE_FLAGS } from '../../public-api';
  *
  * const featureFlags = inject(FeatureFlagsService);
  *
@@ -35,10 +35,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import {
-  MigrationFlags,
-  DEFAULT_MIGRATION_FLAGS,
-} from '@osi-cards/lib/config/migration-flags.config';
+import { MigrationFlags, DEFAULT_MIGRATION_FLAGS } from '../config/migration-flags.config';
 
 // ============================================================================
 // TYPES

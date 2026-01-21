@@ -10,10 +10,10 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { LoggerService } from '@osi-cards/services';
-import { sendDebugLog } from '@osi-cards/lib/utils/debug-log.util';
-import { LOG_TAGS } from '@osi-cards/utils';
+import { CardSection } from '../../models';
+import { LoggerService } from '../../services';
+import { sendDebugLog } from '../../utils/debug-log.util';
+import { LOG_TAGS } from '../../utils';
 // CRITICAL: Use direct imports to avoid circular dependency issues
 // Importing from @osi-cards/components can cause circular dependencies
 import { MasonryGridComponent } from '../masonry-grid/masonry-grid.component';

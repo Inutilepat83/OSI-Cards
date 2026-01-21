@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { CardUtil } from 'osi-cards-lib';
+ * import { CardUtil } from '../../public-api';
  *
  * // Generate IDs
  * const card = CardUtil.ensureCardIds(config);

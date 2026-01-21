@@ -17,7 +17,7 @@
  *
  * @example
  * ```typescript
- * import { NotificationService } from '@osi-cards/lib';
+ * import { NotificationService } from '../../public-api';
  *
  * const notify = inject(NotificationService);
  *

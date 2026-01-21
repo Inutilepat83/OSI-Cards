@@ -6,7 +6,7 @@
  *
  * @example
  * ```typescript
- * import { validateUrl, sanitizeHtml, validateEmail } from 'osi-cards-lib';
+ * import { validateUrl, sanitizeHtml, validateEmail } from '../../public-api';
  *
  * // Validate URL
  * const urlResult = validateUrl('https://example.com');

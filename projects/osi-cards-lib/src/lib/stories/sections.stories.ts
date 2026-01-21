@@ -8,13 +8,13 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
-import { SectionRendererComponent } from '@osi-cards/components';
+import { SectionRendererComponent } from '../components';
 import type {
   AnalyticsSection as AnalyticsSectionType,
   CardSection,
   ContactCardSection as ContactCardSectionType,
   ListSection as ListSectionType,
-} from '@osi-cards/models';
+} from '../models';
 
 /**
  * Meta configuration for Section Renderer stories

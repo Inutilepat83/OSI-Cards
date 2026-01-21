@@ -9,7 +9,7 @@
  *
  * @example
  * ```typescript
- * import { RetryPolicyService, RetryConfig } from 'osi-cards-lib';
+ * import { RetryPolicyService, RetryConfig } from '../../public-api';
  *
  * @Injectable()
  * export class MyDataService {

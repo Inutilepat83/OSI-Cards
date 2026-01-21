@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { GridAccessibilityManager } from 'osi-cards-lib';
+ * import { GridAccessibilityManager } from '../../public-api';
  *
  * const a11y = new GridAccessibilityManager(gridContainer);
  * a11y.enableKeyboardNavigation();

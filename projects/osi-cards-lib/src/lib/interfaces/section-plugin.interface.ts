@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { CardSection } from '../models';
+import { BaseSectionComponent } from '../components/sections/base-section.component';
 
 /**
  * Plugin metadata for a custom section type

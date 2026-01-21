@@ -24,12 +24,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject, ReplaySubject, from, of } from 'rxjs';
 import { takeUntil, map, catchError, timeout } from 'rxjs/operators';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 import type {
   LayoutWorkerMessage,
   LayoutWorkerResponse,
   LayoutWorkerMessageType,
-} from '@osi-cards/lib/workers/layout-worker';
+} from '../workers/layout-worker';
 
 // ============================================================================
 // TYPES

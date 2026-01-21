@@ -101,4 +101,4 @@ export {
 } from './column-packer.util';
 
 // Re-export type for convenience
-export type { CardChangeType } from '@osi-cards/types';
+export type { CardChangeType } from '../types';

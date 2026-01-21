@@ -9,11 +9,11 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { SectionLayoutPreferenceService } from '@osi-cards/services';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { TooltipDirective } from '@osi-cards/lib/directives/tooltip.directive';
+import { TooltipDirective } from '../../../directives/tooltip.directive';
 
 /**
  * Solutions Section Component

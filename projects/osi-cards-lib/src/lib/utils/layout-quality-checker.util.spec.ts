@@ -8,7 +8,7 @@ import {
   getLayoutQualitySummary,
   LayoutMetrics,
 } from './layout-quality-checker.util';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 describe('LayoutQualityChecker', () => {
   const createSections = (count: number): CardSection[] =>

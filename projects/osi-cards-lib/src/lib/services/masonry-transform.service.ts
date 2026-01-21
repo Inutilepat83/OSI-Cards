@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
+import { CardSection } from '../models';
 
 /**
  * Position info for a section after transform calculation

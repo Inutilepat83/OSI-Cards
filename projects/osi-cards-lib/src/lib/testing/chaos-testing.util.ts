@@ -416,7 +416,7 @@ export class ChaosExperiments {
  *
  * @example
  * ```typescript
- * import { ChaosEngineer, ChaosExperiments } from '@osi-cards/testing';
+ * import { ChaosEngineer, ChaosExperiments } from './';
  *
  * describe('Chaos Engineering Tests', () => {
  *   it('should handle network latency', async () => {

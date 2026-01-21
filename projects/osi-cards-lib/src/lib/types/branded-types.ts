@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { Brand, make } from '@osi-cards/types';
+ * import { Brand, make } from './';
  *
  * type UserId = Brand<string, 'UserId'>;
  * type CardId = Brand<string, 'CardId'>;

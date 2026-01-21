@@ -1,12 +1,12 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { CardSection } from '@osi-cards/models';
-import { BaseSectionComponent } from '@osi-cards/lib/components/sections/base-section.component';
+import { CardSection } from '../models';
+import { BaseSectionComponent } from '../components/sections/base-section.component';
 import {
   SectionPlugin,
   RegisteredSectionPlugin,
   SectionPluginConfig,
   SectionPluginMetadata,
-} from '@osi-cards/lib/interfaces/section-plugin.interface';
+} from '../interfaces/section-plugin.interface';
 
 /**
  * Section Plugin Registry Service

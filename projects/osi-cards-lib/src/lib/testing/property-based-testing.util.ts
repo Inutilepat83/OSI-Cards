@@ -369,7 +369,7 @@ export class CardProperties {
  *
  * @example
  * ```typescript
- * import { PropertyTest, CardGen, CardProperties } from '@osi-cards/testing';
+ * import { PropertyTest, CardGen, CardProperties } from './';
  *
  * describe('Card Properties', () => {
  *   it('should have non-empty title', () => {

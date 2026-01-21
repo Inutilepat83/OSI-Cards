@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardSection } from '@osi-cards/models';
-import { MasonryGridComponent, MasonryLayoutInfo } from '@osi-cards/components';
-import { SectionRenderEvent } from '@osi-cards/components';
+import { CardSection } from '../../models';
+import { MasonryGridComponent, MasonryLayoutInfo } from '..';
+import { SectionRenderEvent } from '..';
 
 /**
  * Card Body Component

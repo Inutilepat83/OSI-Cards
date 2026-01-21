@@ -27,8 +27,8 @@
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { packSectionsIntoColumns, ColumnPackerConfig } from '@osi-cards/utils';
-import { CardSection, SectionTypeInput } from '@osi-cards/models';
+import { packSectionsIntoColumns, ColumnPackerConfig } from '../utils';
+import { CardSection, SectionTypeInput } from '../models';
 
 // ============================================================================
 // TYPES

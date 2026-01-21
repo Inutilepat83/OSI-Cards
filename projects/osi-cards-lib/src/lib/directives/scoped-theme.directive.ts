@@ -10,7 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { OSICardsThemeConfig, ThemePreset, ThemeService } from '@osi-cards/themes';
+import { OSICardsThemeConfig, ThemePreset, ThemeService } from '../themes';
 
 /**
  * Scoped Theme Directive

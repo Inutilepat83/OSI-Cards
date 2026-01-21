@@ -1,20 +1,20 @@
 import { Provider, EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { MIGRATION_FLAGS_TOKEN } from '@osi-cards/services';
-import { MigrationFlags } from '@osi-cards/lib/config/migration-flags.config';
-import { SectionFactory } from '@osi-cards/lib/factories';
-import { EventBusService } from '@osi-cards/services';
-import { IconService } from '@osi-cards/services';
-import { SectionNormalizationService } from '@osi-cards/services';
-import { SectionUtilsService } from '@osi-cards/services';
-import { CardFacadeService } from '@osi-cards/services';
-import { SectionPluginRegistry } from '@osi-cards/services';
-import { FeatureFlagsService } from '@osi-cards/services';
-import { AccessibilityService } from '@osi-cards/services';
-import { VERSION } from '@osi-cards/lib/version';
-import { checkVersionRequirement } from '@osi-cards/utils';
+import { MIGRATION_FLAGS_TOKEN } from '../services';
+import { MigrationFlags } from '../config/migration-flags.config';
+import { SectionFactory } from '../factories';
+import { EventBusService } from '../services';
+import { IconService } from '../services';
+import { SectionNormalizationService } from '../services';
+import { SectionUtilsService } from '../services';
+import { CardFacadeService } from '../services';
+import { SectionPluginRegistry } from '../services';
+import { FeatureFlagsService } from '../services';
+import { AccessibilityService } from '../services';
+import { VERSION } from '../version';
+import { checkVersionRequirement } from '../utils';
 // Removed - animation.service deleted
 // Use animation utilities instead
-// import { LayoutOptimizerService } from '@osi-cards/services';  // Service disabled due to type errors
+// import { LayoutOptimizerService } from '../services';  // Service disabled due to type errors
 
 /**
  * Configuration options for OSI Cards library

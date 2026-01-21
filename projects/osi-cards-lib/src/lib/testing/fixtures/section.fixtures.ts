@@ -26,12 +26,12 @@
  * ```
  */
 
-import type { CardSection, CardField, CardItem } from '@osi-cards/models';
+import type { CardSection, CardField, CardItem } from '../../models';
 import {
   COMPLETE_FIXTURES,
   MINIMAL_FIXTURES,
   EDGE_CASE_FIXTURES,
-} from '@osi-cards/lib/registry/fixtures.generated';
+} from '../../registry/fixtures.generated';
 
 // ============================================================================
 // FACTORY FUNCTIONS
