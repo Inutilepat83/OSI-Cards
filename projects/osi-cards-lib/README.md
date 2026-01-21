@@ -86,7 +86,7 @@ You can specify a minimum required library version to ensure compatibility. If t
 export const appConfig: ApplicationConfig = {
   providers: [
     provideOsiCards({
-      minVersion: '>=1.5.0',  // Require at least version 1.5.55
+      minVersion: '>=1.5.0',  // Require at least version 1.5.56
       // ... other options
     }),
   ]
