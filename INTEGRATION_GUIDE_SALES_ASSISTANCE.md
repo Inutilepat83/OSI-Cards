@@ -13,6 +13,23 @@ Angular needs to know where to resolve SCSS imports.
 ### 3. Import Position in styles.sass
 The import should be near the top, not at the bottom.
 
+## Required Setup & Installation
+
+### 0. Initial Installation (Local Development)
+
+Since `osi-cards-lib` is built locally, you should install it from the generated tarball. To handle peer dependency mismatches with Angular 20, use the `--legacy-peer-deps` flag.
+
+> [!NOTE]
+> As of version **1.5.58**, the library uses `/* @vite-ignore */` for optional dependencies (like `html2pdf.js`). This prevents Vite build errors in the consuming application even if these libraries are not installed.
+
+**Command:**
+```bash
+npm install "/Users/arthurmariani/Desktop/OSI-Cards-1/dist/osi-cards-lib/osi-cards-lib-1.5.58.tgz" --legacy-peer-deps
+```
+
+> [!TIP]
+> If you prefer a more permanent solution for peer dependencies, you can add an `overrides` section to your `package.json` to force compatibility, but `--legacy-peer-deps` is the quickest way to get running.
+
 ## Required Fixes
 
 ### Fix 1: Update `cards.component.html`

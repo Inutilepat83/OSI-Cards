@@ -24,17 +24,17 @@
 
 import { inject, Injectable } from '@angular/core';
 import { AICardConfig } from '../models';
-import { LoggerService } from './logger.service';
 import { generateCardHtml } from '../utils/card-pdf-html-generator.util';
 import { generateCardPdfStyles } from '../utils/card-pdf-styles.util';
-import { CardPdfExportOptions } from './card-pdf.service';
-import { sendDebugLog } from '../utils/debug-log.util';
-import { normalizeStylesForPdf, getColorProperties } from '../utils/pdf-style-normalizer.util';
 import {
-  normalizeColorForPdf,
-  normalizeComplexColorValue,
-  isUnsupportedColorFunction,
+    isUnsupportedColorFunction,
+    normalizeColorForPdf,
+    normalizeComplexColorValue,
 } from '../utils/color-conversion.util';
+import { sendDebugLog } from '../utils/debug-log.util';
+import { getColorProperties } from '../utils/pdf-style-normalizer.util';
+import { CardPdfExportOptions } from './card-pdf.service';
+import { LoggerService } from './logger.service';
 
 const COLOR_PROPERTIES = getColorProperties();
 
@@ -228,7 +228,7 @@ export class CardPdfHtml2PdfService {
 
       // Try ES module import first - Vite should process this since it's in allowedCommonJsDependencies
       // Don't use @vite-ignore - we want Vite to process and bundle it
-      const html2pdfModule = (await import('html2pdf.js')) as any;
+      const html2pdfModule = (await import(/* @vite-ignore */ 'html2pdf.js')) as any;
 
       // #region agent log
       sendDebugLog(
@@ -717,7 +717,7 @@ export class CardPdfHtml2PdfService {
             'http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a'
           );
           // #endregion
-          const html2canvasModule = await import('html2canvas');
+          const html2canvasModule = await import(/* @vite-ignore */ 'html2canvas');
           html2canvas = html2canvasModule.default || html2canvasModule;
           // #region agent log
           sendDebugLog(
@@ -778,7 +778,7 @@ export class CardPdfHtml2PdfService {
             'http://127.0.0.1:7245/ingest/ae037419-79db-44fb-9060-a10d5503303a'
           );
           // #endregion
-          const jsPDFModule = await import('jspdf');
+          const jsPDFModule = await import(/* @vite-ignore */ 'jspdf');
           // jsPDF exports as { jsPDF: class, ... } or default export
           JsPDF = (jsPDFModule as any).jsPDF || jsPDFModule.default || jsPDFModule;
           // #region agent log

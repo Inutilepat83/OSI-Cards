@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  effect,
-  inject,
-  isDevMode,
-  signal,
-  ChangeDetectionStrategy,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    HostListener,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    effect,
+    inject,
+    isDevMode,
+    signal,
 } from '@angular/core';
 // @ts-ignore - chart.js may not be installed yet, but it's in optionalDependencies
 import type { ChartData, ChartOptions, ChartType } from 'chart.js';
@@ -22,7 +22,7 @@ import { safeDebugFetch } from '../../../utils';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 // CRITICAL FIX: Import ChartSectionBaseComponent directly from source to avoid barrel export resolution issues in production builds
-import { ChartSectionBaseComponent, ChartConfig } from '../abstract-section-bases';
+import { ChartConfig, ChartSectionBaseComponent } from '../abstract-section-bases';
 
 // #region agent log
 if (typeof window !== 'undefined') {
@@ -419,7 +419,7 @@ export class ChartSectionComponent
       // Chart.js is loaded via ng2-charts, but we need to ensure it's available
       // Dynamic import of chart.js to ensure it's loaded
       // @ts-ignore - chart.js may not be installed yet
-      await import('chart.js/auto');
+      await import(/* @vite-ignore */ 'chart.js/auto');
       this.chartLibraryLoaded.set(true);
       this.chartError.set(null);
     } catch (error) {

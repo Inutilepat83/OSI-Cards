@@ -1,6 +1,6 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.5.57",
+  "version": "1.5.58",
   "description": "Standalone OSI Cards library for Angular applications with CSS Layer support for easy style overrides",
   "keywords": [
     "angular",
@@ -21,6 +21,10 @@
     "rxjs": "~7.8.0"
   },
   "optionalDependencies": {
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
+    "jspdf": "^2.5.1",
+    "leaflet": "^1.9.4",
     "marked": "^17.0.0"
   },
   "repository": {

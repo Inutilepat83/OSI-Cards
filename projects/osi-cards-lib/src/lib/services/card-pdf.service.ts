@@ -21,11 +21,11 @@
 
 import { inject, Injectable } from '@angular/core';
 import { AICardConfig } from '../models';
-import { LoggerService } from './logger.service';
 import { generateCardHtml } from '../utils/card-pdf-html-generator.util';
 import { generateCardPdfStyles } from '../utils/card-pdf-styles.util';
-import { CardPdfHtml2PdfService } from './card-pdf-html2pdf.service';
 import { sendDebugLog } from '../utils/debug-log.util';
+import { CardPdfHtml2PdfService } from './card-pdf-html2pdf.service';
+import { LoggerService } from './logger.service';
 
 /**
  * PDF export options
@@ -161,7 +161,7 @@ export class CardPdfService {
   private async loadJsPDF(): Promise<any> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const jsPDFModule = await import('jspdf' as any);
+      const jsPDFModule = await import(/* @vite-ignore */ 'jspdf' as any);
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || jsPDFModule.default;
       if (!jsPDF) {
         throw new Error('jsPDF not available');

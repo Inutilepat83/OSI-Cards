@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  inject,
-  ChangeDetectionStrategy,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    inject,
 } from '@angular/core';
 import { CardSection } from '../../../models';
 import { SectionLayoutPreferenceService } from '../../../services';
@@ -77,7 +77,7 @@ export class MapSectionComponent
 
     try {
       // Dynamic import of Leaflet
-      const leafletModule = await import('leaflet');
+      const leafletModule = await import(/* @vite-ignore */ 'leaflet');
       // ESM/CJS interop: depending on bundler, Leaflet may be exposed as default export
       const L: any = (leafletModule as any).default ?? leafletModule;
       if (!L || typeof L.map !== 'function') {
